@@ -3,7 +3,7 @@ from typing import Optional, List
 
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton,
+    QWidget, QDialog, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton,
     QComboBox, QDoubleSpinBox, QSpinBox, QMessageBox, QGroupBox,
     QFormLayout, QTabWidget
 )
@@ -376,7 +376,7 @@ class BacktestPage(QWidget):
         favorites = settings.backtest_preferences.paired_favorites if settings else []
 
         dialog = PairsSelectorDialog(favorites, self.selected_pairs, self)
-        if dialog.exec() == dialog.Accepted:
+        if dialog.exec() == QDialog.Accepted:
             self.selected_pairs = dialog.get_selected_pairs()
             self._update_pairs_display()
 
