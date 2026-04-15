@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Optional, List
 
-from PySide6.QtCore import Qt, QTimer
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton,
     QComboBox, QDoubleSpinBox, QSpinBox, QMessageBox, QGroupBox,
@@ -122,7 +122,7 @@ class BacktestPage(QWidget):
 
         self.stop_button = QPushButton("Stop")
         self.stop_button.setEnabled(False)
-        self.stop_button.clicked.connect(self.process_service)
+        self.stop_button.clicked.connect(self.process_service.stop_process)
         button_layout.addWidget(self.stop_button)
 
         button_layout.addStretch()
@@ -152,12 +152,7 @@ class BacktestPage(QWidget):
         self.setLayout(main_layout)
 
     def _connect_signals(self):
-        """Connect signals."""
-        self.process_service.started.connect(self._on_process_started)
-        self.process_service.output_received.connect(self.terminal.append_output)
-        self.process_service.error_received.connect(self.terminal.append_error)
-        self.process_service.finished.connect(self._on_process_finished)
-
+        """Connect settings signals."""
         self.settings_state.settings_changed.connect(self._on_settings_changed)
 
     def _refresh_strategies(self):
@@ -222,27 +217,34 @@ class BacktestPage(QWidget):
         # Update export label
         self.export_label.setText(f"Export: {cmd.export_zip}")
 
-        # Execute command
-        try:
-            self.process_service.start(
-                program=cmd.program,
-                arguments=cmd.args,
-                cwd=cmd.cwd,
-            )
-        except Exception as e:
-            QMessageBox.critical(self, "Process Error", str(e))
-
-    def _on_process_started(self):
-        """Called when process starts."""
+        # Mark as running before executing
         self.run_button.setEnabled(False)
         self.stop_button.setEnabled(True)
         self.terminal.append_output("[Process started]\n\n")
 
-    def _on_process_finished(self, exit_code: int, exit_status: str):
+        # Execute command with callbacks
+        try:
+            self.process_service.execute_command(
+                command=[cmd.program] + cmd.args,
+                on_output=self.terminal.append_output,
+                on_error=self.terminal.append_error,
+                on_finished=self._on_process_finished_internal,
+                working_directory=cmd.cwd,
+            )
+        except Exception as e:
+            QMessageBox.critical(self, "Process Error", str(e))
+            self.run_button.setEnabled(True)
+            self.stop_button.setEnabled(False)
+
+    def _on_process_started(self):
+        """Called when process starts - now handled internally."""
+        pass
+
+    def _on_process_finished_internal(self, exit_code: int):
         """Called when process finishes."""
         self.run_button.setEnabled(True)
         self.stop_button.setEnabled(False)
-        self.terminal.append_output(f"\n[Process finished] exit_code={exit_code} status={exit_status}\n")
+        self.terminal.append_output(f"\n[Process finished] exit_code={exit_code}\n")
 
         # Try to parse and display results
         if exit_code == 0 and self.last_export_path:
