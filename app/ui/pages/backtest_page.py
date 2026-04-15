@@ -15,6 +15,7 @@ from app.core.services.settings_service import SettingsService
 from app.core.services.process_service import ProcessService
 from app.ui.widgets.terminal_widget import TerminalWidget
 from app.ui.widgets.backtest_results_widget import BacktestResultsWidget
+from app.ui.dialogs.pairs_selector_dialog import PairsSelectorDialog
 
 
 class BacktestPage(QWidget):
@@ -27,6 +28,7 @@ class BacktestPage(QWidget):
         self.backtest_service = BacktestService(self.settings_service)
         self.process_service = ProcessService()
         self.last_export_path: Optional[str] = None
+        self.selected_pairs: List[str] = []  # Track selected pairs
 
         self.init_ui()
         self._connect_signals()
@@ -62,10 +64,9 @@ class BacktestPage(QWidget):
         timeframe_layout.addWidget(self.timeframe_input)
         params_layout.addLayout(timeframe_layout)
 
-        # Timerange with preset buttons
-        timerange_layout = QVBoxLayout()
+        # Timerange presets
         timerange_presets_layout = QHBoxLayout()
-        timerange_presets_layout.addWidget(QLabel("Timerange:"))
+        timerange_presets_layout.addWidget(QLabel("Timerange Presets:"))
 
         for preset in ["7d", "14d", "30d", "90d", "120d", "360d"]:
             btn = QPushButton(preset)
@@ -73,21 +74,36 @@ class BacktestPage(QWidget):
             btn.clicked.connect(lambda checked, p=preset: self._on_timerange_preset(p))
             timerange_presets_layout.addWidget(btn)
 
-        timerange_presets_layout.addWidget(QLabel("Custom:"))
-        self.timerange_input = QLineEdit()
-        self.timerange_input.setPlaceholderText("20240101-20241231")
-        timerange_presets_layout.addWidget(self.timerange_input)
         timerange_presets_layout.addStretch()
+        params_layout.addLayout(timerange_presets_layout)
 
-        timerange_layout.addLayout(timerange_presets_layout)
-        params_layout.addLayout(timerange_layout)
+        # Custom timerange in group box
+        custom_timerange_group = QGroupBox("Custom Timerange (Optional)")
+        custom_timerange_layout = QHBoxLayout()
+        custom_timerange_layout.addWidget(QLabel("Format: YYYYMMDD-YYYYMMDD"))
+        self.timerange_input = QLineEdit()
+        self.timerange_input.setPlaceholderText("e.g., 20240101-20241231")
+        custom_timerange_layout.addWidget(self.timerange_input)
+        custom_timerange_group.setLayout(custom_timerange_layout)
+        params_layout.addWidget(custom_timerange_group)
 
-        # Pairs with dropdown
-        pairs_layout = QHBoxLayout()
-        pairs_layout.addWidget(QLabel("Pairs:"))
-        self.pairs_combo = QComboBox()
-        self.pairs_combo.setEditable(True)
-        pairs_layout.addWidget(self.pairs_combo)
+        # Pairs selection
+        pairs_layout = QVBoxLayout()
+        pairs_button_layout = QHBoxLayout()
+        pairs_button_layout.addWidget(QLabel("Pairs:"))
+
+        self.pairs_button = QPushButton("Select Pairs... (0)")
+        self.pairs_button.clicked.connect(self._on_select_pairs)
+        pairs_button_layout.addWidget(self.pairs_button)
+        pairs_button_layout.addStretch()
+
+        pairs_layout.addLayout(pairs_button_layout)
+
+        # Display selected pairs
+        self.pairs_display_label = QLabel("Selected: None")
+        self.pairs_display_label.setStyleSheet("color: #666; font-size: 9pt; padding-left: 4px;")
+        pairs_layout.addWidget(self.pairs_display_label)
+
         params_layout.addLayout(pairs_layout)
 
         # Advanced options (collapsible)
@@ -185,7 +201,7 @@ class BacktestPage(QWidget):
         strategy = self.strategy_combo.currentText().strip()
         timeframe = self.timeframe_input.text().strip()
         timerange = self.timerange_input.text().strip() or None
-        pairs = [p.strip() for p in self.pairs_combo.currentText().split() if p.strip()]
+        pairs = self.selected_pairs  # Use selected pairs from dialog
 
         # Validate inputs
         if not strategy:
@@ -193,6 +209,9 @@ class BacktestPage(QWidget):
             return
         if not timeframe:
             QMessageBox.warning(self, "Missing Input", "Please enter a timeframe.")
+            return
+        if not pairs:
+            QMessageBox.warning(self, "Missing Input", "Please select at least one pair.")
             return
 
         # Save preferences before running
@@ -309,13 +328,14 @@ class BacktestPage(QWidget):
         if prefs.default_timeframe:
             self.timeframe_input.setText(prefs.default_timeframe)
 
-        # Load pairs favorites and set current value
-        self.pairs_combo.clear()
-        self.pairs_combo.addItems(prefs.paired_favorites)
+        # Load pairs from comma-separated string
         if prefs.default_pairs:
-            self.pairs_combo.setCurrentText(prefs.default_pairs)
-        elif prefs.paired_favorites:
-            self.pairs_combo.setCurrentIndex(0)
+            pairs_list = [p.strip() for p in prefs.default_pairs.split(",") if p.strip()]
+            self.selected_pairs = pairs_list
+        else:
+            self.selected_pairs = []
+
+        self._update_pairs_display()
 
     def _save_preferences_to_settings(self):
         """Save current input values to settings for next run."""
@@ -327,14 +347,12 @@ class BacktestPage(QWidget):
 
         prefs.last_strategy = self.strategy_combo.currentText()
         prefs.default_timeframe = self.timeframe_input.text()
-        prefs.default_pairs = self.pairs_combo.currentText()
+        prefs.default_pairs = ",".join(self.selected_pairs) if self.selected_pairs else ""
 
-        # Update favorites with current pairs (if different)
-        current_pairs = self.pairs_combo.currentText()
-        if current_pairs and current_pairs not in prefs.paired_favorites:
-            # Add current to favorites (keep list reasonable size)
-            if len(prefs.paired_favorites) < 10:
-                prefs.paired_favorites.append(current_pairs)
+        # Update favorites with selected pairs (auto-grow list)
+        for pair in self.selected_pairs:
+            if pair not in prefs.paired_favorites and len(prefs.paired_favorites) < 10:
+                prefs.paired_favorites.append(pair)
 
         # Save to disk
         self.settings_state.save_settings(settings)
@@ -351,3 +369,23 @@ class BacktestPage(QWidget):
         if settings and settings.backtest_preferences:
             settings.backtest_preferences.last_timerange_preset = preset
             self.settings_state.save_settings(settings)
+
+    def _on_select_pairs(self):
+        """Open pairs selector dialog."""
+        settings = self.settings_state.current_settings
+        favorites = settings.backtest_preferences.paired_favorites if settings else []
+
+        dialog = PairsSelectorDialog(favorites, self.selected_pairs, self)
+        if dialog.exec() == dialog.Accepted:
+            self.selected_pairs = dialog.get_selected_pairs()
+            self._update_pairs_display()
+
+    def _update_pairs_display(self):
+        """Update pairs button and display label."""
+        count = len(self.selected_pairs)
+        self.pairs_button.setText(f"Select Pairs... ({count})")
+
+        if self.selected_pairs:
+            self.pairs_display_label.setText(f"Selected: {', '.join(self.selected_pairs)}")
+        else:
+            self.pairs_display_label.setText("Selected: None")
