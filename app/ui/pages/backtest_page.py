@@ -122,7 +122,7 @@ class BacktestPage(QWidget):
 
         self.stop_button = QPushButton("Stop")
         self.stop_button.setEnabled(False)
-        self.stop_button.clicked.connect(self.process_service.stop)
+        self.stop_button.clicked.connect(self.process_service)
         button_layout.addWidget(self.stop_button)
 
         button_layout.addStretch()
