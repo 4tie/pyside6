@@ -57,20 +57,29 @@ class MainWindow(QMainWindow):
         self._apply_terminal_preferences()
         self.settings_state.settings_saved.connect(self._on_settings_saved)
 
+    @property
+    def _all_terminals(self):
+        """All TerminalWidget instances across the app."""
+        return [
+            self.terminal_widget,
+            self.backtest_page.terminal,
+            self.dd_page.terminal,
+        ]
+
     def _apply_terminal_preferences(self):
         """Apply terminal preferences to all terminal widgets."""
         settings = self.settings_state.current_settings
         if not settings:
             return
         prefs = settings.terminal_preferences
-        self.terminal_widget.apply_preferences(prefs)
-        self.backtest_page.terminal.apply_preferences(prefs)
+        for t in self._all_terminals:
+            t.apply_preferences(prefs)
 
     def _on_settings_saved(self, settings):
         """Re-apply terminal preferences when settings are saved."""
         prefs = settings.terminal_preferences
-        self.terminal_widget.apply_preferences(prefs)
-        self.backtest_page.terminal.apply_preferences(prefs)
+        for t in self._all_terminals:
+            t.apply_preferences(prefs)
 
     def _create_terminal_tab(self) -> QWidget:
         """Create terminal tab with quick action buttons."""
