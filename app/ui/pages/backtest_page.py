@@ -138,16 +138,6 @@ class BacktestPage(QWidget):
         self.max_open_trades.setToolTip("Maximum number of open trades")
         advanced_layout.addRow("Max Open Trades:", self.max_open_trades)
 
-        self.stake_currency = QLineEdit()
-        self.stake_currency.setPlaceholderText("USDT, BNB, etc. (optional)")
-        advanced_layout.addRow("Stake Currency:", self.stake_currency)
-
-        self.stake_amount = QDoubleSpinBox()
-        self.stake_amount.setMinimum(0)
-        self.stake_amount.setMaximum(999999)
-        self.stake_amount.setToolTip("Stake amount per trade (optional)")
-        advanced_layout.addRow("Stake Amount:", self.stake_amount)
-
         advanced_group.setLayout(advanced_layout)
         advanced_group.setCheckable(False)
         params_layout.addWidget(advanced_group)
@@ -161,9 +151,29 @@ class BacktestPage(QWidget):
 
         # Run/Stop buttons
         button_layout = QHBoxLayout()
+
+        # Command mode toggle
+        self.command_mode_group = QHBoxLayout()
+        self.backtest_radio = QPushButton("Backtest")
+        self.backtest_radio.setCheckable(True)
+        self.backtest_radio.setChecked(True)
+        self.backtest_radio.clicked.connect(self._on_command_mode_changed)
+        self.download_radio = QPushButton("Download Data")
+        self.download_radio.setCheckable(True)
+        self.download_radio.clicked.connect(self._on_command_mode_changed)
+        self.command_mode_group.addWidget(self.backtest_radio)
+        self.command_mode_group.addWidget(self.download_radio)
+        self.command_mode_group.addStretch()
+
+        button_layout.addLayout(self.command_mode_group)
+
         self.run_button = QPushButton("Run Backtest")
         self.run_button.clicked.connect(self._run_backtest)
         button_layout.addWidget(self.run_button)
+
+        self.download_button = QPushButton("Download Data")
+        self.download_button.clicked.connect(self._run_download_data)
+        button_layout.addWidget(self.download_button)
 
         self.stop_button = QPushButton("Stop")
         self.stop_button.setEnabled(False)
@@ -201,16 +211,21 @@ class BacktestPage(QWidget):
         # Signal for settings changes
         self.settings_state.settings_changed.connect(self._on_settings_changed)
 
-        # Signals for live command preview updates
+        # Signals for backtest command preview updates
         self.strategy_combo.currentTextChanged.connect(self._update_command_preview)
         self.timeframe_input.textChanged.connect(self._update_command_preview)
         self.timerange_input.textChanged.connect(self._update_command_preview)
         self.dry_run_wallet.valueChanged.connect(self._update_command_preview)
         self.max_open_trades.valueChanged.connect(self._update_command_preview)
-        self.stake_currency.textChanged.connect(self._update_command_preview)
-        self.stake_amount.valueChanged.connect(self._update_command_preview)
         # Also update when settings that affect the command change (venv path, etc)
         self.settings_state.settings_changed.connect(self._update_command_preview)
+
+        # Also connect signals for download command preview
+        self.timeframe_input.textChanged.connect(self._update_download_command_preview)
+        self.timerange_input.textChanged.connect(self._update_download_command_preview)
+        self.settings_state.settings_changed.connect(
+            self._update_download_command_preview
+        )
 
     def _refresh_strategies(self):
         """Refresh available strategies."""
@@ -222,6 +237,17 @@ class BacktestPage(QWidget):
         """Called when settings change."""
         self._refresh_strategies()
 
+    def _on_command_mode_changed(self):
+        """Called when command mode toggle changes."""
+        if self.backtest_radio.isChecked():
+            self._update_command_preview()
+            self.run_button.setVisible(True)
+            self.download_button.setVisible(False)
+        else:
+            self._update_download_command_preview()
+            self.run_button.setVisible(False)
+            self.download_button.setVisible(True)
+
     def _update_command_preview(self):
         """Update the command preview in terminal based on current UI values."""
         try:
@@ -229,10 +255,6 @@ class BacktestPage(QWidget):
             timeframe = self.timeframe_input.text().strip()
             timerange = self.timerange_input.text().strip() or None
             pairs = self.selected_pairs
-            stake_currency = self.stake_currency.text().strip() or None
-            stake_amount = (
-                self.stake_amount.value() if self.stake_amount.value() > 0 else None
-            )
             dry_run_wallet = (
                 self.dry_run_wallet.value() if self.dry_run_wallet.value() > 0 else None
             )
@@ -247,10 +269,33 @@ class BacktestPage(QWidget):
                 timeframe=timeframe,
                 timerange=timerange,
                 pairs=pairs if pairs else [],
-                stake_currency=stake_currency,
-                stake_amount=stake_amount,
                 max_open_trades=max_open_trades,
                 dry_run_wallet=dry_run_wallet,
+            )
+
+            command_string = f"{cmd.program} {' '.join(cmd.args)}"
+            self.terminal.set_command(command_string)
+        except Exception:
+            pass
+
+    def _update_download_command_preview(self):
+        """Update the command preview for download-data command."""
+        try:
+            timeframe = self.timeframe_input.text().strip()
+            timerange = self.timerange_input.text().strip() or None
+            pairs = self.selected_pairs
+
+            if not timeframe:
+                self.terminal.set_command("[Configure timeframe and pairs]")
+                return
+            if not pairs:
+                self.terminal.set_command("[Select pairs for download]")
+                return
+
+            cmd = self.backtest_service.build_download_data_command(
+                timeframe=timeframe,
+                timerange=timerange,
+                pairs=pairs,
             )
 
             command_string = f"{cmd.program} {' '.join(cmd.args)}"
@@ -283,10 +328,6 @@ class BacktestPage(QWidget):
 
         # Build command
         try:
-            stake_currency = self.stake_currency.text().strip() or None
-            stake_amount = (
-                self.stake_amount.value() if self.stake_amount.value() > 0 else None
-            )
             dry_run_wallet = (
                 self.dry_run_wallet.value() if self.dry_run_wallet.value() > 0 else None
             )
@@ -297,8 +338,6 @@ class BacktestPage(QWidget):
                 timeframe=timeframe,
                 timerange=timerange,
                 pairs=pairs,
-                stake_currency=stake_currency,
-                stake_amount=stake_amount,
                 max_open_trades=max_open_trades,
                 dry_run_wallet=dry_run_wallet,
             )
@@ -328,6 +367,7 @@ class BacktestPage(QWidget):
 
         # Mark as running before executing
         self.run_button.setEnabled(False)
+        self.download_button.setEnabled(False)
         self.stop_button.setEnabled(True)
         self.terminal.append_output("[Process started]\n\n")
 
@@ -349,9 +389,78 @@ class BacktestPage(QWidget):
         """Called when process starts - now handled internally."""
         pass
 
+    def _run_download_data(self):
+        """Run download-data with current backtest config."""
+        strategy = self.strategy_combo.currentText().strip()
+        timeframe = self.timeframe_input.text().strip()
+        timerange = self.timerange_input.text().strip() or None
+        pairs = self.selected_pairs
+
+        if not timeframe:
+            QMessageBox.warning(self, "Missing Input", "Please enter a timeframe.")
+            return
+        if not pairs:
+            QMessageBox.warning(
+                self, "Missing Input", "Please select at least one pair."
+            )
+            return
+
+        # Save preferences before running
+        self._save_preferences_to_settings()
+
+        # Build download-data command
+        try:
+            cmd = self.backtest_service.build_download_data_command(
+                timeframe=timeframe,
+                timerange=timerange,
+                pairs=pairs,
+            )
+            command_string = f"{cmd.program} {' '.join(cmd.args)}"
+        except Exception as e:
+            QMessageBox.critical(self, "Download Setup Failed", str(e))
+            return
+
+        # Clear terminal and show command
+        self.terminal.clear_output()
+        self.terminal.append_output(f"$ {command_string}\n")
+        self.terminal.append_output(
+            f"Timeframe: {timeframe}\n"
+            f"Timerange: {timerange or 'default'}\n"
+            f"Pairs: {', '.join(pairs)}\n\n"
+        )
+
+        # Mark as running
+        self.run_button.setEnabled(False)
+        self.download_button.setEnabled(False)
+        self.stop_button.setEnabled(True)
+        self.terminal.append_output("[Download started]\n\n")
+
+        # Execute command
+        try:
+            self.process_service.execute_command(
+                command=[cmd.program] + cmd.args,
+                on_output=self.terminal.append_output,
+                on_error=self.terminal.append_error,
+                on_finished=self._on_download_finished,
+                working_directory=cmd.cwd,
+            )
+        except Exception as e:
+            QMessageBox.critical(self, "Process Error", str(e))
+            self.run_button.setEnabled(True)
+            self.download_button.setEnabled(True)
+            self.stop_button.setEnabled(False)
+
+    def _on_download_finished(self, exit_code: int):
+        """Called when download finishes."""
+        self.run_button.setEnabled(True)
+        self.download_button.setEnabled(True)
+        self.stop_button.setEnabled(False)
+        self.terminal.append_output(f"\n[Download finished] exit_code={exit_code}\n")
+
     def _on_process_finished_internal(self, exit_code: int):
         """Called when process finishes."""
         self.run_button.setEnabled(True)
+        self.download_button.setEnabled(True)
         self.stop_button.setEnabled(False)
         self.terminal.append_output(f"\n[Process finished] exit_code={exit_code}\n")
 
@@ -418,10 +527,6 @@ class BacktestPage(QWidget):
         # Load advanced options
         self.dry_run_wallet.setValue(prefs.dry_run_wallet or 80.0)
         self.max_open_trades.setValue(prefs.max_open_trades or 2)
-        if prefs.stake_currency:
-            self.stake_currency.setText(prefs.stake_currency)
-        if prefs.stake_amount and prefs.stake_amount > 0:
-            self.stake_amount.setValue(prefs.stake_amount)
 
         self._update_pairs_display()
 
@@ -442,9 +547,6 @@ class BacktestPage(QWidget):
         # Save advanced options
         prefs.dry_run_wallet = self.dry_run_wallet.value()
         prefs.max_open_trades = self.max_open_trades.value()
-        prefs.stake_currency = self.stake_currency.text().strip()
-        stake_amt = self.stake_amount.value()
-        prefs.stake_amount = stake_amt if stake_amt > 0 else 0.0
 
         # Update favorites with selected pairs (auto-grow list)
         for pair in self.selected_pairs:
@@ -477,6 +579,7 @@ class BacktestPage(QWidget):
             self.selected_pairs = dialog.get_selected_pairs()
             self._update_pairs_display()
             self._update_command_preview()
+            self._update_download_command_preview()
 
     def _update_pairs_display(self):
         """Update pairs button and display label."""

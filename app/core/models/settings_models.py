@@ -16,8 +16,6 @@ class BacktestPreferences(BaseModel):
     last_timerange_preset: str = Field("30d", description="Last used timerange preset")
     dry_run_wallet: float = Field(80.0, description="Dry run wallet balance")
     max_open_trades: int = Field(2, description="Max open trades")
-    stake_currency: str = Field("", description="Stake currency")
-    stake_amount: float = Field(0.0, description="Stake amount")
 
 
 class AppSettings(BaseModel):

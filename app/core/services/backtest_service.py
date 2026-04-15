@@ -15,14 +15,70 @@ class BacktestService:
         """
         self.settings_service = settings_service
 
+    def build_download_data_command(
+        self,
+        timeframe: str,
+        timerange: Optional[str] = None,
+        pairs: Optional[List[str]] = None,
+    ) -> BacktestCommand:
+        """Build a download-data command using backtest config.
+
+        Args:
+            timeframe: Timeframe (e.g., "5m", "1h")
+            timerange: Optional timerange
+            pairs: Optional list of pairs
+
+        Returns:
+            BacktestCommand with all necessary info
+        """
+        settings = self.settings_service.load_settings()
+
+        # Get config file path from backtest command
+        bt_cmd = CommandRunner.build_backtest_command(
+            settings=settings,
+            strategy_name="dummy",  # Not needed for download
+            timeframe=timeframe,
+            timerange=timerange,
+            pairs=pairs or [],
+            extra_flags=[],
+        )
+        config_file = bt_cmd.config_file
+
+        # Build download-data command
+        cmd_list = CommandRunner.build_freqtrade_command(
+            "download-data", settings=settings
+        )
+        cmd_list.extend(["--config", config_file, "--exchange", "binance"])
+
+        if pairs:
+            for pair in pairs:
+                cmd_list.extend(["--pairs", pair])
+
+        if timeframe:
+            cmd_list.extend(["--timeframe", timeframe])
+
+        if timerange:
+            cmd_list.extend(["--timerange", timerange])
+
+        cmd_list.append("--prepend")
+
+        # Create BacktestCommand-like object
+        result = BacktestCommand(
+            program=cmd_list[0],
+            args=cmd_list[1:],
+            config_file=config_file,
+            strategy_file="",
+            export_zip="",
+            cwd=bt_cmd.cwd,
+        )
+        return result
+
     def build_command(
         self,
         strategy_name: str,
         timeframe: str,
         timerange: Optional[str] = None,
         pairs: Optional[List[str]] = None,
-        stake_currency: Optional[str] = None,
-        stake_amount: Optional[float] = None,
         max_open_trades: Optional[int] = None,
         dry_run_wallet: Optional[float] = None,
         extra_flags: Optional[List[str]] = None,
@@ -34,8 +90,6 @@ class BacktestService:
             timeframe: Timeframe (e.g., "5m", "1h")
             timerange: Optional timerange (e.g., "20240101-20241231")
             pairs: Optional list of pairs
-            stake_currency: Optional stake currency
-            stake_amount: Optional stake amount
             max_open_trades: Optional max open trades
             dry_run_wallet: Optional dry run wallet
             extra_flags: Optional extra flags
@@ -55,8 +109,6 @@ class BacktestService:
             timeframe=timeframe,
             timerange=timerange,
             pairs=pairs or [],
-            stake_currency=stake_currency,
-            stake_amount=stake_amount,
             max_open_trades=max_open_trades,
             dry_run_wallet=dry_run_wallet,
             extra_flags=extra_flags or [],
@@ -79,7 +131,8 @@ class BacktestService:
             return []
 
         strategies = [
-            f.stem for f in strategies_dir.glob("*.py")
+            f.stem
+            for f in strategies_dir.glob("*.py")
             if f.is_file() and not f.name.startswith("_")
         ]
         return sorted(strategies)

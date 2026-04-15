@@ -70,8 +70,6 @@ class CommandRunner:
         timeframe: str,
         timerange: Optional[str] = None,
         pairs: Optional[List[str]] = None,
-        stake_currency: Optional[str] = None,
-        stake_amount: Optional[float] = None,
         max_open_trades: Optional[int] = None,
         dry_run_wallet: Optional[float] = None,
         extra_flags: Optional[List[str]] = None
@@ -162,12 +160,6 @@ class CommandRunner:
         if pairs:
             args.append("-p")
             args.extend(pairs)
-
-        # Optional: stake settings
-        if stake_currency:
-            args.extend(["--stake-currency", stake_currency])
-        if stake_amount is not None:
-            args.extend(["--stake-amount", str(stake_amount)])
 
         # Optional: trading limits
         if max_open_trades is not None:
