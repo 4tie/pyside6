@@ -1,13 +1,52 @@
+import re
+from typing import Optional
+
 from PySide6.QtCore import Qt, Signal, QTimer
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QTextEdit, QPushButton, QLabel,
     QLineEdit, QApplication
 )
-from PySide6.QtGui import QFont, QTextCursor
+from PySide6.QtGui import QFont, QTextCursor, QColor, QTextCharFormat
 
 from app.core.services.process_service import ProcessService
 from app.core.freqtrade.command_runner import CommandRunner
 from app.core.models.settings_models import AppSettings, TerminalPreferences
+
+# Table data rows start with box-drawing cell separator
+_TABLE_ROW_RE = re.compile(r"^[│┃]")
+
+# A cell that is purely a signed number (with optional trailing spaces/USDT/%/h/m/s)
+_NUMBER_CELL_RE = re.compile(r"^\s*(-?\d+\.?\d*)\s*(%|USDT|h|m|s|:\d+:\d+)?\s*$")
+
+_GREEN = QColor("#2ecc71")
+_RED   = QColor("#e74c3c")
+
+
+def _cell_color(cell: str) -> Optional[QColor]:
+    """Return green/red if cell contains a signed number, else None."""
+    m = _NUMBER_CELL_RE.match(cell)
+    if m:
+        try:
+            return _GREEN if float(m.group(1)) >= 0 else _RED
+        except ValueError:
+            pass
+    return None
+
+
+def _colorize_line(line: str) -> list[tuple[str, Optional[QColor]]]:
+    """Split a table data row into (text, color) segments by cell."""
+    if not _TABLE_ROW_RE.match(line):
+        return [(line, None)]
+
+    # Split keeping the delimiters │ and ┃
+    parts = re.split(r"([│┃])", line)
+    segments: list[tuple[str, Optional[QColor]]] = []
+    for part in parts:
+        if part in ("│", "┃"):
+            segments.append((part, None))
+        else:
+            segments.append((part, _cell_color(part)))
+    return segments
 
 
 class TerminalWidget(QWidget):
@@ -144,9 +183,33 @@ class TerminalWidget(QWidget):
             self.copy_button.setToolTip("Copied!")
             QTimer.singleShot(2000, lambda: self.copy_button.setToolTip(""))
 
+    def _default_fmt(self) -> QTextCharFormat:
+        """Return a char format using the current default text color."""
+        fmt = QTextCharFormat()
+        fmt.setForeground(self.output_text.palette().text().color())
+        return fmt
+
     def _append_output(self, text: str):
-        """Append text to output (stdout)."""
-        self.output_text.insertPlainText(text)
+        """Append stdout text, colorizing numeric cells in table rows."""
+        cursor = self.output_text.textCursor()
+        cursor.movePosition(QTextCursor.End)
+        default_fmt = self._default_fmt()
+
+        for line in re.split(r"(\n)", text):
+            if line == "\n":
+                cursor.insertText("\n", default_fmt)
+                continue
+            if not line:
+                continue
+            for segment, color in _colorize_line(line):
+                if color is not None:
+                    fmt = QTextCharFormat()
+                    fmt.setForeground(color)
+                    cursor.insertText(segment, fmt)
+                else:
+                    cursor.insertText(segment, default_fmt)
+
+        self.output_text.setTextCursor(cursor)
         self._scroll_to_bottom()
         self.output_received.emit(text)
 
@@ -154,13 +217,9 @@ class TerminalWidget(QWidget):
         """Append text to output (stderr) - in red."""
         cursor = self.output_text.textCursor()
         cursor.movePosition(QTextCursor.End)
-
-        # Format error text in red
-        fmt = cursor.charFormat()
-        fmt.setForeground(Qt.red)
-        cursor.setCharFormat(fmt)
-        cursor.insertText(text)
-
+        fmt = QTextCharFormat()
+        fmt.setForeground(QColor("#e74c3c"))
+        cursor.insertText(text, fmt)
         self.output_text.setTextCursor(cursor)
         self._scroll_to_bottom()
         self.error_received.emit(text)

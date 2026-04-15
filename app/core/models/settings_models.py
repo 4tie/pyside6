@@ -8,8 +8,8 @@ class TerminalPreferences(BaseModel):
 
     font_family: str = Field("Courier", description="Terminal font family")
     font_size: int = Field(10, description="Terminal font size")
-    background_color: str = Field("#1e1e1e", description="Terminal background color (hex)")
-    text_color: str = Field("#d4d4d4", description="Terminal text color (hex)")
+    background_color: str = Field("#ffffff", description="Terminal background color (hex)")
+    text_color: str = Field("#000000", description="Terminal text color (hex)")
 
 
 class DownloadPreferences(BaseModel):

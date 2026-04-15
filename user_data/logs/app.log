@@ -4,3 +4,29 @@
 2026-04-16 02:24:10 [DEBUG] freqtrade_gui: Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
 2026-04-16 02:24:10 [DEBUG] freqtrade_gui: Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
 2026-04-16 02:24:11 [INFO] freqtrade_gui: Main window shown
+2026-04-16 02:35:49 [INFO] freqtrade_gui: Settings saved to C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-16 02:35:49 [DEBUG] freqtrade_gui: Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-16 02:35:49 [DEBUG] freqtrade_gui: Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-16 02:35:49 [DEBUG] freqtrade_gui: Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-16 02:35:49 [DEBUG] freqtrade_gui: Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-16 02:35:49 [DEBUG] freqtrade_gui: Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-16 02:35:49 [INFO] freqtrade_gui: Process started: T:\ae\pyside6\.venv\Scripts\python.exe -m freqtrade download-data --config T:\ae\pyside6\user_data\config.json --timeframe 5m --prepend -p ADA/USDT ETH/USDT
+2026-04-16 02:35:59 [INFO] freqtrade_gui: Settings saved to C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-16 02:35:59 [DEBUG] freqtrade_gui: Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-16 02:35:59 [DEBUG] freqtrade_gui: Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-16 02:35:59 [DEBUG] freqtrade_gui: Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-16 02:35:59 [DEBUG] freqtrade_gui: Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-16 02:36:03 [INFO] freqtrade_gui: Settings saved to C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-16 02:36:03 [DEBUG] freqtrade_gui: Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-16 02:36:03 [DEBUG] freqtrade_gui: Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-16 02:36:03 [DEBUG] freqtrade_gui: Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-16 02:36:03 [DEBUG] freqtrade_gui: Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-16 02:36:03 [DEBUG] freqtrade_gui: Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-16 02:36:03 [INFO] freqtrade_gui: Process started: T:\ae\pyside6\.venv\Scripts\python.exe -m freqtrade backtesting --user-data-dir T:\ae\pyside6\user_data --strategy-path T:\ae\pyside6\user_data\strategies --strategy MultiMeee --config T:\ae\pyside6\user_data\config.json --timeframe 5m --export trades --export-filename T:\ae\pyside6\user_data\backtest_results\MultiMeee\MultiMeee_20260416_023603.backtest.zip --timerange 20250421-20260416 -p ADA/USDT ETH/USDT --max-open-trades 2 --dry-run-wallet 80.0
+2026-04-16 02:37:20 [INFO] freqtrade_gui: Application exiting with code 0
+2026-04-16 02:40:49 [INFO] freqtrade_gui: Application starting
+2026-04-16 02:40:49 [DEBUG] freqtrade_gui: Settings loaded: user_data_path=T:\ae\pyside6\user_data
+2026-04-16 02:40:49 [DEBUG] freqtrade_gui: Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-16 02:40:49 [DEBUG] freqtrade_gui: Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-16 02:40:49 [INFO] freqtrade_gui: Main window shown
+2026-04-16 02:40:53 [INFO] freqtrade_gui: Application exiting with code 0
