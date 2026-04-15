@@ -22,7 +22,6 @@ from PySide6.QtWidgets import (
 from app.app_state.settings_state import SettingsState
 from app.core.services.backtest_service import BacktestService
 from app.core.services.backtest_results_service import BacktestResultsService
-from app.core.services.dd_service import DownloadDataService
 from app.core.services.settings_service import SettingsService
 from app.core.services.process_service import ProcessService
 from app.ui.widgets.terminal_widget import TerminalWidget
@@ -38,12 +37,10 @@ class BacktestPage(QWidget):
         self.settings_state = settings_state
         self.settings_service = SettingsService()
         self.backtest_service = BacktestService(self.settings_service)
-        self.download_service = DownloadDataService(self.settings_service)
         self.process_service = ProcessService()
         self.last_export_path: Optional[str] = None
-        self.selected_pairs: List[str] = []  # Track selected pairs
-        self.current_mode: str = "backtest"  # "backtest" or "download"
-        self._initializing: bool = True  # Flag to prevent signals during init
+        self.selected_pairs: List[str] = []
+        self._initializing: bool = True
 
         self.init_ui()
         self._connect_signals()
@@ -71,28 +68,6 @@ class BacktestPage(QWidget):
         strategy_layout.addWidget(refresh_btn)
 
         params_layout.addLayout(strategy_layout)
-
-        # Mode toggle (Backtest / Download Data)
-        mode_layout = QHBoxLayout()
-        mode_layout.addWidget(QLabel("Mode:"))
-
-        self.backtest_mode_btn = QPushButton("Backtest")
-        self.backtest_mode_btn.setCheckable(True)
-        self.backtest_mode_btn.setChecked(True)
-        self.backtest_mode_btn.clicked.connect(
-            lambda: self._on_command_mode_changed("backtest")
-        )
-        mode_layout.addWidget(self.backtest_mode_btn)
-
-        self.download_mode_btn = QPushButton("Download Data")
-        self.download_mode_btn.setCheckable(True)
-        self.download_mode_btn.clicked.connect(
-            lambda: self._on_command_mode_changed("download")
-        )
-        mode_layout.addWidget(self.download_mode_btn)
-
-        mode_layout.addStretch()
-        params_layout.addLayout(mode_layout)
 
         # Basic parameters
         timeframe_layout = QHBoxLayout()
@@ -179,7 +154,7 @@ class BacktestPage(QWidget):
         # Run button (context-sensitive based on mode)
         button_layout = QHBoxLayout()
         self.run_button = QPushButton("Run")
-        self.run_button.clicked.connect(self._run_current_mode)
+        self.run_button.clicked.connect(self._run_backtest)
         button_layout.addWidget(self.run_button)
 
         self.stop_button = QPushButton("Stop")
@@ -230,12 +205,6 @@ class BacktestPage(QWidget):
         # Also update when settings that affect the command change (venv path, etc)
         self.settings_state.settings_changed.connect(self._update_command_preview)
 
-        # Also connect signals for download command preview
-        self.timeframe_input.textChanged.connect(self._update_download_command_preview)
-        self.timerange_input.textChanged.connect(self._update_download_command_preview)
-        self.settings_state.settings_changed.connect(
-            self._update_download_command_preview
-        )
 
     def _refresh_strategies(self):
         """Refresh available strategies."""
@@ -254,18 +223,6 @@ class BacktestPage(QWidget):
     def _on_settings_changed(self, settings):
         """Called when settings change."""
         self._refresh_strategies()
-
-    def _on_command_mode_changed(self, mode: str):
-        """Called when command mode toggle changes.
-
-        Args:
-            mode: Either "backtest" or "download"
-        """
-        self.current_mode = mode
-        if mode == "backtest":
-            self._update_command_preview()
-        else:
-            self._update_download_command_preview()
 
     def _update_command_preview(self):
         """Update the command preview in terminal based on current UI values."""
@@ -296,38 +253,6 @@ class BacktestPage(QWidget):
             self.terminal.set_command(command_string)
         except Exception:
             pass
-
-    def _update_download_command_preview(self):
-        """Update the command preview for download-data command."""
-        try:
-            timeframe = self.timeframe_input.text().strip()
-            timerange = self.timerange_input.text().strip() or None
-            pairs = self.selected_pairs
-
-            if not timeframe:
-                self.terminal.set_command("[Configure timeframe and pairs]")
-                return
-            if not pairs:
-                self.terminal.set_command("[Select pairs for download]")
-                return
-
-            cmd = self.download_service.build_command(
-                timeframe=timeframe,
-                timerange=timerange,
-                pairs=pairs,
-            )
-
-            command_string = f"{cmd.program} {' '.join(cmd.args)}"
-            self.terminal.set_command(command_string)
-        except Exception:
-            pass
-
-    def _run_current_mode(self):
-        """Run the current mode (backtest or download)."""
-        if self.current_mode == "backtest":
-            self._run_backtest()
-        else:
-            self._run_download_data()
 
     def _run_backtest(self):
         """Run backtest with selected parameters."""
@@ -411,73 +336,7 @@ class BacktestPage(QWidget):
             self.stop_button.setEnabled(False)
 
     def _on_process_started(self):
-        """Called when process starts - now handled internally."""
         pass
-
-    def _run_download_data(self):
-        """Run download-data with current backtest config."""
-        strategy = self.strategy_combo.currentText().strip()
-        timeframe = self.timeframe_input.text().strip()
-        timerange = self.timerange_input.text().strip() or None
-        pairs = self.selected_pairs
-
-        if not timeframe:
-            QMessageBox.warning(self, "Missing Input", "Please enter a timeframe.")
-            return
-        if not pairs:
-            QMessageBox.warning(
-                self, "Missing Input", "Please select at least one pair."
-            )
-            return
-
-        # Save preferences before running
-        self._save_preferences_to_settings()
-
-        # Build download-data command
-        try:
-            cmd = self.download_service.build_command(
-                timeframe=timeframe,
-                timerange=timerange,
-                pairs=pairs,
-            )
-            command_string = f"{cmd.program} {' '.join(cmd.args)}"
-        except Exception as e:
-            QMessageBox.critical(self, "Download Setup Failed", str(e))
-            return
-
-        # Clear terminal and show command
-        self.terminal.clear_output()
-        self.terminal.append_output(f"$ {command_string}\n")
-        self.terminal.append_output(
-            f"Timeframe: {timeframe}\n"
-            f"Timerange: {timerange or 'default'}\n"
-            f"Pairs: {', '.join(pairs)}\n\n"
-        )
-
-        # Mark as running
-        self.run_button.setEnabled(False)
-        self.stop_button.setEnabled(True)
-        self.terminal.append_output("[Download started]\n\n")
-
-        # Execute command
-        try:
-            self.process_service.execute_command(
-                command=[cmd.program] + cmd.args,
-                on_output=self.terminal.append_output,
-                on_error=self.terminal.append_error,
-                on_finished=self._on_download_finished,
-                working_directory=cmd.cwd,
-            )
-        except Exception as e:
-            QMessageBox.critical(self, "Process Error", str(e))
-            self.run_button.setEnabled(True)
-            self.stop_button.setEnabled(False)
-
-    def _on_download_finished(self, exit_code: int):
-        """Called when download finishes."""
-        self.run_button.setEnabled(True)
-        self.stop_button.setEnabled(False)
-        self.terminal.append_output(f"\n[Download finished] exit_code={exit_code}\n")
 
     def _on_process_finished_internal(self, exit_code: int):
         """Called when process finishes."""
@@ -615,7 +474,6 @@ class BacktestPage(QWidget):
             self.selected_pairs = dialog.get_selected_pairs()
             self._update_pairs_display()
             self._update_command_preview()
-            self._update_download_command_preview()
 
     def _update_pairs_display(self):
         """Update pairs button and display label."""
