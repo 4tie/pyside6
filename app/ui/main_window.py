@@ -6,6 +6,7 @@ from PySide6.QtCore import Qt
 from app.app_state.settings_state import SettingsState
 from app.ui.pages.settings_page import SettingsPage
 from app.ui.pages.backtest_page import BacktestPage
+from app.ui.pages.dd_page import DDPage
 from app.ui.widgets.terminal_widget import TerminalWidget
 
 
@@ -41,6 +42,10 @@ class MainWindow(QMainWindow):
         self.backtest_page = BacktestPage(self.settings_state)
         self.tabs.addTab(self.backtest_page, "Backtest")
 
+        #Downlaod data tab
+        self.dd_page = DDPage(self.settings_state)
+        self.tabs.addTab(self.dd_page, "Download Data")
+
         # Terminal tab (for ad-hoc testing)
         terminal_page = self._create_terminal_tab()
         self.tabs.addTab(terminal_page, "Terminal")
@@ -64,9 +69,6 @@ class MainWindow(QMainWindow):
         check_freqtrade_btn.clicked.connect(self._check_freqtrade)
         button_layout.addWidget(check_freqtrade_btn)
 
-        version_btn = QPushButton("Freqtrade --version")
-        version_btn.clicked.connect(self._freqtrade_version)
-        button_layout.addWidget(version_btn)
 
         button_layout.addStretch()
         tab_layout.addLayout(button_layout)
@@ -98,11 +100,3 @@ class MainWindow(QMainWindow):
 
         self.terminal_widget.run_freqtrade_command("--version", settings=settings)
 
-    def _freqtrade_version(self):
-        """Run freqtrade --version."""
-        settings = self.settings_state.current_settings
-        if not settings or not settings.python_executable:
-            self.terminal_widget._append_error("Python executable not configured. Set it in Settings.\n")
-            return
-
-        self.terminal_widget.run_freqtrade_command("--version", settings=settings)
