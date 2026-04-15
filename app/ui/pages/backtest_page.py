@@ -41,11 +41,13 @@ class BacktestPage(QWidget):
         self.last_export_path: Optional[str] = None
         self.selected_pairs: List[str] = []  # Track selected pairs
         self.current_mode: str = "backtest"  # "backtest" or "download"
+        self._initializing: bool = True  # Flag to prevent signals during init
 
         self.init_ui()
         self._connect_signals()
         self._refresh_strategies()
         self._load_preferences()
+        self._initializing = False
         self._update_command_preview()
 
     def init_ui(self):
@@ -236,8 +238,16 @@ class BacktestPage(QWidget):
     def _refresh_strategies(self):
         """Refresh available strategies."""
         strategies = self.backtest_service.get_available_strategies()
+        current = self.strategy_combo.currentText()
+        self.strategy_combo.blockSignals(True)
         self.strategy_combo.clear()
         self.strategy_combo.addItems(strategies)
+        # Restore selection if it exists
+        if current:
+            idx = self.strategy_combo.findText(current)
+            if idx >= 0:
+                self.strategy_combo.setCurrentIndex(idx)
+        self.strategy_combo.blockSignals(False)
 
     def _on_settings_changed(self, settings):
         """Called when settings change."""
@@ -510,6 +520,15 @@ class BacktestPage(QWidget):
 
         prefs = settings.backtest_preferences
 
+        # Block all signals during loading
+        self.strategy_combo.blockSignals(True)
+        self.timeframe_input.blockSignals(True)
+        self.timerange_input.blockSignals(True)
+        self.dry_run_wallet.blockSignals(True)
+        self.max_open_trades.blockSignals(True)
+        self.stake_currency.blockSignals(True)
+        self.stake_amount.blockSignals(True)
+
         # Load strategy
         if prefs.last_strategy:
             idx = self.strategy_combo.findText(prefs.last_strategy)
@@ -520,9 +539,9 @@ class BacktestPage(QWidget):
         if prefs.default_timeframe:
             self.timeframe_input.setText(prefs.default_timeframe)
 
-        # Load timerange preset
-        if prefs.last_timerange_preset:
-            self.timerange_input.setText("")
+        # Load timerange from saved config
+        if prefs.default_timerange:
+            self.timerange_input.setText(prefs.default_timerange)
 
         # Load pairs from comma-separated string
         if prefs.default_pairs:
@@ -536,8 +555,21 @@ class BacktestPage(QWidget):
         # Load advanced options
         self.dry_run_wallet.setValue(prefs.dry_run_wallet or 80.0)
         self.max_open_trades.setValue(prefs.max_open_trades or 2)
+        if prefs.stake_currency:
+            self.stake_currency.setText(prefs.stake_currency)
+        if prefs.stake_amount and prefs.stake_amount > 0:
+            self.stake_amount.setValue(prefs.stake_amount)
 
         self._update_pairs_display()
+
+        # Unblock all signals
+        self.strategy_combo.blockSignals(False)
+        self.timeframe_input.blockSignals(False)
+        self.timerange_input.blockSignals(False)
+        self.dry_run_wallet.blockSignals(False)
+        self.max_open_trades.blockSignals(False)
+        self.stake_currency.blockSignals(False)
+        self.stake_amount.blockSignals(False)
 
     def _save_preferences_to_settings(self):
         """Save current input values to settings for next run."""
@@ -549,6 +581,7 @@ class BacktestPage(QWidget):
 
         prefs.last_strategy = self.strategy_combo.currentText()
         prefs.default_timeframe = self.timeframe_input.text()
+        prefs.default_timerange = self.timerange_input.text().strip()
         prefs.default_pairs = (
             ",".join(self.selected_pairs) if self.selected_pairs else ""
         )
@@ -556,6 +589,9 @@ class BacktestPage(QWidget):
         # Save advanced options
         prefs.dry_run_wallet = self.dry_run_wallet.value()
         prefs.max_open_trades = self.max_open_trades.value()
+        prefs.stake_currency = self.stake_currency.text().strip()
+        stake_amt = self.stake_amount.value()
+        prefs.stake_amount = stake_amt if stake_amt > 0 else 0.0
 
         # Update favorites with selected pairs (auto-grow list)
         for pair in self.selected_pairs:
