@@ -8,6 +8,7 @@ class BacktestPreferences(BaseModel):
 
     last_strategy: str = Field("", description="Last used strategy")
     default_timeframe: str = Field("5m", description="Default timeframe")
+    default_timerange: str = Field("", description="Default timerange")
     default_pairs: str = Field("BTC/USDT ETH/USDT", description="Space-separated pairs")
     paired_favorites: list[str] = Field(
         default_factory=lambda: ["BTC/USDT", "ETH/USDT", "ADA/USDT"],
@@ -16,6 +17,8 @@ class BacktestPreferences(BaseModel):
     last_timerange_preset: str = Field("30d", description="Last used timerange preset")
     dry_run_wallet: float = Field(80.0, description="Dry run wallet balance")
     max_open_trades: int = Field(2, description="Max open trades")
+    stake_currency: str = Field("", description="Stake currency")
+    stake_amount: float = Field(0.0, description="Stake amount")
 
 
 class AppSettings(BaseModel):

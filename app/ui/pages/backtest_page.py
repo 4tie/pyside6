@@ -40,6 +40,7 @@ class BacktestPage(QWidget):
         self.process_service = ProcessService()
         self.last_export_path: Optional[str] = None
         self.selected_pairs: List[str] = []  # Track selected pairs
+        self.current_mode: str = "backtest"  # "backtest" or "download"
 
         self.init_ui()
         self._connect_signals()
@@ -66,6 +67,28 @@ class BacktestPage(QWidget):
         strategy_layout.addWidget(refresh_btn)
 
         params_layout.addLayout(strategy_layout)
+
+        # Mode toggle (Backtest / Download Data)
+        mode_layout = QHBoxLayout()
+        mode_layout.addWidget(QLabel("Mode:"))
+
+        self.backtest_mode_btn = QPushButton("Backtest")
+        self.backtest_mode_btn.setCheckable(True)
+        self.backtest_mode_btn.setChecked(True)
+        self.backtest_mode_btn.clicked.connect(
+            lambda: self._on_command_mode_changed("backtest")
+        )
+        mode_layout.addWidget(self.backtest_mode_btn)
+
+        self.download_mode_btn = QPushButton("Download Data")
+        self.download_mode_btn.setCheckable(True)
+        self.download_mode_btn.clicked.connect(
+            lambda: self._on_command_mode_changed("download")
+        )
+        mode_layout.addWidget(self.download_mode_btn)
+
+        mode_layout.addStretch()
+        params_layout.addLayout(mode_layout)
 
         # Basic parameters
         timeframe_layout = QHBoxLayout()
@@ -149,36 +172,19 @@ class BacktestPage(QWidget):
         )
         params_layout.addWidget(self.export_label)
 
-        # Run/Stop buttons
+        # Run button (context-sensitive based on mode)
         button_layout = QHBoxLayout()
-
-        # Command mode toggle
-        self.command_mode_group = QHBoxLayout()
-        self.backtest_radio = QPushButton("Backtest")
-        self.backtest_radio.setCheckable(True)
-        self.backtest_radio.setChecked(True)
-        self.backtest_radio.clicked.connect(self._on_command_mode_changed)
-        self.download_radio = QPushButton("Download Data")
-        self.download_radio.setCheckable(True)
-        self.download_radio.clicked.connect(self._on_command_mode_changed)
-        self.command_mode_group.addWidget(self.backtest_radio)
-        self.command_mode_group.addWidget(self.download_radio)
-        self.command_mode_group.addStretch()
-
-        button_layout.addLayout(self.command_mode_group)
-
-        self.run_button = QPushButton("Run Backtest")
-        self.run_button.clicked.connect(self._run_backtest)
+        self.run_button = QPushButton("Run")
+        self.run_button.clicked.connect(self._run_current_mode)
         button_layout.addWidget(self.run_button)
-
-        self.download_button = QPushButton("Download Data")
-        self.download_button.clicked.connect(self._run_download_data)
-        button_layout.addWidget(self.download_button)
 
         self.stop_button = QPushButton("Stop")
         self.stop_button.setEnabled(False)
         self.stop_button.clicked.connect(self.process_service.stop_process)
         button_layout.addWidget(self.stop_button)
+
+        button_layout.addStretch()
+        params_layout.addLayout(button_layout)
 
         button_layout.addStretch()
         params_layout.addLayout(button_layout)
@@ -237,16 +243,17 @@ class BacktestPage(QWidget):
         """Called when settings change."""
         self._refresh_strategies()
 
-    def _on_command_mode_changed(self):
-        """Called when command mode toggle changes."""
-        if self.backtest_radio.isChecked():
+    def _on_command_mode_changed(self, mode: str):
+        """Called when command mode toggle changes.
+
+        Args:
+            mode: Either "backtest" or "download"
+        """
+        self.current_mode = mode
+        if mode == "backtest":
             self._update_command_preview()
-            self.run_button.setVisible(True)
-            self.download_button.setVisible(False)
         else:
             self._update_download_command_preview()
-            self.run_button.setVisible(False)
-            self.download_button.setVisible(True)
 
     def _update_command_preview(self):
         """Update the command preview in terminal based on current UI values."""
@@ -302,6 +309,13 @@ class BacktestPage(QWidget):
             self.terminal.set_command(command_string)
         except Exception:
             pass
+
+    def _run_current_mode(self):
+        """Run the current mode (backtest or download)."""
+        if self.current_mode == "backtest":
+            self._run_backtest()
+        else:
+            self._run_download_data()
 
     def _run_backtest(self):
         """Run backtest with selected parameters."""
@@ -367,7 +381,6 @@ class BacktestPage(QWidget):
 
         # Mark as running before executing
         self.run_button.setEnabled(False)
-        self.download_button.setEnabled(False)
         self.stop_button.setEnabled(True)
         self.terminal.append_output("[Process started]\n\n")
 
@@ -431,7 +444,6 @@ class BacktestPage(QWidget):
 
         # Mark as running
         self.run_button.setEnabled(False)
-        self.download_button.setEnabled(False)
         self.stop_button.setEnabled(True)
         self.terminal.append_output("[Download started]\n\n")
 
@@ -447,20 +459,17 @@ class BacktestPage(QWidget):
         except Exception as e:
             QMessageBox.critical(self, "Process Error", str(e))
             self.run_button.setEnabled(True)
-            self.download_button.setEnabled(True)
             self.stop_button.setEnabled(False)
 
     def _on_download_finished(self, exit_code: int):
         """Called when download finishes."""
         self.run_button.setEnabled(True)
-        self.download_button.setEnabled(True)
         self.stop_button.setEnabled(False)
         self.terminal.append_output(f"\n[Download finished] exit_code={exit_code}\n")
 
     def _on_process_finished_internal(self, exit_code: int):
         """Called when process finishes."""
         self.run_button.setEnabled(True)
-        self.download_button.setEnabled(True)
         self.stop_button.setEnabled(False)
         self.terminal.append_output(f"\n[Process finished] exit_code={exit_code}\n")
 
