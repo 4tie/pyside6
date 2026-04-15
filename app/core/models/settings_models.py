@@ -5,33 +5,59 @@ from pathlib import Path
 
 class BacktestPreferences(BaseModel):
     """Backtest-specific user preferences."""
+
     last_strategy: str = Field("", description="Last used strategy")
     default_timeframe: str = Field("5m", description="Default timeframe")
     default_pairs: str = Field("BTC/USDT ETH/USDT", description="Space-separated pairs")
     paired_favorites: list[str] = Field(
         default_factory=lambda: ["BTC/USDT", "ETH/USDT", "ADA/USDT"],
-        description="Common pairs for quick selection"
+        description="Common pairs for quick selection",
     )
     last_timerange_preset: str = Field("30d", description="Last used timerange preset")
+    dry_run_wallet: float = Field(80.0, description="Dry run wallet balance")
+    max_open_trades: int = Field(2, description="Max open trades")
+    stake_currency: str = Field("", description="Stake currency")
+    stake_amount: float = Field(0.0, description="Stake amount")
 
 
 class AppSettings(BaseModel):
     """Main application settings for Freqtrade GUI."""
-    venv_path: Optional[str] = Field(None, description="Path to Python virtual environment")
-    python_executable: Optional[str] = Field(None, description="Full path to Python interpreter")
-    freqtrade_executable: Optional[str] = Field(None, description="Full path to freqtrade executable")
-    user_data_path: Optional[str] = Field(None, description="Path to freqtrade user_data directory")
-    project_path: Optional[str] = Field(None, description="Path to freqtrade project root")
+
+    venv_path: Optional[str] = Field(
+        None, description="Path to Python virtual environment"
+    )
+    python_executable: Optional[str] = Field(
+        None, description="Full path to Python interpreter"
+    )
+    freqtrade_executable: Optional[str] = Field(
+        None, description="Full path to freqtrade executable"
+    )
+    user_data_path: Optional[str] = Field(
+        None, description="Path to freqtrade user_data directory"
+    )
+    project_path: Optional[str] = Field(
+        None, description="Path to freqtrade project root"
+    )
     shell_executable: Optional[str] = Field(None, description="Shell executable path")
-    shell_args: list[str] = Field(default_factory=list, description="Arguments for shell")
-    use_module_execution: bool = Field(True, description="Use python -m freqtrade instead of executable")
+    shell_args: list[str] = Field(
+        default_factory=list, description="Arguments for shell"
+    )
+    use_module_execution: bool = Field(
+        True, description="Use python -m freqtrade instead of executable"
+    )
     backtest_preferences: BacktestPreferences = Field(
-        default_factory=BacktestPreferences,
-        description="Backtest UI preferences"
+        default_factory=BacktestPreferences, description="Backtest UI preferences"
     )
 
-    @field_validator("venv_path", "python_executable", "freqtrade_executable",
-                    "user_data_path", "project_path", "shell_executable", mode="before")
+    @field_validator(
+        "venv_path",
+        "python_executable",
+        "freqtrade_executable",
+        "user_data_path",
+        "project_path",
+        "shell_executable",
+        mode="before",
+    )
     @classmethod
     def normalize_paths(cls, v):
         """Normalize path strings to absolute paths."""
@@ -42,6 +68,7 @@ class AppSettings(BaseModel):
 
 class SettingsValidationResult(BaseModel):
     """Result of settings validation."""
+
     valid: bool
     python_ok: bool
     freqtrade_ok: bool
@@ -52,6 +79,7 @@ class SettingsValidationResult(BaseModel):
 
 class ProcessOutput(BaseModel):
     """Captured process output and metadata."""
+
     stdout: str
     stderr: str
     exit_code: Optional[int]
