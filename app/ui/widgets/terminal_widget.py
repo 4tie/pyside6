@@ -1,6 +1,7 @@
-from PySide6.QtCore import Qt, Signal
+from PySide6.QtCore import Qt, Signal, QTimer
 from PySide6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QTextEdit, QPushButton, QLabel
+    QWidget, QVBoxLayout, QHBoxLayout, QTextEdit, QPushButton, QLabel,
+    QLineEdit, QApplication
 )
 from PySide6.QtGui import QFont, QTextCursor
 
@@ -25,6 +26,22 @@ class TerminalWidget(QWidget):
     def init_ui(self):
         """Initialize UI components."""
         layout = QVBoxLayout()
+
+        # Command input section
+        command_layout = QHBoxLayout()
+        command_layout.addWidget(QLabel("Command:"))
+
+        self.command_input = QLineEdit()
+        self.command_input.setPlaceholderText("Command will be displayed here...")
+        self.command_input.setFont(QFont("Courier", 9))
+        command_layout.addWidget(self.command_input)
+
+        self.copy_button = QPushButton("Copy")
+        self.copy_button.setMaximumWidth(60)
+        self.copy_button.clicked.connect(self._on_copy_command)
+        command_layout.addWidget(self.copy_button)
+
+        layout.addLayout(command_layout)
 
         # Output display
         self.output_text = QTextEdit()
@@ -100,6 +117,31 @@ class TerminalWidget(QWidget):
     def clear_output(self):
         """Clear the output display."""
         self.output_text.clear()
+
+    def append_output(self, text: str):
+        """Append text to output (stdout) - public method."""
+        self._append_output(text)
+
+    def append_error(self, text: str):
+        """Append text to output (stderr) - public method."""
+        self._append_error(text)
+
+    def set_command(self, command_str: str):
+        """Update the command input field with a new command string."""
+        self.command_input.setText(command_str)
+
+    def get_command(self) -> str:
+        """Get the current command from the input field."""
+        return self.command_input.text()
+
+    def _on_copy_command(self):
+        """Copy command to clipboard and show tooltip."""
+        command = self.get_command()
+        if command:
+            clipboard = QApplication.clipboard()
+            clipboard.setText(command)
+            self.copy_button.setToolTip("Copied!")
+            QTimer.singleShot(2000, lambda: self.copy_button.setToolTip(""))
 
     def _append_output(self, text: str):
         """Append text to output (stdout)."""
