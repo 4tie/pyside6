@@ -3,9 +3,20 @@ from typing import Optional, List
 
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
-    QWidget, QDialog, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton,
-    QComboBox, QDoubleSpinBox, QSpinBox, QMessageBox, QGroupBox,
-    QFormLayout, QTabWidget
+    QWidget,
+    QDialog,
+    QVBoxLayout,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QPushButton,
+    QComboBox,
+    QDoubleSpinBox,
+    QSpinBox,
+    QMessageBox,
+    QGroupBox,
+    QFormLayout,
+    QTabWidget,
 )
 
 from app.app_state.settings_state import SettingsState
@@ -34,6 +45,7 @@ class BacktestPage(QWidget):
         self._connect_signals()
         self._refresh_strategies()
         self._load_preferences()
+        self._update_command_preview()
 
     def init_ui(self):
         """Initialize UI components."""
@@ -101,7 +113,9 @@ class BacktestPage(QWidget):
 
         # Display selected pairs
         self.pairs_display_label = QLabel("Selected: None")
-        self.pairs_display_label.setStyleSheet("color: #666; font-size: 9pt; padding-left: 4px;")
+        self.pairs_display_label.setStyleSheet(
+            "color: #666; font-size: 9pt; padding-left: 4px;"
+        )
         pairs_layout.addWidget(self.pairs_display_label)
 
         params_layout.addLayout(pairs_layout)
@@ -183,8 +197,20 @@ class BacktestPage(QWidget):
         self.setLayout(main_layout)
 
     def _connect_signals(self):
-        """Connect settings signals."""
+        """Connect settings signals for live command preview updates."""
+        # Signal for settings changes
         self.settings_state.settings_changed.connect(self._on_settings_changed)
+
+        # Signals for live command preview updates
+        self.strategy_combo.currentTextChanged.connect(self._update_command_preview)
+        self.timeframe_input.textChanged.connect(self._update_command_preview)
+        self.timerange_input.textChanged.connect(self._update_command_preview)
+        self.dry_run_wallet.valueChanged.connect(self._update_command_preview)
+        self.max_open_trades.valueChanged.connect(self._update_command_preview)
+        self.stake_currency.textChanged.connect(self._update_command_preview)
+        self.stake_amount.valueChanged.connect(self._update_command_preview)
+        # Also update when settings that affect the command change (venv path, etc)
+        self.settings_state.settings_changed.connect(self._update_command_preview)
 
     def _refresh_strategies(self):
         """Refresh available strategies."""
@@ -195,6 +221,42 @@ class BacktestPage(QWidget):
     def _on_settings_changed(self, settings):
         """Called when settings change."""
         self._refresh_strategies()
+
+    def _update_command_preview(self):
+        """Update the command preview in terminal based on current UI values."""
+        try:
+            strategy = self.strategy_combo.currentText().strip()
+            timeframe = self.timeframe_input.text().strip()
+            timerange = self.timerange_input.text().strip() or None
+            pairs = self.selected_pairs
+            stake_currency = self.stake_currency.text().strip() or None
+            stake_amount = (
+                self.stake_amount.value() if self.stake_amount.value() > 0 else None
+            )
+            dry_run_wallet = (
+                self.dry_run_wallet.value() if self.dry_run_wallet.value() > 0 else None
+            )
+            max_open_trades = self.max_open_trades.value()
+
+            if not strategy or not timeframe:
+                self.terminal.set_command("[Configure strategy and timeframe]")
+                return
+
+            cmd = self.backtest_service.build_command(
+                strategy_name=strategy,
+                timeframe=timeframe,
+                timerange=timerange,
+                pairs=pairs if pairs else [],
+                stake_currency=stake_currency,
+                stake_amount=stake_amount,
+                max_open_trades=max_open_trades,
+                dry_run_wallet=dry_run_wallet,
+            )
+
+            command_string = f"{cmd.program} {' '.join(cmd.args)}"
+            self.terminal.set_command(command_string)
+        except Exception:
+            pass
 
     def _run_backtest(self):
         """Run backtest with selected parameters."""
@@ -211,7 +273,9 @@ class BacktestPage(QWidget):
             QMessageBox.warning(self, "Missing Input", "Please enter a timeframe.")
             return
         if not pairs:
-            QMessageBox.warning(self, "Missing Input", "Please select at least one pair.")
+            QMessageBox.warning(
+                self, "Missing Input", "Please select at least one pair."
+            )
             return
 
         # Save preferences before running
@@ -220,8 +284,12 @@ class BacktestPage(QWidget):
         # Build command
         try:
             stake_currency = self.stake_currency.text().strip() or None
-            stake_amount = self.stake_amount.value() if self.stake_amount.value() > 0 else None
-            dry_run_wallet = self.dry_run_wallet.value() if self.dry_run_wallet.value() > 0 else None
+            stake_amount = (
+                self.stake_amount.value() if self.stake_amount.value() > 0 else None
+            )
+            dry_run_wallet = (
+                self.dry_run_wallet.value() if self.dry_run_wallet.value() > 0 else None
+            )
             max_open_trades = self.max_open_trades.value()
 
             cmd = self.backtest_service.build_command(
@@ -236,15 +304,19 @@ class BacktestPage(QWidget):
             )
 
             self.last_export_path = cmd.export_zip
+            # Use command from terminal widget (allows user edits)
+            command_string = self.terminal.get_command()
 
         except (ValueError, FileNotFoundError) as e:
             QMessageBox.critical(self, "Backtest Setup Failed", str(e))
             return
 
+        # Parse command string into list for execution
+        command_list = command_string.split() if command_string else []
+
         # Clear terminal and show command
         self.terminal.clear_output()
-        cmd_str = f"{cmd.program} {' '.join(cmd.args)}"
-        self.terminal.append_output(f"$ {cmd_str}\n")
+        self.terminal.append_output(f"$ {command_string}\n")
         self.terminal.append_output(
             f"Strategy: {cmd.strategy_file}\n"
             f"Config: {cmd.config_file}\n"
@@ -259,10 +331,10 @@ class BacktestPage(QWidget):
         self.stop_button.setEnabled(True)
         self.terminal.append_output("[Process started]\n\n")
 
-        # Execute command with callbacks
+        # Execute command with callbacks (use user's edited command if any)
         try:
             self.process_service.execute_command(
-                command=[cmd.program] + cmd.args,
+                command=command_list,
                 on_output=self.terminal.append_output,
                 on_error=self.terminal.append_error,
                 on_finished=self._on_process_finished_internal,
@@ -290,7 +362,9 @@ class BacktestPage(QWidget):
     def _try_load_results(self):
         """Try to load and display backtest results."""
         if not self.last_export_path or not Path(self.last_export_path).exists():
-            self.terminal.append_error("\nWarning: Export zip file not found at expected path.\n")
+            self.terminal.append_error(
+                "\nWarning: Export zip file not found at expected path.\n"
+            )
             return
 
         try:
@@ -303,7 +377,7 @@ class BacktestPage(QWidget):
 
                 # Switch to results tab
                 parent_tabs = self.results_widget.parent()
-                if hasattr(parent_tabs, 'setCurrentIndex'):
+                if hasattr(parent_tabs, "setCurrentIndex"):
                     parent_tabs.setCurrentIndex(1)  # Switch to Results tab
 
         except Exception as e:
@@ -330,7 +404,9 @@ class BacktestPage(QWidget):
 
         # Load pairs from comma-separated string
         if prefs.default_pairs:
-            pairs_list = [p.strip() for p in prefs.default_pairs.split(",") if p.strip()]
+            pairs_list = [
+                p.strip() for p in prefs.default_pairs.split(",") if p.strip()
+            ]
             self.selected_pairs = pairs_list
         else:
             self.selected_pairs = []
@@ -347,7 +423,9 @@ class BacktestPage(QWidget):
 
         prefs.last_strategy = self.strategy_combo.currentText()
         prefs.default_timeframe = self.timeframe_input.text()
-        prefs.default_pairs = ",".join(self.selected_pairs) if self.selected_pairs else ""
+        prefs.default_pairs = (
+            ",".join(self.selected_pairs) if self.selected_pairs else ""
+        )
 
         # Update favorites with selected pairs (auto-grow list)
         for pair in self.selected_pairs:
@@ -379,6 +457,7 @@ class BacktestPage(QWidget):
         if dialog.exec() == QDialog.Accepted:
             self.selected_pairs = dialog.get_selected_pairs()
             self._update_pairs_display()
+            self._update_command_preview()
 
     def _update_pairs_display(self):
         """Update pairs button and display label."""
@@ -386,6 +465,8 @@ class BacktestPage(QWidget):
         self.pairs_button.setText(f"Select Pairs... ({count})")
 
         if self.selected_pairs:
-            self.pairs_display_label.setText(f"Selected: {', '.join(self.selected_pairs)}")
+            self.pairs_display_label.setText(
+                f"Selected: {', '.join(self.selected_pairs)}"
+            )
         else:
             self.pairs_display_label.setText("Selected: None")
