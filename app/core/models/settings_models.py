@@ -3,6 +3,18 @@ from typing import Optional
 from pathlib import Path
 
 
+class BacktestPreferences(BaseModel):
+    """Backtest-specific user preferences."""
+    last_strategy: str = Field("", description="Last used strategy")
+    default_timeframe: str = Field("5m", description="Default timeframe")
+    default_pairs: str = Field("BTC/USDT ETH/USDT", description="Space-separated pairs")
+    paired_favorites: list[str] = Field(
+        default_factory=lambda: ["BTC/USDT", "ETH/USDT", "ADA/USDT"],
+        description="Common pairs for quick selection"
+    )
+    last_timerange_preset: str = Field("30d", description="Last used timerange preset")
+
+
 class AppSettings(BaseModel):
     """Main application settings for Freqtrade GUI."""
     venv_path: Optional[str] = Field(None, description="Path to Python virtual environment")
@@ -13,6 +25,10 @@ class AppSettings(BaseModel):
     shell_executable: Optional[str] = Field(None, description="Shell executable path")
     shell_args: list[str] = Field(default_factory=list, description="Arguments for shell")
     use_module_execution: bool = Field(True, description="Use python -m freqtrade instead of executable")
+    backtest_preferences: BacktestPreferences = Field(
+        default_factory=BacktestPreferences,
+        description="Backtest UI preferences"
+    )
 
     @field_validator("venv_path", "python_executable", "freqtrade_executable",
                     "user_data_path", "project_path", "shell_executable", mode="before")

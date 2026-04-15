@@ -31,6 +31,7 @@ class BacktestPage(QWidget):
         self.init_ui()
         self._connect_signals()
         self._refresh_strategies()
+        self._load_preferences()
 
     def init_ui(self):
         """Initialize UI components."""
@@ -61,18 +62,32 @@ class BacktestPage(QWidget):
         timeframe_layout.addWidget(self.timeframe_input)
         params_layout.addLayout(timeframe_layout)
 
-        timerange_layout = QHBoxLayout()
-        timerange_layout.addWidget(QLabel("Timerange (optional):"))
+        # Timerange with preset buttons
+        timerange_layout = QVBoxLayout()
+        timerange_presets_layout = QHBoxLayout()
+        timerange_presets_layout.addWidget(QLabel("Timerange:"))
+
+        for preset in ["7d", "14d", "30d", "90d", "120d", "360d"]:
+            btn = QPushButton(preset)
+            btn.setMaximumWidth(50)
+            btn.clicked.connect(lambda checked, p=preset: self._on_timerange_preset(p))
+            timerange_presets_layout.addWidget(btn)
+
+        timerange_presets_layout.addWidget(QLabel("Custom:"))
         self.timerange_input = QLineEdit()
         self.timerange_input.setPlaceholderText("20240101-20241231")
-        timerange_layout.addWidget(self.timerange_input)
+        timerange_presets_layout.addWidget(self.timerange_input)
+        timerange_presets_layout.addStretch()
+
+        timerange_layout.addLayout(timerange_presets_layout)
         params_layout.addLayout(timerange_layout)
 
+        # Pairs with dropdown
         pairs_layout = QHBoxLayout()
-        pairs_layout.addWidget(QLabel("Pairs (space-separated):"))
-        self.pairs_input = QLineEdit()
-        self.pairs_input.setPlaceholderText("BTC/USDT ETH/USDT ADA/USDT")
-        pairs_layout.addWidget(self.pairs_input)
+        pairs_layout.addWidget(QLabel("Pairs:"))
+        self.pairs_combo = QComboBox()
+        self.pairs_combo.setEditable(True)
+        pairs_layout.addWidget(self.pairs_combo)
         params_layout.addLayout(pairs_layout)
 
         # Advanced options (collapsible)
@@ -170,7 +185,7 @@ class BacktestPage(QWidget):
         strategy = self.strategy_combo.currentText().strip()
         timeframe = self.timeframe_input.text().strip()
         timerange = self.timerange_input.text().strip() or None
-        pairs = [p.strip() for p in self.pairs_input.text().split() if p.strip()]
+        pairs = [p.strip() for p in self.pairs_combo.currentText().split() if p.strip()]
 
         # Validate inputs
         if not strategy:
@@ -179,6 +194,9 @@ class BacktestPage(QWidget):
         if not timeframe:
             QMessageBox.warning(self, "Missing Input", "Please enter a timeframe.")
             return
+
+        # Save preferences before running
+        self._save_preferences_to_settings()
 
         # Build command
         try:
@@ -272,3 +290,64 @@ class BacktestPage(QWidget):
         except Exception as e:
             error_msg = f"Failed to parse backtest results: {e}\n"
             self.terminal.append_error(error_msg)
+
+    def _load_preferences(self):
+        """Load saved preferences from settings."""
+        settings = self.settings_state.current_settings
+        if not settings or not settings.backtest_preferences:
+            return
+
+        prefs = settings.backtest_preferences
+
+        # Load strategy
+        if prefs.last_strategy:
+            idx = self.strategy_combo.findText(prefs.last_strategy)
+            if idx >= 0:
+                self.strategy_combo.setCurrentIndex(idx)
+
+        # Load timeframe
+        if prefs.default_timeframe:
+            self.timeframe_input.setText(prefs.default_timeframe)
+
+        # Load pairs favorites and set current value
+        self.pairs_combo.clear()
+        self.pairs_combo.addItems(prefs.paired_favorites)
+        if prefs.default_pairs:
+            self.pairs_combo.setCurrentText(prefs.default_pairs)
+        elif prefs.paired_favorites:
+            self.pairs_combo.setCurrentIndex(0)
+
+    def _save_preferences_to_settings(self):
+        """Save current input values to settings for next run."""
+        settings = self.settings_state.current_settings
+        if not settings or not settings.backtest_preferences:
+            return
+
+        prefs = settings.backtest_preferences
+
+        prefs.last_strategy = self.strategy_combo.currentText()
+        prefs.default_timeframe = self.timeframe_input.text()
+        prefs.default_pairs = self.pairs_combo.currentText()
+
+        # Update favorites with current pairs (if different)
+        current_pairs = self.pairs_combo.currentText()
+        if current_pairs and current_pairs not in prefs.paired_favorites:
+            # Add current to favorites (keep list reasonable size)
+            if len(prefs.paired_favorites) < 10:
+                prefs.paired_favorites.append(current_pairs)
+
+        # Save to disk
+        self.settings_state.save_settings(settings)
+
+    def _on_timerange_preset(self, preset: str):
+        """Handle timerange preset button click."""
+        from app.core.utils.date_utils import calculate_timerange_preset
+
+        timerange = calculate_timerange_preset(preset)
+        self.timerange_input.setText(timerange)
+
+        # Save preference
+        settings = self.settings_state.current_settings
+        if settings and settings.backtest_preferences:
+            settings.backtest_preferences.last_timerange_preset = preset
+            self.settings_state.save_settings(settings)
