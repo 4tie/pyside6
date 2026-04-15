@@ -184,33 +184,3 @@ class CommandRunner:
             strategy_file=str(strategy_file),
             config_file=str(config_file),
         )
-
-    @staticmethod
-    def build_download_command(
-        settings: AppSettings,
-        config_file: str,
-        **options
-    ) -> List[str]:
-        """Build freqtrade download-data command.
-
-        Args:
-            settings: AppSettings instance
-            config_file: Path to strategy config
-            **options: Additional download options
-
-        Returns:
-            Command list
-        """
-        cmd = CommandRunner.build_freqtrade_command(
-            "download-data",
-            "--config", config_file,
-            settings=settings
-        )
-
-        for key, value in options.items():
-            flag = f"--{key.replace('_', '-')}"
-            cmd.append(flag)
-            if value is not True:
-                cmd.append(str(value))
-
-        return cmd
