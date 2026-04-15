@@ -5,7 +5,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton,
     QComboBox, QDoubleSpinBox, QSpinBox, QMessageBox, QGroupBox,
-    QCheckBox, QFormLayout, QTabWidget
+    QFormLayout, QTabWidget
 )
 
 from app.app_state.settings_state import SettingsState
