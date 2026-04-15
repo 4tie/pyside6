@@ -103,13 +103,10 @@ class BacktestResultsService:
         Returns:
             BacktestResults object
         """
-        # Freqtrade backtest result format
-        metadata = data.get('metadata', {})
-        results = data.get('results', [])
-
-        # Extract summary statistics
-        summary_data = data.get('total', {})
-        trades_data = data.get('trades', [])
+        # Actual freqtrade bt-*.result.json structure:
+        # { "strategy": "...", "result": { "trades": [...] }, ... }
+        strategy = data.get('strategy', 'Unknown')
+        trades_data = data.get('result', {}).get('trades', [])
 
         trades = []
         for trade in trades_data:
@@ -118,14 +115,14 @@ class BacktestResultsService:
                     pair=trade.get('pair', ''),
                     stake_amount=float(trade.get('stake_amount', 0)),
                     amount=float(trade.get('amount', 0)),
-                    open_date=trade.get('open_date', ''),
-                    close_date=trade.get('close_date'),
+                    open_date=str(trade.get('open_date', '')),
+                    close_date=str(trade.get('close_date', '')) or None,
                     open_rate=float(trade.get('open_rate', 0)),
                     close_rate=float(trade.get('close_rate', 0)) if trade.get('close_rate') else None,
-                    profit=float(trade.get('profit', 0)),
+                    profit=float(trade.get('profit_ratio', 0)) * 100,
                     profit_abs=float(trade.get('profit_abs', 0)),
                     duration=int(trade.get('trade_duration', 0)),
-                    is_open=trade.get('is_open', False),
+                    is_open=bool(trade.get('is_open', False)),
                 ))
             except (ValueError, KeyError):
                 continue
@@ -133,24 +130,29 @@ class BacktestResultsService:
         wins = sum(1 for t in trades if t.profit > 0)
         losses = sum(1 for t in trades if t.profit < 0)
         draws = sum(1 for t in trades if t.profit == 0)
+        total = len(trades)
+        win_rate = (wins / total * 100) if total else 0.0
+        avg_profit = (sum(t.profit for t in trades) / total) if total else 0.0
+        total_profit_abs = sum(t.profit_abs for t in trades)
+        avg_duration = int(sum(t.duration for t in trades) / total) if total else 0
 
         summary = BacktestSummary(
-            strategy=metadata.get('strategy', 'Unknown'),
-            timeframe=metadata.get('timeframe', 'Unknown'),
-            total_trades=len(trades),
+            strategy=strategy,
+            timeframe='',
+            total_trades=total,
             wins=wins,
             losses=losses,
             draws=draws,
-            win_rate=float(summary_data.get('win_rate', 0)) * 100,  # Convert to percentage
-            avg_profit=float(summary_data.get('avg_profit', 0)),
-            total_profit=float(summary_data.get('total_profit', 0)),
-            total_profit_abs=float(summary_data.get('total_profit_abs', 0)),
-            sharpe_ratio=summary_data.get('sharpe_ratio'),
-            sortino_ratio=summary_data.get('sortino_ratio'),
-            calmar_ratio=summary_data.get('calmar_ratio'),
-            max_drawdown=float(summary_data.get('max_drawdown', 0)) * 100,
-            max_drawdown_abs=float(summary_data.get('max_drawdown_abs', 0)),
-            trade_duration_avg=int(summary_data.get('trade_duration_avg', 0)),
+            win_rate=win_rate,
+            avg_profit=avg_profit,
+            total_profit=float(data.get('profit_total_pct', avg_profit * total / 100 if total else 0)),
+            total_profit_abs=total_profit_abs,
+            sharpe_ratio=None,
+            sortino_ratio=None,
+            calmar_ratio=None,
+            max_drawdown=0.0,
+            max_drawdown_abs=0.0,
+            trade_duration_avg=avg_duration,
         )
 
         return BacktestResults(

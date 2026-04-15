@@ -1,11 +1,30 @@
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QSortFilterProxyModel
 from PySide6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QTabWidget, QTableWidget, QTableWidgetItem,
-    QLabel, QScrollArea, QGroupBox, QFormLayout
+    QWidget, QVBoxLayout, QHBoxLayout, QTabWidget, QTableWidget,
+    QTableWidgetItem, QLabel, QGroupBox, QGridLayout, QHeaderView,
+    QAbstractItemView, QSizePolicy
 )
-from PySide6.QtGui import QFont
+from PySide6.QtGui import QColor, QFont
 
 from app.core.services.backtest_results_service import BacktestResults, BacktestSummary
+
+_GREEN = QColor("#1a7f37")
+_RED   = QColor("#cf222e")
+_BOLD  = QFont()
+_BOLD.setBold(True)
+
+
+def _colored_item(text: str, value: float) -> QTableWidgetItem:
+    item = QTableWidgetItem(text)
+    item.setForeground(_GREEN if value >= 0 else _RED)
+    item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
+    return item
+
+
+def _right_item(text: str) -> QTableWidgetItem:
+    item = QTableWidgetItem(text)
+    item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
+    return item
 
 
 class BacktestResultsWidget(QWidget):
@@ -19,142 +38,159 @@ class BacktestResultsWidget(QWidget):
     def init_ui(self):
         """Initialize UI components."""
         layout = QVBoxLayout()
+        layout.setContentsMargins(0, 0, 0, 0)
 
-        # Create tabs for Summary and Trades
         self.tabs = QTabWidget()
-
-        self.summary_widget = self._create_summary_tab()
-        self.trades_widget = self._create_trades_tab()
-
-        self.tabs.addTab(self.summary_widget, "Summary")
-        self.tabs.addTab(self.trades_widget, "Trades")
+        self.summary_tab = self._build_summary_tab()
+        self.trades_tab = self._build_trades_tab()
+        self.tabs.addTab(self.summary_tab, "Summary")
+        self.tabs.addTab(self.trades_tab, "Trades")
 
         layout.addWidget(self.tabs)
         self.setLayout(layout)
 
-    def _create_summary_tab(self) -> QWidget:
-        """Create summary statistics tab."""
+    # ------------------------------------------------------------------ #
+    # Tab builders                                                         #
+    # ------------------------------------------------------------------ #
+
+    def _build_summary_tab(self) -> QWidget:
+        """Build summary statistics tab."""
         widget = QWidget()
-        layout = QVBoxLayout()
+        outer = QVBoxLayout(widget)
 
-        # Scrollable form for summary stats
-        scroll = QScrollArea()
-        scroll.setWidgetResizable(True)
+        self._summary_header = QLabel("No results loaded")
+        self._summary_header.setFont(_BOLD)
+        outer.addWidget(self._summary_header)
 
-        form_widget = QWidget()
-        self.form_layout = QFormLayout(form_widget)
-        self.form_layout.setSpacing(8)
+        # Two side-by-side groups
+        row = QHBoxLayout()
 
-        scroll.setWidget(form_widget)
-        layout.addWidget(scroll)
+        self._perf_group = QGroupBox("Performance")
+        self._perf_grid = QGridLayout(self._perf_group)
+        self._perf_grid.setColumnStretch(1, 1)
 
-        widget.setLayout(layout)
+        self._trade_group = QGroupBox("Trade Stats")
+        self._trade_grid = QGridLayout(self._trade_group)
+        self._trade_grid.setColumnStretch(1, 1)
+
+        row.addWidget(self._perf_group)
+        row.addWidget(self._trade_group)
+        outer.addLayout(row)
+        outer.addStretch()
         return widget
 
-    def _create_trades_tab(self) -> QWidget:
-        """Create trades table tab."""
+    def _build_trades_tab(self) -> QWidget:
+        """Build trades table tab."""
         widget = QWidget()
-        layout = QVBoxLayout()
+        layout = QVBoxLayout(widget)
 
-        # Trades table
+        self._trades_label = QLabel("0 trades")
+        layout.addWidget(self._trades_label)
+
         self.trades_table = QTableWidget()
         self.trades_table.setColumnCount(9)
         self.trades_table.setHorizontalHeaderLabels([
-            "Pair", "Open Date", "Close Date", "Open Rate", "Close Rate",
-            "Profit %", "Profit Abs", "Duration (min)", "Status"
+            "Pair", "Open Date", "Close Date", "Open Rate",
+            "Close Rate", "Profit %", "Profit Abs", "Duration (min)", "Exit Reason",
         ])
-        self.trades_table.resizeColumnsToContents()
-        self.trades_table.setSelectionBehavior(
-            self.trades_table.SelectionBehavior.SelectRows
-        )
+        self.trades_table.setSortingEnabled(True)
+        self.trades_table.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.trades_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.trades_table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
+        self.trades_table.horizontalHeader().setStretchLastSection(True)
+        self.trades_table.verticalHeader().setVisible(False)
+        self.trades_table.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
         layout.addWidget(self.trades_table)
-        widget.setLayout(layout)
         return widget
 
+    # ------------------------------------------------------------------ #
+    # Public API                                                           #
+    # ------------------------------------------------------------------ #
+
     def display_results(self, results: BacktestResults):
-        """Display backtest results in the widget.
+        """Display backtest results.
 
         Args:
-            results: BacktestResults object
+            results: BacktestResults object to display
         """
         self.results = results
+        self._populate_summary(results.summary)
+        self._populate_trades(results.trades)
 
-        self._display_summary()
-        self._display_trades()
+    # ------------------------------------------------------------------ #
+    # Private helpers                                                      #
+    # ------------------------------------------------------------------ #
 
-    def _display_summary(self):
-        """Display summary statistics."""
-        if not self.results:
-            return
+    def _populate_summary(self, s: BacktestSummary):
+        """Fill summary grids from a BacktestSummary."""
+        self._summary_header.setText(f"Strategy: {s.strategy}")
 
-        summary = self.results.summary
+        # Clear grids
+        for grid in (self._perf_grid, self._trade_grid):
+            while grid.count():
+                item = grid.takeAt(0)
+                if item.widget():
+                    item.widget().deleteLater()
 
-        # Clear existing items
-        while self.form_layout.rowCount() > 0:
-            self.form_layout.removeRow(0)
+        def add_row(grid: QGridLayout, row: int, label: str, value: str, color: QColor = None):
+            lbl = QLabel(label + ":")
+            val = QLabel(value)
+            val.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+            if color:
+                val.setStyleSheet(f"color: {color.name()}; font-weight: bold;")
+            grid.addWidget(lbl, row, 0)
+            grid.addWidget(val, row, 1)
 
-        # Add summary stats
-        stats = {
-            'Strategy': summary.strategy,
-            'Timeframe': summary.timeframe,
-            'Total Trades': str(summary.total_trades),
-            'Wins': f"{summary.wins}",
-            'Losses': f"{summary.losses}",
-            'Draws': f"{summary.draws}",
-            'Win Rate': f"{summary.win_rate:.2f}%",
-            'Avg Profit': f"{summary.avg_profit:.4f}%",
-            'Total Profit': f"{summary.total_profit:.4f}%",
-            'Total Profit (Abs)': f"{summary.total_profit_abs:.8f}",
-            'Sharpe Ratio': f"{summary.sharpe_ratio:.4f}" if summary.sharpe_ratio else "N/A",
-            'Sortino Ratio': f"{summary.sortino_ratio:.4f}" if summary.sortino_ratio else "N/A",
-            'Calmar Ratio': f"{summary.calmar_ratio:.4f}" if summary.calmar_ratio else "N/A",
-            'Max Drawdown': f"{summary.max_drawdown:.2f}%",
-            'Max Drawdown (Abs)': f"{summary.max_drawdown_abs:.8f}",
-            'Avg Trade Duration': f"{summary.trade_duration_avg} min",
-        }
+        profit_color = _GREEN if s.total_profit_abs >= 0 else _RED
+        avg_color    = _GREEN if s.avg_profit >= 0 else _RED
 
-        for key, value in stats.items():
-            label = QLabel(key)
-            label.setFont(QFont("Arial", 10))
-            value_label = QLabel(value)
-            value_label.setFont(QFont("Courier", 10))
+        # Performance group
+        add_row(self._perf_grid, 0, "Total Profit %",  f"{s.total_profit:.2f}%", profit_color)
+        add_row(self._perf_grid, 1, "Total Profit Abs", f"{s.total_profit_abs:.4f} USDT", profit_color)
+        add_row(self._perf_grid, 2, "Avg Profit %",    f"{s.avg_profit:.4f}%", avg_color)
+        add_row(self._perf_grid, 3, "Max Drawdown",    f"{s.max_drawdown:.2f}%")
+        add_row(self._perf_grid, 4, "Max DD Abs",      f"{s.max_drawdown_abs:.4f} USDT")
+        if s.sharpe_ratio is not None:
+            add_row(self._perf_grid, 5, "Sharpe", f"{s.sharpe_ratio:.4f}")
+        if s.sortino_ratio is not None:
+            add_row(self._perf_grid, 6, "Sortino", f"{s.sortino_ratio:.4f}")
 
-            # Highlight important metrics
-            if key in ['Win Rate', 'Total Profit', 'Sharpe Ratio']:
-                value_label.setStyleSheet("color: #2196F3; font-weight: bold;")
+        # Trade stats group
+        add_row(self._trade_grid, 0, "Total Trades",   str(s.total_trades))
+        add_row(self._trade_grid, 1, "Wins",           str(s.wins), _GREEN)
+        add_row(self._trade_grid, 2, "Losses",         str(s.losses), _RED)
+        add_row(self._trade_grid, 3, "Draws",          str(s.draws))
+        add_row(self._trade_grid, 4, "Win Rate",       f"{s.win_rate:.1f}%",
+                _GREEN if s.win_rate >= 50 else _RED)
+        add_row(self._trade_grid, 5, "Avg Duration",   f"{s.trade_duration_avg} min")
 
-            self.form_layout.addRow(label, value_label)
-
-    def _display_trades(self):
-        """Display trades table."""
-        if not self.results:
-            return
-
-        trades = self.results.trades
-
+    def _populate_trades(self, trades):
+        """Fill the trades table."""
+        self._trades_label.setText(f"{len(trades)} trades")
+        self.trades_table.setSortingEnabled(False)
         self.trades_table.setRowCount(len(trades))
 
-        for row, trade in enumerate(trades):
-            self.trades_table.setItem(row, 0, QTableWidgetItem(trade.pair))
-            self.trades_table.setItem(row, 1, QTableWidgetItem(trade.open_date))
-            self.trades_table.setItem(row, 2, QTableWidgetItem(trade.close_date or "OPEN"))
-            self.trades_table.setItem(row, 3, QTableWidgetItem(f"{trade.open_rate:.8f}"))
-            self.trades_table.setItem(row, 4, QTableWidgetItem(
-                f"{trade.close_rate:.8f}" if trade.close_rate else "N/A"
-            ))
+        for row, t in enumerate(trades):
+            self.trades_table.setItem(row, 0, QTableWidgetItem(t.pair))
+            self.trades_table.setItem(row, 1, QTableWidgetItem(
+                t.open_date[:16] if t.open_date else ""))
+            self.trades_table.setItem(row, 2, QTableWidgetItem(
+                (t.close_date[:16] if t.close_date else "OPEN")))
+            self.trades_table.setItem(row, 3, _right_item(f"{t.open_rate:.6g}"))
+            self.trades_table.setItem(row, 4, _right_item(
+                f"{t.close_rate:.6g}" if t.close_rate else "N/A"))
+            self.trades_table.setItem(row, 5, _colored_item(f"{t.profit:+.3f}%", t.profit))
+            self.trades_table.setItem(row, 6, _colored_item(f"{t.profit_abs:+.4f}", t.profit_abs))
+            self.trades_table.setItem(row, 7, _right_item(str(t.duration)))
 
-            profit_item = QTableWidgetItem(f"{trade.profit:.4f}%")
-            if trade.profit > 0:
-                profit_item.setForeground(Qt.green)
-            elif trade.profit < 0:
-                profit_item.setForeground(Qt.red)
-            self.trades_table.setItem(row, 5, profit_item)
+            # exit reason from raw trade if available
+            exit_reason = ""
+            if self.results and self.results.raw_data:
+                raw_trades = self.results.raw_data.get('result', {}).get('trades', [])
+                if row < len(raw_trades):
+                    exit_reason = raw_trades[row].get('exit_reason', '')
+            self.trades_table.setItem(row, 8, QTableWidgetItem(exit_reason))
 
-            self.trades_table.setItem(row, 6, QTableWidgetItem(f"{trade.profit_abs:.8f}"))
-            self.trades_table.setItem(row, 7, QTableWidgetItem(str(trade.duration)))
-            self.trades_table.setItem(row, 8, QTableWidgetItem(
-                "OPEN" if trade.is_open else "CLOSED"
-            ))
-
-        self.trades_table.resizeColumnsToContents()
+        self.trades_table.setSortingEnabled(True)
+        self.trades_table.sortByColumn(1, Qt.AscendingOrder)
