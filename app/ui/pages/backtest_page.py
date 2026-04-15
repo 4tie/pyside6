@@ -22,6 +22,7 @@ from PySide6.QtWidgets import (
 from app.app_state.settings_state import SettingsState
 from app.core.services.backtest_service import BacktestService
 from app.core.services.backtest_results_service import BacktestResultsService
+from app.core.services.dd_service import DownloadDataService
 from app.core.services.settings_service import SettingsService
 from app.core.services.process_service import ProcessService
 from app.ui.widgets.terminal_widget import TerminalWidget
@@ -37,6 +38,7 @@ class BacktestPage(QWidget):
         self.settings_state = settings_state
         self.settings_service = SettingsService()
         self.backtest_service = BacktestService(self.settings_service)
+        self.download_service = DownloadDataService(self.settings_service)
         self.process_service = ProcessService()
         self.last_export_path: Optional[str] = None
         self.selected_pairs: List[str] = []  # Track selected pairs
@@ -309,7 +311,7 @@ class BacktestPage(QWidget):
                 self.terminal.set_command("[Select pairs for download]")
                 return
 
-            cmd = self.backtest_service.build_download_data_command(
+            cmd = self.download_service.build_command(
                 timeframe=timeframe,
                 timerange=timerange,
                 pairs=pairs,
@@ -433,7 +435,7 @@ class BacktestPage(QWidget):
 
         # Build download-data command
         try:
-            cmd = self.backtest_service.build_download_data_command(
+            cmd = self.download_service.build_command(
                 timeframe=timeframe,
                 timerange=timerange,
                 pairs=pairs,
@@ -554,7 +556,6 @@ class BacktestPage(QWidget):
         self.dry_run_wallet.setValue(prefs.dry_run_wallet or 80.0)
         self.max_open_trades.setValue(prefs.max_open_trades or 2)
 
-
         self._update_pairs_display()
 
         # Unblock all signals
@@ -563,7 +564,6 @@ class BacktestPage(QWidget):
         self.timerange_input.blockSignals(False)
         self.dry_run_wallet.blockSignals(False)
         self.max_open_trades.blockSignals(False)
-
 
     def _save_preferences_to_settings(self):
         """Save current input values to settings for next run."""
@@ -583,7 +583,6 @@ class BacktestPage(QWidget):
         # Save advanced options
         prefs.dry_run_wallet = self.dry_run_wallet.value()
         prefs.max_open_trades = self.max_open_trades.value()
-
 
         # Update favorites with selected pairs (auto-grow list)
         for pair in self.selected_pairs:

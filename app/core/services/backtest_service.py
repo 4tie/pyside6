@@ -15,64 +15,6 @@ class BacktestService:
         """
         self.settings_service = settings_service
 
-    def build_download_data_command(
-        self,
-        timeframe: str,
-        timerange: Optional[str] = None,
-        pairs: Optional[List[str]] = None,
-    ) -> BacktestCommand:
-        """Build a download-data command using backtest config.
-
-        Args:
-            timeframe: Timeframe (e.g., "5m", "1h")
-            timerange: Optional timerange
-            pairs: Optional list of pairs
-
-        Returns:
-            BacktestCommand with all necessary info
-        """
-        settings = self.settings_service.load_settings()
-
-        # Get config file path from backtest command
-        bt_cmd = CommandRunner.build_backtest_command(
-            settings=settings,
-            strategy_name="dummy",  # Not needed for download
-            timeframe=timeframe,
-            timerange=timerange,
-            pairs=pairs or [],
-            extra_flags=[],
-        )
-        config_file = bt_cmd.config_file
-
-        # Build download-data command
-        cmd_list = CommandRunner.build_freqtrade_command(
-            "download-data", settings=settings
-        )
-        cmd_list.extend(["--config", config_file, "--exchange", "binance"])
-
-        if pairs:
-            for pair in pairs:
-                cmd_list.extend(["--pairs", pair])
-
-        if timeframe:
-            cmd_list.extend(["--timeframe", timeframe])
-
-        if timerange:
-            cmd_list.extend(["--timerange", timerange])
-
-        cmd_list.append("--prepend")
-
-        # Create BacktestCommand-like object
-        result = BacktestCommand(
-            program=cmd_list[0],
-            args=cmd_list[1:],
-            config_file=config_file,
-            strategy_file="",
-            export_zip="",
-            cwd=bt_cmd.cwd,
-        )
-        return result
-
     def build_command(
         self,
         strategy_name: str,
