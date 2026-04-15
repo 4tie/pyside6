@@ -3,6 +3,15 @@ from typing import Optional
 from pathlib import Path
 
 
+class TerminalPreferences(BaseModel):
+    """Terminal appearance preferences."""
+
+    font_family: str = Field("Courier", description="Terminal font family")
+    font_size: int = Field(10, description="Terminal font size")
+    background_color: str = Field("#1e1e1e", description="Terminal background color (hex)")
+    text_color: str = Field("#d4d4d4", description="Terminal text color (hex)")
+
+
 class DownloadPreferences(BaseModel):
     """Download data user preferences."""
 
@@ -64,6 +73,9 @@ class AppSettings(BaseModel):
     )
     download_preferences: DownloadPreferences = Field(
         default_factory=DownloadPreferences, description="Download data UI preferences"
+    )
+    terminal_preferences: TerminalPreferences = Field(
+        default_factory=TerminalPreferences, description="Terminal appearance preferences"
     )
 
     @field_validator(

@@ -7,7 +7,7 @@ from PySide6.QtGui import QFont, QTextCursor
 
 from app.core.services.process_service import ProcessService
 from app.core.freqtrade.command_runner import CommandRunner
-from app.core.models.settings_models import AppSettings
+from app.core.models.settings_models import AppSettings, TerminalPreferences
 
 
 class TerminalWidget(QWidget):
@@ -22,6 +22,7 @@ class TerminalWidget(QWidget):
         super().__init__(parent)
         self.process_service = ProcessService()
         self.init_ui()
+        self.apply_preferences(TerminalPreferences())
 
     def init_ui(self):
         """Initialize UI components."""
@@ -182,6 +183,15 @@ class TerminalWidget(QWidget):
     def get_full_output(self) -> tuple:
         """Get full captured output (stdout, stderr)."""
         return self.process_service.get_full_output()
+
+    def apply_preferences(self, prefs: TerminalPreferences):
+        """Apply terminal appearance preferences."""
+        font = QFont(prefs.font_family, prefs.font_size)
+        self.output_text.setFont(font)
+        self.command_input.setFont(QFont(prefs.font_family, max(prefs.font_size - 1, 7)))
+        self.output_text.setStyleSheet(
+            f"background-color: {prefs.background_color}; color: {prefs.text_color};"
+        )
 
     def is_running(self) -> bool:
         """Check if a process is running."""

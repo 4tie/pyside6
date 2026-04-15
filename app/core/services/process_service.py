@@ -4,6 +4,8 @@ from typing import Optional, Callable, List
 
 from PySide6.QtCore import QProcess, QProcessEnvironment
 
+from app.core.utils.app_logger import get_logger
+
 
 class ProcessService:
     """Manages process execution with streaming output support."""
@@ -54,6 +56,7 @@ class ProcessService:
 
         # Start the process
         self.process.start(command[0], command[1:])
+        get_logger().info("Process started: %s", " ".join(command))
         return self.process
 
     def _handle_stdout(self, callback: Callable[[str], None]):
@@ -73,9 +76,11 @@ class ProcessService:
     def stop_process(self):
         """Stop the running process."""
         if self.process and self.process.state() == QProcess.Running:
+            get_logger().info("Stopping process")
             self.process.terminate()
             # Give it a second to terminate gracefully
             if not self.process.waitForFinished(1000):
+                get_logger().warning("Process did not terminate gracefully, killing")
                 self.process.kill()
 
     def get_full_output(self) -> tuple[str, str]:

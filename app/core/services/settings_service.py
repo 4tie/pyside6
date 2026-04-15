@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Optional
 
 from app.core.models.settings_models import AppSettings, SettingsValidationResult
+from app.core.utils.app_logger import get_logger
 
 
 class SettingsService:
@@ -22,8 +23,10 @@ class SettingsService:
                 with open(self.settings_file, "r") as f:
                     data = json.load(f)
                     self.settings = AppSettings(**data)
+                    get_logger().debug("Settings loaded from %s", self.settings_file)
                     return self.settings
             except Exception as e:
+                get_logger().error("Failed to load settings: %s", e)
                 print(f"Failed to load settings: {e}")
 
         self.settings = AppSettings()
@@ -36,8 +39,10 @@ class SettingsService:
             with open(self.settings_file, "w") as f:
                 json.dump(settings.model_dump(), f, indent=2)
             self.settings = settings
+            get_logger().info("Settings saved to %s", self.settings_file)
             return True
         except Exception as e:
+            get_logger().error("Failed to save settings: %s", e)
             print(f"Failed to save settings: {e}")
             return False
 

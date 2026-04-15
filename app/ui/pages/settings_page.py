@@ -3,11 +3,12 @@ from pathlib import Path
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton,
-    QFileDialog, QGroupBox, QCheckBox, QMessageBox
+    QFileDialog, QGroupBox, QCheckBox, QMessageBox, QSpinBox, QComboBox,
+    QColorDialog
 )
 from PySide6.QtGui import QColor, QFont
 
-from app.core.models.settings_models import AppSettings
+from app.core.models.settings_models import AppSettings, TerminalPreferences
 from app.app_state.settings_state import SettingsState
 from app.core.services.settings_service import SettingsService
 
@@ -102,6 +103,40 @@ class SettingsPage(QWidget):
         mode_group.setLayout(mode_layout)
         layout.addWidget(mode_group)
 
+        # Terminal appearance
+        terminal_group = QGroupBox("Terminal Appearance")
+        terminal_layout = QVBoxLayout()
+
+        font_row = QHBoxLayout()
+        font_row.addWidget(QLabel("Font Family:"))
+        self.terminal_font_combo = QComboBox()
+        self.terminal_font_combo.addItems(["Courier", "Courier New", "Consolas", "Lucida Console", "Monospace", "DejaVu Sans Mono"])
+        self.terminal_font_combo.setEditable(True)
+        font_row.addWidget(self.terminal_font_combo)
+        font_row.addWidget(QLabel("Size:"))
+        self.terminal_font_size = QSpinBox()
+        self.terminal_font_size.setRange(6, 32)
+        self.terminal_font_size.setValue(10)
+        font_row.addWidget(self.terminal_font_size)
+        terminal_layout.addLayout(font_row)
+
+        color_row = QHBoxLayout()
+        color_row.addWidget(QLabel("Background:"))
+        self.terminal_bg_btn = QPushButton()
+        self.terminal_bg_btn.setFixedWidth(80)
+        self.terminal_bg_btn.clicked.connect(self._pick_terminal_bg)
+        color_row.addWidget(self.terminal_bg_btn)
+        color_row.addWidget(QLabel("Text:"))
+        self.terminal_text_btn = QPushButton()
+        self.terminal_text_btn.setFixedWidth(80)
+        self.terminal_text_btn.clicked.connect(self._pick_terminal_text)
+        color_row.addWidget(self.terminal_text_btn)
+        color_row.addStretch()
+        terminal_layout.addLayout(color_row)
+
+        terminal_group.setLayout(terminal_layout)
+        layout.addWidget(terminal_group)
+
         # Validation result
         self.validation_result = QLabel("Not validated")
         self.validation_result.setStyleSheet("padding: 10px; background-color: #f0f0f0;")
@@ -128,6 +163,36 @@ class SettingsPage(QWidget):
         """Connect UI signals."""
         self.venv_path_input.textChanged.connect(self._on_venv_changed)
         self.module_exec_checkbox.stateChanged.connect(self._on_settings_changed)
+        self.terminal_font_combo.currentTextChanged.connect(self._on_settings_changed)
+        self.terminal_font_size.valueChanged.connect(self._on_settings_changed)
+
+    def _set_color_button(self, btn: QPushButton, color: str):
+        """Set button background to reflect chosen color."""
+        btn.setText(color)
+        btn.setStyleSheet(f"background-color: {color}; color: {'#ffffff' if self._is_dark(color) else '#000000'};")
+
+    @staticmethod
+    def _is_dark(hex_color: str) -> bool:
+        """Return True if hex color is dark (for contrast)."""
+        c = hex_color.lstrip("#")
+        if len(c) != 6:
+            return True
+        r, g, b = int(c[0:2], 16), int(c[2:4], 16), int(c[4:6], 16)
+        return (r * 299 + g * 587 + b * 114) / 1000 < 128
+
+    def _pick_terminal_bg(self):
+        """Open color picker for terminal background."""
+        color = QColorDialog.getColor(QColor(self.terminal_bg_btn.text() or "#1e1e1e"), self)
+        if color.isValid():
+            self._set_color_button(self.terminal_bg_btn, color.name())
+            self._on_settings_changed()
+
+    def _pick_terminal_text(self):
+        """Open color picker for terminal text."""
+        color = QColorDialog.getColor(QColor(self.terminal_text_btn.text() or "#d4d4d4"), self)
+        if color.isValid():
+            self._set_color_button(self.terminal_text_btn, color.name())
+            self._on_settings_changed()
 
     def _load_current_settings(self):
         """Load current settings into UI."""
@@ -138,6 +203,16 @@ class SettingsPage(QWidget):
         self.user_data_input.setText(self.current_settings.user_data_path or "")
         self.project_input.setText(self.current_settings.project_path or "")
         self.module_exec_checkbox.setChecked(self.current_settings.use_module_execution)
+
+        prefs = self.current_settings.terminal_preferences
+        idx = self.terminal_font_combo.findText(prefs.font_family)
+        if idx >= 0:
+            self.terminal_font_combo.setCurrentIndex(idx)
+        else:
+            self.terminal_font_combo.setCurrentText(prefs.font_family)
+        self.terminal_font_size.setValue(prefs.font_size)
+        self._set_color_button(self.terminal_bg_btn, prefs.background_color)
+        self._set_color_button(self.terminal_text_btn, prefs.text_color)
 
     def _on_venv_changed(self):
         """Update paths when venv changes."""
@@ -232,6 +307,12 @@ class SettingsPage(QWidget):
             user_data_path=self.user_data_input.text() or None,
             project_path=self.project_input.text() or None,
             use_module_execution=self.module_exec_checkbox.isChecked(),
+            terminal_preferences=TerminalPreferences(
+                font_family=self.terminal_font_combo.currentText(),
+                font_size=self.terminal_font_size.value(),
+                background_color=self.terminal_bg_btn.text() or "#1e1e1e",
+                text_color=self.terminal_text_btn.text() or "#d4d4d4",
+            ),
         )
 
         # Resolve paths
