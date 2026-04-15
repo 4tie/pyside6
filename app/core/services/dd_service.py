@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import List, Optional
 
 from app.core.freqtrade.command_runner import BacktestCommand, CommandRunner
@@ -21,7 +22,7 @@ class DownloadDataService:
         timerange: Optional[str] = None,
         pairs: Optional[List[str]] = None,
     ) -> BacktestCommand:
-        """Build a download-data command using backtest config.
+        """Build a download-data command.
 
         Args:
             timeframe: Timeframe (e.g., "5m", "1h")
@@ -36,41 +37,51 @@ class DownloadDataService:
         """
         settings = self.settings_service.load_settings()
 
-        # Get config file path from backtest command (uses same config)
-        bt_cmd = CommandRunner.build_backtest_command(
+        if not settings.python_executable:
+            raise ValueError("python_executable is not configured in Settings")
+        if not settings.user_data_path:
+            raise ValueError("user_data_path is not configured in Settings")
+
+        user_data = Path(settings.user_data_path).expanduser().resolve()
+
+        # Resolve config file (same logic as backtest)
+        config_file: Optional[Path] = None
+        if settings.project_path:
+            default_config = Path(settings.project_path) / "config.json"
+            if default_config.exists():
+                config_file = default_config
+
+        if config_file is None:
+            default_config = user_data / "config.json"
+            if default_config.exists():
+                config_file = default_config
+
+        if config_file is None or not config_file.exists():
+            raise FileNotFoundError(
+                f"No config file found.\n"
+                f"Checked: {user_data / 'config.json'}\n"
+                f"Please create a config.json in user_data/ or project path."
+            )
+
+        # Build download-data command using CommandRunner
+        cmd_list = CommandRunner.build_download_command(
             settings=settings,
+            config_file=str(config_file),
+            exchange="binance",
             timeframe=timeframe,
             timerange=timerange,
+            prepend=True,  # --prepend flag
             pairs=pairs or [],
-            extra_flags=[],
         )
-        config_file = bt_cmd.config_file
 
-        # Build download-data command
-        cmd_list = CommandRunner.build_freqtrade_command(
-            "download-data", settings=settings
-        )
-        cmd_list.extend(["--config", config_file, "--exchange", "binance"])
+        cwd = str(settings.project_path or user_data)
 
-        if pairs:
-            for pair in pairs:
-                cmd_list.extend(["--pairs", pair])
-
-        if timeframe:
-            cmd_list.extend(["--timeframe", timeframe])
-
-        if timerange:
-            cmd_list.extend(["--timerange", timerange])
-
-        cmd_list.append("--prepend")
-
-        # Create BacktestCommand-like object
-        result = BacktestCommand(
+        return BacktestCommand(
             program=cmd_list[0],
             args=cmd_list[1:],
-            config_file=config_file,
-            strategy_file="",
+            cwd=cwd,
+            export_dir=str(user_data / "data"),
             export_zip="",
-            cwd=bt_cmd.cwd,
+            strategy_file="",
+            config_file=str(config_file),
         )
-        return result
