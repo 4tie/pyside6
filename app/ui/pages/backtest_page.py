@@ -526,8 +526,6 @@ class BacktestPage(QWidget):
         self.timerange_input.blockSignals(True)
         self.dry_run_wallet.blockSignals(True)
         self.max_open_trades.blockSignals(True)
-        self.stake_currency.blockSignals(True)
-        self.stake_amount.blockSignals(True)
 
         # Load strategy
         if prefs.last_strategy:
@@ -555,10 +553,7 @@ class BacktestPage(QWidget):
         # Load advanced options
         self.dry_run_wallet.setValue(prefs.dry_run_wallet or 80.0)
         self.max_open_trades.setValue(prefs.max_open_trades or 2)
-        if prefs.stake_currency:
-            self.stake_currency.setText(prefs.stake_currency)
-        if prefs.stake_amount and prefs.stake_amount > 0:
-            self.stake_amount.setValue(prefs.stake_amount)
+
 
         self._update_pairs_display()
 
@@ -568,8 +563,7 @@ class BacktestPage(QWidget):
         self.timerange_input.blockSignals(False)
         self.dry_run_wallet.blockSignals(False)
         self.max_open_trades.blockSignals(False)
-        self.stake_currency.blockSignals(False)
-        self.stake_amount.blockSignals(False)
+
 
     def _save_preferences_to_settings(self):
         """Save current input values to settings for next run."""
@@ -589,9 +583,7 @@ class BacktestPage(QWidget):
         # Save advanced options
         prefs.dry_run_wallet = self.dry_run_wallet.value()
         prefs.max_open_trades = self.max_open_trades.value()
-        prefs.stake_currency = self.stake_currency.text().strip()
-        stake_amt = self.stake_amount.value()
-        prefs.stake_amount = stake_amt if stake_amt > 0 else 0.0
+
 
         # Update favorites with selected pairs (auto-grow list)
         for pair in self.selected_pairs:
