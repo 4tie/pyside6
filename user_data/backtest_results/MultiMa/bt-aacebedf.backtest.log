@@ -1,0 +1,15 @@
+$ T:\Optimizer\.venv\Scripts\freqtrade.exe backtesting --strategy MultiMa --config T:\Optimizer\user_data\config.json --strategy-path T:\Optimizer\data\backtest_runs\bt-aacebedf\workspace\strategies --timeframe 5m --timerange 20250701-20260411 --pairs ETH/USDT SOL/USDT DOGE/USDT ADA/USDT BNB/USDT --dry-run-wallet 500.0 --max-open-trades 5 --export trades --backtest-directory T:\Optimizer\user_data\backtest_results\MultiMa --notes bt-aacebedf --cache none
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "T:\Optimizer\.venv\Scripts\freqtrade.exe\__main__.py", line 4, in <module>
+  File "T:\Optimizer\.venv\Lib\site-packages\freqtrade\main.py", line 16, in <module>
+    from freqtrade.commands import Arguments
+  File "T:\Optimizer\.venv\Lib\site-packages\freqtrade\commands\__init__.py", line 44, in <module>
+    from freqtrade.commands.pairlist_commands import start_test_pairlist
+  File "T:\Optimizer\.venv\Lib\site-packages\freqtrade\commands\pairlist_commands.py", line 4, in <module>
+    import rapidjson
+  File "C:\Users\M4tie\AppData\Local\Programs\Python312\Lib\decimal.py", line 102, in <module>
+    from _decimal import *
+KeyboardInterrupt

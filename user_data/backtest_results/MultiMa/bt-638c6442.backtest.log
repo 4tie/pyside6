@@ -1,0 +1,15 @@
+$ T:\Optimizer\.venv\Scripts\freqtrade.exe backtesting --strategy MultiMa --config T:\Optimizer\user_data\config.json --strategy-path T:\Optimizer\data\backtest_runs\bt-638c6442\workspace\strategies --timeframe 5m --timerange 20250701-20260411 --pairs ETH/USDT SOL/USDT DOGE/USDT ADA/USDT BNB/USDT --dry-run-wallet 500.0 --max-open-trades 5 --export trades --backtest-directory T:\Optimizer\user_data\backtest_results\MultiMa --notes bt-638c6442 --cache none
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "T:\Optimizer\.venv\Scripts\freqtrade.exe\__main__.py", line 4, in <module>
+  File "T:\Optimizer\.venv\Lib\site-packages\freqtrade\main.py", line 7, in <module>
+    import logging
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 1091, in get_code
+  File "<frozen importlib._bootstrap_external>", line 1191, in get_data
+KeyboardInterrupt

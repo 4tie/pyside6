@@ -1,0 +1,144 @@
+$ T:\Optimizer\.venv\Scripts\freqtrade.exe backtesting --strategy MultiMeee --config T:\Optimizer\user_data\config.json --config T:\Optimizer\data\backtest_runs\bt-60a5fed0\workspace\config.version.json --strategy-path T:\Optimizer\data\backtest_runs\bt-60a5fed0\workspace\strategies --timeframe 5m --timerange 20250101-20260412 --pairs ETH/USDT ADA/USDT --dry-run-wallet 100.0 --max-open-trades 1 --export trades --backtest-directory T:\Optimizer\user_data\backtest_results\MultiMeee --notes bt-60a5fed0 --cache none
+
+2026-04-15 14:48:46,165 - freqtrade - INFO - freqtrade 2026.3
+2026-04-15 14:48:47,478 - freqtrade.configuration.load_config - INFO - Using config: T:\Optimizer\user_data\config.json ...
+2026-04-15 14:48:47,479 - freqtrade.configuration.load_config - INFO - Using config: T:\Optimizer\data\backtest_runs\bt-60a5fed0\workspace\config.version.json ...
+2026-04-15 14:48:47,481 - freqtrade.loggers - INFO - Enabling colorized output.
+2026-04-15 14:48:47,481 - freqtrade.loggers - INFO - Logfile configured
+2026-04-15 14:48:47,481 - freqtrade.loggers - INFO - Verbosity set to 0
+2026-04-15 14:48:47,481 - freqtrade.configuration.configuration - INFO - Using additional Strategy lookup path: T:\Optimizer\data\backtest_runs\bt-60a5fed0\workspace\strategies
+2026-04-15 14:48:47,481 - freqtrade.configuration.configuration - WARNING - `force_entry_enable` RPC message enabled.
+2026-04-15 14:48:47,481 - freqtrade.configuration.configuration - INFO - Parameter -i/--timeframe detected ... Using timeframe: 5m ...
+2026-04-15 14:48:47,482 - freqtrade.configuration.configuration - INFO - Parameter --max-open-trades detected, overriding max_open_trades to: 1 ...
+2026-04-15 14:48:47,482 - freqtrade.configuration.configuration - INFO - Parameter --dry-run-wallet detected, overriding dry_run_wallet to: 100.0 ...
+2026-04-15 14:48:47,482 - freqtrade.configuration.configuration - INFO - Parameter --timerange detected: 20250101-20260412 ...
+2026-04-15 14:48:47,483 - freqtrade.configuration.configuration - INFO - Using user-data directory: T:\Optimizer\user_data ...
+2026-04-15 14:48:47,483 - freqtrade.configuration.configuration - INFO - Using data directory: T:\Optimizer\user_data\data\binance ...
+2026-04-15 14:48:47,483 - freqtrade.configuration.configuration - INFO - Using T:\Optimizer\user_data\backtest_results\MultiMeee as backtest directory ...
+2026-04-15 14:48:47,484 - freqtrade.configuration.configuration - INFO - Parameter --export detected: trades ...
+2026-04-15 14:48:47,484 - freqtrade.configuration.configuration - INFO - Parameter --cache=none detected ...
+2026-04-15 14:48:47,484 - freqtrade.configuration.configuration - INFO - Parameter --notes detected: bt-60a5fed0 ...
+2026-04-15 14:48:47,484 - freqtrade.configuration.configuration - INFO - Using pairs ['ETH/USDT', 'ADA/USDT']
+2026-04-15 14:48:47,484 - freqtrade.configuration.configuration - INFO - Filter trades by timerange: 20250101-20260412
+2026-04-15 14:48:47,485 - freqtrade.exchange.check_exchange - INFO - Checking exchange...
+2026-04-15 14:48:47,489 - freqtrade.exchange.check_exchange - INFO - Exchange "binance" is officially supported by the Freqtrade development team.
+2026-04-15 14:48:47,489 - freqtrade.configuration.config_validation - INFO - Validating configuration ...
+2026-04-15 14:48:47,491 - freqtrade.commands.optimize_commands - INFO - Starting freqtrade in Backtesting mode
+2026-04-15 14:48:47,492 - freqtrade.exchange.exchange - INFO - Instance is running with dry_run enabled
+2026-04-15 14:48:47,492 - freqtrade.exchange.exchange - INFO - Using CCXT 4.5.47
+2026-04-15 14:48:47,492 - freqtrade.exchange.exchange - INFO - Applying additional ccxt config: {'enableRateLimit': True, 'timeout': 120000}
+2026-04-15 14:48:47,495 - freqtrade.exchange.exchange - INFO - Applying additional ccxt config: {'enableRateLimit': True, 'timeout': 120000}
+2026-04-15 14:48:47,500 - freqtrade.exchange.exchange - INFO - Using Exchange "Binance"
+2026-04-15 14:48:47,652 - freqtrade.exchange.common - WARNING - _load_async_markets() returned exception: "Error in reload_markets due to ExchangeNotAvailable. Message: binance GET 
+https://api.binance.com/api/v3/exchangeInfo". Retrying still for 3 times.
+2026-04-15 14:48:47,805 - freqtrade.exchange.common - WARNING - _load_async_markets() returned exception: "Error in reload_markets due to ExchangeNotAvailable. Message: binance GET 
+https://api.binance.com/api/v3/exchangeInfo". Retrying still for 2 times.
+2026-04-15 14:48:48,103 - freqtrade.exchange.common - WARNING - _load_async_markets() returned exception: "Error in reload_markets due to ExchangeNotAvailable. Message: binance GET 
+https://api.binance.com/api/v3/exchangeInfo". Retrying still for 1 times.
+2026-04-15 14:48:48,416 - freqtrade.exchange.common - WARNING - _load_async_markets() returned exception: "Error in reload_markets due to ExchangeNotAvailable. Message: binance GET 
+https://api.binance.com/api/v3/exchangeInfo". Giving up.
+2026-04-15 14:48:48,416 - freqtrade.exchange.exchange - ERROR - Could not load markets.
+Traceback (most recent call last):
+  File "T:\Optimizer\.venv\Lib\site-packages\aiohttp\resolver.py", line 117, in resolve
+    resp = await self._resolver.getaddrinfo(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+aiodns.error.DNSError: (11, 'Could not contact DNS servers')
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "T:\Optimizer\.venv\Lib\site-packages\aiohttp\connector.py", line 1574, in _create_direct_connection
+    hosts = await self._resolve_host(host, port, traces=traces)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "T:\Optimizer\.venv\Lib\site-packages\aiohttp\connector.py", line 1190, in _resolve_host
+    return await asyncio.shield(resolved_host_task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "T:\Optimizer\.venv\Lib\site-packages\aiohttp\connector.py", line 1221, in _resolve_host_with_throttle
+    addrs = await self._resolver.resolve(host, port, family=self._family)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "T:\Optimizer\.venv\Lib\site-packages\aiohttp\resolver.py", line 126, in resolve
+    raise OSError(None, msg) from exc
+OSError: [Errno None] Could not contact DNS servers
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "T:\Optimizer\.venv\Lib\site-packages\ccxt\async_support\base\exchange.py", line 241, in fetch
+    async with session_method(yarl.URL(url, encoded=True),
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "T:\Optimizer\.venv\Lib\site-packages\aiohttp\client.py", line 1521, in __aenter__
+    self._resp: _RetType = await self._coro
+                           ^^^^^^^^^^^^^^^^
+  File "T:\Optimizer\.venv\Lib\site-packages\aiohttp\client.py", line 788, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "T:\Optimizer\.venv\Lib\site-packages\aiohttp\client.py", line 742, in _connect_and_send_request
+    conn = await self._connector.connect(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "T:\Optimizer\.venv\Lib\site-packages\aiohttp\connector.py", line 672, in connect
+    proto = await self._create_connection(req, traces, timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "T:\Optimizer\.venv\Lib\site-packages\aiohttp\connector.py", line 1251, in _create_connection
+    _, proto = await self._create_direct_connection(req, traces, timeout)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "T:\Optimizer\.venv\Lib\site-packages\aiohttp\connector.py", line 1580, in _create_direct_connection
+    raise ClientConnectorDNSError(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorDNSError: Cannot connect to host api.binance.com:443 ssl:default [Could not contact DNS servers]
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "T:\Optimizer\.venv\Lib\site-packages\freqtrade\exchange\exchange.py", line 680, in _api_reload_markets
+    await self._api_async.load_markets(reload=reload, params={})
+  File "T:\Optimizer\.venv\Lib\site-packages\ccxt\async_support\base\exchange.py", line 365, in load_markets
+    raise e
+  File "T:\Optimizer\.venv\Lib\site-packages\ccxt\async_support\base\exchange.py", line 357, in load_markets
+    result = await self.markets_loading
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "T:\Optimizer\.venv\Lib\site-packages\ccxt\async_support\base\exchange.py", line 324, in load_markets_helper
+    markets = await self.fetch_markets(params)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "T:\Optimizer\.venv\Lib\site-packages\ccxt\async_support\binance.py", line 3198, in fetch_markets
+    results = await asyncio.gather(*promisesRaw)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "T:\Optimizer\.venv\Lib\site-packages\ccxt\async_support\binance.py", line 11654, in request
+    response = await self.fetch2(path, api, method, params, headers, body, config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "T:\Optimizer\.venv\Lib\site-packages\ccxt\async_support\base\exchange.py", line 1022, in fetch2
+    raise e
+  File "T:\Optimizer\.venv\Lib\site-packages\ccxt\async_support\base\exchange.py", line 1012, in fetch2
+    return await self.fetch(request['url'], request['method'], request['headers'], request['body'])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "T:\Optimizer\.venv\Lib\site-packages\ccxt\async_support\base\exchange.py", line 281, in fetch
+    raise ExchangeNotAvailable(details) from e
+ccxt.base.errors.ExchangeNotAvailable: binance GET https://api.binance.com/api/v3/exchangeInfo
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "T:\Optimizer\.venv\Lib\site-packages\freqtrade\exchange\exchange.py", line 720, in reload_markets
+    retrier(self._load_async_markets, retries=retries)(reload=True)
+  File "T:\Optimizer\.venv\Lib\site-packages\freqtrade\exchange\common.py", line 191, in wrapper
+    return wrapper(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "T:\Optimizer\.venv\Lib\site-packages\freqtrade\exchange\common.py", line 191, in wrapper
+    return wrapper(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "T:\Optimizer\.venv\Lib\site-packages\freqtrade\exchange\common.py", line 191, in wrapper
+    return wrapper(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "T:\Optimizer\.venv\Lib\site-packages\freqtrade\exchange\common.py", line 194, in wrapper
+    raise ex
+  File "T:\Optimizer\.venv\Lib\site-packages\freqtrade\exchange\common.py", line 179, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "T:\Optimizer\.venv\Lib\site-packages\freqtrade\exchange\exchange.py", line 693, in _load_async_markets
+    markets = self.loop.run_until_complete(self._api_reload_markets(reload=reload))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\M4tie\AppData\Local\Programs\Python312\Lib\asyncio\base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "T:\Optimizer\.venv\Lib\site-packages\freqtrade\exchange\exchange.py", line 684, in _api_reload_markets
+    raise TemporaryError(
+freqtrade.exceptions.TemporaryError: Error in reload_markets due to ExchangeNotAvailable. Message: binance GET https://api.binance.com/api/v3/exchangeInfo
+2026-04-15 14:48:48,486 - freqtrade - ERROR - Could not load markets, therefore cannot start. Please investigate the above error for more details.

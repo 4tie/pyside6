@@ -1,0 +1,174 @@
+$ T:\Optimizer\.venv\Scripts\freqtrade.exe backtesting --strategy MohsBaseline --config T:\Optimizer\user_data\config.json --strategy-path T:\Optimizer\data\backtest_runs\bt-acf47877\workspace\strategies --timeframe 5m --timerange 20250701-20260414 --pairs ETH/USDT ADA/USDT --dry-run-wallet 100.0 --max-open-trades 1 --export trades --backtest-directory T:\Optimizer\user_data\backtest_results\MohsBaseline --notes bt-acf47877 --cache none
+
+2026-04-15 11:10:37,326 - freqtrade - INFO - freqtrade 2026.3
+2026-04-15 11:10:38,645 - freqtrade.configuration.load_config - INFO - Using config: T:\Optimizer\user_data\config.json ...
+2026-04-15 11:10:38,647 - freqtrade.loggers - INFO - Enabling colorized output.
+2026-04-15 11:10:38,648 - freqtrade.loggers - INFO - Logfile configured
+2026-04-15 11:10:38,649 - freqtrade.loggers - INFO - Verbosity set to 0
+2026-04-15 11:10:38,649 - freqtrade.configuration.configuration - INFO - Using additional Strategy lookup path: T:\Optimizer\data\backtest_runs\bt-acf47877\workspace\strategies
+2026-04-15 11:10:38,649 - freqtrade.configuration.configuration - WARNING - `force_entry_enable` RPC message enabled.
+2026-04-15 11:10:38,649 - freqtrade.configuration.configuration - INFO - Parameter -i/--timeframe detected ... Using timeframe: 5m ...
+2026-04-15 11:10:38,649 - freqtrade.configuration.configuration - INFO - Parameter --max-open-trades detected, overriding max_open_trades to: 1 ...
+2026-04-15 11:10:38,650 - freqtrade.configuration.configuration - INFO - Parameter --dry-run-wallet detected, overriding dry_run_wallet to: 100.0 ...
+2026-04-15 11:10:38,650 - freqtrade.configuration.configuration - INFO - Parameter --timerange detected: 20250701-20260414 ...
+2026-04-15 11:10:38,650 - freqtrade.configuration.configuration - INFO - Using user-data directory: T:\Optimizer\user_data ...
+2026-04-15 11:10:38,651 - freqtrade.configuration.configuration - INFO - Using data directory: T:\Optimizer\user_data\data\binance ...
+2026-04-15 11:10:38,651 - freqtrade.configuration.configuration - INFO - Using T:\Optimizer\user_data\backtest_results\MohsBaseline as backtest directory ...
+2026-04-15 11:10:38,651 - freqtrade.configuration.configuration - INFO - Parameter --export detected: trades ...
+2026-04-15 11:10:38,651 - freqtrade.configuration.configuration - INFO - Parameter --cache=none detected ...
+2026-04-15 11:10:38,652 - freqtrade.configuration.configuration - INFO - Parameter --notes detected: bt-acf47877 ...
+2026-04-15 11:10:38,652 - freqtrade.configuration.configuration - INFO - Using pairs ['ETH/USDT', 'ADA/USDT']
+2026-04-15 11:10:38,652 - freqtrade.configuration.configuration - INFO - Filter trades by timerange: 20250701-20260414
+2026-04-15 11:10:38,653 - freqtrade.exchange.check_exchange - INFO - Checking exchange...
+2026-04-15 11:10:38,657 - freqtrade.exchange.check_exchange - INFO - Exchange "binance" is officially supported by the Freqtrade development team.
+2026-04-15 11:10:38,658 - freqtrade.configuration.config_validation - INFO - Validating configuration ...
+2026-04-15 11:10:38,659 - freqtrade.commands.optimize_commands - INFO - Starting freqtrade in Backtesting mode
+2026-04-15 11:10:38,660 - freqtrade.exchange.exchange - INFO - Instance is running with dry_run enabled
+2026-04-15 11:10:38,660 - freqtrade.exchange.exchange - INFO - Using CCXT 4.5.47
+2026-04-15 11:10:38,660 - freqtrade.exchange.exchange - INFO - Applying additional ccxt config: {'enableRateLimit': True, 'timeout': 120000}
+2026-04-15 11:10:38,665 - freqtrade.exchange.exchange - INFO - Applying additional ccxt config: {'enableRateLimit': True, 'timeout': 120000}
+2026-04-15 11:10:38,669 - freqtrade.exchange.exchange - INFO - Using Exchange "Binance"
+2026-04-15 11:10:39,783 - freqtrade.resolvers.exchange_resolver - INFO - Using resolved exchange 'Binance'...
+2026-04-15 11:10:39,818 - freqtrade.resolvers.iresolver - INFO - Using resolved strategy MohsBaseline from 'T:\Optimizer\data\backtest_runs\bt-acf47877\workspace\strategies\MohsBaseline.py'...
+2026-04-15 11:10:39,818 - freqtrade.strategy.hyper - INFO - Found no parameter file.
+2026-04-15 11:10:39,818 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'timeframe' with value from the configuration: 5m.
+2026-04-15 11:10:39,819 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'stake_currency' with value from the configuration: USDT.
+2026-04-15 11:10:39,819 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'stake_amount' with value from the configuration: unlimited.
+2026-04-15 11:10:39,819 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'use_exit_signal' with value from the configuration: True.
+2026-04-15 11:10:39,819 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'max_open_trades' with value from the configuration: 1.
+2026-04-15 11:10:39,819 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using minimal_roi: {'60': 0.01, '30': 0.02, '0': 0.04}
+2026-04-15 11:10:39,820 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using timeframe: 5m
+2026-04-15 11:10:39,820 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using stoploss: -0.1
+2026-04-15 11:10:39,820 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using trailing_stop: False
+2026-04-15 11:10:39,820 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using trailing_stop_positive_offset: 0.0
+2026-04-15 11:10:39,820 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using trailing_only_offset_is_reached: False
+2026-04-15 11:10:39,820 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using use_custom_stoploss: False
+2026-04-15 11:10:39,821 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using process_only_new_candles: True
+2026-04-15 11:10:39,821 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using order_types: {'entry': 'limit', 'exit': 'limit', 'stoploss': 'market', 'stoploss_on_exchange': False}
+2026-04-15 11:10:39,821 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using order_time_in_force: {'entry': 'GTC', 'exit': 'GTC'}
+2026-04-15 11:10:39,821 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using stake_currency: USDT
+2026-04-15 11:10:39,821 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using stake_amount: unlimited
+2026-04-15 11:10:39,821 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using startup_candle_count: 30
+2026-04-15 11:10:39,821 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using use_exit_signal: True
+2026-04-15 11:10:39,822 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using exit_profit_only: False
+2026-04-15 11:10:39,822 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using ignore_roi_if_entry_signal: False
+2026-04-15 11:10:39,822 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using exit_profit_offset: 0.0
+2026-04-15 11:10:39,822 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using disable_dataframe_checks: False
+2026-04-15 11:10:39,822 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using ignore_buying_expired_candle_after: 0
+2026-04-15 11:10:39,822 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using position_adjustment_enable: False
+2026-04-15 11:10:39,823 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using max_entry_position_adjustment: -1
+2026-04-15 11:10:39,823 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using max_open_trades: 1
+2026-04-15 11:10:39,823 - freqtrade.configuration.config_validation - INFO - Validating configuration ...
+2026-04-15 11:10:39,827 - freqtrade.resolvers.iresolver - INFO - Using resolved pairlist StaticPairList from 'T:\Optimizer\.venv\Lib\site-packages\freqtrade\plugins\pairlist\StaticPairList.py'...
+2026-04-15 11:10:39,833 - freqtrade.optimize.backtesting - INFO - Using fee 0.1000% - worst case fee from exchange (lowest tier).
+2026-04-15 11:10:39,940 - freqtrade.data.history.datahandlers.idatahandler - WARNING - ETH/USDT, spot, 5m, data ends at 2026-04-10 03:40:00
+2026-04-15 11:10:40,037 - freqtrade.data.history.datahandlers.idatahandler - WARNING - ADA/USDT, spot, 5m, data starts at 2025-07-01 00:00:00
+2026-04-15 11:10:40,038 - freqtrade.data.history.datahandlers.idatahandler - WARNING - ADA/USDT, spot, 5m, data ends at 2026-04-11 01:30:00
+2026-04-15 11:10:40,066 - freqtrade.optimize.backtesting - INFO - Loading data from 2025-06-30 21:30:00 up to 2026-04-11 01:30:00 (284 days).
+2026-04-15 11:10:40,754 - freqtrade.optimize.backtesting - INFO - Dataload complete. Calculating indicators
+2026-04-15 11:10:40,755 - freqtrade.optimize.backtesting - INFO - Running backtesting for Strategy MohsBaseline
+2026-04-15 11:10:40,755 - freqtrade.strategy.hyper - INFO - No params for buy found, using default values.
+2026-04-15 11:10:40,755 - freqtrade.strategy.hyper - INFO - Strategy Parameter(default): buy_rsi = 30
+2026-04-15 11:10:40,756 - freqtrade.strategy.hyper - INFO - No params for sell found, using default values.
+2026-04-15 11:10:40,756 - freqtrade.strategy.hyper - INFO - Strategy Parameter(default): sell_rsi = 70
+2026-04-15 11:10:40,868 - freqtrade.optimize.backtesting - INFO - Backtesting with data from 2025-07-01 00:00:00 up to 2026-04-11 01:30:00 (284 days).
+T:\Optimizer\.venv\Lib\site-packages\freqtrade\data\metrics.py:77: FutureWarning: The default fill_method='pad' in DataFrame.pct_change is deprecated and will be removed in a future version. Either fill in any non-leading NA values prior to calling pct_change or specify 'fill_method=None' to not fill NA values.
+  rel_mean = df_comb.pct_change().mean(axis=1).fillna(0).cumsum()
+2026-04-15 11:10:43,132 - freqtrade.misc - INFO - dumping json to "T:\Optimizer\user_data\backtest_results\MohsBaseline\backtest-result-2026-04-15_11-10-43.meta.json"
+Result for strategy MohsBaseline
+                                              BACKTESTING REPORT                                               
++-------------------------------------------------------------------------------------------------------------+
+|     Pair | Trades | Avg Profit % | Tot Profit USDT | Tot Profit % |   Avg Duration |  Win  Draw  Loss  Win% |
+|----------+--------+--------------+-----------------+--------------+----------------+------------------------|
+| ETH/USDT |     95 |        -0.02 |         -10.605 |       -10.61 | 1 day, 5:47:00 |   85     0    10  89.5 |
+| ADA/USDT |     97 |        -0.41 |         -31.854 |       -31.85 |       18:02:00 |   84     0    13  86.6 |
+|    TOTAL |    192 |        -0.22 |         -42.459 |       -42.46 |       23:51:00 |  169     0    23  88.0 |
++-------------------------------------------------------------------------------------------------------------+
+                                         LEFT OPEN TRADES REPORT                                          
++--------------------------------------------------------------------------------------------------------+
+|  Pair | Trades | Avg Profit % | Tot Profit USDT | Tot Profit % | Avg Duration |  Win  Draw  Loss  Win% |
+|-------+--------+--------------+-----------------+--------------+--------------+------------------------|
+| TOTAL |      0 |          0.0 |           0.000 |          0.0 |         0:00 |    0     0     0     0 |
++--------------------------------------------------------------------------------------------------------+
+                                                ENTER TAG STATS                                                
++-------------------------------------------------------------------------------------------------------------+
+| Enter Tag | Entries | Avg Profit % | Tot Profit USDT | Tot Profit % | Avg Duration |  Win  Draw  Loss  Win% |
+|-----------+---------+--------------+-----------------+--------------+--------------+------------------------|
+|     OTHER |     192 |        -0.22 |         -42.459 |       -42.46 |     23:51:00 |  169     0    23  88.0 |
+|     TOTAL |     192 |        -0.22 |         -42.459 |       -42.46 |     23:51:00 |  169     0    23  88.0 |
++-------------------------------------------------------------------------------------------------------------+
+                                                 EXIT REASON STATS                                                 
++-----------------------------------------------------------------------------------------------------------------+
+| Exit Reason | Exits | Avg Profit % | Tot Profit USDT | Tot Profit % |     Avg Duration |  Win  Draw  Loss  Win% |
+|-------------+-------+--------------+-----------------+--------------+------------------+------------------------|
+|         roi |   169 |         1.08 |         161.228 |       161.23 |         17:23:00 |  169     0     0   100 |
+| exit_signal |     1 |        -1.43 |          -1.725 |        -1.73 | 2 days, 17:50:00 |    0     0     1     0 |
+|   stop_loss |    22 |       -10.17 |        -201.962 |      -201.96 | 2 days, 23:35:00 |    0     0    22     0 |
+|       TOTAL |   192 |        -0.22 |         -42.459 |       -42.46 |         23:51:00 |  169     0    23  88.0 |
++-----------------------------------------------------------------------------------------------------------------+
+                                                        MIXED TAG STATS                                                         
++------------------------------------------------------------------------------------------------------------------------------+
+| Enter Tag | Exit Reason | Trades | Avg Profit % | Tot Profit USDT | Tot Profit % |     Avg Duration |  Win  Draw  Loss  Win% |
+|-----------+-------------+--------+--------------+-----------------+--------------+------------------+------------------------|
+|           |         roi |    169 |         1.08 |         161.228 |       161.23 |         17:23:00 |  169     0     0   100 |
+|           | exit_signal |      1 |        -1.43 |          -1.725 |        -1.73 | 2 days, 17:50:00 |    0     0     1     0 |
+|           |   stop_loss |     22 |       -10.17 |        -201.962 |      -201.96 | 2 days, 23:35:00 |    0     0    22     0 |
+|     TOTAL |             |    192 |        -0.22 |         -42.459 |       -42.46 |         23:51:00 |  169     0    23  88.0 |
++------------------------------------------------------------------------------------------------------------------------------+
+                         SUMMARY METRICS                          
++----------------------------------------------------------------+
+| Metric                        | Value                          |
+|-------------------------------+--------------------------------|
+| Backtesting from              | 2025-07-01 00:00:00            |
+| Backtesting to                | 2026-04-11 01:30:00            |
+| Trading Mode                  | Spot                           |
+| Max open trades               | 1                              |
+|                               |                                |
+| Total/Daily Avg Trades        | 192 / 0.68                     |
+| Starting balance              | 100 USDT                       |
+| Final balance                 | 57.541 USDT                    |
+| Absolute profit               | -42.459 USDT                   |
+| Total profit %                | -42.46%                        |
+| CAGR %                        | -50.85%                        |
+| Sortino                       | -1.24                          |
+| Sharpe                        | -0.86                          |
+| Calmar                        | -5.15                          |
+| SQN                           | -0.93                          |
+| Profit factor                 | 0.79                           |
+| Expectancy (Ratio)            | -0.22 (-0.02)                  |
+| Avg. daily profit             | -0.15 USDT                     |
+| Avg. stake amount             | 88.183 USDT                    |
+| Total trade volume            | 33887.648 USDT                 |
+|                               |                                |
+| Best Pair                     | ETH/USDT -10.61%               |
+| Worst Pair                    | ADA/USDT -31.85%               |
+| Best trade                    | ETH/USDT 4.00%                 |
+| Worst trade                   | ADA/USDT -10.18%               |
+| Best day                      | 2.663 USDT                     |
+| Worst day                     | -14.136 USDT                   |
+| Days win/draw/lose            | 120 / 140 / 22                 |
+| Min/Max/Avg. Duration Winners | 0d 00:00 / 7d 08:35 / 0d 17:23 |
+| Min/Max/Avg. Duration Losers  | 0d 05:10 / 8d 13:55 / 2d 23:20 |
+| Max Consecutive Wins / Loss   | 20 / 2                         |
+| Rejected Entry signals        | 526                            |
+| Entry/Exit Timeouts           | 0 / 0                          |
+|                               |                                |
+| Min balance                   | 54.218 USDT                    |
+| Max balance                   | 121.718 USDT                   |
+| Max % of account underwater   | 55.46%                         |
+| Absolute drawdown             | 67.5 USDT (55.46%)             |
+| Drawdown duration             | 226 days 08:40:00              |
+| Profit at drawdown start      | 21.718 USDT                    |
+| Profit at drawdown end        | -45.782 USDT                   |
+| Drawdown start                | 2025-08-15 14:05:00            |
+| Drawdown end                  | 2026-03-29 22:45:00            |
+| Market change                 | -33.89%                        |
++----------------------------------------------------------------+
+
+Backtested 2025-07-01 00:00:00 -> 2026-04-11 01:30:00 | Max open trades : 1
+                                                          STRATEGY SUMMARY                                                           
++-----------------------------------------------------------------------------------------------------------------------------------+
+|     Strategy | Trades | Avg Profit % | Tot Profit USDT | Tot Profit % | Avg Duration |  Win  Draw  Loss  Win% |          Drawdown |
+|--------------+--------+--------------+-----------------+--------------+--------------+------------------------+-------------------|
+| MohsBaseline |    192 |        -0.22 |         -42.459 |       -42.46 |     23:51:00 |  169     0    23  88.0 | 67.5 USDT  55.46% |
++-----------------------------------------------------------------------------------------------------------------------------------+

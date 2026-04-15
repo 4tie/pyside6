@@ -1,0 +1,64 @@
+$ T:\Optimizer\.venv\Scripts\freqtrade.exe backtesting --strategy MultiMa --config T:\Optimizer\user_data\config.json --strategy-path T:\Optimizer\data\backtest_runs\bt-60dadbf4\workspace\strategies --timeframe 5m --pairs BTC/USDT --dry-run-wallet 100.0 --max-open-trades 1 --export trades --backtest-directory T:\Optimizer\user_data\backtest_results\MultiMa --notes bt-60dadbf4 --cache none
+
+2026-04-11 09:43:37,390 - freqtrade - INFO - freqtrade 2026.3
+2026-04-11 09:43:38,673 - freqtrade.configuration.load_config - INFO - Using config: T:\Optimizer\user_data\config.json ...
+2026-04-11 09:43:38,674 - freqtrade.loggers - INFO - Enabling colorized output.
+2026-04-11 09:43:38,675 - freqtrade.loggers - INFO - Logfile configured
+2026-04-11 09:43:38,675 - freqtrade.loggers - INFO - Verbosity set to 0
+2026-04-11 09:43:38,675 - freqtrade.configuration.configuration - INFO - Using additional Strategy lookup path: T:\Optimizer\data\backtest_runs\bt-60dadbf4\workspace\strategies
+2026-04-11 09:43:38,676 - freqtrade.configuration.configuration - WARNING - `force_entry_enable` RPC message enabled.
+2026-04-11 09:43:38,676 - freqtrade.configuration.configuration - INFO - Parameter -i/--timeframe detected ... Using timeframe: 5m ...
+2026-04-11 09:43:38,676 - freqtrade.configuration.configuration - INFO - Parameter --max-open-trades detected, overriding max_open_trades to: 1 ...
+2026-04-11 09:43:38,676 - freqtrade.configuration.configuration - INFO - Parameter --dry-run-wallet detected, overriding dry_run_wallet to: 100.0 ...
+2026-04-11 09:43:38,677 - freqtrade.configuration.configuration - INFO - Using user-data directory: T:\Optimizer\user_data ...
+2026-04-11 09:43:38,677 - freqtrade.configuration.configuration - INFO - Using data directory: T:\Optimizer\user_data\data\binance ...
+2026-04-11 09:43:38,677 - freqtrade.configuration.configuration - INFO - Using T:\Optimizer\user_data\backtest_results\MultiMa as backtest directory ...
+2026-04-11 09:43:38,677 - freqtrade.configuration.configuration - INFO - Parameter --export detected: trades ...
+2026-04-11 09:43:38,677 - freqtrade.configuration.configuration - INFO - Parameter --cache=none detected ...
+2026-04-11 09:43:38,678 - freqtrade.configuration.configuration - INFO - Parameter --notes detected: bt-60dadbf4 ...
+2026-04-11 09:43:38,678 - freqtrade.configuration.configuration - INFO - Using pairs ['BTC/USDT']
+2026-04-11 09:43:38,678 - freqtrade.exchange.check_exchange - INFO - Checking exchange...
+2026-04-11 09:43:38,683 - freqtrade.exchange.check_exchange - INFO - Exchange "binance" is officially supported by the Freqtrade development team.
+2026-04-11 09:43:38,683 - freqtrade.configuration.config_validation - INFO - Validating configuration ...
+2026-04-11 09:43:38,684 - freqtrade.commands.optimize_commands - INFO - Starting freqtrade in Backtesting mode
+2026-04-11 09:43:38,685 - freqtrade.exchange.exchange - INFO - Instance is running with dry_run enabled
+2026-04-11 09:43:38,686 - freqtrade.exchange.exchange - INFO - Using CCXT 4.5.47
+2026-04-11 09:43:38,686 - freqtrade.exchange.exchange - INFO - Applying additional ccxt config: {'enableRateLimit': True, 'timeout': 120000}
+2026-04-11 09:43:38,690 - freqtrade.exchange.exchange - INFO - Applying additional ccxt config: {'enableRateLimit': True, 'timeout': 120000}
+2026-04-11 09:43:38,694 - freqtrade.exchange.exchange - INFO - Using Exchange "Binance"
+2026-04-11 09:43:39,827 - freqtrade.resolvers.exchange_resolver - INFO - Using resolved exchange 'Binance'...
+2026-04-11 09:43:39,840 - freqtrade.resolvers.iresolver - INFO - Using resolved strategy MultiMa from 'T:\Optimizer\data\backtest_runs\bt-60dadbf4\workspace\strategies\MultiMa.py'...
+2026-04-11 09:43:39,841 - freqtrade.strategy.hyper - INFO - Found no parameter file.
+2026-04-11 09:43:39,842 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'timeframe' with value from the configuration: 5m.
+2026-04-11 09:43:39,842 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'stake_currency' with value from the configuration: USDT.
+2026-04-11 09:43:39,842 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'stake_amount' with value from the configuration: unlimited.
+2026-04-11 09:43:39,842 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'use_exit_signal' with value from the configuration: True.
+2026-04-11 09:43:39,842 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'max_open_trades' with value from the configuration: 1.
+2026-04-11 09:43:39,843 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using minimal_roi: {'0': 0.523, '1553': 0.123, '2332': 0.076, '3169': 0}
+2026-04-11 09:43:39,843 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using timeframe: 5m
+2026-04-11 09:43:39,843 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using stoploss: -0.345
+2026-04-11 09:43:39,843 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using trailing_stop: False
+2026-04-11 09:43:39,843 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using trailing_stop_positive_offset: 0.0
+2026-04-11 09:43:39,843 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using trailing_only_offset_is_reached: False
+2026-04-11 09:43:39,844 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using use_custom_stoploss: False
+2026-04-11 09:43:39,844 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using process_only_new_candles: True
+2026-04-11 09:43:39,844 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using order_types: {'entry': 'limit', 'exit': 'limit', 'stoploss': 'limit', 'stoploss_on_exchange': False, 
+'stoploss_on_exchange_interval': 60}
+2026-04-11 09:43:39,844 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using order_time_in_force: {'entry': 'GTC', 'exit': 'GTC'}
+2026-04-11 09:43:39,845 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using stake_currency: USDT
+2026-04-11 09:43:39,845 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using stake_amount: unlimited
+2026-04-11 09:43:39,845 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using startup_candle_count: 0
+2026-04-11 09:43:39,845 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using use_exit_signal: True
+2026-04-11 09:43:39,845 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using exit_profit_only: False
+2026-04-11 09:43:39,845 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using ignore_roi_if_entry_signal: False
+2026-04-11 09:43:39,846 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using exit_profit_offset: 0.0
+2026-04-11 09:43:39,846 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using disable_dataframe_checks: False
+2026-04-11 09:43:39,846 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using ignore_buying_expired_candle_after: 0
+2026-04-11 09:43:39,846 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using position_adjustment_enable: False
+2026-04-11 09:43:39,846 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using max_entry_position_adjustment: -1
+2026-04-11 09:43:39,846 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using max_open_trades: 1
+2026-04-11 09:43:39,847 - freqtrade.configuration.config_validation - INFO - Validating configuration ...
+2026-04-11 09:43:39,855 - freqtrade.resolvers.iresolver - INFO - Using resolved pairlist StaticPairList from 'T:\Optimizer\.venv\Lib\site-packages\freqtrade\plugins\pairlist\StaticPairList.py'...
+2026-04-11 09:43:39,860 - freqtrade.optimize.backtesting - INFO - Using fee 0.1000% - worst case fee from exchange (lowest tier).
+2026-04-11 09:43:39,863 - freqtrade.data.history.datahandlers.idatahandler - WARNING - No history for BTC/USDT, spot, 5m found. Use `freqtrade download-data` to download the data
+2026-04-11 09:43:39,863 - freqtrade - ERROR - No data found. Terminating.

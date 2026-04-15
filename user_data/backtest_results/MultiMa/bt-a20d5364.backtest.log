@@ -1,0 +1,37 @@
+$ T:\Optimizer\.venv\Scripts\freqtrade.exe backtesting --strategy MultiMa --config T:\Optimizer\user_data\config.json --config T:\Optimizer\data\backtest_runs\bt-a20d5364\workspace\config.version.json --strategy-path T:\Optimizer\data\backtest_runs\bt-a20d5364\workspace\strategies --timeframe 5m --timerange 20250101-20260410 --pairs ETH/USDT BNB/USDT DOGE/USDT SOL/USDT XRP/USDT --dry-run-wallet 500.0 --max-open-trades 5 --export trades --backtest-directory T:\Optimizer\user_data\backtest_results\MultiMa --notes bt-a20d5364 --cache none
+
+Fatal Python error: init_import_site: Failed to import the site module
+Python runtime state: initialized
+Traceback (most recent call last):
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176, in exec_module
+  File "<frozen site>", line 636, in <module>
+  File "<frozen site>", line 629, in main
+  File "<frozen site>", line 568, in execsitecustomize
+  File "T:\Optimizer\sitecustomize.py", line 17, in <module>
+    import aiohttp.connector
+  File "T:\Optimizer\.venv\Lib\site-packages\aiohttp\__init__.py", line 6, in <module>
+    from .client import (
+  File "T:\Optimizer\.venv\Lib\site-packages\aiohttp\client.py", line 3, in <module>
+    import asyncio
+  File "C:\Users\M4tie\AppData\Local\Programs\Python312\Lib\asyncio\__init__.py", line 8, in <module>
+    from .base_events import *
+  File "C:\Users\M4tie\AppData\Local\Programs\Python312\Lib\asyncio\base_events.py", line 39, in <module>
+    from . import coroutines
+  File "C:\Users\M4tie\AppData\Local\Programs\Python312\Lib\asyncio\coroutines.py", line 4, in <module>
+    import inspect
+  File "C:\Users\M4tie\AppData\Local\Programs\Python312\Lib\inspect.py", line 146, in <module>
+    import dis
+  File "C:\Users\M4tie\AppData\Local\Programs\Python312\Lib\dis.py", line 8, in <module>
+    from opcode import *
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 1128, in get_code
+  File "<frozen importlib._bootstrap_external>", line 757, in _compile_bytecode
+KeyboardInterrupt
+
+Extension modules: multidict._multidict (total: 1)
