@@ -3,6 +3,19 @@ from typing import Optional
 from pathlib import Path
 
 
+class DownloadPreferences(BaseModel):
+    """Download data user preferences."""
+
+    default_timeframe: str = Field("5m", description="Default timeframe")
+    default_timerange: str = Field("", description="Default timerange")
+    default_pairs: str = Field("", description="Comma-separated pairs")
+    paired_favorites: list[str] = Field(
+        default_factory=lambda: ["BTC/USDT", "ETH/USDT", "ADA/USDT"],
+        description="Favorite pairs",
+    )
+    last_timerange_preset: str = Field("30d", description="Last used timerange preset")
+
+
 class BacktestPreferences(BaseModel):
     """Backtest-specific user preferences."""
 
@@ -48,6 +61,9 @@ class AppSettings(BaseModel):
     )
     backtest_preferences: BacktestPreferences = Field(
         default_factory=BacktestPreferences, description="Backtest UI preferences"
+    )
+    download_preferences: DownloadPreferences = Field(
+        default_factory=DownloadPreferences, description="Download data UI preferences"
     )
 
     @field_validator(

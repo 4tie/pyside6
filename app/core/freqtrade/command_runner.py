@@ -52,7 +52,74 @@ class CommandRunner:
             )
 
     @staticmethod
-    def build_version_check_command(settings: AppSettings) -> List[str]:
+    def build_download_command(
+        settings: AppSettings,
+        timeframe: str,
+        timerange: Optional[str] = None,
+        pairs: Optional[List[str]] = None,
+    ) -> "BacktestCommand":
+        """Build a freqtrade download-data command.
+
+        Args:
+            settings: AppSettings with paths configured
+            timeframe: Timeframe like "5m", "1h"
+            timerange: Optional timerange like "20240101-20241231"
+            pairs: Optional list of pairs
+
+        Returns:
+            BacktestCommand with program, args, cwd
+
+        Raises:
+            ValueError: If settings are invalid
+            FileNotFoundError: If config file not found
+        """
+        if not settings.python_executable:
+            raise ValueError("python_executable is not configured in Settings")
+        if not settings.user_data_path:
+            raise ValueError("user_data_path is not configured in Settings")
+
+        user_data = Path(settings.user_data_path).expanduser().resolve()
+
+        config_file: Optional[Path] = None
+        if settings.project_path:
+            candidate = Path(settings.project_path) / "config.json"
+            if candidate.exists():
+                config_file = candidate
+        if config_file is None:
+            candidate = user_data / "config.json"
+            if candidate.exists():
+                config_file = candidate
+        if config_file is None:
+            raise FileNotFoundError(
+                f"No config file found. Checked: {user_data / 'config.json'}"
+            )
+
+        args = [
+            "-m", "freqtrade", "download-data",
+            "--config", str(config_file),
+            "--timeframe", timeframe,
+            "--prepend",
+        ]
+
+        if timerange:
+            args.extend(["--timerange", timerange])
+
+        if pairs:
+            args.append("-p")
+            args.extend(pairs)
+
+        cwd = str(settings.project_path or user_data)
+
+        return BacktestCommand(
+            program=settings.python_executable,
+            args=args,
+            cwd=cwd,
+            export_dir=str(user_data / "data"),
+            export_zip="",
+            strategy_file="",
+            config_file=str(config_file),
+        )
+
         """Build command to check freqtrade version."""
         return CommandRunner.build_freqtrade_command("--version", settings=settings)
 
