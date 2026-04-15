@@ -5,20 +5,24 @@ from PySide6.QtCore import Qt
 
 from app.app_state.settings_state import SettingsState
 from app.ui.pages.settings_page import SettingsPage
+from app.ui.pages.backtest_page import BacktestPage
 from app.ui.widgets.terminal_widget import TerminalWidget
 
 
 class MainWindow(QMainWindow):
     """Main application window."""
 
-    def __init__(self):
+    def __init__(self, settings_state: SettingsState = None):
         super().__init__()
         self.setWindowTitle("Freqtrade GUI")
-        self.setGeometry(100, 100, 1200, 800)
+        self.setGeometry(100, 100, 1400, 900)
 
         # Initialize state
-        self.settings_state = SettingsState()
-        self.settings_state.load_settings()
+        if settings_state is None:
+            settings_state = SettingsState()
+            settings_state.load_settings()
+
+        self.settings_state = settings_state
 
         # Create central widget with tabs
         self.central_widget = QWidget()
@@ -33,8 +37,11 @@ class MainWindow(QMainWindow):
         self.settings_page = SettingsPage(self.settings_state)
         self.tabs.addTab(self.settings_page, "Settings")
 
-        # Terminal tab
-        self.terminal_widget = TerminalWidget()
+        # Backtest tab
+        self.backtest_page = BacktestPage(self.settings_state)
+        self.tabs.addTab(self.backtest_page, "Backtest")
+
+        # Terminal tab (for ad-hoc testing)
         terminal_page = self._create_terminal_tab()
         self.tabs.addTab(terminal_page, "Terminal")
 
@@ -65,6 +72,7 @@ class MainWindow(QMainWindow):
         tab_layout.addLayout(button_layout)
 
         # Terminal widget
+        self.terminal_widget = TerminalWidget()
         tab_layout.addWidget(self.terminal_widget)
 
         tab_widget.setLayout(tab_layout)
