@@ -14,7 +14,7 @@ class SettingsService:
     """Manages application settings persistence and resolution."""
 
     def __init__(self, settings_file: Optional[str] = None):
-        self.settings_file = settings_file or Path.home() / ".freqtrade_gui" / "settings.json"
+        self.settings_file = settings_file or Path(__file__).parents[3] / "data" / "settings.json"
         self.settings_file = Path(self.settings_file)
         self.settings: Optional[AppSettings] = None
 

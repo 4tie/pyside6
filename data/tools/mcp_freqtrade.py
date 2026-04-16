@@ -10,7 +10,7 @@ _ROOT = Path(__file__).parent.parent
 
 
 def _settings() -> dict:
-    p = Path.home() / ".freqtrade_gui" / "settings.json"
+    p = Path(__file__).parents[2] / "data" / "settings.json"
     return json.loads(p.read_text(encoding="utf8")) if p.exists() else {}
 
 
