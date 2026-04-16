@@ -1,8 +1,8 @@
 {
   "INTERFACE_VERSION": 3,
   "buy_params": {
-    "buy_ma_count": 5,
-    "buy_ma_gap": 13
+    "buy_ma_count": 6,
+    "buy_ma_gap": 14
   },
   "sell_params": {
     "sell_ma_count": 14,
@@ -21,8 +21,8 @@
   "timeframe": "4h",
   "count_max": 20,
   "gap_max": 100,
-  "buy_ma_count": 5,
-  "buy_ma_gap": 13,
+  "buy_ma_count": 6,
+  "buy_ma_gap": 14,
   "sell_ma_count": 14,
   "sell_ma_gap": 66
 }
