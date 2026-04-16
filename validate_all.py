@@ -107,7 +107,6 @@ if test_strategy:
         check("program file exists",            Path(cmd.program).exists())
         check("strategy_file ends with .py",    cmd.strategy_file.endswith(".py"))
         check("strategy_file exists",           Path(cmd.strategy_file).exists(), cmd.strategy_file)
-        check("config_file exists",             Path(cmd.config_file).exists(), cmd.config_file)
         check("export_dir is under backtest_results", "backtest_results" in cmd.export_dir)
         check("export_zip contains strategy name",    test_strategy in cmd.export_zip)
         check("export_zip ends with .backtest.zip",   cmd.export_zip.endswith(".backtest.zip"))
@@ -115,7 +114,6 @@ if test_strategy:
         check("--user-data-dir in args",        "--user-data-dir" in cmd.args)
         check("--strategy-path in args",        "--strategy-path" in cmd.args)
         check("--strategy in args",             "--strategy" in cmd.args)
-        check("--config in args",               "--config" in cmd.args)
         check("--timeframe in args",            "--timeframe" in cmd.args)
         check("--export trades in args",        "trades" in cmd.args)
         check("--export-filename in args",      "--export-filename" in cmd.args)
@@ -127,7 +125,7 @@ if test_strategy:
               f"freqtrade appears {cmd.args.count('freqtrade')} times")
 
         # Validate all path args point to existing locations
-        for flag in ["--user-data-dir", "--strategy-path", "--config"]:
+        for flag in ["--user-data-dir", "--strategy-path"]:
             idx = cmd.args.index(flag)
             path_val = cmd.args[idx + 1]
             check(f"{flag} path exists", Path(path_val).exists(), path_val)
@@ -148,10 +146,9 @@ try:
     )
     check("dd program is python_executable",  dd_cmd.program == settings.python_executable)
     check("dd program exists",                Path(dd_cmd.program).exists())
-    check("dd config_file exists",            Path(dd_cmd.config_file).exists(), dd_cmd.config_file)
     check("dd cwd exists",                    Path(dd_cmd.cwd).exists(), dd_cmd.cwd)
     check("download-data in args",            "download-data" in dd_cmd.args)
-    check("--config in dd args",              "--config" in dd_cmd.args)
+    check("--user-data-dir in dd args",       "--user-data-dir" in dd_cmd.args)
     check("--timeframe in dd args",           "--timeframe" in dd_cmd.args)
     check("--prepend in dd args",             "--prepend" in dd_cmd.args)
     check("-p in dd args",                    "-p" in dd_cmd.args)

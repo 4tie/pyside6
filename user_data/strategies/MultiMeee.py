@@ -2,100 +2,157 @@
 # Author: @Mablue (Masoud Azizi)
 # github: https://github.com/mablue/
 
-# --- Do not remove these libs ---
+import json
+import os
+from functools import reduce
+
+import pandas as pd
+import talib.abstract as ta
 from freqtrade.strategy import IntParameter, IStrategy
 from pandas import DataFrame
 
-# --------------------------------
 
-# Add your lib to import here
+def load_config_params():
+    config_path = os.path.join(
+        os.path.dirname(__file__), "config_MultiMeee.json"
+    )
+    default_params = {
+        "buy_ma_count": 5,
+        "buy_ma_gap": 13,
+        "sell_ma_count": 14,
+        "sell_ma_gap": 66,
+        "minimal_roi": {"0": 0.523, "1553": 0.123, "2332": 0.076, "3169": 0},
+        "stoploss": -0.345,
+        "trailing_stop": False,
+        "trailing_stop_positive_offset": 0.0,
+        "trailing_only_offset_is_reached": False,
+        "timeframe": "4h",
+        "count_max": 20,
+        "gap_max": 100,
+    }
+    try:
+        with open(config_path, "r") as f:
+            config = json.load(f)
+            return {
+                "buy_ma_count": config.get(
+                    "buy_ma_count", default_params["buy_ma_count"]
+                ),
+                "buy_ma_gap": config.get("buy_ma_gap", default_params["buy_ma_gap"]),
+                "sell_ma_count": config.get(
+                    "sell_ma_count", default_params["sell_ma_count"]
+                ),
+                "sell_ma_gap": config.get("sell_ma_gap", default_params["sell_ma_gap"]),
+                "minimal_roi": config.get("minimal_roi", default_params["minimal_roi"]),
+                "stoploss": config.get("stoploss", default_params["stoploss"]),
+                "trailing_stop": config.get(
+                    "trailing_stop", default_params["trailing_stop"]
+                ),
+                "trailing_stop_positive_offset": config.get(
+                    "trailing_stop_positive_offset",
+                    default_params["trailing_stop_positive_offset"],
+                ),
+                "trailing_only_offset_is_reached": config.get(
+                    "trailing_only_offset_is_reached",
+                    default_params["trailing_only_offset_is_reached"],
+                ),
+                "timeframe": config.get("timeframe", default_params["timeframe"]),
+                "count_max": config.get("count_max", default_params["count_max"]),
+                "gap_max": config.get("gap_max", default_params["gap_max"]),
+            }
+    except (FileNotFoundError, json.JSONDecodeError):
+        return default_params
 
-import talib.abstract as ta
-import freqtrade.vendor.qtpylib.indicators as qtpylib
-from functools import reduce
-import pandas as pd
+
+CONFIG_PARAMS = load_config_params()
 
 
 class MultiMeee(IStrategy):
-    # 111/2000:     18 trades. 12/4/2 Wins/Draws/Losses. Avg profit   9.72%. Median profit   3.01%. Total profit  733.01234143 USDT (  73.30%). Avg duration 2 days, 18:40:00 min. Objective: 1.67048
-
-    INTERFACE_VERSION: int = 3
-    # Buy hyperspace params:
+    INTERFACE_VERSION: int = CONFIG_PARAMS.get("INTERFACE_VERSION", 3)
     buy_params = {
-        "buy_ma_count": 5,
-        "buy_ma_gap": 13,
+        "buy_ma_count": CONFIG_PARAMS.get("buy_ma_count", 5),
+        "buy_ma_gap": CONFIG_PARAMS.get("buy_ma_gap", 13),
     }
 
-    # Sell hyperspace params:
     sell_params = {
-        "sell_ma_count": 14,
-        "sell_ma_gap": 66,
+        "sell_ma_count": CONFIG_PARAMS.get("sell_ma_count", 14),
+        "sell_ma_gap": CONFIG_PARAMS.get("sell_ma_gap", 66),
     }
 
-    # ROI table:
-    minimal_roi = {
-        "0": 0.523,
-        "1553": 0.123,
-        "2332": 0.076,
-        "3169": 0
-    }
+    minimal_roi = CONFIG_PARAMS.get(
+        "minimal_roi", {"0": 0.523, "1553": 0.123, "2332": 0.076, "3169": 0}
+    )
 
-    # Stoploss:
-    stoploss = -0.345
+    stoploss = CONFIG_PARAMS.get("stoploss", -0.345)
 
-    # Trailing stop:
-    trailing_stop = False  # value loaded from strategy
-    trailing_stop_positive = None  # value loaded from strategy
-    trailing_stop_positive_offset = 0.0  # value loaded from strategy
-    trailing_only_offset_is_reached = False  # value loaded from strategy
+    trailing_stop = CONFIG_PARAMS.get("trailing_stop", False)
+    trailing_stop_positive = None
+    trailing_stop_positive_offset = CONFIG_PARAMS.get(
+        "trailing_stop_positive_offset", 0.0
+    )
+    trailing_only_offset_is_reached = CONFIG_PARAMS.get(
+        "trailing_only_offset_is_reached", False
+    )
 
-    # Opimal Timeframe
-    timeframe = "4h"
+    timeframe = CONFIG_PARAMS.get("timeframe", "4h")
 
-    count_max = 20
-    gap_max = 100
+    count_max = CONFIG_PARAMS.get("count_max", 20)
+    gap_max = CONFIG_PARAMS.get("gap_max", 100)
 
-    buy_ma_count = IntParameter(1, count_max, default=5, space="buy")
-    buy_ma_gap = IntParameter(1, gap_max, default=13, space="buy")
+    buy_ma_count = IntParameter(
+        1, count_max, default=CONFIG_PARAMS.get("buy_ma_count", 5), space="buy"
+    )
+    buy_ma_gap = IntParameter(
+        1, gap_max, default=CONFIG_PARAMS.get("buy_ma_gap", 13), space="buy"
+    )
 
-    sell_ma_count = IntParameter(1, count_max, default=14, space="sell")
-    sell_ma_gap = IntParameter(1, gap_max, default=66, space="sell")
+    sell_ma_count = IntParameter(
+        1, count_max, default=CONFIG_PARAMS.get("sell_ma_count", 14), space="sell"
+    )
+    sell_ma_gap = IntParameter(
+        1, gap_max, default=CONFIG_PARAMS.get("sell_ma_gap", 66), space="sell"
+    )
+
+    @staticmethod
+    def _tema_column_name(period: int) -> str:
+        return f"tema_{int(period)}"
 
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-        # Only compute TEMA periods that will actually be used in entry/exit conditions
-        # This reduces from ~1900 indicators to ~20-30, preventing OOM crashes
         needed_periods = set()
-        
-        # Buy side: periods used by populate_entry_trend
+
         for ma_count in range(self.buy_ma_count.value + 1):
             needed_periods.add(ma_count * self.buy_ma_gap.value)
-        
-        # Sell side: periods used by populate_exit_trend
+
         for ma_count in range(self.sell_ma_count.value + 1):
             needed_periods.add(ma_count * self.sell_ma_gap.value)
-        
-        # Compute only the needed TEMA indicators
+
         new_cols = {}
         for period in needed_periods:
-            if period > 1 and period not in dataframe.columns:
-                new_cols[period] = ta.TEMA(dataframe, timeperiod=int(period))
+            if period > 1:
+                col_name = self._tema_column_name(period)
+                if col_name not in dataframe.columns:
+                    new_cols[col_name] = ta.TEMA(dataframe, timeperiod=int(period))
 
         if new_cols:
-            dataframe = pd.concat([dataframe, DataFrame(new_cols, index=dataframe.index)], axis=1)
-        print(" ", metadata['pair'], end="\t\r")
+            dataframe = pd.concat(
+                [dataframe, DataFrame(new_cols, index=dataframe.index)], axis=1
+            )
 
+        print(" ", metadata["pair"], end="\t\r")
         return dataframe
 
     def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         conditions = []
-        # I used range(self.buy_ma_count.value) instade of self.buy_ma_count.range
-        # Cuz it returns range(7,8) but we need range(8) for all modes hyperopt, backtest and etc
 
         for ma_count in range(self.buy_ma_count.value):
-            key = ma_count*self.buy_ma_gap.value
-            past_key = (ma_count-1)*self.buy_ma_gap.value
-            if past_key > 1 and key in dataframe.keys() and past_key in dataframe.keys():
-                conditions.append(dataframe[key] < dataframe[past_key])
+            key_period = ma_count * self.buy_ma_gap.value
+            past_key_period = (ma_count - 1) * self.buy_ma_gap.value
+
+            if past_key_period > 1:
+                key = self._tema_column_name(key_period)
+                past_key = self._tema_column_name(past_key_period)
+
+                if key in dataframe.columns and past_key in dataframe.columns:
+                    conditions.append(dataframe[key] < dataframe[past_key])
 
         if conditions:
             dataframe.loc[reduce(lambda x, y: x & y, conditions), "enter_long"] = 1
@@ -105,10 +162,15 @@ class MultiMeee(IStrategy):
         conditions = []
 
         for ma_count in range(self.sell_ma_count.value):
-            key = ma_count*self.sell_ma_gap.value
-            past_key = (ma_count-1)*self.sell_ma_gap.value
-            if past_key > 1 and key in dataframe.keys() and past_key in dataframe.keys():
-                conditions.append(dataframe[key] > dataframe[past_key])
+            key_period = ma_count * self.sell_ma_gap.value
+            past_key_period = (ma_count - 1) * self.sell_ma_gap.value
+
+            if past_key_period > 1:
+                key = self._tema_column_name(key_period)
+                past_key = self._tema_column_name(past_key_period)
+
+                if key in dataframe.columns and past_key in dataframe.columns:
+                    conditions.append(dataframe[key] > dataframe[past_key])
 
         if conditions:
             dataframe.loc[reduce(lambda x, y: x | y, conditions), "exit_long"] = 1

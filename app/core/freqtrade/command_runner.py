@@ -9,13 +9,12 @@ from app.core.models.settings_models import AppSettings
 @dataclass
 class BacktestCommand:
     """Represents a backtest command with execution info and result paths."""
-    program: str                     # Python executable path
-    args: List[str]                  # Command arguments
-    cwd: str                         # Working directory
-    export_dir: str                  # Directory for results
-    export_zip: str                  # Full path to export zip file
-    strategy_file: str               # Full path to strategy .py file
-    config_file: str                 # Full path to config file
+    program: str        # Python executable path
+    args: List[str]     # Command arguments
+    cwd: str            # Working directory
+    export_dir: str     # Directory for results
+    export_zip: str     # Full path to export zip file
+    strategy_file: str  # Full path to strategy .py file
 
 
 class CommandRunner:
@@ -30,9 +29,9 @@ class CommandRunner:
         """Build a freqtrade command with proper fallback logic.
 
         Args:
-            *args: Freqtrade command arguments (e.g., "backtesting", "--config", "config.json")
+            *args: Freqtrade command arguments
             settings: AppSettings instance
-            use_module: Override module execution setting. If None, use settings.use_module_execution
+            use_module: Override module execution setting
 
         Returns:
             Command list ready for QProcess
@@ -40,10 +39,8 @@ class CommandRunner:
         use_module = use_module if use_module is not None else settings.use_module_execution
 
         if use_module and settings.python_executable:
-            # Preferred: python -m freqtrade
             return [settings.python_executable, "-m", "freqtrade", *args]
         elif settings.freqtrade_executable:
-            # Fallback: direct freqtrade executable
             return [settings.freqtrade_executable, *args]
         else:
             raise ValueError(
@@ -71,7 +68,6 @@ class CommandRunner:
 
         Raises:
             ValueError: If settings are invalid
-            FileNotFoundError: If config file not found
         """
         if not settings.python_executable:
             raise ValueError("python_executable is not configured in Settings")
@@ -80,23 +76,9 @@ class CommandRunner:
 
         user_data = Path(settings.user_data_path).expanduser().resolve()
 
-        config_file: Optional[Path] = None
-        if settings.project_path:
-            candidate = Path(settings.project_path) / "config.json"
-            if candidate.exists():
-                config_file = candidate
-        if config_file is None:
-            candidate = user_data / "config.json"
-            if candidate.exists():
-                config_file = candidate
-        if config_file is None:
-            raise FileNotFoundError(
-                f"No config file found. Checked: {user_data / 'config.json'}"
-            )
-
         args = [
             "-m", "freqtrade", "download-data",
-            "--config", str(config_file),
+            "--user-data-dir", str(user_data),
             "--timeframe", timeframe,
             "--prepend",
         ]
@@ -117,7 +99,6 @@ class CommandRunner:
             export_dir=str(user_data / "data"),
             export_zip="",
             strategy_file="",
-            config_file=str(config_file),
         )
 
     @staticmethod
@@ -137,7 +118,7 @@ class CommandRunner:
         max_open_trades: Optional[int] = None,
         dry_run_wallet: Optional[float] = None,
         extra_flags: Optional[List[str]] = None
-    ) -> BacktestCommand:
+    ) -> "BacktestCommand":
         """Build a backtest command with strategy validation and result export.
 
         Args:
@@ -146,8 +127,6 @@ class CommandRunner:
             timeframe: Timeframe like "5m", "1h"
             timerange: Optional timerange like "20240101-20241231"
             pairs: Optional list of pairs like ["BTC/USDT", "ETH/USDT"]
-            stake_currency: Optional stake currency
-            stake_amount: Optional stake amount
             max_open_trades: Optional max open trades limit
             dry_run_wallet: Optional dry run wallet amount
             extra_flags: Optional additional command flags
@@ -164,81 +143,40 @@ class CommandRunner:
         strategies_dir = user_data / "strategies"
         strategy_file = strategies_dir / f"{strategy_name}.py"
 
-        # Validate strategy file exists
         if not strategy_file.exists():
             raise FileNotFoundError(
-                f"Strategy file not found: {strategy_file}\n"
-                f"Available strategies directory: {strategies_dir}"
+                f"Strategy file not found: {strategy_file}"
             )
 
-        # Resolve config file (in order of preference):
-        # 1. strategies/<strategy>.json  (sidecar)
-        # 2. project_path/config.json
-        # 3. user_data/config.json
-        # NOTE: user_data/config/config_<strategy>.json is a reference copy only,
-        #       never passed as --config to Freqtrade.
-        config_file: Optional[Path] = None
-        sidecar_json = strategies_dir / f"{strategy_name}.json"
-
-        if sidecar_json.exists():
-            config_file = sidecar_json
-
-        if config_file is None and settings.project_path:
-            default_config = Path(settings.project_path) / "config.json"
-            if default_config.exists():
-                config_file = default_config
-
-        if config_file is None:
-            default_config = user_data / "config.json"
-            if default_config.exists():
-                config_file = default_config
-
-        if config_file is None or not config_file.exists():
-            raise FileNotFoundError(
-                f"No config file found for strategy '{strategy_name}'.\n"
-                f"Checked:\n"
-                f"  {sidecar_json}\n"
-                f"  {user_data / 'config.json'}"
-            )
-
-        # Create export directory
         export_dir = user_data / "backtest_results" / strategy_name
         export_dir.mkdir(parents=True, exist_ok=True)
 
-        # Generate timestamped zip filename
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         export_zip = export_dir / f"{strategy_name}_{timestamp}.backtest.zip"
 
-        # Build command arguments
         args = [
             "-m", "freqtrade", "backtesting",
             "--user-data-dir", str(user_data),
             "--strategy-path", str(strategies_dir),
             "--strategy", strategy_name,
-            "--config", str(config_file),
             "--timeframe", timeframe,
             "--export", "trades",
             "--export-filename", str(export_zip),
         ]
 
-        # Optional: timerange
         if timerange:
             args.extend(["--timerange", timerange])
 
-        # Optional: pairs
         if pairs:
             args.append("-p")
             args.extend(pairs)
 
-        # Optional: trading limits
         if max_open_trades is not None:
             args.extend(["--max-open-trades", str(max_open_trades)])
 
-        # Optional: dry run wallet
         if dry_run_wallet is not None:
             args.extend(["--dry-run-wallet", str(dry_run_wallet)])
 
-        # Optional: extra flags
         if extra_flags:
             args.extend(extra_flags)
 
@@ -251,5 +189,4 @@ class CommandRunner:
             export_dir=str(export_dir),
             export_zip=str(export_zip),
             strategy_file=str(strategy_file),
-            config_file=str(config_file),
         )

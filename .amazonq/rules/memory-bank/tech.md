@@ -1,54 +1,48 @@
 # Technology Stack
 
-## Languages and Versions
-- Python 3.10+ (uses `list[str]` built-in generics, `tuple[str, str]` return types)
+## Languages & Runtime
+- Python 3.9+ (type hints, dataclasses, pathlib used throughout)
 - No JavaScript/TypeScript — pure Python desktop app
 
 ## Core Dependencies
-| Package | Version | Purpose |
-|---|---|---|
-| PySide6 | >=6.6.0 | Qt6 GUI framework (widgets, signals, QProcess) |
-| pydantic | >=2.0.0 | Data models, validation, settings serialization |
-| freqtrade | latest | Algorithmic trading framework (invoked as subprocess) |
+| Package | Version | Role |
+|---------|---------|------|
+| PySide6 | >=6.6.0 | Qt6 bindings: QApplication, QMainWindow, QProcess, QObject, Signal |
+| pydantic | >=2.0.0 | Data models, validation, JSON serialization (`model_dump()`, `field_validator`) |
+| freqtrade | latest | Crypto trading bot (invoked as subprocess via `python -m freqtrade`) |
 
-## Key Qt Modules Used
-- `PySide6.QtWidgets` — QMainWindow, QTabWidget, QProcess, dialogs, form widgets
-- `PySide6.QtCore` — QObject, Signal, QProcess, QProcessEnvironment
-- `PySide6.QtGui` — (minimal, for terminal coloring)
+## Key Qt Components Used
+- `QObject` + `Signal` — reactive state management in `SettingsState`
+- `QProcess` — non-blocking subprocess execution with live stdout/stderr streaming
+- `QMainWindow` + `QTabWidget` — tab-based main window
+- `QDialog` — pairs selector dialog
+- `QWidget` — base for all pages and widgets
 
-## Settings Persistence
-- Settings stored at `~/.freqtrade_gui/settings.json`
-- Serialized via `pydantic model.model_dump()` → `json.dump(..., indent=2)`
-- Deserialized via `AppSettings(**data)` with automatic path normalization via `@field_validator`
-
-## Process Execution
-- Freqtrade is invoked as a subprocess via `QProcess` (not Python import)
-- Preferred invocation: `python -m freqtrade <subcommand>` (controlled by `use_module_execution` flag)
-- Fallback: direct `freqtrade` executable path
-- stdout/stderr streamed via `readyReadStandardOutput` / `readyReadStandardError` signals
-- Process termination: `terminate()` → wait 1s → `kill()`
-
-## Linting / Formatting
-- Ruff (`.ruff_cache/` present, version 0.15.10)
-- No pyproject.toml or setup.cfg found — Ruff likely configured via `ruff.toml` or defaults
-
-## Development Commands
+## Build & Run
 ```bash
 # Install dependencies
 pip install -r requirements.txt
 
-# Run the application
+# Run application
 python main.py
-
-# Lint with ruff
-ruff check .
-ruff format .
 ```
 
-## File Conventions
-- Settings JSON: `~/.freqtrade_gui/settings.json`
-- Strategy files: `user_data/strategies/<StrategyName>.py`
-- Strategy sidecar config: `user_data/strategies/<StrategyName>.json` (optional, takes priority)
-- Default config: `user_data/config.json`
-- Backtest results: `user_data/backtest_results/<StrategyName>/`
-- Downloaded data: `user_data/data/binance/`
+## Linting
+- `ruff` (cache present at `.ruff_cache/`) — fast Python linter/formatter
+
+## Settings Storage
+- `~/.freqtrade_gui/settings.json` — user settings persisted as JSON
+
+## Logging
+- File logger at `{user_data_path}/logs/app.log`
+- Console handler for development
+- Logger per module via `get_logger("module_name")` from `app.core.utils.app_logger`
+
+## Freqtrade Execution Strategy
+- Preferred: `python -m freqtrade <subcommand>` (uses venv Python)
+- Fallback: direct `freqtrade` executable from venv Scripts/bin
+- Controlled by `AppSettings.use_module_execution` (default: `True`)
+
+## Platform Notes
+- Windows path handling: `os.name == "nt"` checks for `Scripts/python.exe` vs `bin/python`
+- Path normalization via `Path.expanduser().resolve()` on all path fields

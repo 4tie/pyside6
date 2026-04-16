@@ -44,7 +44,6 @@ class BacktestPage(QWidget):
         self.process_service = ProcessService()
         self.last_export_path: Optional[str] = None
         self._last_export_dir: Optional[str] = None
-        self._last_config_file: Optional[str] = None
         self.selected_pairs: List[str] = []
         self._initializing: bool = True
 
@@ -286,7 +285,6 @@ class BacktestPage(QWidget):
                 RunStore.save(
                     results=results,
                     strategy_results_dir=strategy_results_dir,
-                    config_path=self._last_config_file,
                 )
                 imported += 1
             except Exception as e:
@@ -495,10 +493,9 @@ class BacktestPage(QWidget):
 
             self.last_export_path = cmd.export_zip
             self._last_export_dir = cmd.export_dir
-            self._last_config_file = cmd.config_file
             command_string = f"{cmd.program} {' '.join(cmd.args)}"
-            _log.info("Command built | strategy=%s | config=%s | export=%s",
-                      strategy, cmd.config_file, cmd.export_zip)
+            _log.info("Command built | strategy=%s | export=%s",
+                      strategy, cmd.export_zip)
 
         except (ValueError, FileNotFoundError) as e:
             QMessageBox.critical(self, "Backtest Setup Failed", str(e))
@@ -512,7 +509,6 @@ class BacktestPage(QWidget):
         self.terminal.append_output(f"$ {command_string}\n")
         self.terminal.append_output(
             f"Strategy: {cmd.strategy_file}\n"
-            f"Config: {cmd.config_file}\n"
             f"Export: {cmd.export_zip}\n\n"
         )
 
@@ -592,7 +588,6 @@ class BacktestPage(QWidget):
                 run_dir = RunStore.save(
                     results=results,
                     strategy_results_dir=strategy_results_dir,
-                    config_path=self._last_config_file,
                 )
                 self.terminal.append_output(f"✓ Run saved → {run_dir}\n")
                 self.results_widget.display_results(results, export_dir=str(run_dir))

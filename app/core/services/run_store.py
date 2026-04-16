@@ -389,7 +389,6 @@ class RunStore:
             ├── meta.json
             ├── results.json
             ├── trades.json
-            ├── config.snapshot.json
             └── params.json
 
     Also updates user_data/backtest_results/index.json automatically.
@@ -399,7 +398,6 @@ class RunStore:
     def save(
         results: BacktestResults,
         strategy_results_dir: str,
-        config_path: Optional[str] = None,
         run_params: Optional[dict] = None,
     ) -> Path:
         """Save a backtest run to a timestamped folder and update the index.
@@ -407,7 +405,6 @@ class RunStore:
         Args:
             results: Parsed BacktestResults
             strategy_results_dir: Base dir, e.g. user_data/backtest_results/MultiMeee
-            config_path: Path to the config file used for this run (for snapshot)
             run_params: Optional strategy knobs / hyperopt params dict
 
         Returns:
@@ -427,7 +424,6 @@ class RunStore:
         RunStore._write_meta(run_dir, run_id, results)
         RunStore._write_results(run_dir, results)
         RunStore._write_trades(run_dir, results)
-        RunStore._write_config_snapshot(run_dir, config_path, results)
         RunStore._write_params(run_dir, run_params, results)
 
         backtest_results_dir = str(Path(strategy_results_dir).parent)
@@ -538,26 +534,6 @@ class RunStore:
 
         (run_dir / "trades.json").write_text(
             json.dumps(trades_out, indent=2, ensure_ascii=False), encoding="utf-8"
-        )
-
-    @staticmethod
-    def _write_config_snapshot(
-        run_dir: Path,
-        config_path: Optional[str],
-        results: BacktestResults,
-    ):
-        """Write config.snapshot.json — config used at run time."""
-        snapshot: dict = {}
-        if config_path and Path(config_path).exists():
-            try:
-                snapshot = json.loads(Path(config_path).read_text(encoding="utf-8"))
-            except Exception:
-                pass
-        s = results.summary
-        snapshot.setdefault("timeframe", s.timeframe)
-        snapshot.setdefault("dry_run_wallet", s.starting_balance)
-        (run_dir / "config.snapshot.json").write_text(
-            json.dumps(snapshot, indent=2, ensure_ascii=False), encoding="utf-8"
         )
 
     @staticmethod

@@ -2,149 +2,119 @@
 
 ## Code Quality Standards
 
-### Typing
-- Always use full type annotations on method signatures: `def build_command(self, strategy_name: str, timeframe: str, timerange: Optional[str] = None) -> BacktestCommand:`
-- Use `Optional[X]` (not `X | None`) for optional parameters — consistent throughout codebase
-- Use built-in generics for collections: `list[str]`, `tuple[str, str]` (Python 3.10+ style)
-- Import `Optional`, `List` from `typing` for function signatures; use built-in `list[str]` in Pydantic models
+### Module-level logger pattern (used in every non-trivial module)
+```python
+from app.core.utils.app_logger import get_logger
+_log = get_logger("module_name")  # private, underscore-prefixed
+```
+Log levels: `_log.debug` for data details, `_log.info` for lifecycle events, `_log.warning` for recoverable issues, `_log.error` for failures.
 
 ### Docstrings
-- Every class and public method has a docstring
-- Use Google-style docstrings with `Args:`, `Returns:`, `Raises:` sections
-- Example:
-  ```python
-  def build_command(self, strategy_name: str, timeframe: str) -> BacktestCommand:
-      """Build a backtest command.
+All public classes and methods have Google-style docstrings with Args/Returns/Raises sections. Private helpers (`_handle_stdout`, `_resolve_python_from_venv`) have one-line docstrings only.
 
-      Args:
-          strategy_name: Strategy name
-          timeframe: Timeframe (e.g., "5m", "1h")
+### Type hints
+All function signatures use full type hints including `Optional`, `List`, `Dict`, `Callable`, `tuple`. Use `from typing import ...` (not `collections.abc`).
 
-      Returns:
-          BacktestCommand with all necessary info
-
-      Raises:
-          ValueError: If settings are invalid or incomplete
-          FileNotFoundError: If strategy or config files don't exist
-      """
-  ```
-
-### Naming Conventions
-- Classes: PascalCase (`BacktestService`, `SettingsState`, `CommandRunner`)
-- Methods: snake_case; private methods prefixed with `_` (`_append_error`, `_refresh_strategies`)
-- Qt signal handlers: `_on_<event>` pattern (`_on_settings_changed`, `_on_select_pairs`, `_on_copy_command`)
-- UI init method: always named `init_ui(self)`
-- Signal connection method: always named `_connect_signals(self)`
-
-### Error Handling
-- Raise `ValueError` for configuration/input errors, `FileNotFoundError` for missing files
-- UI methods catch `(ValueError, FileNotFoundError)` and show `QMessageBox.critical()`
-- Broad `except Exception as e` used only in service-layer I/O (settings load/save) with `print(f"Failed to ...: {e}")`
-- Never silently swallow exceptions in command-building logic
+### `__init__.py` files
+All package `__init__.py` files are empty — no re-exports. Import directly from the module file.
 
 ---
 
-## Architectural Patterns
+## Structural Conventions
 
-### Service Layer Pattern
-Services are plain Python classes (not QObjects) that accept a `SettingsService` in `__init__` and expose a `build_command()` method:
+### Service classes
+- Stateless logic → `@staticmethod` methods (e.g., `CommandRunner`, `BacktestResultsService`)
+- Stateful services hold instance state and accept dependencies via `__init__` (e.g., `BacktestService(settings_service)`, `ProcessService()`)
+- Services never import UI code
+
+### Dataclasses vs Pydantic
+- `@dataclass` for internal data transfer objects (e.g., `BacktestCommand`, `BacktestTrade`, `BacktestSummary`)
+- `pydantic.BaseModel` for user-facing settings and validation (e.g., `AppSettings`, `BacktestPreferences`)
+- Pydantic models use `Field(default, description="...")` on every field
+- Path normalization via `@field_validator(..., mode="before")` with `Path.expanduser().resolve()`
+
+### Qt patterns
+- State objects extend `QObject` and declare `Signal(ModelType)` class attributes
+- UI pages receive `SettingsState` via constructor — never instantiate state themselves
+- `QProcess` is managed by `ProcessService`; UI widgets connect via callbacks (`on_output`, `on_error`, `on_finished`)
+- `MainWindow` wires signals to slots in `__init__` (e.g., `settings_state.settings_saved.connect(self._on_settings_saved)`)
+
+### Command building
+Always return a `BacktestCommand` dataclass (never a raw list) from service-level builders. The dataclass carries `program`, `args`, `cwd`, `export_dir`, `export_zip`, `strategy_file`.
+
 ```python
-class BacktestService:
-    def __init__(self, settings_service: SettingsService):
-        self.settings_service = settings_service
-
-    def build_command(self, ...) -> BacktestCommand:
-        settings = self.settings_service.load_settings()
-        return CommandRunner.build_backtest_command(settings=settings, ...)
-```
-
-### Command Builder Pattern
-`CommandRunner` is a static-method-only class. It never holds state. All methods return `List[str]` or `BacktestCommand`:
-```python
-class CommandRunner:
-    @staticmethod
-    def build_freqtrade_command(*args: str, settings: AppSettings, use_module: Optional[bool] = None) -> List[str]:
-        ...
-```
-
-### Qt State Object Pattern
-`SettingsState` is a `QObject` subclass that wraps a service and exposes typed Qt Signals. UI components connect to these signals for reactive updates:
-```python
-class SettingsState(QObject):
-    settings_loaded = Signal(AppSettings)
-    settings_saved = Signal(AppSettings)
-    settings_changed = Signal(AppSettings)
-```
-
-### UI Page Initialization Pattern
-Every QWidget page follows this exact constructor sequence:
-```python
-def __init__(self, settings_state: SettingsState, parent=None):
-    super().__init__(parent)
-    # 1. Store dependencies
-    self.settings_state = settings_state
-    self.settings_service = SettingsService()
-    self.backtest_service = BacktestService(self.settings_service)
-    # 2. Initialize state flags
-    self._initializing: bool = True
-    # 3. Build UI
-    self.init_ui()
-    # 4. Wire signals
-    self._connect_signals()
-    # 5. Load data
-    self._refresh_strategies()
-    self._load_preferences()
-    # 6. Release init guard and trigger preview
-    self._initializing = False
-    self._update_command_preview()
-```
-
-### Signal Blocking During Bulk Load
-When loading saved preferences into multiple widgets, block all signals first, set values, then unblock:
-```python
-self.strategy_combo.blockSignals(True)
-self.timeframe_input.blockSignals(True)
-# ... set values ...
-self.strategy_combo.blockSignals(False)
-self.timeframe_input.blockSignals(False)
+# Correct pattern
+cmd = BacktestCommand(program=..., args=[...], cwd=..., export_dir=..., export_zip=..., strategy_file=...)
+# Then execute via ProcessService
+process_service.execute_command([cmd.program] + cmd.args, cwd=cmd.cwd, ...)
 ```
 
 ---
 
-## Pydantic Model Conventions
-
-- All data models extend `pydantic.BaseModel`
-- Use `Field(default, description="...")` for every field
-- Path fields use `@field_validator(..., mode="before")` with `@classmethod` to normalize via `Path(v).expanduser().resolve()`
-- Nested models use `Field(default_factory=NestedModel)` pattern
-- Serialize with `model.model_dump()` (Pydantic v2 API, not `.dict()`)
-
----
-
-## Qt Process Execution
-
-- Use `ProcessService.execute_command()` with callback parameters (`on_output`, `on_error`, `on_finished`)
-- Never block the UI thread — all process I/O is async via Qt signals
-- Termination sequence: `process.terminate()` → `waitForFinished(1000)` → `process.kill()`
-- Decode bytes with `data.decode("utf-8", errors="replace")`
-- stderr is displayed in red using `QTextCursor` + `charFormat().setForeground(Qt.red)`
+## Naming Conventions
+- Classes: `PascalCase`
+- Methods/functions: `snake_case`; private methods prefixed with `_`
+- Module-level logger: always `_log`
+- Constants/module-level private: underscore prefix
+- Qt signal names: `noun_past_tense` (e.g., `settings_saved`, `settings_loaded`)
 
 ---
 
-## File and Path Conventions
+## Error Handling Patterns
+- Raise `ValueError` for configuration/logic errors (missing settings, invalid params)
+- Raise `FileNotFoundError` for missing files (strategy .py, zip files)
+- Catch broad `Exception` only in persistence/IO methods; log with `_log.error` and re-raise as `ValueError` with a user-friendly message
+- Never silently swallow exceptions in service layer
 
-- Always use `pathlib.Path` for path manipulation, never string concatenation
-- Resolve paths: `Path(settings.user_data_path).expanduser().resolve()`
-- Config resolution priority: strategy sidecar JSON → project `config.json` → `user_data/config.json`
-- Create output directories with `export_dir.mkdir(parents=True, exist_ok=True)`
-- Cross-platform venv paths: check `os.name == "nt"` for `Scripts/` vs `bin/`
+```python
+# Standard IO error pattern
+try:
+    ...
+except json.JSONDecodeError as e:
+    _log.error("JSON decode error in %s: %s", filename, e)
+    raise ValueError(f"Failed to parse: {e}")
+except Exception as e:
+    _log.error("Failed: %s", e)
+    raise ValueError(f"Operation failed: {e}")
+```
 
 ---
 
-## Freqtrade Command Conventions
+## Path Handling
+- Always use `pathlib.Path` — never string concatenation for paths
+- Resolve paths: `Path(x).expanduser().resolve()`
+- Platform branching: `if os.name == "nt":` for Windows `Scripts/` vs Unix `bin/`
+- `mkdir(parents=True, exist_ok=True)` before writing files
 
-- Preferred invocation: `python -m freqtrade <subcommand>` (controlled by `settings.use_module_execution`)
-- Fallback: direct `freqtrade` executable path
-- Always pass `--user-data-dir`, `--strategy-path`, `--config` explicitly
-- Download data always uses `--prepend` flag
-- Export backtest results with `--export trades --export-filename <timestamped_path>`
+---
+
+## Semantic Patterns
+
+### Fallback execution strategy
+```python
+if use_module and settings.python_executable:
+    return [settings.python_executable, "-m", "freqtrade", *args]
+elif settings.freqtrade_executable:
+    return [settings.freqtrade_executable, *args]
+else:
+    raise ValueError("No valid freqtrade execution method")
+```
+
+### Optional list parameters default to empty list at call site
+```python
+def build_command(self, pairs: Optional[List[str]] = None, extra_flags: Optional[List[str]] = None):
+    ...
+    pairs=pairs or [],
+    extra_flags=extra_flags or [],
+```
+
+### Prefer pre-computed values, fall back to computing from raw data
+```python
+wins = int(sd.get('wins', sum(1 for t in trades if t.profit > 0)))
+```
+
+### Format display data in a dedicated method returning `Dict[str, str]`
+Service methods like `format_summary_for_display` return plain dicts of formatted strings — UI widgets consume these without knowing the model structure.
+
+### Environment injection for subprocesses
+Never rely on shell activation. Inject `VIRTUAL_ENV` and prepend venv `bin/Scripts` to `PATH` explicitly via `QProcessEnvironment`.
