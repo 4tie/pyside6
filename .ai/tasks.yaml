@@ -110,8 +110,8 @@ requests:
           - Instantiate `self.strategy_config_page = StrategyConfigPage(self.settings_state)`
           - Add tab: `self.tabs.addTab(self.strategy_config_page, "Strategy Config")`
           - Insert the tab between "Download Data" and "Terminal" tabs
-        done: false
-        completedDetails: ''
+        done: true
+        completedDetails: Added StrategyConfigPage import and tab insertion in main_window.py between Download Data and Terminal tabs.
         subtasks: []
     completed: false
     notes:
@@ -172,6 +172,71 @@ requests:
       - id: task-5
         title: 'Verify: run import check and CI checks'
         description: Run `python -c 'import app'` with the venv Python to confirm no broken imports, then run `python data/tools/run_checks.py` to confirm all CI checks pass.
+        done: false
+        completedDetails: ''
+        subtasks: []
+    completed: false
+    notes: []
+  - requestId: req-3
+    originalRequest: 'Clean up the codebase: remove all backward-compat shims and dead files, update all remaining imports to point directly to the new module locations, leaving no extra files.'
+    splitDetails: 'Clean up the codebase: remove all backward-compat shims and dead files, update all remaining imports to point directly to the new module locations, leaving no extra files.'
+    tasks:
+      - id: task-1
+        title: Fix backtest_results_widget.py imports
+        description: |-
+          File imports from both shims:
+          - `from app.core.services.backtest_results_service import BacktestResults` → `from app.core.backtests.results_models import BacktestResults`
+          - `from app.core.services.run_store import RunStore` → `from app.core.backtests.results_store import RunStore`
+        done: false
+        completedDetails: ''
+        subtasks: []
+      - id: task-2
+        title: Fix terminal_widget.py imports
+        description: |-
+          File imports from the dead file:
+          - `from app.core.freqtrade.command_runner import CommandRunner` → `from app.core.freqtrade.runners.base_runner import build_command` (and update the one call site that uses CommandRunner inside the widget)
+        done: false
+        completedDetails: ''
+        subtasks: []
+      - id: task-3
+        title: Fix download_data_page.py imports
+        description: |-
+          File uses `BacktestService.build_download_command()` which no longer exists on BacktestService. Replace:
+          - `from app.core.services.backtest_service import BacktestService` → `from app.core.services.download_data_service import DownloadDataService`
+          - Replace `self.backtest_service = BacktestService(...)` with `self.download_service = DownloadDataService(...)`
+          - Replace all `self.backtest_service.build_download_command(...)` calls with `self.download_service.build_command(...)`
+        done: false
+        completedDetails: ''
+        subtasks: []
+      - id: task-4
+        title: 'Fix main_window.py: rename dd_page and add strategy_config_page'
+        description: |-
+          Two issues:
+          1. `self.dd_page = DownloadDataPage(...)` → rename to `self.download_data_page` and fix `_all_terminals` reference from `self.dd_page.terminal` to `self.download_data_page.terminal`
+          2. `main_window.py` already imports `StrategyConfigPage` — verify it is wired up correctly in tabs
+        done: false
+        completedDetails: ''
+        subtasks: []
+      - id: task-5
+        title: Delete all shim and dead files
+        description: |-
+          Delete these 5 files — no remaining references after tasks 1–4:
+          - `app/core/services/backtest_results_service.py` (shim)
+          - `app/core/services/run_store.py` (shim)
+          - `app/core/services/dd_service.py` (shim)
+          - `app/core/freqtrade/command_runner.py` (replaced by runners/)
+          - `app/ui/pages/dd_page.py` (replaced by download_data_page.py)
+        done: false
+        completedDetails: ''
+        subtasks: []
+      - id: task-6
+        title: 'Verify: import check + CI checks'
+        description: |-
+          Run:
+          1. `.venv\Scripts\python.exe -c "import app.ui.main_window; import app.ui.pages.backtest_page; import app.ui.pages.download_data_page; import app.ui.widgets.backtest_results_widget; import app.ui.widgets.terminal_widget; print('OK')"`
+          2. `python data/tools/run_checks.py`
+
+          Both must pass with zero errors.
         done: false
         completedDetails: ''
         subtasks: []
