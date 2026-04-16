@@ -150,7 +150,10 @@ class BacktestResultsWidget(QWidget):
 
     def _populate_summary(self, s: BacktestSummary):
         """Fill summary grids from a BacktestSummary."""
-        self._summary_header.setText(f"Strategy: {s.strategy}")
+        self._summary_header.setText(
+            f"{s.strategy}  |  {s.timeframe}  |  {s.backtest_start[:10]} → {s.backtest_end[:10]}"
+            if s.backtest_start else f"Strategy: {s.strategy}"
+        )
 
         # Clear grids
         for grid in (self._perf_grid, self._trade_grid):
@@ -170,26 +173,51 @@ class BacktestResultsWidget(QWidget):
 
         profit_color = _GREEN if s.total_profit_abs >= 0 else _RED
         avg_color    = _GREEN if s.avg_profit >= 0 else _RED
+        bal_color    = _GREEN if s.final_balance >= s.starting_balance else _RED
 
         # Performance group
-        add_row(self._perf_grid, 0, "Total Profit %",  f"{s.total_profit:.2f}%", profit_color)
-        add_row(self._perf_grid, 1, "Total Profit Abs", f"{s.total_profit_abs:.4f} USDT", profit_color)
-        add_row(self._perf_grid, 2, "Avg Profit %",    f"{s.avg_profit:.4f}%", avg_color)
-        add_row(self._perf_grid, 3, "Max Drawdown",    f"{s.max_drawdown:.2f}%")
-        add_row(self._perf_grid, 4, "Max DD Abs",      f"{s.max_drawdown_abs:.4f} USDT")
+        r = 0
+        if s.starting_balance:
+            add_row(self._perf_grid, r, "Starting Balance", f"{s.starting_balance:.3f} USDT"); r += 1
+            add_row(self._perf_grid, r, "Final Balance",    f"{s.final_balance:.3f} USDT", bal_color); r += 1
+        add_row(self._perf_grid, r, "Total Profit %",   f"{s.total_profit:.4f}%", profit_color); r += 1
+        add_row(self._perf_grid, r, "Total Profit Abs", f"{s.total_profit_abs:.4f} USDT", profit_color); r += 1
+        add_row(self._perf_grid, r, "Avg Profit %",     f"{s.avg_profit:.4f}%", avg_color); r += 1
+        add_row(self._perf_grid, r, "Max Drawdown %",   f"{s.max_drawdown:.2f}%", _RED if s.max_drawdown > 0 else None); r += 1
+        add_row(self._perf_grid, r, "Max DD Abs",       f"{s.max_drawdown_abs:.4f} USDT"); r += 1
+        if s.profit_factor:
+            add_row(self._perf_grid, r, "Profit Factor", f"{s.profit_factor:.4f}",
+                    _GREEN if s.profit_factor >= 1 else _RED); r += 1
+        if s.expectancy:
+            add_row(self._perf_grid, r, "Expectancy", f"{s.expectancy:.4f}",
+                    _GREEN if s.expectancy >= 0 else _RED); r += 1
         if s.sharpe_ratio is not None:
-            add_row(self._perf_grid, 5, "Sharpe", f"{s.sharpe_ratio:.4f}")
+            add_row(self._perf_grid, r, "Sharpe",  f"{s.sharpe_ratio:.4f}",
+                    _GREEN if s.sharpe_ratio >= 0 else _RED); r += 1
         if s.sortino_ratio is not None:
-            add_row(self._perf_grid, 6, "Sortino", f"{s.sortino_ratio:.4f}")
+            add_row(self._perf_grid, r, "Sortino", f"{s.sortino_ratio:.4f}",
+                    _GREEN if s.sortino_ratio >= 0 else _RED); r += 1
+        if s.calmar_ratio is not None:
+            add_row(self._perf_grid, r, "Calmar",  f"{s.calmar_ratio:.4f}",
+                    _GREEN if s.calmar_ratio >= 0 else _RED); r += 1
 
         # Trade stats group
-        add_row(self._trade_grid, 0, "Total Trades",   str(s.total_trades))
-        add_row(self._trade_grid, 1, "Wins",           str(s.wins), _GREEN)
-        add_row(self._trade_grid, 2, "Losses",         str(s.losses), _RED)
-        add_row(self._trade_grid, 3, "Draws",          str(s.draws))
-        add_row(self._trade_grid, 4, "Win Rate",       f"{s.win_rate:.1f}%",
-                _GREEN if s.win_rate >= 50 else _RED)
-        add_row(self._trade_grid, 5, "Avg Duration",   f"{s.trade_duration_avg} min")
+        r = 0
+        add_row(self._trade_grid, r, "Total Trades",  str(s.total_trades)); r += 1
+        add_row(self._trade_grid, r, "Wins",          str(s.wins), _GREEN); r += 1
+        add_row(self._trade_grid, r, "Losses",        str(s.losses), _RED); r += 1
+        add_row(self._trade_grid, r, "Draws",         str(s.draws)); r += 1
+        add_row(self._trade_grid, r, "Win Rate",      f"{s.win_rate:.1f}%",
+                _GREEN if s.win_rate >= 50 else _RED); r += 1
+        add_row(self._trade_grid, r, "Avg Duration",  f"{s.trade_duration_avg} min"); r += 1
+        if s.max_consecutive_wins:
+            add_row(self._trade_grid, r, "Max Consec. Wins",   str(s.max_consecutive_wins), _GREEN); r += 1
+        if s.max_consecutive_losses:
+            add_row(self._trade_grid, r, "Max Consec. Losses", str(s.max_consecutive_losses), _RED); r += 1
+        if s.pairlist:
+            add_row(self._trade_grid, r, "Pairs", ", ".join(s.pairlist)); r += 1
+        if s.timerange:
+            add_row(self._trade_grid, r, "Timerange", s.timerange); r += 1
 
     def _populate_trades(self, trades):
         """Fill the trades table."""

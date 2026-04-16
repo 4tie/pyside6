@@ -40,6 +40,16 @@ class BacktestSummary:
     max_drawdown: float
     max_drawdown_abs: float
     trade_duration_avg: int
+    starting_balance: float = 0.0
+    final_balance: float = 0.0
+    timerange: str = ''
+    pairlist: List[str] = field(default_factory=list)
+    backtest_start: str = ''
+    backtest_end: str = ''
+    expectancy: float = 0.0
+    profit_factor: float = 0.0
+    max_consecutive_wins: int = 0
+    max_consecutive_losses: int = 0
 
 
 @dataclass
@@ -104,19 +114,32 @@ class BacktestResultsService:
 
     @staticmethod
     def _parse_result_json(data: Dict[str, Any]) -> BacktestResults:
-        """Parse the backtest result JSON format.
+        """Parse either a backtest zip JSON or a bt-*.result.json file.
+
+        Zip format:  { "strategy": { "<Name>": { "trades": [...], "total_trades": N, ... } } }
+        File format: { "strategy": "<Name>", "result": { "trades": [...] }, ... }
 
         Args:
-            data: Parsed JSON data from backtest result
+            data: Parsed JSON data
 
         Returns:
             BacktestResults object
         """
-        # Actual freqtrade bt-*.result.json structure:
-        # { "strategy": "...", "result": { "trades": [...] }, ... }
-        strategy = data.get('strategy', 'Unknown')
-        trades_data = data.get('result', {}).get('trades', [])
+        # --- detect format ---
+        strategy_block = data.get('strategy', {})
 
+        if isinstance(strategy_block, dict):
+            # ZIP format: strategy block is a dict keyed by strategy name
+            strategy_name = next(iter(strategy_block), 'Unknown')
+            sd = strategy_block[strategy_name]          # full summary dict
+            trades_data = sd.get('trades', [])
+        else:
+            # bt-*.result.json format
+            strategy_name = str(strategy_block)
+            sd = {}                                     # no pre-computed summary
+            trades_data = data.get('result', {}).get('trades', [])
+
+        # --- parse trades ---
         trades = []
         for trade in trades_data:
             try:
@@ -136,39 +159,59 @@ class BacktestResultsService:
             except (ValueError, KeyError):
                 continue
 
-        wins = sum(1 for t in trades if t.profit > 0)
-        losses = sum(1 for t in trades if t.profit < 0)
-        draws = sum(1 for t in trades if t.profit == 0)
         total = len(trades)
-        win_rate = (wins / total * 100) if total else 0.0
-        avg_profit = (sum(t.profit for t in trades) / total) if total else 0.0
-        total_profit_abs = sum(t.profit_abs for t in trades)
-        avg_duration = int(sum(t.duration for t in trades) / total) if total else 0
+
+        # prefer pre-computed values from zip summary, fall back to computing from trades
+        wins   = int(sd.get('wins',   sum(1 for t in trades if t.profit > 0)))
+        losses = int(sd.get('losses', sum(1 for t in trades if t.profit < 0)))
+        draws  = int(sd.get('draws',  sum(1 for t in trades if t.profit == 0)))
+        win_rate         = float(sd.get('winrate', wins / total if total else 0.0)) * 100
+        avg_profit       = float(sd.get('profit_mean', sum(t.profit for t in trades) / total if total else 0.0)) * 100
+        total_profit     = float(sd.get('profit_total', 0.0)) * 100
+        total_profit_abs = float(sd.get('profit_total_abs', sum(t.profit_abs for t in trades)))
+        max_drawdown     = float(sd.get('max_relative_drawdown', sd.get('max_drawdown_account', 0.0))) * 100
+        max_drawdown_abs = float(sd.get('max_drawdown_abs', 0.0))
+        sharpe           = sd.get('sharpe')
+        sortino          = sd.get('sortino')
+        calmar           = sd.get('calmar')
+        timeframe        = str(sd.get('timeframe', ''))
+        starting_balance = float(sd.get('starting_balance', sd.get('dry_run_wallet', 0.0)))
+        final_balance    = float(sd.get('final_balance', 0.0))
+        avg_duration_s   = float(sd.get('holding_avg_s', 0.0))
+        avg_duration_min = int(avg_duration_s / 60) if avg_duration_s else (
+            int(sum(t.duration for t in trades) / total) if total else 0
+        )
 
         summary = BacktestSummary(
-            strategy=strategy,
-            timeframe='',
-            total_trades=total,
+            strategy=strategy_name,
+            timeframe=timeframe,
+            total_trades=int(sd.get('total_trades', total)),
             wins=wins,
             losses=losses,
             draws=draws,
             win_rate=win_rate,
             avg_profit=avg_profit,
-            total_profit=float(data.get('profit_total_pct', avg_profit * total / 100 if total else 0)),
+            total_profit=total_profit,
             total_profit_abs=total_profit_abs,
-            sharpe_ratio=None,
-            sortino_ratio=None,
-            calmar_ratio=None,
-            max_drawdown=0.0,
-            max_drawdown_abs=0.0,
-            trade_duration_avg=avg_duration,
+            sharpe_ratio=float(sharpe) if sharpe is not None else None,
+            sortino_ratio=float(sortino) if sortino is not None else None,
+            calmar_ratio=float(calmar) if calmar is not None else None,
+            max_drawdown=max_drawdown,
+            max_drawdown_abs=max_drawdown_abs,
+            trade_duration_avg=avg_duration_min,
+            starting_balance=starting_balance,
+            final_balance=final_balance,
+            timerange=str(sd.get('timerange', '')),
+            pairlist=list(sd.get('pairlist', [])),
+            backtest_start=str(sd.get('backtest_start', '')),
+            backtest_end=str(sd.get('backtest_end', '')),
+            expectancy=float(sd.get('expectancy', 0.0)),
+            profit_factor=float(sd.get('profit_factor', 0.0)),
+            max_consecutive_wins=int(sd.get('max_consecutive_wins', 0)),
+            max_consecutive_losses=int(sd.get('max_consecutive_losses', 0)),
         )
 
-        return BacktestResults(
-            summary=summary,
-            trades=trades,
-            raw_data=data,
-        )
+        return BacktestResults(summary=summary, trades=trades, raw_data=data)
 
     @staticmethod
     def format_summary_for_display(summary: BacktestSummary) -> Dict[str, str]:
