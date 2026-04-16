@@ -20,7 +20,9 @@
 
 2.2 WHEN `load_run()` reads a `trades.json` that uses the key `"exit_reason"` THEN the system SHALL correctly populate `BacktestTrade.exit_reason` with the stored value
 
-2.3 WHEN `load_run()` reconstructs `raw_data` THEN the system SHALL NOT require a fake trade-list workaround; the `raw_data` reconstruction SHALL be simplified or removed
+2.3 WHEN `load_run()` builds `raw_data` THEN the system SHALL normalize each trade record so that `"exit_reason"` is always present — if a record has `"reason"` but not `"exit_reason"`, copy the value across — and SHALL NOT build a separate fake trade-list reconstruction just for this field
+
+2.4 WHEN `load_run()` reads a legacy `trades.json` entry that contains the key `"reason"` but NOT `"exit_reason"` THEN the system SHALL populate `BacktestTrade.exit_reason` from the `"reason"` value, so that runs saved before this fix remain readable without data loss. The implementation SHALL use: `t.get("exit_reason", t.get("reason", ""))`
 
 ### Unchanged Behavior (Regression Prevention)
 
@@ -51,8 +53,11 @@ END FUNCTION
 // Property: Fix Checking
 FOR ALL trade_record WHERE isBugCondition(trade_record) DO
   result ← load_run'(run_dir_containing(trade_record))
-  ASSERT result.trades[i].exit_reason ≠ "" OR original_exit_reason = ""
+  // Backward compat: "reason" value is migrated to exit_reason
+  ASSERT result.trades[i].exit_reason = trade_record["reason"]
+  // New writes use canonical key
   ASSERT "exit_reason" IN written_trade_record.keys()
+  ASSERT "reason" NOT IN written_trade_record.keys()
 END FOR
 
 // Property: Preservation Checking
