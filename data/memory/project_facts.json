@@ -1,0 +1,30 @@
+{
+  "paths": {
+    "project_root": "t:/ae/pyside6",
+    "user_data": "user_data",
+    "strategies": "user_data/strategies",
+    "backtest_results": "user_data/backtest_results",
+    "config": "user_data/config.json",
+    "log": "data/log/app.log",
+    "rules": "data/rules",
+    "docs_app": "data/docs/app_docs",
+    "docs_freqtrade": "data/docs/freqtrade_docs",
+    "tools": "data/tools",
+    "memory": "data/memory"
+  },
+  "assumptions": {
+    "execution_mode": "python -m freqtrade preferred over direct executable",
+    "settings_location": "~/.freqtrade_gui/settings.json",
+    "platform": "Windows — Scripts/ not bin/",
+    "log_location": "data/log/app.log"
+  },
+  "workflow_rules": [
+    "Always call get_workflow_rules() before starting any task",
+    "Always call read_rule('guidelines.md') before editing service or model files",
+    "Always call run_tests() after any code change",
+    "Always call read_logs() when app crashes or behaves unexpectedly",
+    "Save new decisions as assumptions via save_fact('assumptions', key, value)",
+    "Never import UI code from service layer",
+    "Never use string concatenation for paths — always pathlib.Path"
+  ]
+}

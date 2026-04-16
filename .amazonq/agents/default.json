@@ -3,16 +3,6 @@
   "description": "Default agent configuration",
   "prompt": "",
   "mcpServers": {
-    "filesystem": {
-      "command": "npx",
-      "disabled": false,
-      "timeout": 60000,
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-filesystem",
-        "."
-      ]
-    },
     "memory": {
       "command": "npx",
       "disabled": false,
@@ -20,6 +10,41 @@
       "args": [
         "-y",
         "@modelcontextprotocol/server-memory"
+      ]
+    },
+    "filesystem": {
+      "command": "npx",
+      "disabled": false,
+      "timeout": 60000,
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "T:\\ae\\pyside6"
+      ]
+    },
+    "Git": {
+      "command": "uvx",
+      "disabled": false,
+      "timeout": 60000,
+      "args": [
+        "mcp-server-git"
+      ]
+    },
+    "py git ": {
+      "command": "T:\\ae\\pyside6\\.venv\\Scripts\\python.exe",
+      "disabled": false,
+      "timeout": 120000,
+      "args": [
+        "-m",
+        "mcp_server_git"
+      ]
+    },
+    "pyside6": {
+      "command": "T:\\ae\\pyside6\\.venv\\Scripts\\python.exe",
+      "disabled": false,
+      "timeout": 120000,
+      "args": [
+        "T:\\ae\\pyside6\\mcp_pyside6.py"
       ]
     }
   },
@@ -29,8 +54,11 @@
     "fs_write",
     "report_issue",
     "use_aws",
+    "@memory",
     "@filesystem",
-    "@memory"
+    "@Git",
+    "@py git ",
+    "@pyside6"
   ],
   "toolAliases": {},
   "allowedTools": [
@@ -44,7 +72,24 @@
     "@memory/add_observations",
     "@memory/read_graph",
     "@memory/search_nodes",
-    "@memory/open_nodes"
+    "@memory/open_nodes",
+    "@filesystem/read_file",
+    "@filesystem/read_text_file",
+    "@filesystem/read_media_file",
+    "@filesystem/read_multiple_files",
+    "@filesystem/write_file",
+    "@filesystem/edit_file",
+    "@filesystem/create_directory",
+    "@filesystem/list_directory",
+    "@filesystem/list_directory_with_sizes",
+    "@filesystem/directory_tree",
+    "@filesystem/move_file",
+    "@filesystem/search_files",
+    "@filesystem/get_file_info",
+    "@filesystem/list_allowed_directories",
+    "@pyside6/run_tests",
+    "@pyside6/read_logs",
+    "@pyside6/list_ui"
   ],
   "toolsSettings": {
     "use_aws": {

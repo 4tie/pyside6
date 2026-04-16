@@ -14,7 +14,7 @@ from pandas import DataFrame
 
 def load_config_params():
     config_path = os.path.join(
-        os.path.dirname(__file__), "config_MultiMeee.json"
+        os.path.dirname(__file__), "strategies", "config_MultiMeee.json"
     )
     default_params = {
         "buy_ma_count": 5,
