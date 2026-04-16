@@ -1,43 +1,61 @@
-import sys, json, os
-sys.path.insert(0, 'T:/ae/pyside6')
-from pathlib import Path
-from app.core.services.backtest_results_service import BacktestResultsService
-from app.core.services.run_store import RunStore, StrategyIndexStore
+"""Tests for StrategyIndexStore (per-strategy index)."""
+import json
 
-ZIP = r'T:\ae\pyside6\user_data\backtest_results\backtest-result-2026-04-16_05-02-01.zip'
-STRATEGY_DIR = r'T:\ae\pyside6\user_data\backtest_results\MultiMeee'
+import pytest
 
-results = BacktestResultsService.parse_backtest_zip(ZIP)
-run_dir = RunStore.save(
-    results=results,
-    strategy_results_dir=STRATEGY_DIR,
-    config_path=r'T:\ae\pyside6\user_data\config\config_MultiMeee.json',
-)
-print("Run dir:", run_dir)
+from app.core.backtests.results_index import StrategyIndexStore
+from app.core.backtests.results_store import RunStore
+from tests.conftest import SAMPLE_STRATEGY
 
-# Verify strategy index exists
-idx_path = Path(STRATEGY_DIR) / 'index.json'
-print("Strategy index exists:", idx_path.exists())
 
-idx = json.loads(idx_path.read_text(encoding='utf-8'))
-print("strategy:", idx['strategy'])
-print("updated_at:", idx['updated_at'])
-print("runs count:", len(idx['runs']))
-print()
-for r in idx['runs']:
-    print(f"  {r['run_id']}  profit={r['profit_total_pct']}%  trades={r['trades_count']}  saved={r['saved_at'][:19]}")
+def test_strategy_index_created_after_save(sample_results, strategy_results_dir):
+    RunStore.save(results=sample_results, strategy_results_dir=str(strategy_results_dir))
+    assert (strategy_results_dir / "index.json").exists()
 
-# Verify run_dir is just the folder name (not full path)
-print()
-print("run_dir field (should be folder name only):", idx['runs'][0]['run_dir'])
-assert '/' not in idx['runs'][0]['run_dir'] and '\\' not in idx['runs'][0]['run_dir'], \
-    "run_dir should be folder name only"
 
-# Test rebuild
-print()
-print("--- Testing rebuild ---")
-rebuilt = StrategyIndexStore.rebuild(STRATEGY_DIR, 'MultiMeee')
-print("Rebuilt runs:", len(rebuilt['runs']))
+def test_strategy_index_contains_run(sample_results, strategy_results_dir):
+    RunStore.save(results=sample_results, strategy_results_dir=str(strategy_results_dir))
+    index = StrategyIndexStore.load(str(strategy_results_dir), SAMPLE_STRATEGY)
+    assert len(index["runs"]) == 1
+    assert index["strategy"] == SAMPLE_STRATEGY
 
-print()
-print("All checks passed.")
+
+def test_strategy_index_run_dir_is_folder_name_only(sample_results, strategy_results_dir):
+    """run_dir in strategy index must be just the folder name, not a full path."""
+    run_dir = RunStore.save(results=sample_results, strategy_results_dir=str(strategy_results_dir))
+    index = StrategyIndexStore.load(str(strategy_results_dir), SAMPLE_STRATEGY)
+    run_dir_field = index["runs"][0]["run_dir"]
+    assert "/" not in run_dir_field
+    assert "\\" not in run_dir_field
+    assert run_dir_field == run_dir.name
+
+
+def test_strategy_index_multiple_runs_sorted_newest_first(sample_results, strategy_results_dir):
+    import time
+    RunStore.save(results=sample_results, strategy_results_dir=str(strategy_results_dir))
+    time.sleep(1.1)
+    RunStore.save(results=sample_results, strategy_results_dir=str(strategy_results_dir))
+    index = StrategyIndexStore.load(str(strategy_results_dir), SAMPLE_STRATEGY)
+    assert len(index["runs"]) == 2
+    # Newest first
+    assert index["runs"][0]["saved_at"] >= index["runs"][1]["saved_at"]
+
+
+def test_strategy_index_rebuild(sample_results, strategy_results_dir):
+    import time
+    RunStore.save(results=sample_results, strategy_results_dir=str(strategy_results_dir))
+    time.sleep(1.1)
+    RunStore.save(results=sample_results, strategy_results_dir=str(strategy_results_dir))
+
+    # Delete index and rebuild
+    (strategy_results_dir / "index.json").unlink()
+    rebuilt = StrategyIndexStore.rebuild(str(strategy_results_dir), SAMPLE_STRATEGY)
+
+    assert rebuilt["strategy"] == SAMPLE_STRATEGY
+    assert len(rebuilt["runs"]) == 2
+
+
+def test_strategy_index_load_missing_returns_default(tmp_path):
+    index = StrategyIndexStore.load(str(tmp_path / "no_such"), "Ghost")
+    assert index["runs"] == []
+    assert index["strategy"] == "Ghost"
