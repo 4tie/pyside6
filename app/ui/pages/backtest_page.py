@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Optional, List
 
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QTimer
 from PySide6.QtWidgets import (
     QWidget,
     QDialog,
@@ -52,6 +52,12 @@ class BacktestPage(QWidget):
         self._initializing = False
         self._update_command_preview()
         self._refresh_run_picker()
+
+        # Refresh command preview every second so the timestamp stays current
+        self._preview_timer = QTimer(self)
+        self._preview_timer.setInterval(1000)
+        self._preview_timer.timeout.connect(self._update_command_preview)
+        self._preview_timer.start()
 
     def init_ui(self):
         """Initialize UI components."""
@@ -433,8 +439,8 @@ class BacktestPage(QWidget):
             self.last_export_path = cmd.export_zip
             self._last_export_dir = cmd.export_dir
             self._last_config_file = cmd.config_file
-            # Use command from terminal widget (allows user edits)
-            command_string = self.terminal.get_command()
+            # Rebuild command string fresh from cmd (timestamp is current)
+            command_string = f"{cmd.program} {' '.join(cmd.args)}"
 
         except (ValueError, FileNotFoundError) as e:
             QMessageBox.critical(self, "Backtest Setup Failed", str(e))
@@ -458,6 +464,7 @@ class BacktestPage(QWidget):
         # Mark as running before executing
         self.run_button.setEnabled(False)
         self.stop_button.setEnabled(True)
+        self._preview_timer.stop()
         self.terminal.append_output("[Process started]\n\n")
 
         # Execute command with callbacks (use user's edited command if any)
@@ -481,6 +488,7 @@ class BacktestPage(QWidget):
         """Called when process finishes."""
         self.run_button.setEnabled(True)
         self.stop_button.setEnabled(False)
+        self._preview_timer.start()
         self.terminal.append_output(f"\n[Process finished] exit_code={exit_code}\n")
 
         # Try to parse and display results
