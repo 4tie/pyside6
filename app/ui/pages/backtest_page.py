@@ -39,6 +39,7 @@ class BacktestPage(QWidget):
         self.backtest_service = BacktestService(self.settings_service)
         self.process_service = ProcessService()
         self.last_export_path: Optional[str] = None
+        self._last_export_dir: Optional[str] = None
         self.selected_pairs: List[str] = []
         self._initializing: bool = True
 
@@ -294,6 +295,7 @@ class BacktestPage(QWidget):
             )
 
             self.last_export_path = cmd.export_zip
+            self._last_export_dir = cmd.export_dir
             # Use command from terminal widget (allows user edits)
             command_string = self.terminal.get_command()
 
@@ -361,7 +363,8 @@ class BacktestPage(QWidget):
             results = BacktestResultsService.parse_backtest_zip(self.last_export_path)
 
             if results:
-                self.results_widget.display_results(results)
+                cmd_export_dir = self._last_export_dir
+                self.results_widget.display_results(results, export_dir=cmd_export_dir)
                 self.terminal.append_output("✓ Results loaded successfully!\n")
 
                 # Switch to results tab

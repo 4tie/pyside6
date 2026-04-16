@@ -69,29 +69,38 @@ class BacktestResultsService:
 
         try:
             with zipfile.ZipFile(zip_file, 'r') as zf:
-                # Find the backtest result JSON file
-                json_files = [f for f in zf.namelist() if f.endswith('.json')]
+                json_files = [f for f in zf.namelist()
+                              if f.endswith('.json') and '_config' not in f]
                 if not json_files:
                     raise ValueError("No JSON files found in backtest zip")
-
-                # Usually it's backtest-result_*.json
-                result_file = None
-                for f in json_files:
-                    if 'backtest-result' in f:
-                        result_file = f
-                        break
-
-                if not result_file:
-                    result_file = json_files[0]  # Fallback to first JSON
-
-                # Extract and parse the JSON
-                json_data = json.loads(zf.read(result_file).decode('utf-8'))
+                json_data = json.loads(zf.read(json_files[0]).decode('utf-8'))
                 return BacktestResultsService._parse_result_json(json_data)
 
         except json.JSONDecodeError as e:
             raise ValueError(f"Failed to parse backtest JSON: {e}")
         except Exception as e:
             raise ValueError(f"Failed to parse backtest zip: {e}")
+
+    @staticmethod
+    def parse_result_json_file(json_path: str) -> Optional[BacktestResults]:
+        """Parse a bt-*.result.json file directly.
+
+        Args:
+            json_path: Path to the result JSON file
+
+        Returns:
+            BacktestResults object or None if parsing fails
+        """
+        path = Path(json_path)
+        if not path.exists():
+            raise FileNotFoundError(f"Result file not found: {json_path}")
+        try:
+            data = json.loads(path.read_text(encoding='utf-8'))
+            return BacktestResultsService._parse_result_json(data)
+        except json.JSONDecodeError as e:
+            raise ValueError(f"Failed to parse result JSON: {e}")
+        except Exception as e:
+            raise ValueError(f"Failed to parse result file: {e}")
 
     @staticmethod
     def _parse_result_json(data: Dict[str, Any]) -> BacktestResults:

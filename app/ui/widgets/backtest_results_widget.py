@@ -1,8 +1,14 @@
-from PySide6.QtCore import Qt, QSortFilterProxyModel
+import csv
+import json
+from datetime import datetime
+from pathlib import Path
+from typing import Optional
+
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QTabWidget, QTableWidget,
     QTableWidgetItem, QLabel, QGroupBox, QGridLayout, QHeaderView,
-    QAbstractItemView, QSizePolicy
+    QAbstractItemView, QSizePolicy, QPushButton, QFileDialog, QMessageBox
 )
 from PySide6.QtGui import QColor, QFont
 
@@ -33,12 +39,25 @@ class BacktestResultsWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.results: BacktestResults = None
+        self._export_dir: Optional[Path] = None
         self.init_ui()
 
     def init_ui(self):
         """Initialize UI components."""
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
+
+        # Export toolbar
+        toolbar = QHBoxLayout()
+        self._export_path_label = QLabel("No results loaded")
+        self._export_path_label.setStyleSheet("color: #555; font-size: 9pt;")
+        toolbar.addWidget(self._export_path_label, 1)
+
+        self._export_btn = QPushButton("Export Results")
+        self._export_btn.setEnabled(False)
+        self._export_btn.clicked.connect(self._on_export)
+        toolbar.addWidget(self._export_btn)
+        layout.addLayout(toolbar)
 
         self.tabs = QTabWidget()
         self.summary_tab = self._build_summary_tab()
@@ -108,13 +127,20 @@ class BacktestResultsWidget(QWidget):
     # Public API                                                           #
     # ------------------------------------------------------------------ #
 
-    def display_results(self, results: BacktestResults):
+    def display_results(self, results: BacktestResults, export_dir: Optional[str] = None):
         """Display backtest results.
 
         Args:
             results: BacktestResults object to display
+            export_dir: Optional directory to use as default export location
         """
         self.results = results
+        self._export_dir = Path(export_dir) if export_dir else None
+        self._export_btn.setEnabled(True)
+        if self._export_dir:
+            self._export_path_label.setText(str(self._export_dir))
+        else:
+            self._export_path_label.setText(f"Strategy: {results.summary.strategy}")
         self._populate_summary(results.summary)
         self._populate_trades(results.trades)
 
@@ -194,3 +220,101 @@ class BacktestResultsWidget(QWidget):
 
         self.trades_table.setSortingEnabled(True)
         self.trades_table.sortByColumn(1, Qt.AscendingOrder)
+
+    # ------------------------------------------------------------------ #
+    # Export                                                               #
+    # ------------------------------------------------------------------ #
+
+    def _on_export(self):
+        """Export summary JSON and trades CSV to the results directory."""
+        if not self.results:
+            return
+
+        strategy = self.results.summary.strategy
+        default_dir = str(self._export_dir) if self._export_dir else ""
+
+        out_dir = QFileDialog.getExistingDirectory(
+            self, "Select Export Directory", default_dir
+        )
+        if not out_dir:
+            return
+
+        try:
+            exported = self._export_to(Path(out_dir))
+            QMessageBox.information(
+                self, "Export Complete",
+                f"Exported to:\n" + "\n".join(str(p) for p in exported)
+            )
+            self._export_path_label.setText(out_dir)
+        except Exception as e:
+            QMessageBox.critical(self, "Export Failed", str(e))
+
+    def _export_to(self, out_dir: Path) -> list[Path]:
+        """Write summary JSON and trades CSV into out_dir.
+
+        Args:
+            out_dir: Destination directory (created if missing)
+
+        Returns:
+            List of paths written
+        """
+        out_dir.mkdir(parents=True, exist_ok=True)
+        s = self.results.summary
+        ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+        stem = f"{s.strategy}_{ts}"
+
+        # --- summary JSON ---
+        summary_path = out_dir / f"{stem}_summary.json"
+        summary_dict = {
+            "strategy":         s.strategy,
+            "timeframe":        s.timeframe,
+            "total_trades":     s.total_trades,
+            "wins":             s.wins,
+            "losses":           s.losses,
+            "draws":            s.draws,
+            "win_rate_pct":     round(s.win_rate, 4),
+            "avg_profit_pct":   round(s.avg_profit, 6),
+            "total_profit_pct": round(s.total_profit, 6),
+            "total_profit_abs": round(s.total_profit_abs, 8),
+            "max_drawdown_pct": round(s.max_drawdown, 4),
+            "max_drawdown_abs": round(s.max_drawdown_abs, 8),
+            "avg_duration_min": s.trade_duration_avg,
+            "sharpe_ratio":     s.sharpe_ratio,
+            "sortino_ratio":    s.sortino_ratio,
+            "calmar_ratio":     s.calmar_ratio,
+            "exported_at":      datetime.now().isoformat(),
+        }
+        summary_path.write_text(
+            json.dumps(summary_dict, indent=2), encoding="utf-8"
+        )
+
+        # --- trades CSV ---
+        trades_path = out_dir / f"{stem}_trades.csv"
+        with trades_path.open("w", newline="", encoding="utf-8") as f:
+            writer = csv.writer(f)
+            writer.writerow([
+                "pair", "open_date", "close_date", "open_rate", "close_rate",
+                "profit_pct", "profit_abs", "duration_min", "exit_reason", "is_open",
+            ])
+            raw_trades = (
+                self.results.raw_data.get("result", {}).get("trades", [])
+                if self.results.raw_data else []
+            )
+            for i, t in enumerate(self.results.trades):
+                exit_reason = (
+                    raw_trades[i].get("exit_reason", "") if i < len(raw_trades) else ""
+                )
+                writer.writerow([
+                    t.pair,
+                    t.open_date,
+                    t.close_date or "",
+                    t.open_rate,
+                    t.close_rate if t.close_rate is not None else "",
+                    round(t.profit, 6),
+                    round(t.profit_abs, 8),
+                    t.duration,
+                    exit_reason,
+                    t.is_open,
+                ])
+
+        return [summary_path, trades_path]
