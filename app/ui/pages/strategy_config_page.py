@@ -79,11 +79,6 @@ class StrategyConfigPage(QWidget):
         self.stoploss_spin.setDecimals(3)
         params_form.addRow("Stoploss:", self.stoploss_spin)
 
-        self.max_open_trades_spin = QSpinBox()
-        self.max_open_trades_spin.setRange(-1, 999)
-        self.max_open_trades_spin.setValue(-1)
-        params_form.addRow("Max Open Trades:", self.max_open_trades_spin)
-
         self._left_layout.addWidget(params_group)
 
         # Trailing stop group
@@ -227,10 +222,6 @@ class StrategyConfigPage(QWidget):
         stoploss_val = params.get("stoploss", {}).get("stoploss", -0.1)
         self.stoploss_spin.setValue(float(stoploss_val))
 
-        # max_open_trades
-        mot = params.get("max_open_trades", {}).get("max_open_trades", -1)
-        self.max_open_trades_spin.setValue(int(mot))
-
         # trailing
         t = params.get("trailing", {})
         self.trailing_stop_chk.setChecked(bool(t.get("trailing_stop", False)))
@@ -300,11 +291,6 @@ class StrategyConfigPage(QWidget):
 
         # stoploss
         params["stoploss"] = {"stoploss": self.stoploss_spin.value()}
-
-        # max_open_trades — only write if key existed or value != -1
-        mot_val = self.max_open_trades_spin.value()
-        if "max_open_trades" in params or mot_val != -1:
-            params["max_open_trades"] = {"max_open_trades": mot_val}
 
         # trailing
         params["trailing"] = {

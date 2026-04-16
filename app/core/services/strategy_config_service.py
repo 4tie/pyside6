@@ -7,7 +7,7 @@ from app.core.utils.app_logger import get_logger
 
 _log = get_logger("strategy_config")
 
-_KNOWN_SECTIONS = {"roi", "stoploss", "trailing", "max_open_trades", "buy", "sell"}
+_KNOWN_SECTIONS = {"roi", "stoploss", "trailing", "buy", "sell"}
 
 
 class StrategyConfigService:

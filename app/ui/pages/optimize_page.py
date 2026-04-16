@@ -111,8 +111,8 @@ class OptimizePage(QWidget):
         advanced_form.addRow("Epochs:", self.epochs_spin)
 
         self.spaces_input = QLineEdit()
-        self.spaces_input.setPlaceholderText("all or buy sell roi stoploss trailing")
-        self.spaces_input.setText("all")
+        self.spaces_input.setPlaceholderText("buy sell roi stoploss trailing")
+        self.spaces_input.setText("buy sell roi stoploss trailing")
         advanced_form.addRow("Spaces:", self.spaces_input)
 
         self.loss_combo = QComboBox()
@@ -321,7 +321,7 @@ class OptimizePage(QWidget):
             else []
         )
         self.epochs_spin.setValue(prefs.epochs or 100)
-        self.spaces_input.setText(prefs.spaces or "all")
+        self.spaces_input.setText(prefs.spaces or "buy sell roi stoploss trailing")
         if prefs.hyperopt_loss:
             idx = self.loss_combo.findText(prefs.hyperopt_loss)
             if idx >= 0:
