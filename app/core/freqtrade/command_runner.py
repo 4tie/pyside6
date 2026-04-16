@@ -54,47 +54,28 @@ class CommandRunner:
         timerange: Optional[str] = None,
         pairs: Optional[List[str]] = None,
     ) -> "BacktestCommand":
-        """Build a freqtrade download-data command.
-
-        Args:
-            settings: AppSettings with paths configured
-            timeframe: Timeframe like "5m", "1h"
-            timerange: Optional timerange like "20240101-20241231"
-            pairs: Optional list of pairs
-
-        Returns:
-            BacktestCommand with program, args, cwd
-
-        Raises:
-            ValueError: If settings are invalid
-        """
-        if not settings.python_executable:
-            raise ValueError("python_executable is not configured in Settings")
+        """Build a freqtrade download-data command."""
         if not settings.user_data_path:
             raise ValueError("user_data_path is not configured in Settings")
 
         user_data = Path(settings.user_data_path).expanduser().resolve()
 
-        args = [
-            "-m", "freqtrade", "download-data",
+        ft_args = [
+            "download-data",
             "--user-data-dir", str(user_data),
             "--timeframe", timeframe,
             "--prepend",
         ]
-
         if timerange:
-            args.extend(["--timerange", timerange])
-
+            ft_args.extend(["--timerange", timerange])
         if pairs:
-            args.append("-p")
-            args.extend(pairs)
+            ft_args += ["-p"] + list(pairs)
 
-        cwd = str(settings.project_path or user_data)
-
+        full_cmd = CommandRunner.build_freqtrade_command(*ft_args, settings=settings)
         return BacktestCommand(
-            program=settings.python_executable,
-            args=args,
-            cwd=cwd,
+            program=full_cmd[0],
+            args=full_cmd[1:],
+            cwd=str(settings.project_path or user_data),
             export_dir=str(user_data / "data"),
             export_zip="",
             strategy_file="",
@@ -118,23 +99,7 @@ class CommandRunner:
         dry_run_wallet: Optional[float] = None,
         extra_flags: Optional[List[str]] = None
     ) -> "BacktestCommand":
-        """Build a backtest command with strategy validation and result export.
-
-        Args:
-            settings: AppSettings with paths configured
-            strategy_name: Strategy name (must exist as .py file)
-            timeframe: Timeframe like "5m", "1h"
-            timerange: Optional timerange like "20240101-20241231"
-            pairs: Optional list of pairs like ["BTC/USDT", "ETH/USDT"]
-            max_open_trades: Optional max open trades limit
-            dry_run_wallet: Optional dry run wallet amount
-            extra_flags: Optional additional command flags
-
-        Returns:
-            BacktestCommand with program, args, paths
-        """
-        if not settings.python_executable:
-            raise ValueError("python_executable is not configured in Settings")
+        """Build a backtest command with strategy validation and result export."""
         if not settings.user_data_path:
             raise ValueError("user_data_path is not configured in Settings")
 
@@ -143,48 +108,36 @@ class CommandRunner:
         strategy_file = strategies_dir / f"{strategy_name}.py"
 
         if not strategy_file.exists():
-            raise FileNotFoundError(
-                f"Strategy file not found: {strategy_file}"
-            )
+            raise FileNotFoundError(f"Strategy file not found: {strategy_file}")
 
-        # Freqtrade ignores --export-filename directory and always writes
-        # the zip to backtest_results/*.zip in the root. We accept this
-        # and let _try_load_results pick up the newest zip after the run.
         export_dir = user_data / "backtest_results"
         export_dir.mkdir(parents=True, exist_ok=True)
 
-        args = [
-            "-m", "freqtrade", "backtesting",
+        ft_args = [
+            "backtesting",
             "--user-data-dir", str(user_data),
             "--strategy-path", str(strategies_dir),
             "--strategy", strategy_name,
             "--timeframe", timeframe,
             "--export", "trades",
         ]
-
         if timerange:
-            args.extend(["--timerange", timerange])
-
+            ft_args.extend(["--timerange", timerange])
         if pairs:
-            args.append("-p")
-            args.extend(pairs)
-
+            ft_args += ["-p"] + list(pairs)
         if max_open_trades is not None:
-            args.extend(["--max-open-trades", str(max_open_trades)])
-
+            ft_args.extend(["--max-open-trades", str(max_open_trades)])
         if dry_run_wallet is not None:
-            args.extend(["--dry-run-wallet", str(dry_run_wallet)])
-
+            ft_args.extend(["--dry-run-wallet", str(dry_run_wallet)])
         if extra_flags:
-            args.extend(extra_flags)
+            ft_args.extend(extra_flags)
 
-        cwd = str(settings.project_path or user_data)
-
+        full_cmd = CommandRunner.build_freqtrade_command(*ft_args, settings=settings)
         return BacktestCommand(
-            program=settings.python_executable,
-            args=args,
-            cwd=cwd,
+            program=full_cmd[0],
+            args=full_cmd[1:],
+            cwd=str(settings.project_path or user_data),
             export_dir=str(export_dir),
-            export_zip="",  # determined at runtime after freqtrade writes it
+            export_zip="",
             strategy_file=str(strategy_file),
         )

@@ -31,7 +31,7 @@ class BacktestPreferences(BaseModel):
     last_strategy: str = Field("", description="Last used strategy")
     default_timeframe: str = Field("5m", description="Default timeframe")
     default_timerange: str = Field("", description="Default timerange")
-    default_pairs: str = Field("BTC/USDT ETH/USDT", description="Space-separated pairs")
+    default_pairs: str = Field("", description="Comma-separated pairs")
     paired_favorites: list[str] = Field(
         default_factory=lambda: ["BTC/USDT", "ETH/USDT", "ADA/USDT"],
         description="Common pairs for quick selection",
@@ -39,8 +39,6 @@ class BacktestPreferences(BaseModel):
     last_timerange_preset: str = Field("30d", description="Last used timerange preset")
     dry_run_wallet: float = Field(80.0, description="Dry run wallet balance")
     max_open_trades: int = Field(2, description="Max open trades")
-    stake_currency: str = Field("", description="Stake currency")
-    stake_amount: float = Field(0.0, description="Stake amount")
 
 
 class AppSettings(BaseModel):
@@ -61,10 +59,6 @@ class AppSettings(BaseModel):
     project_path: Optional[str] = Field(
         None, description="Path to freqtrade project root"
     )
-    shell_executable: Optional[str] = Field(None, description="Shell executable path")
-    shell_args: list[str] = Field(
-        default_factory=list, description="Arguments for shell"
-    )
     use_module_execution: bool = Field(
         True, description="Use python -m freqtrade instead of executable"
     )
@@ -84,7 +78,6 @@ class AppSettings(BaseModel):
         "freqtrade_executable",
         "user_data_path",
         "project_path",
-        "shell_executable",
         mode="before",
     )
     @classmethod

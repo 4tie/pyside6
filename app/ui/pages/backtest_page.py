@@ -22,8 +22,9 @@ from PySide6.QtWidgets import (
 
 from app.app_state.settings_state import SettingsState
 from app.core.services.backtest_service import BacktestService
-from app.core.services.backtest_results_service import BacktestResultsService
-from app.core.services.run_store import RunStore, IndexStore
+from app.core.backtests.results_parser import parse_backtest_zip
+from app.core.backtests.results_store import RunStore
+from app.core.backtests.results_index import IndexStore
 from app.core.services.settings_service import SettingsService
 from app.core.services.process_service import ProcessService
 from app.core.utils.app_logger import get_logger
@@ -249,50 +250,14 @@ class BacktestPage(QWidget):
         self._refresh_run_picker()
 
     def _rebuild_index_from_zips(self):
-        """Parse any root-level zips not yet in the index and save them as runs."""
+        """Delegate index rebuild to BacktestService."""
         settings = self.settings_state.current_settings
         if not settings or not settings.user_data_path:
             return
-
-        backtest_results_dir = (
+        backtest_results_dir = str(
             Path(settings.user_data_path).expanduser().resolve() / "backtest_results"
         )
-        index = IndexStore.load(str(backtest_results_dir))
-        zips = list(backtest_results_dir.glob("*.zip"))
-        _log.info("Index rebuild: scanning %d zip(s) in %s", len(zips), backtest_results_dir)
-
-        imported = 0
-        skipped  = 0
-        for zip_path in sorted(zips, key=lambda p: p.stat().st_mtime):
-            try:
-                results = BacktestResultsService.parse_backtest_zip(str(zip_path))
-                if not results:
-                    continue
-                strategy = results.summary.strategy
-                strategy_results_dir = str(backtest_results_dir / strategy)
-
-                existing = IndexStore.get_strategy_runs(str(backtest_results_dir), strategy)
-                already = any(
-                    r.get("trades_count") == results.summary.total_trades
-                    and r.get("backtest_start") == results.summary.backtest_start
-                    and r.get("backtest_end") == results.summary.backtest_end
-                    for r in existing
-                )
-                if already:
-                    _log.debug("Skipping already-indexed zip: %s", zip_path.name)
-                    skipped += 1
-                    continue
-
-                RunStore.save(
-                    results=results,
-                    strategy_results_dir=strategy_results_dir,
-                )
-                imported += 1
-            except Exception as e:
-                _log.warning("Failed to import zip %s: %s", zip_path.name, e)
-                continue
-
-        _log.info("Index rebuild complete: imported=%d skipped=%d", imported, skipped)
+        self.backtest_service.rebuild_index(backtest_results_dir)
 
     def _refresh_run_picker(self, _=None):
         """Populate the run combo with existing runs for the selected strategy."""
@@ -341,86 +306,17 @@ class BacktestPage(QWidget):
         if not settings or not settings.user_data_path:
             return
 
-        backtest_results_dir = Path(settings.user_data_path) / "backtest_results"
-        run_dir = backtest_results_dir / run_meta["run_dir"]
-        results_file = run_dir / "results.json"
-        trades_file  = run_dir / "trades.json"
-
-        if not results_file.exists() or not trades_file.exists():
-            QMessageBox.warning(self, "Load Failed",
-                                f"Run folder incomplete:\n{run_dir}")
-            return
+        run_dir = (
+            Path(settings.user_data_path) / "backtest_results" / run_meta["run_dir"]
+        )
 
         try:
-            from app.core.services.backtest_results_service import (
-                BacktestResults, BacktestSummary, BacktestTrade
-            )
-            import json
-            from dataclasses import fields
-
-            r_data = json.loads(results_file.read_text(encoding="utf-8"))
-            t_data = json.loads(trades_file.read_text(encoding="utf-8"))
-
-            # Rebuild BacktestSummary from results.json
-            summary = BacktestSummary(
-                strategy=r_data.get("strategy", ""),
-                timeframe=r_data.get("timeframe", ""),
-                total_trades=r_data.get("total_trades", 0),
-                wins=r_data.get("wins", 0),
-                losses=r_data.get("losses", 0),
-                draws=r_data.get("draws", 0),
-                win_rate=r_data.get("win_rate_pct", 0.0),
-                avg_profit=r_data.get("avg_profit_pct", 0.0),
-                total_profit=r_data.get("total_profit_pct", 0.0),
-                total_profit_abs=r_data.get("total_profit_abs", 0.0),
-                sharpe_ratio=r_data.get("sharpe_ratio"),
-                sortino_ratio=r_data.get("sortino_ratio"),
-                calmar_ratio=r_data.get("calmar_ratio"),
-                max_drawdown=r_data.get("max_drawdown_pct", 0.0),
-                max_drawdown_abs=r_data.get("max_drawdown_abs", 0.0),
-                trade_duration_avg=r_data.get("avg_duration_min", 0),
-                starting_balance=r_data.get("starting_balance", 0.0),
-                final_balance=r_data.get("final_balance", 0.0),
-                timerange=r_data.get("timerange", ""),
-                pairlist=r_data.get("pairs", []),
-                backtest_start=r_data.get("backtest_start", ""),
-                backtest_end=r_data.get("backtest_end", ""),
-                expectancy=r_data.get("expectancy", 0.0),
-                profit_factor=r_data.get("profit_factor", 0.0),
-                max_consecutive_wins=r_data.get("max_consecutive_wins", 0),
-                max_consecutive_losses=r_data.get("max_consecutive_losses", 0),
-            )
-
-            # Rebuild trades from trades.json
-            trades = []
-            for t in t_data:
-                trades.append(BacktestTrade(
-                    pair=t.get("pair", ""),
-                    stake_amount=float(t.get("stake_amount", 0)),
-                    amount=0.0,
-                    open_date=t.get("entry", ""),
-                    close_date=t.get("exit") or None,
-                    open_rate=float(t.get("entry_rate", 0)),
-                    close_rate=float(t.get("exit_rate", 0)) if t.get("exit_rate") else None,
-                    profit=float(t.get("profit_pct", 0)),
-                    profit_abs=float(t.get("profit_abs", 0)),
-                    duration=int(t.get("duration_min", 0)),
-                    is_open=bool(t.get("is_open", False)),
-                ))
-
-            # Inject exit_reason into raw_data so the widget can display it
-            raw_trades = [
-                {"exit_reason": t.get("reason", "")} for t in t_data
-            ]
-            raw_data = {"result": {"trades": raw_trades}}
-
-            results = BacktestResults(summary=summary, trades=trades, raw_data=raw_data)
-            _log.info("Run loaded from disk | strategy=%s | trades=%d",
-                      summary.strategy, len(trades))
+            results = BacktestResultsService.load_run(run_dir)
+            _log.info("Run loaded | strategy=%s | trades=%d",
+                      results.summary.strategy, len(results.trades))
             self.results_widget.display_results(results, export_dir=str(run_dir))
             self.output_tabs.setCurrentIndex(1)
-
-        except Exception as e:
+        except (FileNotFoundError, ValueError) as e:
             _log.error("Failed to load run %s: %s", run_meta.get("run_id"), e)
             QMessageBox.critical(self, "Load Failed", str(e))
 

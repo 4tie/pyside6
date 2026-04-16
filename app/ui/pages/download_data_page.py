@@ -1,5 +1,4 @@
-from pathlib import Path
-from typing import Optional, List
+from typing import List, Optional
 
 from PySide6.QtWidgets import (
     QWidget,
@@ -14,7 +13,7 @@ from PySide6.QtWidgets import (
     QTabWidget,
 )
 from app.app_state.settings_state import SettingsState
-from app.core.services.download_data_service import DownloadDataService
+from app.core.services.backtest_service import BacktestService
 from app.core.services.settings_service import SettingsService
 from app.core.services.process_service import ProcessService
 from app.ui.widgets.terminal_widget import TerminalWidget
@@ -22,14 +21,14 @@ from app.ui.widgets.data_status_widget import DataStatusWidget
 from app.ui.dialogs.pairs_selector_dialog import PairsSelectorDialog
 
 
-class DDPage(QWidget):
+class DownloadDataPage(QWidget):
     """Page for downloading and validating OHLCV market data."""
 
     def __init__(self, settings_state: SettingsState, parent=None):
         super().__init__(parent)
         self.settings_state = settings_state
         self.settings_service = SettingsService()
-        self.download_service = DownloadDataService(self.settings_service)
+        self.backtest_service = BacktestService(self.settings_service)
         self.process_service = ProcessService()
         self.selected_pairs: List[str] = []
         self._initializing: bool = True
@@ -44,10 +43,8 @@ class DDPage(QWidget):
         """Initialize UI components."""
         main_layout = QVBoxLayout()
 
-        # Left panel: Parameters
         params_layout = QVBoxLayout()
 
-        # Timeframe
         timeframe_layout = QHBoxLayout()
         timeframe_layout.addWidget(QLabel("Timeframe:"))
         self.timeframe_input = QLineEdit()
@@ -56,7 +53,6 @@ class DDPage(QWidget):
         timeframe_layout.addWidget(self.timeframe_input)
         params_layout.addLayout(timeframe_layout)
 
-        # Timerange presets
         presets_layout = QHBoxLayout()
         presets_layout.addWidget(QLabel("Timerange Presets:"))
         for preset in ["7d", "14d", "30d", "90d", "120d", "360d"]:
@@ -67,7 +63,6 @@ class DDPage(QWidget):
         presets_layout.addStretch()
         params_layout.addLayout(presets_layout)
 
-        # Custom timerange
         timerange_group = QGroupBox("Custom Timerange (Optional)")
         timerange_layout = QHBoxLayout()
         timerange_layout.addWidget(QLabel("Format: YYYYMMDD-YYYYMMDD"))
@@ -77,7 +72,6 @@ class DDPage(QWidget):
         timerange_group.setLayout(timerange_layout)
         params_layout.addWidget(timerange_group)
 
-        # Pairs selection
         pairs_layout = QVBoxLayout()
         pairs_button_layout = QHBoxLayout()
         pairs_button_layout.addWidget(QLabel("Pairs:"))
@@ -96,7 +90,6 @@ class DDPage(QWidget):
 
         params_layout.addStretch()
 
-        # Run / Stop buttons
         button_layout = QHBoxLayout()
         self.run_button = QPushButton("Download")
         self.run_button.clicked.connect(self._run_download)
@@ -110,7 +103,6 @@ class DDPage(QWidget):
         button_layout.addStretch()
         params_layout.addLayout(button_layout)
 
-        # Right panel: Terminal + Data Status
         output_layout = QVBoxLayout()
         self.output_tabs = QTabWidget()
 
@@ -122,41 +114,12 @@ class DDPage(QWidget):
 
         output_layout.addWidget(self.output_tabs)
 
-        # Main horizontal layout
         h_layout = QHBoxLayout()
         h_layout.addLayout(params_layout, 1)
         h_layout.addLayout(output_layout, 2)
 
         main_layout.addLayout(h_layout)
         self.setLayout(main_layout)
-
-    def _build_status_widget(self) -> QWidget:
-        """Build the data status panel showing downloaded files."""
-        widget = QWidget()
-        layout = QVBoxLayout()
-
-        header_layout = QHBoxLayout()
-        header_layout.addWidget(QLabel("Downloaded Data Files:"))
-        refresh_btn = QPushButton("Refresh")
-        refresh_btn.setMaximumWidth(70)
-        refresh_btn.clicked.connect(self._refresh_data_status)
-        header_layout.addWidget(refresh_btn)
-        header_layout.addStretch()
-        layout.addLayout(header_layout)
-
-        self.data_tree = QTreeWidget()
-        self.data_tree.setHeaderLabels(["Pair / Exchange", "Timeframe", "Size"])
-        self.data_tree.header().setSectionResizeMode(0, QHeaderView.Stretch)
-        self.data_tree.header().setSectionResizeMode(1, QHeaderView.ResizeToContents)
-        self.data_tree.header().setSectionResizeMode(2, QHeaderView.ResizeToContents)
-        layout.addWidget(self.data_tree)
-
-        self.status_summary_label = QLabel("")
-        self.status_summary_label.setStyleSheet("color: #555; font-size: 9pt;")
-        layout.addWidget(self.status_summary_label)
-
-        widget.setLayout(layout)
-        return widget
 
     def _connect_signals(self):
         """Connect signals for live command preview updates."""
@@ -188,7 +151,7 @@ class DDPage(QWidget):
                 self.terminal.set_command("[Select pairs to download]")
                 return
 
-            cmd = self.download_service.build_command(
+            cmd = self.backtest_service.build_download_command(
                 timeframe=timeframe,
                 timerange=timerange,
                 pairs=pairs,
@@ -213,7 +176,7 @@ class DDPage(QWidget):
         self._save_preferences()
 
         try:
-            cmd = self.download_service.build_command(
+            cmd = self.backtest_service.build_download_command(
                 timeframe=timeframe,
                 timerange=timerange,
                 pairs=pairs,
@@ -282,7 +245,6 @@ class DDPage(QWidget):
         self.timeframe_input.blockSignals(False)
         self.timerange_input.blockSignals(False)
 
-        settings = self.settings_state.current_settings
         self.status_widget.set_user_data_path(
             settings.user_data_path if settings else None
         )

@@ -225,7 +225,82 @@ class BacktestResultsService:
         return BacktestResults(summary=summary, trades=trades, raw_data=data)
 
     @staticmethod
-    def format_summary_for_display(summary: BacktestSummary) -> Dict[str, str]:
+    def load_run(run_dir: Path) -> "BacktestResults":
+        """Load a saved run from a run folder (results.json + trades.json).
+
+        Args:
+            run_dir: Path to the run folder containing results.json and trades.json
+
+        Returns:
+            BacktestResults reconstructed from persisted files
+
+        Raises:
+            FileNotFoundError: If results.json or trades.json are missing
+            ValueError: If files cannot be parsed
+        """
+        results_file = run_dir / "results.json"
+        trades_file = run_dir / "trades.json"
+
+        if not results_file.exists() or not trades_file.exists():
+            raise FileNotFoundError(f"Run folder incomplete: {run_dir}")
+
+        try:
+            r_data = json.loads(results_file.read_text(encoding="utf-8"))
+            t_data = json.loads(trades_file.read_text(encoding="utf-8"))
+        except json.JSONDecodeError as e:
+            raise ValueError(f"Failed to parse run files: {e}")
+
+        summary = BacktestSummary(
+            strategy=r_data.get("strategy", ""),
+            timeframe=r_data.get("timeframe", ""),
+            total_trades=r_data.get("total_trades", 0),
+            wins=r_data.get("wins", 0),
+            losses=r_data.get("losses", 0),
+            draws=r_data.get("draws", 0),
+            win_rate=r_data.get("win_rate_pct", 0.0),
+            avg_profit=r_data.get("avg_profit_pct", 0.0),
+            total_profit=r_data.get("total_profit_pct", 0.0),
+            total_profit_abs=r_data.get("total_profit_abs", 0.0),
+            sharpe_ratio=r_data.get("sharpe_ratio"),
+            sortino_ratio=r_data.get("sortino_ratio"),
+            calmar_ratio=r_data.get("calmar_ratio"),
+            max_drawdown=r_data.get("max_drawdown_pct", 0.0),
+            max_drawdown_abs=r_data.get("max_drawdown_abs", 0.0),
+            trade_duration_avg=r_data.get("avg_duration_min", 0),
+            starting_balance=r_data.get("starting_balance", 0.0),
+            final_balance=r_data.get("final_balance", 0.0),
+            timerange=r_data.get("timerange", ""),
+            pairlist=r_data.get("pairs", []),
+            backtest_start=r_data.get("backtest_start", ""),
+            backtest_end=r_data.get("backtest_end", ""),
+            expectancy=r_data.get("expectancy", 0.0),
+            profit_factor=r_data.get("profit_factor", 0.0),
+            max_consecutive_wins=r_data.get("max_consecutive_wins", 0),
+            max_consecutive_losses=r_data.get("max_consecutive_losses", 0),
+        )
+
+        trades = [
+            BacktestTrade(
+                pair=t.get("pair", ""),
+                stake_amount=float(t.get("stake_amount", 0)),
+                amount=0.0,
+                open_date=t.get("entry", ""),
+                close_date=t.get("exit") or None,
+                open_rate=float(t.get("entry_rate", 0)),
+                close_rate=float(t.get("exit_rate", 0)) if t.get("exit_rate") else None,
+                profit=float(t.get("profit_pct", 0)),
+                profit_abs=float(t.get("profit_abs", 0)),
+                duration=int(t.get("duration_min", 0)),
+                is_open=bool(t.get("is_open", False)),
+            )
+            for t in t_data
+        ]
+
+        raw_data = {"result": {"trades": [{"exit_reason": t.get("reason", "")} for t in t_data]}}
+        return BacktestResults(summary=summary, trades=trades, raw_data=raw_data)
+
+    @staticmethod
+    def format_summary_for_display(summary: "BacktestSummary") -> "Dict[str, str]":
         """Format summary statistics for UI display.
 
         Args:

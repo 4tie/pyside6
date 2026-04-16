@@ -6,7 +6,7 @@ from PySide6.QtCore import Qt
 from app.app_state.settings_state import SettingsState
 from app.ui.pages.settings_page import SettingsPage
 from app.ui.pages.backtest_page import BacktestPage
-from app.ui.pages.dd_page import DDPage
+from app.ui.pages.download_data_page import DownloadDataPage
 from app.ui.widgets.terminal_widget import TerminalWidget
 
 
@@ -43,7 +43,7 @@ class MainWindow(QMainWindow):
         self.tabs.addTab(self.backtest_page, "Backtest")
 
         #Downlaod data tab
-        self.dd_page = DDPage(self.settings_state)
+        self.dd_page = DownloadDataPage(self.settings_state)
         self.tabs.addTab(self.dd_page, "Download Data")
 
         # Terminal tab (for ad-hoc testing)
