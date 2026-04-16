@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "pyside6": {
+      "command": "python",
+      "args": ["t:/ae/pyside6/data/tools/mcp_pyside6.py"]
+    },
+    "freqtrade": {
+      "command": "python",
+      "args": ["t:/ae/pyside6/data/tools/mcp_freqtrade.py"]
+    },
+    "memory": {
+      "command": "python",
+      "args": ["t:/ae/pyside6/data/tools/mcp_project_memory.py"]
+    }
+  }
+}
