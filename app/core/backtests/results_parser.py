@@ -110,6 +110,7 @@ def _parse_trades(trades_data: List[Dict]) -> List[BacktestTrade]:
                 profit_abs=float(t.get("profit_abs", 0)),
                 duration=int(t.get("trade_duration", 0)),
                 is_open=bool(t.get("is_open", False)),
+                exit_reason=str(t.get("exit_reason", "")),
             ))
         except (ValueError, KeyError):
             continue

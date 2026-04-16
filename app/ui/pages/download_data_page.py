@@ -1,4 +1,5 @@
 from typing import List, Optional
+from datetime import datetime
 
 from PySide6.QtWidgets import (
     QWidget,
@@ -38,6 +39,7 @@ class DownloadDataPage(QWidget):
         self._load_preferences()
         self._initializing = False
         self._update_command_preview()
+        self._validate_inputs()
 
     def init_ui(self):
         """Initialize UI components."""
@@ -88,8 +90,6 @@ class DownloadDataPage(QWidget):
         pairs_layout.addWidget(self.pairs_display_label)
         params_layout.addLayout(pairs_layout)
 
-        params_layout.addStretch()
-
         button_layout = QHBoxLayout()
         self.run_button = QPushButton("Download")
         self.run_button.clicked.connect(self._run_download)
@@ -102,6 +102,18 @@ class DownloadDataPage(QWidget):
 
         button_layout.addStretch()
         params_layout.addLayout(button_layout)
+
+        # Validation warning
+        self.validation_label = QLabel("")
+        self.validation_label.setWordWrap(True)
+        self.validation_label.setStyleSheet(
+            "background: #fff3cd; color: #856404; border: 1px solid #ffc107; "
+            "border-radius: 4px; padding: 6px; font-size: 9pt;"
+        )
+        self.validation_label.setVisible(False)
+        params_layout.addWidget(self.validation_label)
+
+        params_layout.addStretch()
 
         output_layout = QVBoxLayout()
         self.output_tabs = QTabWidget()
@@ -125,7 +137,9 @@ class DownloadDataPage(QWidget):
         """Connect signals for live command preview updates."""
         self.settings_state.settings_changed.connect(self._on_settings_changed)
         self.timeframe_input.textChanged.connect(self._update_command_preview)
+        self.timeframe_input.textChanged.connect(self._validate_inputs)
         self.timerange_input.textChanged.connect(self._update_command_preview)
+        self.timerange_input.textChanged.connect(self._validate_inputs)
         self.settings_state.settings_changed.connect(self._update_command_preview)
 
     def _on_settings_changed(self, settings):
@@ -211,6 +225,40 @@ class DownloadDataPage(QWidget):
             QMessageBox.critical(self, "Process Error", str(e))
             self.run_button.setEnabled(True)
             self.stop_button.setEnabled(False)
+
+    def _validate_inputs(self):
+        """Show warnings for short timeranges or missing data context."""
+        warnings = []
+        raw = self.timerange_input.text().strip()
+        if raw and "-" in raw:
+            parts = raw.split("-")
+            if len(parts) == 2 and len(parts[0]) == 8 and len(parts[1]) == 8:
+                try:
+                    start = datetime.strptime(parts[0], "%Y%m%d")
+                    end   = datetime.strptime(parts[1], "%Y%m%d")
+                    days  = (end - start).days
+                    if days < 7:
+                        warnings.append(
+                            f"⚠ Timerange is only {days} day(s). "
+                            "For backtesting you need at least 30 days; for hyperopt at least 90 days."
+                        )
+                    elif days < 30:
+                        warnings.append(
+                            f"⚠ {days} days is enough for basic backtesting but too short for reliable hyperopt (need 90+ days)."
+                        )
+                    tf = self.timeframe_input.text().strip()
+                    if tf in ("1d", "3d", "1w") and days < 365:
+                        warnings.append(
+                            f"⚠ Daily/weekly timeframes need at least 1 year of data for meaningful results."
+                        )
+                except ValueError:
+                    warnings.append("⚠ Invalid timerange format. Use YYYYMMDD-YYYYMMDD.")
+
+        if warnings:
+            self.validation_label.setText("\n\n".join(warnings))
+            self.validation_label.setVisible(True)
+        else:
+            self.validation_label.setVisible(False)
 
     def _on_process_finished(self, exit_code: int):
         """Called when download process finishes."""

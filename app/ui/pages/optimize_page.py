@@ -11,6 +11,7 @@ from PySide6.QtWidgets import (
     QLineEdit,
     QMessageBox,
     QPushButton,
+    QScrollArea,
     QSpinBox,
     QVBoxLayout,
     QWidget,
@@ -19,6 +20,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QColor
 
 from app.app_state.settings_state import SettingsState
+from app.core.services.hyperopt_advisor import analyse as advise_hyperopt
 from app.core.services.optimize_service import OptimizeService
 from app.core.services.process_service import ProcessService
 from app.core.services.settings_service import SettingsService
@@ -50,6 +52,7 @@ class OptimizePage(QWidget):
         self._initializing = False
         self._update_command_preview()
         self._validate_data_window()
+        self._refresh_advisor()
 
     def _build_ui(self):
         root = QVBoxLayout(self)
@@ -180,6 +183,47 @@ class OptimizePage(QWidget):
 
         params_layout.addStretch()
 
+        # ── Advisor panel ──────────────────────────────────────────────
+        advisor_group = QGroupBox("💡 Hyperopt Advisor")
+        advisor_group.setCheckable(True)
+        advisor_group.setChecked(False)  # collapsed by default
+        advisor_vbox = QVBoxLayout(advisor_group)
+
+        advisor_header = QHBoxLayout()
+        self._advisor_status = QLabel("Select a strategy to see recommendations.")
+        self._advisor_status.setStyleSheet("color: #555; font-size: 9pt;")
+        self._advisor_status.setWordWrap(True)
+        advisor_header.addWidget(self._advisor_status, 1)
+
+        self._auto_configure_btn = QPushButton("⚡ Auto-Configure")
+        self._auto_configure_btn.setToolTip(
+            "Apply recommended epochs, spaces and loss function based on last run analysis"
+        )
+        self._auto_configure_btn.setEnabled(False)
+        self._auto_configure_btn.clicked.connect(self._apply_advisor_suggestion)
+        advisor_header.addWidget(self._auto_configure_btn)
+        advisor_vbox.addLayout(advisor_header)
+
+        self._advisor_tips = QLabel("")
+        self._advisor_tips.setWordWrap(True)
+        self._advisor_tips.setStyleSheet(
+            "background: #e8f4fd; color: #0c5460; border: 1px solid #bee5eb; "
+            "border-radius: 4px; padding: 8px; font-size: 9pt;"
+        )
+        self._advisor_tips.setVisible(False)
+        advisor_vbox.addWidget(self._advisor_tips)
+
+        self._advisor_warnings = QLabel("")
+        self._advisor_warnings.setWordWrap(True)
+        self._advisor_warnings.setStyleSheet(
+            "background: #fff3cd; color: #856404; border: 1px solid #ffc107; "
+            "border-radius: 4px; padding: 8px; font-size: 9pt;"
+        )
+        self._advisor_warnings.setVisible(False)
+        advisor_vbox.addWidget(self._advisor_warnings)
+
+        params_layout.addWidget(advisor_group)
+
         output_layout = QVBoxLayout()
         self.terminal = TerminalWidget()
         output_layout.addWidget(self.terminal)
@@ -192,6 +236,7 @@ class OptimizePage(QWidget):
     def _connect_signals(self):
         self.settings_state.settings_changed.connect(self._on_settings_changed)
         self.strategy_combo.currentTextChanged.connect(self._update_command_preview)
+        self.strategy_combo.currentTextChanged.connect(self._refresh_advisor)
         self.timeframe_input.textChanged.connect(self._update_command_preview)
         self.timerange_input.textChanged.connect(self._update_command_preview)
         self.timerange_input.textChanged.connect(self._validate_data_window)
@@ -346,6 +391,83 @@ class OptimizePage(QWidget):
         self.terminal.append_output(f"\n[Optimize finished] exit_code={exit_code}\n")
         if exit_code == 0:
             self._check_result_quality()
+            self._refresh_advisor()  # re-analyse with new results
+
+    def _refresh_advisor(self, _=None):
+        """Run the hyperopt advisor for the selected strategy and update the panel."""
+        strategy = self.strategy_combo.currentText().strip()
+        settings = self.settings_state.current_settings
+        if not strategy or not settings or not settings.user_data_path:
+            self._advisor_status.setText("Select a strategy to see recommendations.")
+            self._advisor_tips.setVisible(False)
+            self._advisor_warnings.setVisible(False)
+            self._auto_configure_btn.setEnabled(False)
+            self._current_suggestion = None
+            return
+
+        try:
+            suggestion = advise_hyperopt(strategy, settings.user_data_path)
+            self._current_suggestion = suggestion
+
+            if suggestion.source == "last_run":
+                self._advisor_status.setText(
+                    f"Analysis based on last run for {strategy}. "
+                    f"Recommended: {suggestion.epochs} epochs · "
+                    f"spaces: {' '.join(suggestion.spaces)} · "
+                    f"loss: {suggestion.loss_function}"
+                )
+            else:
+                self._advisor_status.setText(
+                    f"No previous runs found for {strategy}. Showing general recommendations."
+                )
+
+            if suggestion.tips:
+                self._advisor_tips.setText("\n\n".join(f"• {t}" for t in suggestion.tips))
+                self._advisor_tips.setVisible(True)
+            else:
+                self._advisor_tips.setVisible(False)
+
+            if suggestion.warnings:
+                self._advisor_warnings.setText("\n\n".join(f"⚠ {w}" for w in suggestion.warnings))
+                self._advisor_warnings.setVisible(True)
+            else:
+                self._advisor_warnings.setVisible(False)
+
+            self._auto_configure_btn.setEnabled(True)
+
+        except Exception as e:
+            _log.warning("Advisor failed for %s: %s", strategy, e)
+            self._advisor_status.setText("Could not load advisor recommendations.")
+            self._auto_configure_btn.setEnabled(False)
+            self._current_suggestion = None
+
+    def _apply_advisor_suggestion(self):
+        """Apply the current advisor suggestion to the UI fields."""
+        s = getattr(self, "_current_suggestion", None)
+        if not s:
+            return
+
+        self.epochs_spin.blockSignals(True)
+        self.spaces_input.blockSignals(True)
+
+        self.epochs_spin.setValue(s.epochs)
+        self.spaces_input.setText(" ".join(s.spaces))
+
+        idx = self.loss_combo.findText(s.loss_function)
+        if idx >= 0:
+            self.loss_combo.setCurrentIndex(idx)
+        else:
+            self.loss_combo.setEditText(s.loss_function)
+
+        self.epochs_spin.blockSignals(False)
+        self.spaces_input.blockSignals(False)
+
+        self._update_command_preview()
+        self._validate_data_window()
+        _log.info(
+            "Auto-configured | epochs=%d | spaces=%s | loss=%s",
+            s.epochs, s.spaces, s.loss_function,
+        )
 
     def _validate_data_window(self):
         """Show a warning if the timerange is too short for reliable optimization."""
