@@ -251,6 +251,10 @@ class TerminalWidget(QWidget):
         self.stop_button.setEnabled(False)
         self.process_finished.emit(exit_code)
 
+    def get_output(self) -> str:
+        """Return all plain text currently in the output display."""
+        return self.output_text.toPlainText()
+
     def get_full_output(self) -> tuple:
         """Get full captured output (stdout, stderr)."""
         return self.process_service.get_full_output()

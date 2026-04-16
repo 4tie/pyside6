@@ -40,6 +40,8 @@ class OptimizePage(QWidget):
         self.process_service = ProcessService()
         self.selected_pairs: List[str] = []
         self._initializing = True
+        self._last_json_backup: Optional[dict] = None  # backup before hyperopt overwrites it
+        self._last_json_path: Optional[str] = None
 
         self._build_ui()
         self._connect_signals()
@@ -47,6 +49,7 @@ class OptimizePage(QWidget):
         self._load_preferences()
         self._initializing = False
         self._update_command_preview()
+        self._validate_data_window()
 
     def _build_ui(self):
         root = QVBoxLayout(self)
@@ -144,8 +147,37 @@ class OptimizePage(QWidget):
         self.stop_button.setEnabled(False)
         self.stop_button.clicked.connect(self.process_service.stop_process)
         button_layout.addWidget(self.stop_button)
+
+        self.revert_button = QPushButton("\u21a9 Revert Parameters")
+        self.revert_button.setEnabled(False)
+        self.revert_button.setToolTip("Restore strategy parameters to values before this optimization run")
+        self.revert_button.setStyleSheet("color: #b85c00; font-weight: bold;")
+        self.revert_button.clicked.connect(self._revert_parameters)
+        button_layout.addWidget(self.revert_button)
+
         button_layout.addStretch()
         params_layout.addLayout(button_layout)
+
+        # Data quality warning
+        self.data_warning_label = QLabel("")
+        self.data_warning_label.setWordWrap(True)
+        self.data_warning_label.setStyleSheet(
+            "background: #fff3cd; color: #856404; border: 1px solid #ffc107; "
+            "border-radius: 4px; padding: 6px; font-size: 9pt;"
+        )
+        self.data_warning_label.setVisible(False)
+        params_layout.addWidget(self.data_warning_label)
+
+        # Result quality warning
+        self.result_warning_label = QLabel("")
+        self.result_warning_label.setWordWrap(True)
+        self.result_warning_label.setStyleSheet(
+            "background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; "
+            "border-radius: 4px; padding: 6px; font-size: 9pt;"
+        )
+        self.result_warning_label.setVisible(False)
+        params_layout.addWidget(self.result_warning_label)
+
         params_layout.addStretch()
 
         output_layout = QVBoxLayout()
@@ -162,7 +194,9 @@ class OptimizePage(QWidget):
         self.strategy_combo.currentTextChanged.connect(self._update_command_preview)
         self.timeframe_input.textChanged.connect(self._update_command_preview)
         self.timerange_input.textChanged.connect(self._update_command_preview)
+        self.timerange_input.textChanged.connect(self._validate_data_window)
         self.epochs_spin.valueChanged.connect(self._update_command_preview)
+        self.epochs_spin.valueChanged.connect(self._validate_data_window)
         self.spaces_input.textChanged.connect(self._update_command_preview)
         self.loss_combo.currentTextChanged.connect(self._update_command_preview)
 
@@ -277,7 +311,21 @@ class OptimizePage(QWidget):
 
         self.run_button.setEnabled(False)
         self.stop_button.setEnabled(True)
+        self.revert_button.setEnabled(False)
+        self.result_warning_label.setVisible(False)
         self.terminal.append_output("[Optimize started]\n\n")
+
+        # Backup current strategy JSON before freqtrade overwrites it
+        self._last_json_backup = None
+        self._last_json_path = cmd.strategy_file.replace(".py", ".json")
+        try:
+            import json
+            from pathlib import Path
+            p = Path(self._last_json_path)
+            if p.exists():
+                self._last_json_backup = json.loads(p.read_text(encoding="utf-8"))
+        except Exception:
+            pass
 
         try:
             self.process_service.execute_command(
@@ -296,6 +344,92 @@ class OptimizePage(QWidget):
         self.run_button.setEnabled(True)
         self.stop_button.setEnabled(False)
         self.terminal.append_output(f"\n[Optimize finished] exit_code={exit_code}\n")
+        if exit_code == 0:
+            self._check_result_quality()
+
+    def _validate_data_window(self):
+        """Show a warning if the timerange is too short for reliable optimization."""
+        warnings = []
+        raw = self.timerange_input.text().strip()
+        if raw and "-" in raw:
+            parts = raw.split("-")
+            if len(parts) == 2 and len(parts[0]) == 8 and len(parts[1]) == 8:
+                try:
+                    start = datetime.strptime(parts[0], "%Y%m%d")
+                    end = datetime.strptime(parts[1], "%Y%m%d")
+                    days = (end - start).days
+                    if days < 30:
+                        warnings.append(
+                            f"⚠ Timerange is only {days} day(s). "
+                            "Hyperopt needs at least 30 days of data to find reliable parameters. "
+                            "Results on short windows are likely to overfit and perform worse on new data."
+                        )
+                except ValueError:
+                    pass
+
+        epochs = self.epochs_spin.value()
+        if epochs < 50:
+            warnings.append(
+                f"⚠ {epochs} epochs is very low. Use at least 100–500 epochs for meaningful results."
+            )
+
+        if warnings:
+            self.data_warning_label.setText("\n\n".join(warnings))
+            self.data_warning_label.setVisible(True)
+        else:
+            self.data_warning_label.setVisible(False)
+
+    def _check_result_quality(self):
+        """Parse terminal output after optimization and warn if result is bad."""
+        output = self.terminal.get_output() if hasattr(self.terminal, "get_output") else ""
+        issues = []
+
+        # Detect all-loss result
+        import re
+        m = re.search(r"\|\s*\*?\s*Best\s*\|[^|]+\|\s*(\d+)\s*\|\s*(\d+)\s+(\d+)\s+(\d+)", output)
+        if m:
+            trades, wins, draws, losses = int(m.group(1)), int(m.group(2)), int(m.group(3)), int(m.group(4))
+            if trades > 0 and wins == 0:
+                issues.append(f"⚠ Best result had 0 wins out of {trades} trades — all losses.")
+
+        # Detect negative total profit
+        if re.search(r"Total profit\s+-", output) or re.search(r"\(-\d+\.\d+%\)", output):
+            issues.append("⚠ Best result has negative total profit — the optimized parameters are worse than doing nothing.")
+
+        # Detect very short data window from freqtrade's own log
+        m2 = re.search(r"Hyperopting with data from .+ \((\d+) days?\)", output)
+        if m2 and int(m2.group(1)) < 7:
+            issues.append(
+                f"⚠ Freqtrade only had {m2.group(1)} day(s) of actual data. "
+                "Download more historical data before optimizing."
+            )
+
+        if issues:
+            msg = "\n".join(issues)
+            if self._last_json_backup:
+                msg += "\n\nParameters were overwritten. Use ↩ Revert Parameters to restore the previous values."
+                self.revert_button.setEnabled(True)
+            self.result_warning_label.setText(msg)
+            self.result_warning_label.setVisible(True)
+        else:
+            self.result_warning_label.setVisible(False)
+
+    def _revert_parameters(self):
+        """Restore strategy JSON to the backup taken before this optimization run."""
+        if not self._last_json_backup or not self._last_json_path:
+            return
+        import json, os
+        from pathlib import Path
+        tmp = Path(self._last_json_path).with_suffix(".tmp")
+        try:
+            tmp.write_text(json.dumps(self._last_json_backup, indent=2), encoding="utf-8")
+            os.replace(tmp, self._last_json_path)
+            self.revert_button.setEnabled(False)
+            self.result_warning_label.setVisible(False)
+            self.terminal.append_output("\n[Parameters reverted to pre-optimization values]\n")
+            _log.info("Reverted strategy JSON: %s", self._last_json_path)
+        except Exception as e:
+            QMessageBox.critical(self, "Revert Failed", str(e))
 
     def _load_preferences(self):
         settings = self.settings_state.current_settings
