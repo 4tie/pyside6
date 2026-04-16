@@ -7,6 +7,9 @@
       "args": [
         "-y",
         "@modelcontextprotocol/server-memory"
+      ],
+      "disabledTools": [
+        "delete_relations"
       ]
     },
     "filesystem": {
@@ -25,6 +28,10 @@
       "timeout": 60000,
       "args": [
         "mcp-server-git"
+      ],
+      "disabledTools": [
+        "git_branch",
+        "git_create_branch"
       ]
     },
     "sequential-thinking": {
@@ -49,7 +56,14 @@
         "TASK_MANAGER_BASE_DIR": "T:\\ae\\pyside6",
         "ARCHIVE_FILE_PATH": "T:\\ae\\pyside6\\.ai\\tasks-archive.yaml",
         "ARCHIVE_MODE": "manual"
-      }
+      },
+      "disabledTools": [
+        "restore_archived_request",
+        "remove_prompts",
+        "delete_note",
+        "delete_subtask",
+        "delete_task"
+      ]
     }
   }
 }

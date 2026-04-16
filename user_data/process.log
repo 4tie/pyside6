@@ -1,0 +1,4 @@
+2026-04-16 12:06:57.733 | INFO     | freqtrade_gui.process          | Process started | cmd=python -m freqtrade backtesting --strategy MultiMeee | cwd=T:/ae/pyside6
+2026-04-16 12:06:57.733 | DEBUG    | freqtrade_gui.process          | stdout chunk: 1024 bytes
+2026-04-16 12:06:57.733 | DEBUG    | freqtrade_gui.process          | stderr chunk: 256 bytes
+2026-04-16 12:06:57.733 | INFO     | freqtrade_gui.process          | Backtest process finished | exit_code=0

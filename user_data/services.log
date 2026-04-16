@@ -1,8 +1,3 @@
-2026-04-16 12:06:57.731 | INFO     | freqtrade_gui.startup          | ============================================================
-2026-04-16 12:06:57.731 | INFO     | freqtrade_gui.startup          | Freqtrade GUI starting
-2026-04-16 12:06:57.731 | INFO     | freqtrade_gui.startup          | Python     : 3.12.0
-2026-04-16 12:06:57.731 | INFO     | freqtrade_gui.startup          | user_data  : T:/ae/pyside6/user_data
-2026-04-16 12:06:57.731 | INFO     | freqtrade_gui.startup          | ============================================================
 2026-04-16 12:06:57.732 | DEBUG    | freqtrade_gui.settings         | Settings loaded from ~/.freqtrade_gui/settings.json
 2026-04-16 12:06:57.732 | INFO     | freqtrade_gui.settings         | Settings saved to ~/.freqtrade_gui/settings.json
 2026-04-16 12:06:57.732 | DEBUG    | freqtrade_gui.settings         | Saved: python=T:/venv/Scripts/python.exe venv=T:/venv user_data=T:/ae/pyside6/user_data
@@ -12,15 +7,6 @@
 2026-04-16 12:06:57.733 | INFO     | freqtrade_gui.settings         |   freqtrade 2024.1
 2026-04-16 12:06:57.733 | INFO     | freqtrade_gui.backtest         | Backtest requested | strategy=MultiMeee | timeframe=5m | timerange=20250101-20260101 | pairs=[ADA/USDT, ETH/USDT]
 2026-04-16 12:06:57.733 | INFO     | freqtrade_gui.backtest         | Command built | strategy=MultiMeee | config=user_data/strategies/MultiMeee.json | export=user_data/backtest_results/MultiMeee/MultiMeee_20260416_043238.backtest.zip
-2026-04-16 12:06:57.733 | INFO     | freqtrade_gui.process          | Process started | cmd=python -m freqtrade backtesting --strategy MultiMeee | cwd=T:/ae/pyside6
-2026-04-16 12:06:57.733 | DEBUG    | freqtrade_gui.process          | stdout chunk: 1024 bytes
-2026-04-16 12:06:57.733 | DEBUG    | freqtrade_gui.process          | stderr chunk: 256 bytes
-2026-04-16 12:06:57.733 | INFO     | freqtrade_gui.process          | Backtest process finished | exit_code=0
-2026-04-16 12:06:57.733 | DEBUG    | freqtrade_gui.results          | Parsing zip: backtest-result-2026-04-16_05-02-01.zip | json_file=backtest-result-2026-04-16_05-02-01.json
-2026-04-16 12:06:57.733 | INFO     | freqtrade_gui.results          | Zip parsed | strategy=MultiMeee | trades=231 | profit=-4.6510%
-2026-04-16 12:06:57.733 | INFO     | freqtrade_gui.run_store        | Saving run | id=run_2026-04-16_05-02-01_abc123 | strategy=MultiMeee | trades=231 | profit=-4.6510%
-2026-04-16 12:06:57.734 | DEBUG    | freqtrade_gui.run_store        | Index updated | strategy=MultiMeee | run_id=run_2026-04-16_05-02-01_abc123
-2026-04-16 12:06:57.734 | INFO     | freqtrade_gui.run_store        | Run saved -> T:/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-16_05-02-01_abc123
 2026-04-16 12:06:57.734 | INFO     | freqtrade_gui.backtest         | Index rebuild: scanning 11 zip(s) in backtest_results/
 2026-04-16 12:06:57.734 | DEBUG    | freqtrade_gui.backtest         | Skipping already-indexed zip: backtest-result-2026-04-16_02-52-06.zip
 2026-04-16 12:06:57.734 | INFO     | freqtrade_gui.backtest         | Index rebuild complete: imported=1 skipped=10

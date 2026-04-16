@@ -16,6 +16,7 @@ class BacktestTrade:
     profit_abs: float
     duration: int        # minutes
     is_open: bool
+    exit_reason: str = ""
 
 
 @dataclass
