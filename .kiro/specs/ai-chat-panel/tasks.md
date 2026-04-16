@@ -300,7 +300,7 @@ All code follows project conventions: `get_logger("section.module")`, `@dataclas
     - For any valid `AppSettings` containing `AISettings`, save to a temp file and reload; assert `ai` field equals original including `chat_model`, `task_model`, and `routing_mode`
     - **Validates: Requirements 20.2**
 
-  - [ ] 5.6 Write property test: OpenRouter free model filtering
+  - [~] 5.6 Write property test: OpenRouter free model filtering
     - **Property 13: OpenRouter free model filtering**
     - Generate lists of model objects with varying pricing fields; assert `list_models()` with `free_only=True` returns only zero-priced models; with `free_only=False` returns all text-capable models
     - **Validates: Requirements 22.1, 22.2**
