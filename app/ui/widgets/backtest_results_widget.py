@@ -1,4 +1,3 @@
-import csv
 import json
 from datetime import datetime
 from pathlib import Path
@@ -13,6 +12,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtGui import QColor, QFont
 
 from app.core.services.backtest_results_service import BacktestResults, BacktestSummary
+from app.core.services.run_store import RunStore
 
 _GREEN = QColor("#1a7f37")
 _RED   = QColor("#cf222e")
@@ -254,13 +254,11 @@ class BacktestResultsWidget(QWidget):
     # ------------------------------------------------------------------ #
 
     def _on_export(self):
-        """Export summary JSON and trades CSV to the results directory."""
+        """Export run folder via RunStore to a chosen directory."""
         if not self.results:
             return
 
-        strategy = self.results.summary.strategy
         default_dir = str(self._export_dir) if self._export_dir else ""
-
         out_dir = QFileDialog.getExistingDirectory(
             self, "Select Export Directory", default_dir
         )
@@ -268,81 +266,16 @@ class BacktestResultsWidget(QWidget):
             return
 
         try:
-            exported = self._export_to(Path(out_dir))
+            run_dir = RunStore.save(
+                results=self.results,
+                strategy_results_dir=out_dir,
+            )
             QMessageBox.information(
                 self, "Export Complete",
-                f"Exported to:\n" + "\n".join(str(p) for p in exported)
+                f"Run saved to:\n{run_dir}\n\n"
+                "Files: meta.json, results.json, trades.json, "
+                "config.snapshot.json, params.json"
             )
-            self._export_path_label.setText(out_dir)
+            self._export_path_label.setText(str(run_dir))
         except Exception as e:
             QMessageBox.critical(self, "Export Failed", str(e))
-
-    def _export_to(self, out_dir: Path) -> list[Path]:
-        """Write summary JSON and trades CSV into out_dir.
-
-        Args:
-            out_dir: Destination directory (created if missing)
-
-        Returns:
-            List of paths written
-        """
-        out_dir.mkdir(parents=True, exist_ok=True)
-        s = self.results.summary
-        ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-        stem = f"{s.strategy}_{ts}"
-
-        # --- summary JSON ---
-        summary_path = out_dir / f"{stem}_summary.json"
-        summary_dict = {
-            "strategy":         s.strategy,
-            "timeframe":        s.timeframe,
-            "total_trades":     s.total_trades,
-            "wins":             s.wins,
-            "losses":           s.losses,
-            "draws":            s.draws,
-            "win_rate_pct":     round(s.win_rate, 4),
-            "avg_profit_pct":   round(s.avg_profit, 6),
-            "total_profit_pct": round(s.total_profit, 6),
-            "total_profit_abs": round(s.total_profit_abs, 8),
-            "max_drawdown_pct": round(s.max_drawdown, 4),
-            "max_drawdown_abs": round(s.max_drawdown_abs, 8),
-            "avg_duration_min": s.trade_duration_avg,
-            "sharpe_ratio":     s.sharpe_ratio,
-            "sortino_ratio":    s.sortino_ratio,
-            "calmar_ratio":     s.calmar_ratio,
-            "exported_at":      datetime.now().isoformat(),
-        }
-        summary_path.write_text(
-            json.dumps(summary_dict, indent=2), encoding="utf-8"
-        )
-
-        # --- trades CSV ---
-        trades_path = out_dir / f"{stem}_trades.csv"
-        with trades_path.open("w", newline="", encoding="utf-8") as f:
-            writer = csv.writer(f)
-            writer.writerow([
-                "pair", "open_date", "close_date", "open_rate", "close_rate",
-                "profit_pct", "profit_abs", "duration_min", "exit_reason", "is_open",
-            ])
-            raw_trades = (
-                self.results.raw_data.get("result", {}).get("trades", [])
-                if self.results.raw_data else []
-            )
-            for i, t in enumerate(self.results.trades):
-                exit_reason = (
-                    raw_trades[i].get("exit_reason", "") if i < len(raw_trades) else ""
-                )
-                writer.writerow([
-                    t.pair,
-                    t.open_date,
-                    t.close_date or "",
-                    t.open_rate,
-                    t.close_rate if t.close_rate is not None else "",
-                    round(t.profit, 6),
-                    round(t.profit_abs, 8),
-                    t.duration,
-                    exit_reason,
-                    t.is_open,
-                ])
-
-        return [summary_path, trades_path]

@@ -22,6 +22,7 @@ from PySide6.QtWidgets import (
 from app.app_state.settings_state import SettingsState
 from app.core.services.backtest_service import BacktestService
 from app.core.services.backtest_results_service import BacktestResultsService
+from app.core.services.run_store import RunStore
 from app.core.services.settings_service import SettingsService
 from app.core.services.process_service import ProcessService
 from app.ui.widgets.terminal_widget import TerminalWidget
@@ -40,6 +41,7 @@ class BacktestPage(QWidget):
         self.process_service = ProcessService()
         self.last_export_path: Optional[str] = None
         self._last_export_dir: Optional[str] = None
+        self._last_config_file: Optional[str] = None
         self.selected_pairs: List[str] = []
         self._initializing: bool = True
 
@@ -296,6 +298,7 @@ class BacktestPage(QWidget):
 
             self.last_export_path = cmd.export_zip
             self._last_export_dir = cmd.export_dir
+            self._last_config_file = cmd.config_file
             # Use command from terminal widget (allows user edits)
             command_string = self.terminal.get_command()
 
@@ -363,8 +366,13 @@ class BacktestPage(QWidget):
             results = BacktestResultsService.parse_backtest_zip(self.last_export_path)
 
             if results:
-                cmd_export_dir = self._last_export_dir
-                self.results_widget.display_results(results, export_dir=cmd_export_dir)
+                run_dir = RunStore.save(
+                    results=results,
+                    strategy_results_dir=self._last_export_dir,
+                    config_path=self._last_config_file,
+                )
+                self.terminal.append_output(f"✓ Run saved → {run_dir}\n")
+                self.results_widget.display_results(results, export_dir=str(run_dir))
                 self.terminal.append_output("✓ Results loaded successfully!\n")
 
                 # Switch to results tab
