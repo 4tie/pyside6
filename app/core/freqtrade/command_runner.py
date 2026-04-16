@@ -120,9 +120,6 @@ class CommandRunner:
             config_file=str(config_file),
         )
 
-        """Build command to check freqtrade version."""
-        return CommandRunner.build_freqtrade_command("--version", settings=settings)
-
     @staticmethod
     def build_python_version_command(settings: AppSettings) -> List[str]:
         """Build command to check Python version."""
