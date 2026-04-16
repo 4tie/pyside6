@@ -1,0 +1,5 @@
+Never delete this file.
+
+
+
+As for why the last run was still bad — MaxDrawDownHyperOptLoss optimizes to minimize drawdown, not maximize profit. With 355 days of data it found parameters that lose money slowly (66.7% win rate but -65% total profit means the losses are huge). The advisor will now steer you toward SharpeHyperOptLoss with buy sell spaces first.
