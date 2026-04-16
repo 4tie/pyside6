@@ -6,7 +6,7 @@ from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QComboBox,
     QGroupBox, QFormLayout, QDoubleSpinBox, QSpinBox, QCheckBox,
     QTableWidget, QTableWidgetItem, QHeaderView, QAbstractItemView,
-    QScrollArea, QSizePolicy,
+    QScrollArea
 )
 
 from app.app_state.settings_state import SettingsState

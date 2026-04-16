@@ -1,8 +1,8 @@
-from pathlib import Path
 from typing import List, Optional
 
 from app.core.models.settings_models import AppSettings
 from app.core.freqtrade.runners.base_runner import RunCommand, build_command
+from app.core.freqtrade.resolvers.runtime_resolver import resolve_run_paths
 
 
 def build_download_data_command(
@@ -25,11 +25,12 @@ def build_download_data_command(
     Raises:
         ValueError: If settings are incomplete.
     """
-    user_data = Path(settings.user_data_path).expanduser().resolve()
+    paths = resolve_run_paths(settings)
 
     ft_args = [
         "download-data",
-        "--user-data-dir", str(user_data),
+        "--user-data-dir", str(paths.user_data_dir),
+        "--config", str(paths.config_file),
         "--timeframe", timeframe,
         "--prepend",
     ]

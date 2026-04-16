@@ -46,6 +46,7 @@ class BacktestPage(QWidget):
         self.process_service = ProcessService()
         self.last_export_path: Optional[str] = None
         self._last_export_dir: Optional[str] = None
+        self._last_run_config_path: Optional[str] = None
         self.selected_pairs: List[str] = []
         self._initializing: bool = True
 
@@ -176,9 +177,6 @@ class BacktestPage(QWidget):
         self.stop_button.setEnabled(False)
         self.stop_button.clicked.connect(self.process_service.stop_process)
         button_layout.addWidget(self.stop_button)
-
-        button_layout.addStretch()
-        params_layout.addLayout(button_layout)
 
         button_layout.addStretch()
         params_layout.addLayout(button_layout)
@@ -345,8 +343,7 @@ class BacktestPage(QWidget):
                 dry_run_wallet=dry_run_wallet,
             )
 
-            command_string = f"{cmd.program} {' '.join(cmd.args)}"
-            self.terminal.set_command(command_string)
+            self.terminal.set_command_list(cmd.as_list())
         except Exception:
             pass
 
@@ -388,9 +385,10 @@ class BacktestPage(QWidget):
                 dry_run_wallet=dry_run_wallet,
             )
 
-            self.last_export_path = cmd.export_zip
+            self.last_export_path = None
             self._last_export_dir = cmd.export_dir
-            command_string = f"{cmd.program} {' '.join(cmd.args)}"
+            self._last_run_config_path = cmd.config_file
+            command_string = cmd.to_display_string()
             _log.info("Command built | strategy=%s", strategy)
 
         except (ValueError, FileNotFoundError) as e:
@@ -401,6 +399,7 @@ class BacktestPage(QWidget):
         self.terminal.clear_output()
         self.terminal.append_output(f"$ {command_string}\n")
         self.terminal.append_output(
+            f"Config: {cmd.config_file}\n"
             f"Strategy: {cmd.strategy_file}\n\n"
         )
 
@@ -414,7 +413,7 @@ class BacktestPage(QWidget):
 
         try:
             self.process_service.execute_command(
-                command=[cmd.program] + cmd.args,
+                command=cmd.as_list(),
                 on_output=self.terminal.append_output,
                 on_error=self.terminal.append_error,
                 on_finished=self._on_process_finished_internal,
@@ -472,7 +471,7 @@ class BacktestPage(QWidget):
 
         try:
             self.terminal.append_output("Parsing backtest results...\n")
-            results = BacktestResultsService.parse_backtest_zip(str(zip_path))
+            results = parse_backtest_zip(str(zip_path))
 
             if results:
                 s = results.summary
@@ -482,6 +481,7 @@ class BacktestPage(QWidget):
                 run_dir = RunStore.save(
                     results=results,
                     strategy_results_dir=strategy_results_dir,
+                    config_path=self._last_run_config_path,
                 )
                 self.terminal.append_output(f"✓ Run saved → {run_dir}\n")
                 self.results_widget.display_results(results, export_dir=str(run_dir))

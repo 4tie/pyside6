@@ -13,12 +13,12 @@ from PySide6.QtWidgets import (
     QTabWidget,
 )
 from app.app_state.settings_state import SettingsState
-from app.core.services.backtest_service import BacktestService
-from app.core.services.settings_service import SettingsService
+from app.core.services.download_data_service import DownloadDataService
 from app.core.services.process_service import ProcessService
-from app.ui.widgets.terminal_widget import TerminalWidget
-from app.ui.widgets.data_status_widget import DataStatusWidget
+from app.core.services.settings_service import SettingsService
 from app.ui.dialogs.pairs_selector_dialog import PairsSelectorDialog
+from app.ui.widgets.data_status_widget import DataStatusWidget
+from app.ui.widgets.terminal_widget import TerminalWidget
 
 
 class DownloadDataPage(QWidget):
@@ -28,7 +28,7 @@ class DownloadDataPage(QWidget):
         super().__init__(parent)
         self.settings_state = settings_state
         self.settings_service = SettingsService()
-        self.backtest_service = BacktestService(self.settings_service)
+        self.download_data_service = DownloadDataService(self.settings_service)
         self.process_service = ProcessService()
         self.selected_pairs: List[str] = []
         self._initializing: bool = True
@@ -151,12 +151,12 @@ class DownloadDataPage(QWidget):
                 self.terminal.set_command("[Select pairs to download]")
                 return
 
-            cmd = self.backtest_service.build_download_command(
+            cmd = self.download_data_service.build_command(
                 timeframe=timeframe,
                 timerange=timerange,
                 pairs=pairs,
             )
-            self.terminal.set_command(f"{cmd.program} {' '.join(cmd.args)}")
+            self.terminal.set_command_list(cmd.as_list())
         except Exception:
             pass
 
@@ -176,7 +176,7 @@ class DownloadDataPage(QWidget):
         self._save_preferences()
 
         try:
-            cmd = self.backtest_service.build_download_command(
+            cmd = self.download_data_service.build_command(
                 timeframe=timeframe,
                 timerange=timerange,
                 pairs=pairs,
@@ -185,7 +185,7 @@ class DownloadDataPage(QWidget):
             QMessageBox.critical(self, "Download Setup Failed", str(e))
             return
 
-        command_string = f"{cmd.program} {' '.join(cmd.args)}"
+        command_string = cmd.to_display_string()
 
         self.terminal.clear_output()
         self.terminal.append_output(f"$ {command_string}\n")
@@ -201,7 +201,7 @@ class DownloadDataPage(QWidget):
 
         try:
             self.process_service.execute_command(
-                command=[cmd.program] + cmd.args,
+                command=cmd.as_list(),
                 on_output=self.terminal.append_output,
                 on_error=self.terminal.append_error,
                 on_finished=self._on_process_finished,

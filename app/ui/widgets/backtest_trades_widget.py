@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List
 
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
@@ -31,8 +31,6 @@ class BacktestTradesWidget(QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self._raw_data: Optional[dict] = None
-        self._strategy_name: str = ""
         self._build_ui()
 
     def _build_ui(self):
@@ -56,16 +54,12 @@ class BacktestTradesWidget(QWidget):
         self.table.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         layout.addWidget(self.table)
 
-    def populate(self, trades: List[BacktestTrade], raw_data: Optional[dict] = None, strategy_name: str = ""):
+    def populate(self, trades: List[BacktestTrade]):
         """Fill the trades table.
 
         Args:
             trades: List of BacktestTrade objects
-            raw_data: Optional raw JSON data for exit_reason lookup
-            strategy_name: Strategy name for raw_data lookup
         """
-        self._raw_data = raw_data
-        self._strategy_name = strategy_name
         self._count_label.setText(f"{len(trades)} trades")
         self.table.setSortingEnabled(False)
         self.table.setRowCount(len(trades))
@@ -82,17 +76,7 @@ class BacktestTradesWidget(QWidget):
             self.table.setItem(row, 5, _colored_item(f"{t.profit:+.3f}%", t.profit))
             self.table.setItem(row, 6, _colored_item(f"{t.profit_abs:+.4f}", t.profit_abs))
             self.table.setItem(row, 7, _right_item(str(t.duration)))
-
-            exit_reason = ""
-            if raw_data:
-                strategy_block = raw_data.get("strategy", {})
-                if isinstance(strategy_block, dict):
-                    raw_trades = strategy_block.get(strategy_name, {}).get("trades", [])
-                else:
-                    raw_trades = raw_data.get("result", {}).get("trades", [])
-                if row < len(raw_trades):
-                    exit_reason = raw_trades[row].get("exit_reason", "")
-            self.table.setItem(row, 8, QTableWidgetItem(exit_reason))
+            self.table.setItem(row, 8, QTableWidgetItem(t.exit_reason))
 
         self.table.setSortingEnabled(True)
         self.table.sortByColumn(1, Qt.AscendingOrder)

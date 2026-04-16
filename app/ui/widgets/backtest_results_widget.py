@@ -6,9 +6,9 @@ from PySide6.QtWidgets import (
     QLabel, QPushButton, QFileDialog, QMessageBox,
 )
 
-from app.core.services.backtest_results_service import BacktestResults
-from app.core.services.run_store import RunStore
-from app.ui.widgets.backtest_summary_widget import BacktestSummaryWidget
+from app.core.backtests.results_models import BacktestResults
+from app.core.backtests.results_store import RunStore
+from app.ui.widgets.backtest_stats_widget import BacktestStatsWidget
 from app.ui.widgets.backtest_trades_widget import BacktestTradesWidget
 
 
@@ -37,9 +37,9 @@ class BacktestResultsWidget(QWidget):
         layout.addLayout(toolbar)
 
         self.tabs = QTabWidget()
-        self.summary_widget = BacktestSummaryWidget()
+        self.summary_widget = BacktestStatsWidget()
         self.trades_widget = BacktestTradesWidget()
-        self.tabs.addTab(self.summary_widget, "Summary")
+        self.tabs.addTab(self.summary_widget, "Stats")
         self.tabs.addTab(self.trades_widget, "Trades")
         layout.addWidget(self.tabs)
 
@@ -57,11 +57,7 @@ class BacktestResultsWidget(QWidget):
             str(self._export_dir) if self._export_dir else f"Strategy: {results.summary.strategy}"
         )
         self.summary_widget.populate(results.summary)
-        self.trades_widget.populate(
-            results.trades,
-            raw_data=results.raw_data,
-            strategy_name=results.summary.strategy,
-        )
+        self.trades_widget.populate(results.trades)
 
     def _on_export(self):
         """Export run folder via RunStore to a chosen directory."""
@@ -79,8 +75,8 @@ class BacktestResultsWidget(QWidget):
             QMessageBox.information(
                 self, "Export Complete",
                 f"Run saved to:\n{run_dir}\n\n"
-                "Files: meta.json, results.json, trades.json, "
-                "config.snapshot.json, params.json"
+                "Files: meta.json, results.json, trades.json, params.json\n"
+                "config.snapshot.json is included when a config path is available."
             )
             self._export_path_label.setText(str(run_dir))
         except Exception as e:

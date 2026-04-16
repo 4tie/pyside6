@@ -7,6 +7,7 @@ from app.app_state.settings_state import SettingsState
 from app.ui.pages.settings_page import SettingsPage
 from app.ui.pages.backtest_page import BacktestPage
 from app.ui.pages.download_data_page import DownloadDataPage
+from app.ui.pages.optimize_page import OptimizePage
 from app.ui.pages.strategy_config_page import StrategyConfigPage
 from app.ui.widgets.terminal_widget import TerminalWidget
 
@@ -43,9 +44,13 @@ class MainWindow(QMainWindow):
         self.backtest_page = BacktestPage(self.settings_state)
         self.tabs.addTab(self.backtest_page, "Backtest")
 
-        #Downlaod data tab
-        self.dd_page = DownloadDataPage(self.settings_state)
-        self.tabs.addTab(self.dd_page, "Download Data")
+        # Optimize tab
+        self.optimize_page = OptimizePage(self.settings_state)
+        self.tabs.addTab(self.optimize_page, "Optimize")
+
+        # Download data tab
+        self.download_data_page = DownloadDataPage(self.settings_state)
+        self.tabs.addTab(self.download_data_page, "Download Data")
 
         # Strategy config tab
         self.strategy_config_page = StrategyConfigPage(self.settings_state)
@@ -68,7 +73,8 @@ class MainWindow(QMainWindow):
         return [
             self.terminal_widget,
             self.backtest_page.terminal,
-            self.dd_page.terminal,
+            self.optimize_page.terminal,
+            self.download_data_page.terminal,
         ]
 
     def _apply_terminal_preferences(self):
@@ -132,4 +138,3 @@ class MainWindow(QMainWindow):
             return
 
         self.terminal_widget.run_freqtrade_command("--version", settings=settings)
-

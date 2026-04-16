@@ -1,6 +1,9 @@
+import os
+import shlex
+import subprocess
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Sequence
 
 from app.core.models.settings_models import AppSettings
 
@@ -11,6 +14,22 @@ class RunCommand:
     program: str
     args: List[str]
     cwd: str
+
+    def as_list(self) -> List[str]:
+        """Return the command as a flat token list."""
+        return [self.program, *self.args]
+
+    def to_display_string(self) -> str:
+        """Return a shell-safe display string for the current platform."""
+        return format_command(self.as_list())
+
+
+def format_command(command: Sequence[str]) -> str:
+    """Render a tokenized command for display/copy without re-splitting it later."""
+    command_parts = [str(part) for part in command if part is not None]
+    if os.name == "nt":
+        return subprocess.list2cmdline(command_parts)
+    return shlex.join(command_parts)
 
 
 def build_command(settings: AppSettings, *ft_args: str) -> RunCommand:
@@ -26,14 +45,12 @@ def build_command(settings: AppSettings, *ft_args: str) -> RunCommand:
     Raises:
         ValueError: If no valid execution method is configured.
     """
-    if not settings.user_data_path:
-        raise ValueError("user_data_path is not configured in Settings")
-
-    cwd = str(
-        Path(settings.project_path).expanduser().resolve()
-        if settings.project_path
-        else Path(settings.user_data_path).expanduser().resolve()
-    )
+    if settings.project_path:
+        cwd = str(Path(settings.project_path).expanduser().resolve())
+    elif settings.user_data_path:
+        cwd = str(Path(settings.user_data_path).expanduser().resolve())
+    else:
+        cwd = str(Path.cwd())
 
     if settings.use_module_execution and settings.python_executable:
         return RunCommand(

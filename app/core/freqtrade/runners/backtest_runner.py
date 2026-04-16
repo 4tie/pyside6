@@ -1,16 +1,16 @@
 from dataclasses import dataclass
-from pathlib import Path
 from typing import List, Optional
 
 from app.core.models.settings_models import AppSettings
 from app.core.freqtrade.runners.base_runner import RunCommand, build_command
-from app.core.freqtrade.resolvers.strategy_resolver import resolve_strategy_file
+from app.core.freqtrade.resolvers.runtime_resolver import resolve_run_paths
 
 
 @dataclass
 class BacktestRunCommand(RunCommand):
     """RunCommand extended with backtest-specific paths."""
     export_dir: str
+    config_file: str
     strategy_file: str
 
 
@@ -43,17 +43,16 @@ def build_backtest_command(
         ValueError: If settings are incomplete.
         FileNotFoundError: If strategy file does not exist.
     """
-    user_data = Path(settings.user_data_path).expanduser().resolve()
-    strategy_file = resolve_strategy_file(user_data, strategy_name)
-    strategies_dir = strategy_file.parent
+    paths = resolve_run_paths(settings, strategy_name=strategy_name)
 
-    export_dir = user_data / "backtest_results"
+    export_dir = paths.user_data_dir / "backtest_results"
     export_dir.mkdir(parents=True, exist_ok=True)
 
     ft_args = [
         "backtesting",
-        "--user-data-dir", str(user_data),
-        "--strategy-path", str(strategies_dir),
+        "--user-data-dir", str(paths.user_data_dir),
+        "--config", str(paths.config_file),
+        "--strategy-path", str(paths.strategies_dir),
         "--strategy", strategy_name,
         "--timeframe", timeframe,
         "--export", "trades",
@@ -75,5 +74,6 @@ def build_backtest_command(
         args=base.args,
         cwd=base.cwd,
         export_dir=str(export_dir),
-        strategy_file=str(strategy_file),
+        config_file=str(paths.config_file),
+        strategy_file=str(paths.strategy_file),
     )

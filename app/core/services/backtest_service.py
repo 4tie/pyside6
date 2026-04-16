@@ -1,11 +1,12 @@
 from pathlib import Path
 from typing import List, Optional
 
-from app.core.freqtrade.runners.backtest_runner import BacktestRunCommand, build_backtest_command
-from app.core.freqtrade.resolvers.strategy_resolver import list_strategies
 from app.core.backtests.results_index import IndexStore
 from app.core.backtests.results_parser import parse_backtest_zip
 from app.core.backtests.results_store import RunStore
+from app.core.freqtrade.resolvers.config_resolver import resolve_config_file
+from app.core.freqtrade.resolvers.strategy_resolver import list_strategies
+from app.core.freqtrade.runners.backtest_runner import BacktestRunCommand, build_backtest_command
 from app.core.services.settings_service import SettingsService
 from app.core.utils.app_logger import get_logger
 
@@ -55,8 +56,13 @@ class BacktestService:
         if not results_dir.exists():
             return
 
-        index = IndexStore.load(backtest_results_dir)
         imported = skipped = 0
+        settings = self.settings_service.load_settings()
+        user_data_dir = (
+            Path(settings.user_data_path).expanduser().resolve()
+            if settings.user_data_path
+            else None
+        )
 
         for zip_path in sorted(results_dir.glob("*.zip"), key=lambda p: p.stat().st_mtime):
             try:
@@ -74,7 +80,19 @@ class BacktestService:
                 if already:
                     skipped += 1
                     continue
-                RunStore.save(results, str(results_dir / strategy))
+                config_path = None
+                if user_data_dir:
+                    try:
+                        config_path = str(
+                            resolve_config_file(user_data_dir, strategy_name=strategy)
+                        )
+                    except FileNotFoundError:
+                        config_path = None
+                RunStore.save(
+                    results,
+                    str(results_dir / strategy),
+                    config_path=config_path,
+                )
                 imported += 1
             except Exception as e:
                 _log.warning("Failed to import zip %s: %s", zip_path.name, e)

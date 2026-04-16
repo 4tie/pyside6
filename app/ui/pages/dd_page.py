@@ -12,6 +12,8 @@ from PySide6.QtWidgets import (
     QMessageBox,
     QGroupBox,
     QTabWidget,
+    QTreeWidget,
+    QHeaderView,
 )
 from app.app_state.settings_state import SettingsState
 from app.core.services.download_data_service import DownloadDataService
@@ -193,7 +195,7 @@ class DDPage(QWidget):
                 timerange=timerange,
                 pairs=pairs,
             )
-            self.terminal.set_command(f"{cmd.program} {' '.join(cmd.args)}")
+            self.terminal.set_command_list(cmd.as_list())
         except Exception:
             pass
 
@@ -222,7 +224,7 @@ class DDPage(QWidget):
             QMessageBox.critical(self, "Download Setup Failed", str(e))
             return
 
-        command_string = f"{cmd.program} {' '.join(cmd.args)}"
+        command_string = cmd.to_display_string()
 
         self.terminal.clear_output()
         self.terminal.append_output(f"$ {command_string}\n")
@@ -238,7 +240,7 @@ class DDPage(QWidget):
 
         try:
             self.process_service.execute_command(
-                command=[cmd.program] + cmd.args,
+                command=cmd.as_list(),
                 on_output=self.terminal.append_output,
                 on_error=self.terminal.append_error,
                 on_finished=self._on_process_finished,
@@ -334,3 +336,8 @@ class DDPage(QWidget):
             self.pairs_display_label.setText(f"Selected: {', '.join(self.selected_pairs)}")
         else:
             self.pairs_display_label.setText("Selected: None")
+
+
+from app.ui.pages.download_data_page import DownloadDataPage as DDPage
+
+__all__ = ["DDPage"]

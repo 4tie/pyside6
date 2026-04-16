@@ -41,6 +41,23 @@ class BacktestPreferences(BaseModel):
     max_open_trades: int = Field(2, description="Max open trades")
 
 
+class OptimizePreferences(BaseModel):
+    """Hyperopt-specific user preferences."""
+
+    last_strategy: str = Field("", description="Last used strategy")
+    default_timeframe: str = Field("5m", description="Default timeframe")
+    default_timerange: str = Field("", description="Default timerange")
+    default_pairs: str = Field("", description="Comma-separated pairs")
+    paired_favorites: list[str] = Field(
+        default_factory=lambda: ["BTC/USDT", "ETH/USDT", "ADA/USDT"],
+        description="Common pairs for quick selection",
+    )
+    last_timerange_preset: str = Field("30d", description="Last used timerange preset")
+    epochs: int = Field(100, description="Hyperopt epochs")
+    spaces: str = Field("all", description="Hyperopt spaces")
+    hyperopt_loss: str = Field("SharpeHyperOptLoss", description="Hyperopt loss class")
+
+
 class AppSettings(BaseModel):
     """Main application settings for Freqtrade GUI."""
 
@@ -64,6 +81,9 @@ class AppSettings(BaseModel):
     )
     backtest_preferences: BacktestPreferences = Field(
         default_factory=BacktestPreferences, description="Backtest UI preferences"
+    )
+    optimize_preferences: OptimizePreferences = Field(
+        default_factory=OptimizePreferences, description="Hyperopt UI preferences"
     )
     download_preferences: DownloadPreferences = Field(
         default_factory=DownloadPreferences, description="Download data UI preferences"

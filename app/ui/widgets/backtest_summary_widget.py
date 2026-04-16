@@ -112,3 +112,8 @@ class BacktestSummaryWidget(QWidget):
             add_row(self._trade_grid, r, "Pairs", ", ".join(s.pairlist)); r += 1
         if s.timerange:
             add_row(self._trade_grid, r, "Timerange", s.timerange); r += 1
+
+
+from app.ui.widgets.backtest_stats_widget import BacktestStatsWidget as BacktestSummaryWidget
+
+__all__ = ["BacktestSummaryWidget"]

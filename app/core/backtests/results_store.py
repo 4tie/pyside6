@@ -4,6 +4,7 @@ Also provides load_run() for reconstructing BacktestResults from disk.
 """
 import hashlib
 import json
+import shutil
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
@@ -19,8 +20,12 @@ class RunStore:
     """Persists a backtest run as a structured folder and updates both indexes."""
 
     @staticmethod
-    def save(results: BacktestResults, strategy_results_dir: str,
-             run_params: Optional[dict] = None) -> Path:
+    def save(
+        results: BacktestResults,
+        strategy_results_dir: str,
+        config_path: Optional[str] = None,
+        run_params: Optional[dict] = None,
+    ) -> Path:
         """Save a backtest run and update indexes."""
         ts = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         short_hash = hashlib.md5(ts.encode()).hexdigest()[:6]
@@ -36,6 +41,7 @@ class RunStore:
         _write_meta(run_dir, run_id, results)
         _write_results(run_dir, results)
         _write_trades(run_dir, results)
+        _write_config_snapshot(run_dir, config_path)
         _write_params(run_dir, run_params, results)
 
         backtest_results_dir = str(Path(strategy_results_dir).parent)
@@ -115,6 +121,7 @@ class RunStore:
                 profit_abs=float(t.get("profit_abs", 0)),
                 duration=int(t.get("duration_min", 0)),
                 is_open=bool(t.get("is_open", False)),
+                exit_reason=t.get("reason", ""),
             )
             for t in t_data
         ]
@@ -196,13 +203,6 @@ def _write_results(run_dir: Path, results: BacktestResults) -> None:
 
 
 def _write_trades(run_dir: Path, results: BacktestResults) -> None:
-    raw_trades = (
-        results.raw_data.get("strategy", {})
-        .get(results.summary.strategy, {})
-        .get("trades", [])
-        if isinstance(results.raw_data.get("strategy"), dict)
-        else results.raw_data.get("result", {}).get("trades", [])
-    )
     trades_out = [
         {
             "pair":         t.pair,
@@ -211,17 +211,30 @@ def _write_trades(run_dir: Path, results: BacktestResults) -> None:
             "entry_rate":   t.open_rate,
             "exit_rate":    t.close_rate,
             "duration_min": t.duration,
-            "reason":       (raw_trades[i].get("exit_reason", "") if i < len(raw_trades) else ""),
+            "reason":       t.exit_reason,
             "profit_pct":   round(t.profit, 6),
             "profit_abs":   round(t.profit_abs, 8),
             "stake_amount": t.stake_amount,
             "is_open":      t.is_open,
         }
-        for i, t in enumerate(results.trades)
+        for t in results.trades
     ]
     (run_dir / "trades.json").write_text(
         json.dumps(trades_out, indent=2, ensure_ascii=False), encoding="utf-8"
     )
+
+
+def _write_config_snapshot(run_dir: Path, config_path: Optional[str]) -> None:
+    """Copy the config used for the run into the run folder when available."""
+    if not config_path:
+        return
+
+    source = Path(config_path)
+    if not source.exists() or not source.is_file():
+        _log.warning("Config snapshot skipped, file not found: %s", source)
+        return
+
+    shutil.copy2(source, run_dir / "config.snapshot.json")
 
 
 def _write_params(run_dir: Path, run_params: Optional[dict],

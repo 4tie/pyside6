@@ -10,8 +10,9 @@ def resolve_config_file(user_data: Path, strategy_name: Optional[str] = None) ->
     """Resolve the freqtrade config.json to use for a run.
 
     Resolution order:
-    1. Sidecar config next to strategy: strategies/{strategy_name}_config.json
-    2. Default: user_data/config.json
+    1. Strategy config in user_data/config/config_{strategy_name}.json
+    2. Sidecar config next to strategy: strategies/{strategy_name}_config.json
+    3. Default: user_data/config.json
 
     Args:
         user_data: Resolved user_data directory Path.
@@ -24,6 +25,11 @@ def resolve_config_file(user_data: Path, strategy_name: Optional[str] = None) ->
         FileNotFoundError: If no config file is found.
     """
     if strategy_name:
+        named = user_data / "config" / f"config_{strategy_name}.json"
+        if named.exists():
+            _log.debug("Using strategy config: %s", named)
+            return named
+
         sidecar = user_data / "strategies" / f"{strategy_name}_config.json"
         if sidecar.exists():
             _log.debug("Using sidecar config: %s", sidecar)

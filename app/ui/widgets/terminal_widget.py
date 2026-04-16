@@ -8,8 +8,8 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtGui import QFont, QTextCursor, QColor, QTextCharFormat
 
+from app.core.freqtrade.runners.base_runner import build_command, format_command
 from app.core.services.process_service import ProcessService
-from app.core.freqtrade.command_runner import CommandRunner
 from app.core.models.settings_models import AppSettings, TerminalPreferences
 
 # Table data rows start with box-drawing cell separator
@@ -60,6 +60,7 @@ class TerminalWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.process_service = ProcessService()
+        self._current_command: list[str] = []
         self.init_ui()
         self.apply_preferences(TerminalPreferences())
 
@@ -112,12 +113,13 @@ class TerminalWidget(QWidget):
 
     def run_command(
         self,
-        command: list,
+        command: list[str],
         working_directory: str = None,
         env: dict = None
     ):
         """Execute a command and stream output to the terminal."""
         self.clear_output()
+        self.set_command_list(command)
         self.status_label.setText("Running...")
         self.stop_button.setEnabled(True)
 
@@ -139,7 +141,7 @@ class TerminalWidget(QWidget):
     ):
         """Run a freqtrade command."""
         try:
-            command = CommandRunner.build_freqtrade_command(*args, settings=settings)
+            command = build_command(settings, *args).as_list()
             env = ProcessService.build_environment(
                 settings.venv_path or settings.python_executable,
                 base_env=None
@@ -168,11 +170,21 @@ class TerminalWidget(QWidget):
 
     def set_command(self, command_str: str):
         """Update the command input field with a new command string."""
+        self._current_command = []
         self.command_input.setText(command_str)
+
+    def set_command_list(self, command: list[str]):
+        """Update the command input field from a tokenized command."""
+        self._current_command = list(command)
+        self.command_input.setText(format_command(command))
 
     def get_command(self) -> str:
         """Get the current command from the input field."""
         return self.command_input.text()
+
+    def get_command_list(self) -> list[str]:
+        """Get the current tokenized command if available."""
+        return list(self._current_command)
 
     def _on_copy_command(self):
         """Copy command to clipboard and show tooltip."""

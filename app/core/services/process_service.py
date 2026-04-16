@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from typing import Optional, Callable, List
+from typing import Callable, Optional, Sequence
 
 from PySide6.QtCore import QProcess, QProcessEnvironment
 
@@ -19,7 +19,7 @@ class ProcessService:
 
     def execute_command(
         self,
-        command: List[str],
+        command: Sequence[str],
         on_output: Optional[Callable[[str], None]] = None,
         on_error: Optional[Callable[[str], None]] = None,
         on_finished: Optional[Callable[[int], None]] = None,
@@ -27,6 +27,11 @@ class ProcessService:
         env: Optional[dict] = None
     ) -> QProcess:
         """Execute a command and stream output."""
+        if isinstance(command, str) or not command:
+            raise TypeError("command must be a non-empty tokenized sequence, not a string")
+
+        command_parts = [str(part) for part in command]
+
         self.process = QProcess()
         self.output_buffer_stdout = ""
         self.output_buffer_stderr = ""
@@ -57,8 +62,12 @@ class ProcessService:
             self.process.finished.connect(on_finished)
 
         # Start the process
-        self.process.start(command[0], command[1:])
-        _log.info("Process started | cmd=%s | cwd=%s", " ".join(command), working_directory or "(default)")
+        self.process.start(command_parts[0], command_parts[1:])
+        _log.info(
+            "Process started | cmd=%s | cwd=%s",
+            " ".join(command_parts),
+            working_directory or "(default)",
+        )
         return self.process
 
     def _handle_stdout(self, callback: Callable[[str], None]):
