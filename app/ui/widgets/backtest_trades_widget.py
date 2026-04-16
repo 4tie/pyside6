@@ -7,7 +7,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtGui import QColor
 
-from app.core.services.backtest_results_service import BacktestTrade
+from app.core.backtests.results_models import BacktestTrade
 
 _GREEN = QColor("#1a7f37")
 _RED   = QColor("#cf222e")
