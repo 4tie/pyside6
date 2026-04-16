@@ -63,7 +63,8 @@ class AISettings(BaseModel):
 
     provider: str = Field("ollama", description="Active provider: 'ollama' or 'openrouter'")
     ollama_base_url: str = Field("http://localhost:11434", description="Ollama server base URL")
-    openrouter_api_key: Optional[str] = Field(None, description="OpenRouter API key")
+    openrouter_api_key: Optional[str] = Field(None, description="OpenRouter API key (active/first key, kept for backward compat)")
+    openrouter_api_keys: list[str] = Field(default_factory=list, description="Multiple OpenRouter API keys for rotation")
     chat_model: str = Field("", description="Model for plain conversation")
     task_model: str = Field("", description="Model for tool-using task runs")
     routing_mode: str = Field("single_model", description="'single_model' or 'dual_model'")
@@ -85,12 +86,18 @@ class AISettings(BaseModel):
 
     @model_validator(mode="before")
     @classmethod
-    def migrate_legacy_selected_model(cls, data: Any) -> Any:
-        """Map legacy 'selected_model' key to 'chat_model' if present."""
+    def migrate_legacy_fields(cls, data: Any) -> Any:
+        """Migrate legacy fields and backfill openrouter_api_keys from single key if needed."""
         if isinstance(data, dict):
+            data = dict(data)
+            # Migrate old 'selected_model' -> 'chat_model'
             if "selected_model" in data and "chat_model" not in data:
-                data = dict(data)
                 data["chat_model"] = data.pop("selected_model")
+            # Migrate single key into keys list if list is empty
+            single_key = data.get("openrouter_api_key")
+            keys_list = data.get("openrouter_api_keys", [])
+            if single_key and not keys_list:
+                data["openrouter_api_keys"] = [single_key]
         return data
 
 

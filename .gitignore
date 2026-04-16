@@ -18,4 +18,6 @@ build/
 *.swo
 *~
 .env.local
+# App settings — contains API keys, paths, credentials
 settings.json
+data/settings.json

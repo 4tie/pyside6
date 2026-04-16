@@ -10011,3 +10011,147 @@
 2026-04-16 21:44:16.412 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
 2026-04-16 21:44:17.399 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
 2026-04-16 21:44:18.409 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:00.889 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:00.917 | INFO     | freqtrade_gui.services.ai_service | AIService initialised
+2026-04-17 01:03:00.968 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:00.971 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:00.972 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:01.088 | INFO     | freqtrade_gui.services.backtest | Index rebuild: imported=0 skipped=10
+2026-04-17 01:03:01.093 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:02.835 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:02.858 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: get_app_status
+2026-04-17 01:03:02.858 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: read_recent_logs
+2026-04-17 01:03:02.859 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: get_last_error
+2026-04-17 01:03:02.859 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: list_recent_events
+2026-04-17 01:03:02.859 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: get_latest_backtest_result
+2026-04-17 01:03:02.859 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: load_run_history
+2026-04-17 01:03:02.859 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: compare_runs
+2026-04-17 01:03:02.859 | DEBUG    | freqtrade_gui.services.backtest_tools | Backtest tools registered: get_latest_backtest_result, load_run_history, compare_runs
+2026-04-17 01:03:02.859 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: list_strategies
+2026-04-17 01:03:02.859 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: read_strategy_code
+2026-04-17 01:03:02.859 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: read_strategy_params
+2026-04-17 01:03:02.859 | DEBUG    | freqtrade_gui.services.strategy_tools | Strategy tools registered: list_strategies, read_strategy_code, read_strategy_params
+2026-04-17 01:03:02.860 | DEBUG    | freqtrade_gui.services.ai_service | ToolRegistry built with 10 tools
+2026-04-17 01:03:02.860 | INFO     | freqtrade_gui.services.ai_service | ConversationRuntime created: provider=ollama model= tools=True
+2026-04-17 01:03:02.860 | DEBUG    | freqtrade_gui.services.ai_service | BacktestJournalAdapter connected to BacktestService
+2026-04-17 01:03:03.370 | DEBUG    | freqtrade_gui.services.ollama_provider | health_check() GET http://localhost:11434/api/tags
+2026-04-17 01:03:03.394 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:04.085 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:05.083 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:06.092 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:07.090 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:07.442 | WARNING  | freqtrade_gui.services.ollama_provider | health_check() failed: HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url: /api/tags (Caused by NewConnectionError("HTTPConnection(host='localhost', port=11434): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it"))
+2026-04-17 01:03:08.087 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:09.085 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:10.084 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:11.081 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:12.094 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:13.093 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:14.090 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:15.087 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:16.085 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:17.081 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:18.092 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:19.091 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:20.087 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:21.084 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:22.093 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:23.091 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:24.088 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:25.100 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:26.110 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:27.109 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:28.106 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:29.102 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:30.100 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:31.109 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:32.108 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:33.100 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:34.101 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:35.097 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:36.109 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:37.097 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:38.104 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:39.101 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:40.100 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:41.108 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:42.104 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:43.098 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:44.110 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:45.106 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:46.095 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:47.099 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:48.096 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:49.097 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:50.105 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:51.100 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:52.098 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:53.096 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:54.098 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:55.103 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:56.100 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:57.099 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:58.096 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:03:59.109 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:00.106 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:01.119 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:02.115 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:03.126 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:04.120 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:05.121 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:06.116 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:07.115 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:08.112 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:09.124 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:10.121 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:11.118 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:12.115 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:13.126 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:14.126 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:15.122 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:16.123 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:17.120 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:18.120 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:19.129 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:20.141 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:21.140 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:22.138 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:23.149 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:24.146 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:25.144 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:26.146 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:27.157 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:28.154 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:29.150 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:30.143 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:31.153 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:32.150 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:33.146 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:34.157 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:35.152 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:36.148 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:37.144 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:38.155 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:39.149 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:40.145 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:41.169 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:42.164 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:43.173 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:44.168 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:45.164 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:46.159 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:47.172 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:48.164 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:49.173 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:50.169 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:51.166 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:52.166 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:53.172 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:54.173 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:55.172 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:56.167 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:57.163 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:58.172 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:04:59.167 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:05:00.163 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-17 01:05:01.161 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
