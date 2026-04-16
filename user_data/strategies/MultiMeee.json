@@ -1,12 +1,6 @@
 {
-  "params": {
-    "buy": {
-      "buy_ma_count": 6,
-      "buy_ma_gap": 14
-    },
-    "sell": {
-      "sell_ma_count": 14,
-      "sell_ma_gap": 66
-    }
-  }
+  "buy_ma_count": 6,
+  "buy_ma_gap": 14,
+  "sell_ma_count": 14,
+  "sell_ma_gap": 66
 }
