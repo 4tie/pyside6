@@ -12,17 +12,13 @@ from PySide6.QtWidgets import (
     QMessageBox,
     QGroupBox,
     QTabWidget,
-    QTreeWidget,
-    QTreeWidgetItem,
-    QHeaderView,
 )
-from PySide6.QtGui import QColor
-
 from app.app_state.settings_state import SettingsState
 from app.core.services.dd_service import DownloadDataService
 from app.core.services.settings_service import SettingsService
 from app.core.services.process_service import ProcessService
 from app.ui.widgets.terminal_widget import TerminalWidget
+from app.ui.widgets.data_status_widget import DataStatusWidget
 from app.ui.dialogs.pairs_selector_dialog import PairsSelectorDialog
 
 
@@ -121,7 +117,7 @@ class DDPage(QWidget):
         self.terminal = TerminalWidget()
         self.output_tabs.addTab(self.terminal, "Terminal Output")
 
-        self.status_widget = self._build_status_widget()
+        self.status_widget = DataStatusWidget()
         self.output_tabs.addTab(self.status_widget, "Data Status")
 
         output_layout.addWidget(self.output_tabs)
@@ -172,6 +168,9 @@ class DDPage(QWidget):
     def _on_settings_changed(self, settings):
         """Called when settings change."""
         self._update_command_preview()
+        self.status_widget.set_user_data_path(
+            settings.user_data_path if settings else None
+        )
 
     def _update_command_preview(self):
         """Update the command preview based on current UI values."""
@@ -257,73 +256,8 @@ class DDPage(QWidget):
         self.stop_button.setEnabled(False)
         self.terminal.append_output(f"\n[Download finished] exit_code={exit_code}\n")
         if exit_code == 0:
-            self._refresh_data_status()
+            self.status_widget.refresh()
             self.output_tabs.setCurrentIndex(1)
-
-    def _refresh_data_status(self):
-        """Scan user_data/data/ and populate the data status tree."""
-        self.data_tree.clear()
-        settings = self.settings_state.current_settings
-        if not settings or not settings.user_data_path:
-            self.status_summary_label.setText("user_data_path not configured.")
-            return
-
-        data_dir = Path(settings.user_data_path).expanduser().resolve() / "data"
-        if not data_dir.exists():
-            self.status_summary_label.setText(f"Data directory not found: {data_dir}")
-            return
-
-        total_files = 0
-        total_size = 0
-
-        for exchange_dir in sorted(data_dir.iterdir()):
-            if not exchange_dir.is_dir():
-                continue
-
-            json_files = sorted(exchange_dir.glob("*.json"))
-            if not json_files:
-                continue
-
-            exchange_item = QTreeWidgetItem([exchange_dir.name, "", ""])
-            font = exchange_item.font(0)
-            font.setBold(True)
-            exchange_item.setFont(0, font)
-
-            # Group files by pair
-            pairs_map: dict[str, list[Path]] = {}
-            for f in json_files:
-                parts = f.stem.rsplit("-", 1)
-                pair = parts[0].replace("_", "/") if len(parts) == 2 else f.stem
-                pairs_map.setdefault(pair, []).append(f)
-
-            for pair, files in sorted(pairs_map.items()):
-                pair_item = QTreeWidgetItem([pair, "", ""])
-                for f in sorted(files):
-                    parts = f.stem.rsplit("-", 1)
-                    timeframe = parts[1] if len(parts) == 2 else ""
-                    size_bytes = f.stat().st_size
-                    size_kb = size_bytes / 1024
-                    size_str = (
-                        f"{size_kb / 1024:.2f} MB" if size_kb >= 1024
-                        else f"{size_kb:.1f} KB"
-                    )
-                    file_item = QTreeWidgetItem(["", timeframe, size_str])
-                    file_item.setForeground(1, QColor("#0a7"))
-                    pair_item.addChild(file_item)
-                    total_files += 1
-                    total_size += size_bytes
-
-                exchange_item.addChild(pair_item)
-
-            self.data_tree.addTopLevelItem(exchange_item)
-            exchange_item.setExpanded(True)
-            for i in range(exchange_item.childCount()):
-                exchange_item.child(i).setExpanded(True)
-
-        size_mb = total_size / (1024 * 1024)
-        self.status_summary_label.setText(
-            f"{total_files} file(s) — {size_mb:.1f} MB total"
-        )
 
     def _load_preferences(self):
         """Load saved preferences from settings."""
@@ -349,7 +283,10 @@ class DDPage(QWidget):
         self.timeframe_input.blockSignals(False)
         self.timerange_input.blockSignals(False)
 
-        self._refresh_data_status()
+        settings = self.settings_state.current_settings
+        self.status_widget.set_user_data_path(
+            settings.user_data_path if settings else None
+        )
 
     def _save_preferences(self):
         """Save current input values to settings."""

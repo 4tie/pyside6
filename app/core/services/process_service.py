@@ -6,6 +6,8 @@ from PySide6.QtCore import QProcess, QProcessEnvironment
 
 from app.core.utils.app_logger import get_logger
 
+_log = get_logger("process")
+
 
 class ProcessService:
     """Manages process execution with streaming output support."""
@@ -56,7 +58,7 @@ class ProcessService:
 
         # Start the process
         self.process.start(command[0], command[1:])
-        get_logger().info("Process started: %s", " ".join(command))
+        _log.info("Process started | cmd=%s | cwd=%s", " ".join(command), working_directory or "(default)")
         return self.process
 
     def _handle_stdout(self, callback: Callable[[str], None]):
@@ -64,6 +66,7 @@ class ProcessService:
         if self.process:
             data = self.process.readAllStandardOutput().data().decode("utf-8", errors="replace")
             self.output_buffer_stdout += data
+            _log.debug("stdout chunk: %d bytes", len(data))
             callback(data)
 
     def _handle_stderr(self, callback: Callable[[str], None]):
@@ -71,16 +74,17 @@ class ProcessService:
         if self.process:
             data = self.process.readAllStandardError().data().decode("utf-8", errors="replace")
             self.output_buffer_stderr += data
+            _log.debug("stderr chunk: %d bytes", len(data))
             callback(data)
 
     def stop_process(self):
         """Stop the running process."""
         if self.process and self.process.state() == QProcess.Running:
-            get_logger().info("Stopping process")
+            _log.info("Terminating process (pid=%s)", self.process.processId())
             self.process.terminate()
-            # Give it a second to terminate gracefully
             if not self.process.waitForFinished(1000):
-                get_logger().warning("Process did not terminate gracefully, killing")
+                _log.warning("Process did not terminate gracefully — killing (pid=%s)",
+                             self.process.processId())
                 self.process.kill()
 
     def get_full_output(self) -> tuple[str, str]:

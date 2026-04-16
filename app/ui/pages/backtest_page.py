@@ -25,9 +25,12 @@ from app.core.services.backtest_results_service import BacktestResultsService
 from app.core.services.run_store import RunStore, IndexStore
 from app.core.services.settings_service import SettingsService
 from app.core.services.process_service import ProcessService
+from app.core.utils.app_logger import get_logger
 from app.ui.widgets.terminal_widget import TerminalWidget
 from app.ui.widgets.backtest_results_widget import BacktestResultsWidget
 from app.ui.dialogs.pairs_selector_dialog import PairsSelectorDialog
+
+_log = get_logger("backtest")
 
 
 class BacktestPage(QWidget):
@@ -51,6 +54,7 @@ class BacktestPage(QWidget):
         self._load_preferences()
         self._initializing = False
         self._update_command_preview()
+        self._rebuild_index_from_zips()
         self._refresh_run_picker()
 
         # Refresh command preview every second so the timestamp stays current
@@ -244,6 +248,53 @@ class BacktestPage(QWidget):
         self._refresh_strategies()
         self._refresh_run_picker()
 
+    def _rebuild_index_from_zips(self):
+        """Parse any root-level zips not yet in the index and save them as runs."""
+        settings = self.settings_state.current_settings
+        if not settings or not settings.user_data_path:
+            return
+
+        backtest_results_dir = (
+            Path(settings.user_data_path).expanduser().resolve() / "backtest_results"
+        )
+        index = IndexStore.load(str(backtest_results_dir))
+        zips = list(backtest_results_dir.glob("*.zip"))
+        _log.info("Index rebuild: scanning %d zip(s) in %s", len(zips), backtest_results_dir)
+
+        imported = 0
+        skipped  = 0
+        for zip_path in sorted(zips, key=lambda p: p.stat().st_mtime):
+            try:
+                results = BacktestResultsService.parse_backtest_zip(str(zip_path))
+                if not results:
+                    continue
+                strategy = results.summary.strategy
+                strategy_results_dir = str(backtest_results_dir / strategy)
+
+                existing = IndexStore.get_strategy_runs(str(backtest_results_dir), strategy)
+                already = any(
+                    r.get("trades_count") == results.summary.total_trades
+                    and r.get("backtest_start") == results.summary.backtest_start
+                    and r.get("backtest_end") == results.summary.backtest_end
+                    for r in existing
+                )
+                if already:
+                    _log.debug("Skipping already-indexed zip: %s", zip_path.name)
+                    skipped += 1
+                    continue
+
+                RunStore.save(
+                    results=results,
+                    strategy_results_dir=strategy_results_dir,
+                    config_path=self._last_config_file,
+                )
+                imported += 1
+            except Exception as e:
+                _log.warning("Failed to import zip %s: %s", zip_path.name, e)
+                continue
+
+        _log.info("Index rebuild complete: imported=%d skipped=%d", imported, skipped)
+
     def _refresh_run_picker(self, _=None):
         """Populate the run combo with existing runs for the selected strategy."""
         self.run_combo.blockSignals(True)
@@ -282,6 +333,10 @@ class BacktestPage(QWidget):
         run_meta = self.run_combo.currentData()
         if not run_meta:
             return
+
+        _log.info("Loading run | id=%s | strategy=%s | profit=%.4f%%",
+                  run_meta.get("run_id"), run_meta.get("strategy"),
+                  run_meta.get("profit_total_pct", 0))
 
         settings = self.settings_state.current_settings
         if not settings or not settings.user_data_path:
@@ -361,10 +416,13 @@ class BacktestPage(QWidget):
             raw_data = {"result": {"trades": raw_trades}}
 
             results = BacktestResults(summary=summary, trades=trades, raw_data=raw_data)
+            _log.info("Run loaded from disk | strategy=%s | trades=%d",
+                      summary.strategy, len(trades))
             self.results_widget.display_results(results, export_dir=str(run_dir))
             self.output_tabs.setCurrentIndex(1)
 
         except Exception as e:
+            _log.error("Failed to load run %s: %s", run_meta.get("run_id"), e)
             QMessageBox.critical(self, "Load Failed", str(e))
 
     def _update_command_preview(self):
@@ -402,9 +460,8 @@ class BacktestPage(QWidget):
         strategy = self.strategy_combo.currentText().strip()
         timeframe = self.timeframe_input.text().strip()
         timerange = self.timerange_input.text().strip() or None
-        pairs = self.selected_pairs  # Use selected pairs from dialog
+        pairs = self.selected_pairs
 
-        # Validate inputs
         if not strategy:
             QMessageBox.warning(self, "Missing Input", "Please enter a strategy name.")
             return
@@ -412,12 +469,12 @@ class BacktestPage(QWidget):
             QMessageBox.warning(self, "Missing Input", "Please enter a timeframe.")
             return
         if not pairs:
-            QMessageBox.warning(
-                self, "Missing Input", "Please select at least one pair."
-            )
+            QMessageBox.warning(self, "Missing Input", "Please select at least one pair.")
             return
 
-        # Save preferences before running
+        _log.info("Backtest requested | strategy=%s | timeframe=%s | timerange=%s | pairs=%s",
+                  strategy, timeframe, timerange or "(all)", pairs)
+
         self._save_preferences_to_settings()
 
         # Build command
@@ -439,8 +496,9 @@ class BacktestPage(QWidget):
             self.last_export_path = cmd.export_zip
             self._last_export_dir = cmd.export_dir
             self._last_config_file = cmd.config_file
-            # Rebuild command string fresh from cmd (timestamp is current)
             command_string = f"{cmd.program} {' '.join(cmd.args)}"
+            _log.info("Command built | strategy=%s | config=%s | export=%s",
+                      strategy, cmd.config_file, cmd.export_zip)
 
         except (ValueError, FileNotFoundError) as e:
             QMessageBox.critical(self, "Backtest Setup Failed", str(e))
@@ -490,27 +548,50 @@ class BacktestPage(QWidget):
         self.stop_button.setEnabled(False)
         self._preview_timer.start()
         self.terminal.append_output(f"\n[Process finished] exit_code={exit_code}\n")
+        _log.info("Backtest process finished | exit_code=%d", exit_code)
 
-        # Try to parse and display results
-        if exit_code == 0 and self.last_export_path:
+        if exit_code == 0:
             self._try_load_results()
+        else:
+            _log.warning("Backtest exited with non-zero code: %d", exit_code)
 
     def _try_load_results(self):
-        """Try to load and display backtest results."""
-        if not self.last_export_path or not Path(self.last_export_path).exists():
-            self.terminal.append_error(
-                "\nWarning: Export zip file not found at expected path.\n"
-            )
+        """Find the most recently written zip in backtest_results/ and load it."""
+        settings = self.settings_state.current_settings
+        if not settings or not settings.user_data_path:
+            self.terminal.append_error("\nWarning: user_data_path not configured.\n")
             return
 
+        backtest_results_dir = (
+            Path(settings.user_data_path).expanduser().resolve() / "backtest_results"
+        )
+
+        # Find the newest zip Freqtrade wrote (it ignores --export-filename location)
+        zips = sorted(
+            backtest_results_dir.glob("*.zip"),
+            key=lambda p: p.stat().st_mtime,
+            reverse=True,
+        )
+        if not zips:
+            self.terminal.append_error("\nWarning: No zip files found in backtest_results/.\n")
+            return
+
+        zip_path = zips[0]
+        self.terminal.append_output(f"\nFound result: {zip_path.name}\n")
+        _log.info("Loading result zip: %s", zip_path.name)
+
         try:
-            self.terminal.append_output("\nParsing backtest results...\n")
-            results = BacktestResultsService.parse_backtest_zip(self.last_export_path)
+            self.terminal.append_output("Parsing backtest results...\n")
+            results = BacktestResultsService.parse_backtest_zip(str(zip_path))
 
             if results:
+                s = results.summary
+                _log.info("Parsed | strategy=%s | trades=%d | profit=%.4f%% | win_rate=%.1f%%",
+                          s.strategy, s.total_trades, s.total_profit, s.win_rate)
+                strategy_results_dir = str(backtest_results_dir / s.strategy)
                 run_dir = RunStore.save(
                     results=results,
-                    strategy_results_dir=self._last_export_dir,
+                    strategy_results_dir=strategy_results_dir,
                     config_path=self._last_config_file,
                 )
                 self.terminal.append_output(f"✓ Run saved → {run_dir}\n")
@@ -520,8 +601,8 @@ class BacktestPage(QWidget):
                 self.output_tabs.setCurrentIndex(1)
 
         except Exception as e:
-            error_msg = f"Failed to parse backtest results: {e}\n"
-            self.terminal.append_error(error_msg)
+            _log.error("Failed to load results from %s: %s", zip_path.name, e)
+            self.terminal.append_error(f"Failed to parse backtest results: {e}\n")
 
     def _load_preferences(self):
         """Load saved preferences from settings."""

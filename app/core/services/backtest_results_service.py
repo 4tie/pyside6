@@ -4,6 +4,10 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional, List, Dict, Any
 
+from app.core.utils.app_logger import get_logger
+
+_log = get_logger("results")
+
 
 @dataclass
 class BacktestTrade:
@@ -83,12 +87,19 @@ class BacktestResultsService:
                               if f.endswith('.json') and '_config' not in f]
                 if not json_files:
                     raise ValueError("No JSON files found in backtest zip")
+                _log.debug("Parsing zip: %s | json_file=%s", zip_file.name, json_files[0])
                 json_data = json.loads(zf.read(json_files[0]).decode('utf-8'))
-                return BacktestResultsService._parse_result_json(json_data)
+                result = BacktestResultsService._parse_result_json(json_data)
+                _log.info("Zip parsed | strategy=%s | trades=%d | profit=%.4f%%",
+                          result.summary.strategy, result.summary.total_trades,
+                          result.summary.total_profit)
+                return result
 
         except json.JSONDecodeError as e:
+            _log.error("JSON decode error in %s: %s", zip_file.name, e)
             raise ValueError(f"Failed to parse backtest JSON: {e}")
         except Exception as e:
+            _log.error("Failed to parse zip %s: %s", zip_file.name, e)
             raise ValueError(f"Failed to parse backtest zip: {e}")
 
     @staticmethod

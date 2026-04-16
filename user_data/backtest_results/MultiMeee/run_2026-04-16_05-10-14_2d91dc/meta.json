@@ -1,0 +1,28 @@
+{
+  "run_id": "run_2026-04-16_05-10-14_2d91dc",
+  "strategy": "MultiMeee",
+  "timeframe": "5m",
+  "pairs": [
+    "ETH/USDT"
+  ],
+  "start_time": "2026-04-16T05:10:14.647763",
+  "timerange": "",
+  "backtest_start": "2025-01-01 00:00:00",
+  "backtest_end": "2026-04-10 03:20:00",
+  "status": "completed",
+  "profit_total_pct": 7.1531,
+  "profit_total_abs": 5.7225,
+  "starting_balance": 80.0,
+  "final_balance": 85.7225,
+  "max_drawdown_pct": 5.9202,
+  "max_drawdown_abs": 5.113,
+  "trades_count": 133,
+  "wins": 54,
+  "losses": 79,
+  "win_rate_pct": 40.6,
+  "sharpe": 0.3094,
+  "sortino": 0.604,
+  "calmar": 4.9749,
+  "profit_factor": 1.1956,
+  "expectancy": 0.043
+}

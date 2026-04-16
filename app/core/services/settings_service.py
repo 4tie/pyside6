@@ -7,6 +7,8 @@ from typing import Optional
 from app.core.models.settings_models import AppSettings, SettingsValidationResult
 from app.core.utils.app_logger import get_logger
 
+_log = get_logger("settings")
+
 
 class SettingsService:
     """Manages application settings persistence and resolution."""
@@ -23,11 +25,13 @@ class SettingsService:
                 with open(self.settings_file, "r") as f:
                     data = json.load(f)
                     self.settings = AppSettings(**data)
-                    get_logger().debug("Settings loaded from %s", self.settings_file)
+                    _log.debug("Settings loaded from %s", self.settings_file)
                     return self.settings
             except Exception as e:
-                get_logger().error("Failed to load settings: %s", e)
+                _log.error("Failed to load settings from %s: %s", self.settings_file, e)
                 print(f"Failed to load settings: {e}")
+        else:
+            _log.info("No settings file found at %s — using defaults", self.settings_file)
 
         self.settings = AppSettings()
         return self.settings
@@ -39,10 +43,12 @@ class SettingsService:
             with open(self.settings_file, "w") as f:
                 json.dump(settings.model_dump(), f, indent=2)
             self.settings = settings
-            get_logger().info("Settings saved to %s", self.settings_file)
+            _log.info("Settings saved to %s", self.settings_file)
+            _log.debug("Saved: python=%s venv=%s user_data=%s",
+                       settings.python_executable, settings.venv_path, settings.user_data_path)
             return True
         except Exception as e:
-            get_logger().error("Failed to save settings: %s", e)
+            _log.error("Failed to save settings to %s: %s", self.settings_file, e)
             print(f"Failed to save settings: {e}")
             return False
 
@@ -84,6 +90,7 @@ class SettingsService:
 
     def validate_settings(self, settings: AppSettings) -> SettingsValidationResult:
         """Validate application settings in order."""
+        _log.info("Validating settings...")
         details = {}
 
         # 1. Python exists
@@ -158,6 +165,12 @@ class SettingsService:
 
         valid = python_ok and freqtrade_ok and user_data_ok
         message = "Settings are valid" if valid else "Settings validation failed"
+        _log.info("Validation result: valid=%s python=%s freqtrade=%s user_data=%s",
+                  valid, python_ok, freqtrade_ok, user_data_ok)
+        if details.get("python_version"):
+            _log.info("  %s", details["python_version"])
+        if details.get("freqtrade_version"):
+            _log.info("  %s", details["freqtrade_version"])
 
         return SettingsValidationResult(
             valid=valid,

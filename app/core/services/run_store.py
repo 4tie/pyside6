@@ -5,6 +5,186 @@ from pathlib import Path
 from typing import Optional
 
 from app.core.services.backtest_results_service import BacktestResults
+from app.core.utils.app_logger import get_logger
+
+_log = get_logger("run_store")
+
+
+class StrategyIndexStore:
+    """Manages user_data/backtest_results/<strategy>/index.json.
+
+    Scoped to a single strategy — run_dir paths are relative to the strategy folder.
+
+    Structure:
+    {
+      "strategy": "MultiMeee",
+      "updated_at": "...",
+      "runs": [
+        {
+          "run_id": "run_2026-04-16_14-32-10_6098ac",
+          "run_dir": "run_2026-04-16_14-32-10_6098ac",
+          "timeframe": "5m",
+          "pairs": ["ADA/USDT", "ETH/USDT"],
+          "timerange": "20250421-20260416",
+          "backtest_start": "...",
+          "backtest_end": "...",
+          "saved_at": "...",
+          "profit_total_pct": -4.651,
+          "profit_total_abs": -3.7208,
+          "starting_balance": 80.0,
+          "final_balance": 76.279,
+          "max_drawdown_pct": 9.9,
+          "trades_count": 231,
+          "wins": 84,
+          "losses": 147,
+          "win_rate_pct": 36.36,
+          "sharpe": -0.3,
+          "profit_factor": 0.93
+        },
+        ...
+      ]
+    }
+    """
+
+    INDEX_FILENAME = "index.json"
+
+    @staticmethod
+    def update(strategy_dir: Path, run_id: str, run_dir: Path, results: BacktestResults):
+        """Add or update a run entry in the strategy-level index.
+
+        Args:
+            strategy_dir: Strategy results dir, e.g. backtest_results/MultiMeee
+            run_id: The run identifier string
+            run_dir: Absolute path to the run folder
+            results: Parsed BacktestResults for this run
+        """
+        index_path = strategy_dir / StrategyIndexStore.INDEX_FILENAME
+        index = StrategyIndexStore._load(index_path, results.summary.strategy)
+
+        s = results.summary
+        entry = {
+            "run_id":           run_id,
+            "run_dir":          run_dir.name,          # just the folder name, e.g. run_2026-...
+            "timeframe":        s.timeframe,
+            "pairs":            s.pairlist,
+            "timerange":        s.timerange,
+            "backtest_start":   s.backtest_start,
+            "backtest_end":     s.backtest_end,
+            "saved_at":         datetime.now().isoformat(),
+            "profit_total_pct": round(s.total_profit, 4),
+            "profit_total_abs": round(s.total_profit_abs, 4),
+            "starting_balance": s.starting_balance,
+            "final_balance":    round(s.final_balance, 4),
+            "max_drawdown_pct": round(s.max_drawdown, 4),
+            "max_drawdown_abs": round(s.max_drawdown_abs, 4),
+            "trades_count":     s.total_trades,
+            "wins":             s.wins,
+            "losses":           s.losses,
+            "win_rate_pct":     round(s.win_rate, 2),
+            "sharpe":           round(s.sharpe_ratio, 4) if s.sharpe_ratio is not None else None,
+            "sortino":          round(s.sortino_ratio, 4) if s.sortino_ratio is not None else None,
+            "calmar":           round(s.calmar_ratio, 4) if s.calmar_ratio is not None else None,
+            "profit_factor":    round(s.profit_factor, 4),
+            "expectancy":       round(s.expectancy, 4),
+        }
+
+        runs = index["runs"]
+        for i, r in enumerate(runs):
+            if r.get("run_id") == run_id:
+                runs[i] = entry
+                break
+        else:
+            runs.append(entry)
+
+        runs.sort(key=lambda r: r.get("saved_at", ""), reverse=True)
+        index["updated_at"] = datetime.now().isoformat()
+        StrategyIndexStore._save(index_path, index)
+        _log.debug("Strategy index updated | strategy=%s | run_id=%s | path=%s",
+                   s.strategy, run_id, index_path)
+
+    @staticmethod
+    def load(strategy_dir: str, strategy: str) -> dict:
+        """Load the strategy-level index.
+
+        Args:
+            strategy_dir: Strategy results dir path
+            strategy: Strategy name (used to initialise if missing)
+
+        Returns:
+            Index dict
+        """
+        return StrategyIndexStore._load(
+            Path(strategy_dir) / StrategyIndexStore.INDEX_FILENAME, strategy
+        )
+
+    @staticmethod
+    def rebuild(strategy_dir: str, strategy: str) -> dict:
+        """Rebuild the strategy index by scanning run folders.
+
+        Args:
+            strategy_dir: Strategy results dir path
+            strategy: Strategy name
+
+        Returns:
+            Rebuilt index dict
+        """
+        root = Path(strategy_dir)
+        index: dict = {
+            "strategy":   strategy,
+            "updated_at": datetime.now().isoformat(),
+            "runs":       [],
+        }
+        for run_dir in sorted(root.iterdir(), reverse=True):
+            meta_path = run_dir / "meta.json"
+            if not run_dir.is_dir() or not meta_path.exists():
+                continue
+            try:
+                meta = json.loads(meta_path.read_text(encoding="utf-8"))
+                entry = {
+                    "run_id":           meta.get("run_id", run_dir.name),
+                    "run_dir":          run_dir.name,
+                    "timeframe":        meta.get("timeframe", ""),
+                    "pairs":            meta.get("pairs", []),
+                    "timerange":        meta.get("timerange", ""),
+                    "backtest_start":   meta.get("backtest_start", ""),
+                    "backtest_end":     meta.get("backtest_end", ""),
+                    "saved_at":         meta.get("start_time", ""),
+                    "profit_total_pct": meta.get("profit_total_pct", 0),
+                    "profit_total_abs": meta.get("profit_total_abs", 0),
+                    "starting_balance": meta.get("starting_balance", 0),
+                    "final_balance":    meta.get("final_balance", 0),
+                    "max_drawdown_pct": meta.get("max_drawdown_pct", 0),
+                    "max_drawdown_abs": meta.get("max_drawdown_abs", 0),
+                    "trades_count":     meta.get("trades_count", 0),
+                    "wins":             meta.get("wins", 0),
+                    "losses":           meta.get("losses", 0),
+                    "win_rate_pct":     meta.get("win_rate_pct", 0),
+                    "sharpe":           meta.get("sharpe"),
+                    "sortino":          meta.get("sortino"),
+                    "calmar":           meta.get("calmar"),
+                    "profit_factor":    meta.get("profit_factor", 0),
+                    "expectancy":       meta.get("expectancy", 0),
+                }
+                index["runs"].append(entry)
+            except Exception:
+                continue
+
+        StrategyIndexStore._save(root / StrategyIndexStore.INDEX_FILENAME, index)
+        _log.info("Strategy index rebuilt | strategy=%s | runs=%d", strategy, len(index["runs"]))
+        return index
+
+    @staticmethod
+    def _load(path: Path, strategy: str = "") -> dict:
+        if path.exists():
+            try:
+                return json.loads(path.read_text(encoding="utf-8"))
+            except Exception:
+                pass
+        return {"strategy": strategy, "updated_at": "", "runs": []}
+
+    @staticmethod
+    def _save(path: Path, index: dict):
+        path.write_text(json.dumps(index, indent=2, ensure_ascii=False), encoding="utf-8")
 
 
 class IndexStore:
@@ -108,6 +288,7 @@ class IndexStore:
 
         index["updated_at"] = datetime.now().isoformat()
         IndexStore._save(index_path, index)
+        _log.debug("Index updated | strategy=%s | run_id=%s", strategy, run_id)
 
     @staticmethod
     def load(backtest_results_dir: str) -> dict:
@@ -239,16 +420,20 @@ class RunStore:
         run_dir = Path(strategy_results_dir) / run_id
         run_dir.mkdir(parents=True, exist_ok=True)
 
+        _log.info("Saving run | id=%s | strategy=%s | trades=%d | profit=%.4f%%",
+                  run_id, results.summary.strategy,
+                  results.summary.total_trades, results.summary.total_profit)
+
         RunStore._write_meta(run_dir, run_id, results)
         RunStore._write_results(run_dir, results)
         RunStore._write_trades(run_dir, results)
         RunStore._write_config_snapshot(run_dir, config_path, results)
         RunStore._write_params(run_dir, run_params, results)
 
-        # Update the shared index
         backtest_results_dir = str(Path(strategy_results_dir).parent)
         IndexStore.update(backtest_results_dir, run_id, run_dir, results)
-
+        StrategyIndexStore.update(Path(strategy_results_dir), run_id, run_dir, results)
+        _log.info("Run saved → %s", run_dir)
         return run_dir
 
     # ------------------------------------------------------------------ #
