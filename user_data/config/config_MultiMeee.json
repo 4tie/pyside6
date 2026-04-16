@@ -1,0 +1,28 @@
+{
+  "INTERFACE_VERSION": 3,
+  "buy_params": {
+    "buy_ma_count": 5,
+    "buy_ma_gap": 13
+  },
+  "sell_params": {
+    "sell_ma_count": 14,
+    "sell_ma_gap": 66
+  },
+  "minimal_roi": {
+    "0": 0.523,
+    "1553": 0.123,
+    "2332": 0.076,
+    "3169": 0
+  },
+  "stoploss": -0.345,
+  "trailing_stop": false,
+  "trailing_stop_positive_offset": 0.0,
+  "trailing_only_offset_is_reached": false,
+  "timeframe": "4h",
+  "count_max": 20,
+  "gap_max": 100,
+  "buy_ma_count": 5,
+  "buy_ma_gap": 13,
+  "sell_ma_count": 14,
+  "sell_ma_gap": 66
+}

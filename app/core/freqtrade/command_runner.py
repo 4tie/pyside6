@@ -174,19 +174,27 @@ class CommandRunner:
                 f"Available strategies directory: {strategies_dir}"
             )
 
-        # Resolve config file (in order of preference)
+        # Resolve config file (in order of preference):
+        # 1. strategies/<strategy>.json  (sidecar)
+        # 2. user_data/config/config_<strategy>.json
+        # 3. project_path/config.json
+        # 4. user_data/config.json
         config_file: Optional[Path] = None
         sidecar_json = strategies_dir / f"{strategy_name}.json"
 
         if sidecar_json.exists():
             config_file = sidecar_json
-        elif settings.project_path:
-            # Try explicit project config
+
+        if config_file is None:
+            named_config = user_data / "config" / f"config_{strategy_name}.json"
+            if named_config.exists():
+                config_file = named_config
+
+        if config_file is None and settings.project_path:
             default_config = Path(settings.project_path) / "config.json"
             if default_config.exists():
                 config_file = default_config
 
-        # Fallback to user_data config
         if config_file is None:
             default_config = user_data / "config.json"
             if default_config.exists():
@@ -195,8 +203,10 @@ class CommandRunner:
         if config_file is None or not config_file.exists():
             raise FileNotFoundError(
                 f"No config file found for strategy '{strategy_name}'.\n"
-                f"Checked: {sidecar_json} and {user_data / 'config.json'}\n"
-                f"Please create a config.json in user_data/ or a sidecar."
+                f"Checked:\n"
+                f"  {sidecar_json}\n"
+                f"  {user_data / 'config' / f'config_{strategy_name}.json'}\n"
+                f"  {user_data / 'config.json'}"
             )
 
         # Create export directory
