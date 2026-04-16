@@ -4,6 +4,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt
 
 from app.app_state.settings_state import SettingsState
+from app.core.ai.ai_service import AIService
 from app.ui.pages.settings_page import SettingsPage
 from app.ui.pages.backtest_page import BacktestPage
 from app.ui.pages.download_data_page import DownloadDataPage
@@ -27,6 +28,9 @@ class MainWindow(QMainWindow):
             settings_state.load_settings()
 
         self.settings_state = settings_state
+
+        # AI service — wires journal, tools, context providers
+        self.ai_service = AIService(settings_state)
 
         # Create central widget with tabs
         self.central_widget = QWidget()
@@ -65,8 +69,13 @@ class MainWindow(QMainWindow):
         self.central_widget.setLayout(layout)
 
         # AI Chat dock
-        self.ai_chat_dock = AIChatDock(self.settings_state, self)
+        self.ai_chat_dock = AIChatDock(self.settings_state, self, ai_service=self.ai_service)
         self.addDockWidget(Qt.RightDockWidgetArea, self.ai_chat_dock)
+
+        # Wire BacktestJournalAdapter to BacktestService if available
+        backtest_service = getattr(self.backtest_page, "backtest_service", None)
+        if backtest_service is not None:
+            self.ai_service.connect_backtest_service(backtest_service)
 
         # View menu
         view_menu = self.menuBar().addMenu("View")

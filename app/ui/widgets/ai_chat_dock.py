@@ -1,4 +1,4 @@
-"""AIChatDock — dockable AI Chat panel wired to ConversationRuntime."""
+"""AIChatDock — dockable AI Chat panel wired to ConversationRuntime via AIService."""
 
 from typing import Optional
 
@@ -12,6 +12,7 @@ from PySide6.QtWidgets import (
     QScrollArea,
     QSizePolicy,
     QToolButton,
+    QToolTip,
     QVBoxLayout,
     QWidget,
 )
@@ -19,7 +20,6 @@ from PySide6.QtWidgets import (
 from app.app_state.settings_state import SettingsState
 from app.core.ai.providers.provider_base import AIResponse, ProviderHealth, StreamToken
 from app.core.ai.providers.provider_factory import ProviderFactory
-from app.core.ai.runtime.agent_policy import default_policy
 from app.core.ai.runtime.conversation_runtime import ConversationRuntime
 from app.core.models.settings_models import AISettings
 from app.core.utils.app_logger import get_logger
@@ -52,6 +52,27 @@ class _HealthWorker(QObject):
 
 
 # ---------------------------------------------------------------------------
+# Enter-intercepting QPlainTextEdit
+# ---------------------------------------------------------------------------
+
+
+class _ChatInput(QPlainTextEdit):
+    """QPlainTextEdit that sends on Enter and inserts newline on Shift+Enter."""
+
+    send_requested = Signal()
+
+    def keyPressEvent(self, event) -> None:
+        if event.key() in (Qt.Key_Return, Qt.Key_Enter):
+            if event.modifiers() & Qt.ShiftModifier:
+                # Shift+Enter → newline
+                super().keyPressEvent(event)
+            else:
+                self.send_requested.emit()
+        else:
+            super().keyPressEvent(event)
+
+
+# ---------------------------------------------------------------------------
 # AIChatDock
 # ---------------------------------------------------------------------------
 
@@ -60,14 +81,16 @@ class AIChatDock(QDockWidget):
     """Dockable AI Chat panel backed by ConversationRuntime.
 
     Model and provider selection live exclusively in Settings → AI.
+    Pass an :class:`AIService` instance to enable full tool + context support.
     """
 
-    def __init__(self, settings_state: SettingsState, parent=None):
+    def __init__(self, settings_state: SettingsState, parent=None, ai_service=None):
         super().__init__("AI Chat", parent)
         self.setObjectName("AIChatDock")
         self.setAllowedAreas(Qt.RightDockWidgetArea | Qt.LeftDockWidgetArea)
 
         self._settings_state = settings_state
+        self._ai_service = ai_service
         self._runtime: Optional[ConversationRuntime] = None
         self._current_assistant_widget: Optional[AssistantMessageWidget] = None
         self._user_scrolled_up = False
@@ -80,7 +103,7 @@ class AIChatDock(QDockWidget):
         self._init_runtime()
 
         self._settings_state.ai_settings_changed.connect(self._on_ai_settings_changed)
-        _log.debug("AIChatDock initialised")
+        _log.debug("AIChatDock initialised (ai_service=%s)", ai_service is not None)
 
     # ------------------------------------------------------------------
     # UI construction
@@ -112,8 +135,9 @@ class AIChatDock(QDockWidget):
         self._tools_btn = QToolButton()
         self._tools_btn.setText("Tools")
         self._tools_btn.setCheckable(True)
-        self._tools_btn.setToolTip("Toggle tool calling (configure in Settings → AI)")
-        self._tools_btn.setEnabled(False)  # read-only indicator; change via Settings
+        self._tools_btn.setToolTip("Configure tools in Settings → AI")
+        self._tools_btn.setEnabled(True)
+        self._tools_btn.clicked.connect(self._on_tools_btn_clicked)
         header_layout.addWidget(self._tools_btn)
 
         root_layout.addWidget(header)
@@ -147,17 +171,24 @@ class AIChatDock(QDockWidget):
         input_layout.setContentsMargins(0, 0, 0, 0)
         input_layout.setSpacing(2)
 
-        self._input_edit = QPlainTextEdit()
-        self._input_edit.setPlaceholderText("Ask anything…")
+        self._input_edit = _ChatInput()
+        self._input_edit.setPlaceholderText("Ask anything… (Enter to send, Shift+Enter for newline)")
         self._input_edit.setMaximumHeight(80)
         self._input_edit.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        self._input_edit.send_requested.connect(self._send_message)
 
         btn_row = QHBoxLayout()
+        self._clear_btn = QPushButton("Clear")
+        self._clear_btn.setToolTip("Clear conversation history")
+        self._clear_btn.clicked.connect(self._clear_conversation)
+
         self._send_btn = QPushButton("Send")
         self._send_btn.clicked.connect(self._send_message)
         self._stop_btn = QPushButton("Stop")
         self._stop_btn.setEnabled(False)
         self._stop_btn.clicked.connect(self._stop_streaming)
+
+        btn_row.addWidget(self._clear_btn)
         btn_row.addStretch()
         btn_row.addWidget(self._send_btn)
         btn_row.addWidget(self._stop_btn)
@@ -176,7 +207,15 @@ class AIChatDock(QDockWidget):
     def _init_runtime(self) -> None:
         settings = self._settings_state.current_settings
         ai_settings = settings.ai if settings else AISettings()
-        self._runtime = ConversationRuntime(ai_settings=ai_settings, agent_policy=default_policy())
+
+        if self._ai_service is not None:
+            self._runtime = self._ai_service.get_runtime(ai_settings)
+        else:
+            from app.core.ai.runtime.agent_policy import default_policy
+            self._runtime = ConversationRuntime(
+                ai_settings=ai_settings, agent_policy=default_policy()
+            )
+
         self._connect_runtime_signals()
         self._sync_header_to_settings(ai_settings)
 
@@ -216,10 +255,29 @@ class AIChatDock(QDockWidget):
         self._sync_input_visibility()
 
     def _sync_input_visibility(self) -> None:
+        # Always show the input box — just warn in _send_message if no model
+        self._input_widget.setVisible(True)
+        self._no_model_label.setVisible(False)
+
+    # ------------------------------------------------------------------
+    # Tools button
+    # ------------------------------------------------------------------
+
+    def _on_tools_btn_clicked(self) -> None:
+        """Show a tooltip pointing users to Settings → AI for tool config."""
+        # Keep the checked state in sync with actual settings (don't let the
+        # button toggle freely — it's a read-only indicator).
         settings = self._settings_state.current_settings
-        has_model = bool(settings.ai.chat_model if settings else "")
-        self._input_widget.setVisible(has_model)
-        self._no_model_label.setVisible(not has_model)
+        enabled = settings.ai.tools_enabled if settings else False
+        self._tools_btn.blockSignals(True)
+        self._tools_btn.setChecked(enabled)
+        self._tools_btn.blockSignals(False)
+
+        QToolTip.showText(
+            self._tools_btn.mapToGlobal(self._tools_btn.rect().bottomLeft()),
+            "Configure tools in Settings → AI",
+            self._tools_btn,
+        )
 
     # ------------------------------------------------------------------
     # Status indicator
@@ -306,13 +364,23 @@ class AIChatDock(QDockWidget):
         self._user_scrolled_up = value < sb.maximum()
 
     # ------------------------------------------------------------------
-    # Send / Stop
+    # Send / Stop / Clear
     # ------------------------------------------------------------------
 
     def _send_message(self) -> None:
         text = self._input_edit.toPlainText().strip()
-        if not text or self._runtime is None:
+        if not text:
             return
+        
+        # Check if model is configured
+        settings = self._settings_state.current_settings
+        if not settings or not settings.ai.chat_model:
+            self._append_error_message("No model selected. Configure a model in Settings → AI.")
+            return
+        
+        if self._runtime is None:
+            return
+        
         self._input_edit.clear()
         self._send_btn.setEnabled(False)
         self._stop_btn.setEnabled(True)
@@ -326,6 +394,20 @@ class AIChatDock(QDockWidget):
             self._runtime.cancel_current_request()
         self._send_btn.setEnabled(True)
         self._stop_btn.setEnabled(False)
+
+    def _clear_conversation(self) -> None:
+        """Clear runtime history and remove all message widgets from the layout."""
+        if self._runtime is not None:
+            self._runtime.clear_history()
+
+        # Remove all widgets except the trailing stretch (last item)
+        while self._messages_layout.count() > 1:
+            item = self._messages_layout.takeAt(0)
+            if item.widget():
+                item.widget().deleteLater()
+
+        self._current_assistant_widget = None
+        _log.debug("Conversation cleared")
 
     # ------------------------------------------------------------------
     # Runtime signal slots
@@ -384,7 +466,15 @@ class AIChatDock(QDockWidget):
     def _on_ai_settings_changed(self, ai_settings: AISettings) -> None:
         _log.info("AI settings changed — recreating runtime")
         self._disconnect_runtime_signals()
-        self._runtime = ConversationRuntime(ai_settings=ai_settings, agent_policy=default_policy())
+
+        if self._ai_service is not None:
+            self._runtime = self._ai_service.get_runtime(ai_settings)
+        else:
+            from app.core.ai.runtime.agent_policy import default_policy
+            self._runtime = ConversationRuntime(
+                ai_settings=ai_settings, agent_policy=default_policy()
+            )
+
         self._connect_runtime_signals()
         self._sync_header_to_settings(ai_settings)
         self._run_health_check()
