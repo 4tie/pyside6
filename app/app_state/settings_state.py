@@ -14,6 +14,7 @@ class SettingsState(QObject):
     settings_saved = Signal(AppSettings)
     settings_validated = Signal(SettingsValidationResult)
     settings_changed = Signal(AppSettings)
+    ai_settings_changed = Signal(object)
 
     def __init__(self):
         super().__init__()
@@ -29,11 +30,14 @@ class SettingsState(QObject):
 
     def save_settings(self, settings: AppSettings) -> bool:
         """Save settings to disk."""
+        ai_changed = self.current_settings is None or self.current_settings.ai != settings.ai
         success = self.settings_service.save_settings(settings)
         if success:
             self.current_settings = settings
             self.settings_saved.emit(settings)
             self.settings_changed.emit(settings)
+            if ai_changed:
+                self.ai_settings_changed.emit(settings.ai)
         return success
 
     def update_settings(self, **kwargs) -> AppSettings:

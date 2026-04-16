@@ -4,13 +4,14 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton,
     QFileDialog, QGroupBox, QCheckBox, QMessageBox, QSpinBox, QComboBox,
-    QColorDialog
+    QColorDialog, QFormLayout
 )
 from PySide6.QtGui import QColor, QFont
 
-from app.core.models.settings_models import AppSettings, TerminalPreferences
+from app.core.models.settings_models import AppSettings, TerminalPreferences, AISettings
 from app.app_state.settings_state import SettingsState
 from app.core.services.settings_service import SettingsService
+from app.core.ai.providers.provider_factory import ProviderFactory
 
 
 class SettingsPage(QWidget):
@@ -137,6 +138,65 @@ class SettingsPage(QWidget):
         terminal_group.setLayout(terminal_layout)
         layout.addWidget(terminal_group)
 
+        # AI settings
+        ai_group = QGroupBox("AI")
+        ai_form = QFormLayout()
+
+        self.ai_provider_combo = QComboBox()
+        self.ai_provider_combo.addItems(["ollama", "openrouter"])
+        ai_form.addRow("Provider:", self.ai_provider_combo)
+
+        self.ai_ollama_base_url_input = QLineEdit()
+        self.ai_ollama_base_url_input.setPlaceholderText("http://localhost:11434")
+        ai_form.addRow("Ollama Base URL:", self.ai_ollama_base_url_input)
+
+        self.ai_openrouter_api_key_input = QLineEdit()
+        self.ai_openrouter_api_key_input.setEchoMode(QLineEdit.EchoMode.Password)
+        self.ai_openrouter_api_key_input.setPlaceholderText("sk-or-...")
+        ai_form.addRow("OpenRouter API Key:", self.ai_openrouter_api_key_input)
+
+        self.ai_chat_model_input = QLineEdit()
+        self.ai_chat_model_input.setPlaceholderText("e.g. llama3")
+        ai_form.addRow("Chat Model:", self.ai_chat_model_input)
+
+        self.ai_task_model_input = QLineEdit()
+        self.ai_task_model_input.setPlaceholderText("e.g. llama3")
+        ai_form.addRow("Task Model:", self.ai_task_model_input)
+
+        self.ai_routing_mode_combo = QComboBox()
+        self.ai_routing_mode_combo.addItems(["single_model", "dual_model"])
+        ai_form.addRow("Routing Mode:", self.ai_routing_mode_combo)
+
+        self.ai_timeout_spinbox = QSpinBox()
+        self.ai_timeout_spinbox.setRange(1, 300)
+        self.ai_timeout_spinbox.setValue(60)
+        ai_form.addRow("Timeout (seconds):", self.ai_timeout_spinbox)
+
+        self.ai_stream_enabled_checkbox = QCheckBox()
+        ai_form.addRow("Stream Enabled:", self.ai_stream_enabled_checkbox)
+
+        self.ai_tools_enabled_checkbox = QCheckBox()
+        ai_form.addRow("Tools Enabled:", self.ai_tools_enabled_checkbox)
+
+        self.ai_max_history_spinbox = QSpinBox()
+        self.ai_max_history_spinbox.setRange(1, 500)
+        self.ai_max_history_spinbox.setValue(50)
+        ai_form.addRow("Max History Messages:", self.ai_max_history_spinbox)
+
+        self.ai_max_tool_steps_spinbox = QSpinBox()
+        self.ai_max_tool_steps_spinbox.setRange(1, 50)
+        self.ai_max_tool_steps_spinbox.setValue(8)
+        ai_form.addRow("Max Tool Steps:", self.ai_max_tool_steps_spinbox)
+
+        self.ai_openrouter_free_only_checkbox = QCheckBox()
+        ai_form.addRow("OpenRouter Free Only:", self.ai_openrouter_free_only_checkbox)
+
+        self.ai_cloud_fallback_checkbox = QCheckBox()
+        ai_form.addRow("Cloud Fallback Enabled:", self.ai_cloud_fallback_checkbox)
+
+        ai_group.setLayout(ai_form)
+        layout.addWidget(ai_group)
+
         # Validation result
         self.validation_result = QLabel("Not validated")
         self.validation_result.setStyleSheet("padding: 10px; background-color: #f0f0f0;")
@@ -214,6 +274,21 @@ class SettingsPage(QWidget):
         self._set_color_button(self.terminal_bg_btn, prefs.background_color)
         self._set_color_button(self.terminal_text_btn, prefs.text_color)
 
+        ai = self.current_settings.ai
+        self.ai_provider_combo.setCurrentText(ai.provider)
+        self.ai_ollama_base_url_input.setText(ai.ollama_base_url)
+        self.ai_openrouter_api_key_input.setText(ai.openrouter_api_key or "")
+        self.ai_chat_model_input.setText(ai.chat_model)
+        self.ai_task_model_input.setText(ai.task_model)
+        self.ai_routing_mode_combo.setCurrentText(ai.routing_mode)
+        self.ai_timeout_spinbox.setValue(ai.timeout_seconds)
+        self.ai_stream_enabled_checkbox.setChecked(ai.stream_enabled)
+        self.ai_tools_enabled_checkbox.setChecked(ai.tools_enabled)
+        self.ai_max_history_spinbox.setValue(ai.max_history_messages)
+        self.ai_max_tool_steps_spinbox.setValue(ai.max_tool_steps)
+        self.ai_openrouter_free_only_checkbox.setChecked(ai.openrouter_free_only)
+        self.ai_cloud_fallback_checkbox.setChecked(ai.cloud_fallback_enabled)
+
     def _on_venv_changed(self):
         """Update paths when venv changes."""
         venv_path = self.venv_path_input.text()
@@ -270,8 +345,13 @@ class SettingsPage(QWidget):
 
         result = self.settings_state.validate_current_settings()
 
-        # Update UI
-        if result.valid:
+        # Also check AI provider connectivity
+        ai_health = self._check_ai_provider()
+
+        # Update UI label
+        ai_ok = ai_health is None or ai_health.ok
+        overall_ok = result.valid and ai_ok
+        if overall_ok:
             self.validation_result.setStyleSheet("padding: 10px; background-color: #00ff00; color: darkgreen;")
             self.validation_result.setText(f"✓ {result.message}")
         else:
@@ -281,8 +361,17 @@ class SettingsPage(QWidget):
             self.validation_result.setText(msg)
 
         # Show detailed message
-        detail_text = self._format_validation_details(result)
+        detail_text = self._format_validation_details(result, ai_health)
         QMessageBox.information(self, "Validation Result", detail_text)
+
+    def _check_ai_provider(self):
+        """Run a health check on the configured AI provider. Returns ProviderHealth or None."""
+        try:
+            provider = ProviderFactory.create(self.current_settings.ai)
+            return provider.health_check()
+        except Exception as exc:
+            from app.core.ai.providers.provider_base import ProviderHealth
+            return ProviderHealth(ok=False, message=str(exc))
 
     def _validate_async(self):
         """Validate settings asynchronously."""
@@ -302,6 +391,22 @@ class SettingsPage(QWidget):
 
     def _collect_settings(self):
         """Collect settings from UI."""
+        ai_settings = AISettings(
+            provider=self.ai_provider_combo.currentText(),
+            ollama_base_url=self.ai_ollama_base_url_input.text() or "http://localhost:11434",
+            openrouter_api_key=self.ai_openrouter_api_key_input.text() or None,
+            chat_model=self.ai_chat_model_input.text(),
+            task_model=self.ai_task_model_input.text(),
+            routing_mode=self.ai_routing_mode_combo.currentText(),
+            timeout_seconds=self.ai_timeout_spinbox.value(),
+            stream_enabled=self.ai_stream_enabled_checkbox.isChecked(),
+            tools_enabled=self.ai_tools_enabled_checkbox.isChecked(),
+            max_history_messages=self.ai_max_history_spinbox.value(),
+            max_tool_steps=self.ai_max_tool_steps_spinbox.value(),
+            openrouter_free_only=self.ai_openrouter_free_only_checkbox.isChecked(),
+            cloud_fallback_enabled=self.ai_cloud_fallback_checkbox.isChecked(),
+        )
+
         self.current_settings = AppSettings(
             venv_path=self.venv_path_input.text() or None,
             user_data_path=self.user_data_input.text() or None,
@@ -313,6 +418,7 @@ class SettingsPage(QWidget):
                 background_color=self.terminal_bg_btn.text() or "#1e1e1e",
                 text_color=self.terminal_text_btn.text() or "#d4d4d4",
             ),
+            ai=ai_settings,
         )
 
         # Resolve paths
@@ -325,7 +431,7 @@ class SettingsPage(QWidget):
                 self.settings_service._resolve_freqtrade_from_venv(venv_path)
             )
 
-    def _format_validation_details(self, result) -> str:
+    def _format_validation_details(self, result, ai_health=None) -> str:
         """Format validation result for display."""
         lines = [result.message]
         lines.append("")
@@ -339,5 +445,12 @@ class SettingsPage(QWidget):
             for key, value in result.details.items():
                 if key not in ["python_ok", "freqtrade_ok", "user_data_ok"]:
                     lines.append(f"  {key}: {value}")
+
+        if ai_health is not None:
+            lines.append("")
+            provider_name = self.current_settings.ai.provider.capitalize() if self.current_settings else "AI"
+            status = "✓" if ai_health.ok else "✗"
+            latency = f" ({ai_health.latency_ms:.0f} ms)" if ai_health.latency_ms is not None else ""
+            lines.append(f"  {provider_name}: {status} {ai_health.message}{latency}")
 
         return "\n".join(lines)

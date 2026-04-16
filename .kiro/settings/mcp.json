@@ -8,9 +8,7 @@
         "-y",
         "@modelcontextprotocol/server-memory"
       ],
-      "disabledTools": [
-        "delete_relations"
-      ]
+      "disabledTools": []
     },
     "filesystem": {
       "command": "npx",
@@ -29,10 +27,7 @@
       "args": [
         "mcp-server-git"
       ],
-      "disabledTools": [
-        "git_branch",
-        "git_create_branch"
-      ]
+      "disabledTools": []
     },
     "sequential-thinking": {
       "command": "npx",
@@ -57,13 +52,7 @@
         "ARCHIVE_FILE_PATH": "T:\\ae\\pyside6\\.ai\\tasks-archive.yaml",
         "ARCHIVE_MODE": "manual"
       },
-      "disabledTools": [
-        "restore_archived_request",
-        "remove_prompts",
-        "delete_note",
-        "delete_subtask",
-        "delete_task"
-      ]
+      "disabledTools": []
     }
   }
 }

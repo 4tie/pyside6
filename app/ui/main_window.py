@@ -10,6 +10,7 @@ from app.ui.pages.download_data_page import DownloadDataPage
 from app.ui.pages.optimize_page import OptimizePage
 from app.ui.pages.strategy_config_page import StrategyConfigPage
 from app.ui.widgets.terminal_widget import TerminalWidget
+from app.ui.widgets.ai_chat_dock import AIChatDock
 
 
 class MainWindow(QMainWindow):
@@ -62,6 +63,15 @@ class MainWindow(QMainWindow):
 
         layout.addWidget(self.tabs)
         self.central_widget.setLayout(layout)
+
+        # AI Chat dock
+        self.ai_chat_dock = AIChatDock(self.settings_state, self)
+        self.addDockWidget(Qt.RightDockWidgetArea, self.ai_chat_dock)
+        self.ai_chat_dock.hide()
+
+        # View menu
+        view_menu = self.menuBar().addMenu("View")
+        view_menu.addAction(self.ai_chat_dock.toggleViewAction())
 
         # Apply terminal preferences from loaded settings
         self._apply_terminal_preferences()

@@ -1,5 +1,5 @@
-from pydantic import BaseModel, Field, field_validator
-from typing import Optional
+from pydantic import BaseModel, Field, field_validator, model_validator
+from typing import Optional, Any
 from pathlib import Path
 
 
@@ -58,6 +58,42 @@ class OptimizePreferences(BaseModel):
     hyperopt_loss: str = Field("SharpeHyperOptLoss", description="Hyperopt loss class")
 
 
+class AISettings(BaseModel):
+    """AI panel configuration."""
+
+    provider: str = Field("ollama", description="Active provider: 'ollama' or 'openrouter'")
+    ollama_base_url: str = Field("http://localhost:11434", description="Ollama server base URL")
+    openrouter_api_key: Optional[str] = Field(None, description="OpenRouter API key")
+    chat_model: str = Field("", description="Model for plain conversation")
+    task_model: str = Field("", description="Model for tool-using task runs")
+    routing_mode: str = Field("single_model", description="'single_model' or 'dual_model'")
+    cloud_fallback_enabled: bool = Field(False, description="Reserved — no runtime effect in this version")
+    openrouter_free_only: bool = Field(True, description="Filter OpenRouter to free models only")
+    timeout_seconds: int = Field(60, description="HTTP request timeout in seconds")
+    stream_enabled: bool = Field(True, description="Use streaming responses")
+    tools_enabled: bool = Field(False, description="Enable tool calling")
+    max_history_messages: int = Field(50, description="Max messages retained in history")
+    max_tool_steps: int = Field(8, description="Max tool call iterations per run_task()")
+
+    @field_validator("routing_mode")
+    @classmethod
+    def validate_routing_mode(cls, v: str) -> str:
+        """Reject any routing_mode value other than the two supported modes."""
+        if v not in ("single_model", "dual_model"):
+            raise ValueError(f"routing_mode must be 'single_model' or 'dual_model', got: {v!r}")
+        return v
+
+    @model_validator(mode="before")
+    @classmethod
+    def migrate_legacy_selected_model(cls, data: Any) -> Any:
+        """Map legacy 'selected_model' key to 'chat_model' if present."""
+        if isinstance(data, dict):
+            if "selected_model" in data and "chat_model" not in data:
+                data = dict(data)
+                data["chat_model"] = data.pop("selected_model")
+        return data
+
+
 class AppSettings(BaseModel):
     """Main application settings for Freqtrade GUI."""
 
@@ -90,6 +126,9 @@ class AppSettings(BaseModel):
     )
     terminal_preferences: TerminalPreferences = Field(
         default_factory=TerminalPreferences, description="Terminal appearance preferences"
+    )
+    ai: AISettings = Field(
+        default_factory=AISettings, description="AI panel configuration"
     )
 
     @field_validator(
