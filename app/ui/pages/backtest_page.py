@@ -311,7 +311,7 @@ class BacktestPage(QWidget):
         )
 
         try:
-            results = BacktestResultsService.load_run(run_dir)
+            results = RunStore.load_run(run_dir)
             _log.info("Run loaded | strategy=%s | trades=%d",
                       results.summary.strategy, len(results.trades))
             self.results_widget.display_results(results, export_dir=str(run_dir))

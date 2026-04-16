@@ -1,54 +1,98 @@
-# WORKFLOW.md — خطوات أي تغيير
+# WORKFLOW.md — Change Policy
 
-## القاعدة الأساسية
+## THE POLICY
 
-كل تغيير — مهما كان صغيراً — يمر بهذه الخطوات بالترتيب.
-لا تقفز خطوة.
+```
+ANY code change MUST follow this exact order:
 
----
+  1. ANALYZE    — understand the request fully, read relevant files
+  2. IDENTIFY   — name the minimal set of files to change
+  3. APPLY      — make the smallest correct patch
+  4. VALIDATE   — run checks, confirm nothing broke
+  5. SUMMARIZE  — write an update summary (via script)
+  6. WAIT       — present summary, wait for explicit user approval
+  7. COMMIT     — only after approval (via script)
 
-## الخطوات
+NO EXCEPTIONS. NO SHORTCUTS.
+```
 
-### 1. تحليل
-- افهم المشكلة أو الطلب بالكامل قبل أي كود
-- اقرأ الملفات المعنية أولاً
-- حدد root cause إذا كانت bug
-
-### 2. تحديد الملفات
-- حدد بالضبط أي الملفات ستتغير
-- إذا كان التغيير يمس أكثر من 3 ملفات — توقف وفكر إذا كان هناك طريقة أبسط
-- لا تنشئ ملفاً جديداً إذا كان الكود يمكن إضافته لملف موجود
-
-### 3. تنفيذ minimal patch
-- أصغر تغيير ممكن يحل المشكلة
-- لا تعيد كتابة ما يعمل
-- لا تغير style أو formatting في نفس الـ PR
-- لا تضيف features إضافية لم تُطلب
-
-### 4. اختبار
-- شغّل `pytest` بعد أي تغيير في `app/core/`
-- تحقق يدوياً من الـ UI إذا كان التغيير في `app/ui/`
-- تحقق من `data/log/app.log` إذا كان هناك سلوك غير متوقع
-
-### 5. توثيق
-- إذا تغيّر behavior — حدّث الـ doc المناسب في `data/docs/`
-- إذا تغيّر structure — حدّث `STRUCTURE.md`
-- إذا تغيّر flow — حدّث `ARCHITECTURE.md`
-
-### 6. انتظار تأكيد المستخدم
-- لا تكمل للخطوة التالية بدون موافقة
-- اعرض ما تغيّر بوضوح
-- اذكر أي side effects محتملة
-
-### 7. Commit
-- رسالة commit واضحة: `fix:`, `feat:`, `refactor:`, `docs:`
-- لا تجمع تغييرات غير مترابطة في commit واحد
+This policy is enforced by:
+- Scripts in `data/tools/` that must be called at steps 4, 5, 7
+- MCP tools that wrap those scripts
+- CI that rejects any push that skips validation
 
 ---
 
-## قواعد سريعة
+## Step-by-Step
 
-- **Bug fix** → أصغر patch ممكن، لا تعيد كتابة الدالة
-- **Feature جديد** → service أولاً، ثم UI
-- **Refactor** → لا تغير behavior، فقط structure
-- **Doc update** → لا يحتاج اختبار، لكن يحتاج تأكيد
+### Step 1 — ANALYZE
+- Read every file that will be touched before writing any code
+- For bugs: identify root cause, not just symptoms
+- For features: confirm scope — what is in/out of bounds (see `PRODUCT.md`)
+- If the request is ambiguous → ask, don't guess
+
+### Step 2 — IDENTIFY
+- List exact files to change before touching anything
+- If more than 3 files → pause and find a simpler approach
+- Never create a new file if the change fits an existing one
+- State the plan explicitly: "I will change X in file Y because Z"
+
+### Step 3 — APPLY
+- Smallest correct patch only
+- No style/formatting changes mixed with logic changes
+- No unrequested features added
+- No rewriting of working code
+
+### Step 4 — VALIDATE
+```bash
+python data/tools/run_checks.py
+```
+- Must pass before proceeding
+- If tests fail → fix first, do not skip
+
+### Step 5 — SUMMARIZE
+```bash
+python data/tools/post_change_report.py --feature "<name>" --type <fix|feat|refactor>
+```
+- Generates: changed files, diff stat, test result, timestamp
+- Output goes to `data/docs/updates/` or appended to `CHANGELOG.md`
+- Do NOT write the summary manually — use the script
+
+### Step 6 — WAIT
+- Present the summary to the user
+- State clearly: what changed, why, any side effects
+- **Do not proceed to commit without explicit "yes" or "approved"**
+- If user requests changes → go back to Step 3
+
+### Step 7 — COMMIT
+```bash
+python data/tools/make_commit_message.py
+# → copy the suggested message
+git add <files>
+git commit -m "<suggested message>"
+```
+- Never commit without running `make_commit_message.py` first
+- Never bundle unrelated changes in one commit
+
+---
+
+## Tool Bindings
+
+| Step | Tool | Command |
+|------|------|---------|
+| 4 — Validate | `run_checks` (MCP) | `python data/tools/run_checks.py` |
+| 5 — Summarize | `write_update_summary` (MCP) | `python data/tools/post_change_report.py` |
+| 5 — Changelog | `update_changelog` (MCP) | `python data/tools/update_changelog.py` |
+| 7 — Commit msg | `generate_commit_message` (MCP) | `python data/tools/make_commit_message.py` |
+
+---
+
+## Quick Rules
+
+| Change type | Rule |
+|-------------|------|
+| Bug fix | Smallest patch, don't rewrite the function |
+| New feature | Service layer first, then UI |
+| Refactor | No behavior change, structure only |
+| Docs only | No tests needed, but still needs approval |
+| Breaking change | Must be flagged in summary and CHANGELOG |

@@ -12,23 +12,3 @@
 
 ---
 
-## ما يُعتبر Feature صحيح
-
-- أي شيء يختصر خطوة CLI يقوم بها المستخدم يدوياً
-- عرض نتائج backtest بشكل مقروء (summary + trades)
-- حفظ تاريخ الـ runs وإمكانية مقارنتها
-- إعدادات تُحفظ وتُستعاد بين الجلسات
-- terminal output حي أثناء تشغيل الأوامر
-- pair selector مع favorites
-
----
-
-## ما هو خارج النطاق
-
-- live trading أو dry-run management
-- تعديل strategy code من داخل التطبيق
-- charting أو رسم equity curves
-- hyperopt runner (ثقيل جداً للـ GUI)
-- multi-strategy comparison charts
-- أي شيء يتطلب freqtrade API أو REST
-- AI strategy generation (placeholder فقط حالياً)

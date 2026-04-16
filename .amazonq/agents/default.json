@@ -46,6 +46,30 @@
       "args": [
         "T:\\ae\\pyside6\\mcp_pyside6.py"
       ]
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "disabled": false,
+      "timeout": 60000,
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ]
+    },
+    "taskflow": {
+      "command": "npx",
+      "disabled": false,
+      "timeout": 60000,
+      "args": [
+        "-y",
+        "@pinkpixel/taskflow-mcp"
+      ],
+      "env": {
+        "TASK_MANAGER_FILE_PATH": "T:\\ae\\pyside6\\.ai\\tasks.yaml",
+        "TASK_MANAGER_BASE_DIR": "T:\\ae\\pyside6",
+        "ARCHIVE_FILE_PATH": "T:\\ae\\pyside6\\.ai\\tasks-archive.yaml",
+        "ARCHIVE_MODE": "manual"
+      }
     }
   },
   "tools": [
@@ -58,7 +82,9 @@
     "@filesystem",
     "@Git",
     "@py git ",
-    "@pyside6"
+    "@pyside6",
+    "@sequential-thinking",
+    "@taskflow"
   ],
   "toolAliases": {},
   "allowedTools": [
@@ -89,7 +115,24 @@
     "@filesystem/list_allowed_directories",
     "@pyside6/run_tests",
     "@pyside6/read_logs",
-    "@pyside6/list_ui"
+    "@pyside6/list_ui",
+    "@sequential-thinking/sequentialthinking",
+    "@taskflow/plan_task",
+    "@taskflow/get_next_task",
+    "@taskflow/open_task_details",
+    "@taskflow/list_requests",
+    "@taskflow/add_tasks_to_request",
+    "@taskflow/add_subtasks",
+    "@taskflow/update_subtask",
+    "@taskflow/export_task_status",
+    "@taskflow/add_note",
+    "@taskflow/update_note",
+    "@taskflow/delete_note",
+    "@taskflow/add_dependency",
+    "@taskflow/get_prompts",
+    "@taskflow/set_prompts",
+    "@taskflow/update_prompts",
+    "@taskflow/list_archived_requests"
   ],
   "toolsSettings": {
     "use_aws": {

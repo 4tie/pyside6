@@ -69,6 +69,17 @@ jobs:
       - name: Verify required docs exist
         run: python data/tools/ci_checks/check_docs.py
 
+      - name: Verify WORKFLOW.md has THE POLICY section
+        run: python -c "
+import sys
+from pathlib import Path
+content = (Path('data/docs/WORKFLOW.md')).read_text()
+if 'THE POLICY' not in content or '7. COMMIT' not in content:
+    print('FAIL: WORKFLOW.md is missing THE POLICY or step 7')
+    sys.exit(1)
+print('OK: WORKFLOW.md policy intact')
+"
+
       - name: Verify no UI imports in services
         run: python data/tools/ci_checks/check_layer_violations.py
 
