@@ -67,7 +67,6 @@ class MainWindow(QMainWindow):
         # AI Chat dock
         self.ai_chat_dock = AIChatDock(self.settings_state, self)
         self.addDockWidget(Qt.RightDockWidgetArea, self.ai_chat_dock)
-        self.ai_chat_dock.hide()
 
         # View menu
         view_menu = self.menuBar().addMenu("View")

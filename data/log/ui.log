@@ -4,3 +4,9 @@
 2026-04-16 19:09:53.013 | WARNING  | freqtrade_gui.ui.ai_chat_dock  | Failed to list models: HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url: /api/tags (Caused by NewConnectionError("HTTPConnection(host='localhost', port=11434): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it"))
 2026-04-16 19:09:53.014 | DEBUG    | freqtrade_gui.ui.ai_chat_dock  | Health check: ok=False message=HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url: /api/tags (Caused by NewConnectionError("HTTPConnection(host='localhost', port=11434): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it"))
 2026-04-16 19:09:53.015 | DEBUG    | freqtrade_gui.ui.ai_chat_dock  | Model list populated: 0 models
+2026-04-16 19:13:09.458 | DEBUG    | freqtrade_gui.ui.ai_chat_dock  | AIChatDock initialised
+2026-04-16 19:13:11.615 | DEBUG    | freqtrade_gui.ui.ai_chat_dock  | Model list populated: 11 models
+2026-04-16 19:13:11.616 | DEBUG    | freqtrade_gui.ui.ai_chat_dock  | Health check: ok=True message=Connected
+2026-04-16 19:13:19.014 | DEBUG    | freqtrade_gui.ui.ai_chat_dock  | Tools toggle: False
+2026-04-16 19:13:19.535 | DEBUG    | freqtrade_gui.ui.ai_chat_dock  | Tools toggle: True
+2026-04-16 19:13:20.179 | DEBUG    | freqtrade_gui.ui.ai_chat_dock  | Tools toggle: False
