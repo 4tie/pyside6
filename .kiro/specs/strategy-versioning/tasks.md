@@ -24,19 +24,19 @@
   - [x] 4.1 إنشاء `app/core/versioning/versioning_service.py`
   - [x] 4.2 تنفيذ `create_candidate` — ينشئ UUID، يستدعي `VersionStore.save_version`، يُحدّث الفهرس
   - [x] 4.3 تنفيذ `accept_version`
-    - [-] نسخ `snapshot_strategy_path` → `strategy_file_path` عبر temp file + `Path.replace()` (أولاً)
-    - [ ] نسخ `snapshot_params_path` → `live_params_path` عبر temp file + `Path.replace()` (أولاً)
-    - [ ] بعد نجاح النسخ فقط: نقل الـ `active` السابق إلى `accepted` وتحديث `updated_at`
-    - [ ] تحويل الـ `candidate` إلى `active` وتحديث `updated_at`
-    - [ ] ضبط `base_version_id` على الـ `active` الجديد ليشير إلى الـ `active` السابق
-    - [ ] تحديث الفهرس لكلا النسختين
+    - [x] نسخ `snapshot_strategy_path` → `strategy_file_path` عبر temp file + `Path.replace()` (أولاً)
+    - [x] نسخ `snapshot_params_path` → `live_params_path` عبر temp file + `Path.replace()` (أولاً)
+    - [x] بعد نجاح النسخ فقط: نقل الـ `active` السابق إلى `accepted` وتحديث `updated_at`
+    - [x] تحويل الـ `candidate` إلى `active` وتحديث `updated_at`
+    - [x] ضبط `base_version_id` على الـ `active` الجديد ليشير إلى الـ `active` السابق
+    - [x] تحديث الفهرس لكلا النسختين
   - [x] 4.4 تنفيذ `reject_version` — يُحوّل الـ `candidate` إلى `rejected`، يرفع `ValueError` إذا لم يكن `candidate`
   - [x] 4.5 تنفيذ `get_active_version`، `list_versions`، `get_version`، `get_version_for_run`
-    - [ ] `get_version_for_run(run_meta: dict)` يقرأ `version_id` من `meta.json` (source of truth) ثم يُحمّل النسخة من القرص — الفهرس cache فقط
+    - [x] `get_version_for_run(run_meta: dict)` يقرأ `version_id` من `meta.json` (source of truth) ثم يُحمّل النسخة من القرص — الفهرس cache فقط
   - [x] 4.6 تنفيذ `build_diff_preview`
-    - [ ] مقارنة `strategy.py` الحالي في `user_data/strategies/` مع `snapshot_strategy_path` للـ candidate
-    - [ ] مقارنة `MyStrategy.json` الحالي مع `snapshot_params_path` للـ candidate
-    - [ ] إعادة dict منظم: `{"strategy_diff": str, "params_diff": str}` للاستخدام لاحقاً في UI
+    - [x] مقارنة `strategy.py` الحالي في `user_data/strategies/` مع `snapshot_strategy_path` للـ candidate
+    - [x] مقارنة `MyStrategy.json` الحالي مع `snapshot_params_path` للـ candidate
+    - [x] إعادة dict منظم: `{"strategy_diff": str, "params_diff": str}` للاستخدام لاحقاً في UI
 
 - [x] 5. تعديل `RunStore.save()` لدعم `version_id`
   - [x] 5.1 إضافة parameter `version_id: Optional[str] = None` لـ `RunStore.save()`
@@ -45,8 +45,8 @@
 
 - [x] 6. إعداد بيئة الاختبار وكتابة Unit Tests
   - [x] 6.0 إضافة dev test dependencies إلى `requirements.txt`
-    - [ ] إضافة `pytest`
-    - [ ] إضافة `hypothesis`
+    - [x] إضافة `pytest`
+    - [x] إضافة `hypothesis`
   - [x] 6.1 `tests/core/versioning/test_version_models.py` — serialization، deserialization، حقول مفقودة، VersionStatus/VersionSource enums
   - [x] 6.2 `tests/core/versioning/test_version_store.py` — save/load/update_status، FileNotFoundError، ValueError للـ duplicate
   - [x] 6.3 `tests/core/versioning/test_version_index.py` — load على ملف غير موجود، update، rebuild مع ملف تالف، invariant at-most-one-active
