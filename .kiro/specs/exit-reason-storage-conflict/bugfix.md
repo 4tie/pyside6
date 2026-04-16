@@ -38,30 +38,52 @@
 
 ## Bug Condition (Pseudocode)
 
+Two distinct defect conditions exist, each exposing a different failure mode:
+
 ```pascal
-FUNCTION isBugCondition(trade_record)
+// Defect 1: Canonical Write Defect
+// Record was written by the buggy _write_trades() — uses non-standard "reason" key.
+// Proves the write-side diverges from the freqtrade standard.
+FUNCTION isWriteDefect(trade_record)
   INPUT: trade_record — a dict entry from trades.json
   OUTPUT: boolean
 
-  // Bug is triggered when the record was written by _write_trades()
-  // and therefore uses "reason" instead of "exit_reason"
   RETURN "reason" IN trade_record.keys() AND "exit_reason" NOT IN trade_record.keys()
+END FUNCTION
+
+
+// Defect 2: Native Read Defect
+// Record is a freqtrade-native file using the canonical "exit_reason" key,
+// but the old load_run() looks up "reason" and silently returns "".
+// Proves the read-side fails on any standard freqtrade output.
+FUNCTION isReadDefect(trade_record)
+  INPUT: trade_record — a dict entry from trades.json
+  OUTPUT: boolean
+
+  RETURN "exit_reason" IN trade_record.keys() AND "reason" NOT IN trade_record.keys()
 END FUNCTION
 ```
 
 ```pascal
-// Property: Fix Checking
-FOR ALL trade_record WHERE isBugCondition(trade_record) DO
+// Property: Fix Checking — Write Defect
+// After fix: legacy records are migrated; new writes use canonical key only.
+FOR ALL trade_record WHERE isWriteDefect(trade_record) DO
   result ← load_run'(run_dir_containing(trade_record))
-  // Backward compat: "reason" value is migrated to exit_reason
-  ASSERT result.trades[i].exit_reason = trade_record["reason"]
-  // New writes use canonical key
-  ASSERT "exit_reason" IN written_trade_record.keys()
+  ASSERT result.trades[i].exit_reason = trade_record["reason"]   // backward compat migration
+  ASSERT "exit_reason" IN written_trade_record.keys()            // new writes are canonical
   ASSERT "reason" NOT IN written_trade_record.keys()
 END FOR
 
+// Property: Fix Checking — Read Defect
+// After fix: native freqtrade records are read correctly.
+FOR ALL trade_record WHERE isReadDefect(trade_record) DO
+  result ← load_run'(run_dir_containing(trade_record))
+  ASSERT result.trades[i].exit_reason = trade_record["exit_reason"]   // no longer silently ""
+END FOR
+
 // Property: Preservation Checking
-FOR ALL trade_record WHERE NOT isBugCondition(trade_record) DO
-  ASSERT load_run(run_dir) = load_run'(run_dir)   // all other fields unchanged
+// All records that match neither defect condition are completely unaffected.
+FOR ALL trade_record WHERE NOT isWriteDefect(trade_record) AND NOT isReadDefect(trade_record) DO
+  ASSERT load_run(run_dir) = load_run'(run_dir)   // all fields unchanged
 END FOR
 ```

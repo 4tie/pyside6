@@ -51,7 +51,7 @@ def test_save_trades_contain_exit_reason(sample_results, strategy_results_dir):
     )
     trades = json.loads((run_dir / "trades.json").read_text(encoding="utf-8"))
     assert len(trades) == 2
-    reasons = {t["reason"] for t in trades}
+    reasons = {t["exit_reason"] for t in trades}
     assert "roi" in reasons
     assert "stop_loss" in reasons
 

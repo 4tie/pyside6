@@ -13346,3 +13346,1215 @@
 2026-04-16 14:45:21.342 | DEBUG    | freqtrade_gui.services.versioning | Index updated for version cef7f3ef-dc28-489b-a398-dbbbeb235b4f (strategy 'MyStrategy')
 2026-04-16 14:45:21.342 | INFO     | freqtrade_gui.services.versioning | Created candidate version cef7f3ef-dc28-489b-a398-dbbbeb235b4f for strategy 'MyStrategy'
 2026-04-16 14:45:21.349 | DEBUG    | freqtrade_gui.services.versioning | Loaded version cef7f3ef-dc28-489b-a398-dbbbeb235b4f from C:\Users\M4tie\AppData\Local\Temp\pytest-of-M4tie\pytest-89\test_build_diff_preview_empty_0\strategy_versions\MyStrategy\cef7f3ef-dc28-489b-a398-dbbbeb235b4f
+2026-04-16 15:14:08.501 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-08_c800ee | strategy=TestStrategy | trades=0 | profit=0.0000%
+2026-04-16 15:14:08.503 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.503 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.503 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmp6f8qn5c4\backtest_results\TestStrategy\run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.512 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-08_c800ee | strategy=TestStrategy | trades=1 | profit=0.0000%
+2026-04-16 15:14:08.513 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.513 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.514 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpfci182tj\backtest_results\TestStrategy\run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.526 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-08_c800ee | strategy=TestStrategy | trades=2 | profit=0.0000%
+2026-04-16 15:14:08.528 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.529 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.529 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmp847zgln1\backtest_results\TestStrategy\run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.542 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-08_c800ee | strategy=TestStrategy | trades=2 | profit=0.0000%
+2026-04-16 15:14:08.544 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.545 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.545 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpk44h63si\backtest_results\TestStrategy\run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.553 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-08_c800ee | strategy=TestStrategy | trades=2 | profit=0.0000%
+2026-04-16 15:14:08.554 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.555 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.555 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpcavc9poq\backtest_results\TestStrategy\run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.563 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-08_c800ee | strategy=TestStrategy | trades=1 | profit=0.0000%
+2026-04-16 15:14:08.565 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.565 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.565 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpyd5ifjbs\backtest_results\TestStrategy\run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.574 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-08_c800ee | strategy=TestStrategy | trades=3 | profit=0.0000%
+2026-04-16 15:14:08.576 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.576 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.576 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpw1rsti0y\backtest_results\TestStrategy\run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.589 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-08_c800ee | strategy=TestStrategy | trades=7 | profit=0.0000%
+2026-04-16 15:14:08.591 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.591 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.591 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpy7aac5er\backtest_results\TestStrategy\run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.605 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-08_c800ee | strategy=TestStrategy | trades=5 | profit=0.0000%
+2026-04-16 15:14:08.607 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.608 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.608 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmph7co4w_f\backtest_results\TestStrategy\run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.621 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-08_c800ee | strategy=TestStrategy | trades=10 | profit=0.0000%
+2026-04-16 15:14:08.623 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.624 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.624 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmp8kf27t0k\backtest_results\TestStrategy\run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.635 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-08_c800ee | strategy=TestStrategy | trades=2 | profit=0.0000%
+2026-04-16 15:14:08.637 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.637 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.637 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmp_si4pe3g\backtest_results\TestStrategy\run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.646 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-08_c800ee | strategy=TestStrategy | trades=2 | profit=0.0000%
+2026-04-16 15:14:08.648 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.649 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.649 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmp8l91d4ke\backtest_results\TestStrategy\run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.656 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-08_c800ee | strategy=TestStrategy | trades=1 | profit=0.0000%
+2026-04-16 15:14:08.657 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.658 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.658 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpt6av_xuu\backtest_results\TestStrategy\run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.667 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-08_c800ee | strategy=TestStrategy | trades=8 | profit=0.0000%
+2026-04-16 15:14:08.669 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.669 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.669 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpcfyfmr3k\backtest_results\TestStrategy\run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.681 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-08_c800ee | strategy=TestStrategy | trades=8 | profit=0.0000%
+2026-04-16 15:14:08.682 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.683 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.683 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmp58pap6r3\backtest_results\TestStrategy\run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.692 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-08_c800ee | strategy=TestStrategy | trades=8 | profit=0.0000%
+2026-04-16 15:14:08.695 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.695 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.696 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpm6t9t5ie\backtest_results\TestStrategy\run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.703 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-08_c800ee | strategy=TestStrategy | trades=8 | profit=0.0000%
+2026-04-16 15:14:08.705 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.705 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.705 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpcd9tmxvo\backtest_results\TestStrategy\run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.714 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-08_c800ee | strategy=TestStrategy | trades=8 | profit=0.0000%
+2026-04-16 15:14:08.716 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.716 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.716 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpm1bx6pwd\backtest_results\TestStrategy\run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.729 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-08_c800ee | strategy=TestStrategy | trades=8 | profit=0.0000%
+2026-04-16 15:14:08.731 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.731 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.731 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpdm09b37l\backtest_results\TestStrategy\run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.741 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-08_c800ee | strategy=TestStrategy | trades=8 | profit=0.0000%
+2026-04-16 15:14:08.742 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.743 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.743 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpkw2c7pn5\backtest_results\TestStrategy\run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.752 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-08_c800ee | strategy=TestStrategy | trades=10 | profit=0.0000%
+2026-04-16 15:14:08.754 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.754 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.754 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpekf9a1nv\backtest_results\TestStrategy\run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.764 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-08_c800ee | strategy=TestStrategy | trades=10 | profit=0.0000%
+2026-04-16 15:14:08.766 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.766 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.766 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpb9oqyxtr\backtest_results\TestStrategy\run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.775 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-08_c800ee | strategy=TestStrategy | trades=1 | profit=0.0000%
+2026-04-16 15:14:08.776 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.777 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.777 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpxs30mmo9\backtest_results\TestStrategy\run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.785 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-08_c800ee | strategy=TestStrategy | trades=10 | profit=0.0000%
+2026-04-16 15:14:08.787 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.788 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.788 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpgg4u7g15\backtest_results\TestStrategy\run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.797 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-08_c800ee | strategy=TestStrategy | trades=10 | profit=0.0000%
+2026-04-16 15:14:08.799 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.800 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.800 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpgos9_ufc\backtest_results\TestStrategy\run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.809 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-08_c800ee | strategy=TestStrategy | trades=10 | profit=0.0000%
+2026-04-16 15:14:08.811 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.811 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.811 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmp5ve2efuh\backtest_results\TestStrategy\run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.820 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-08_c800ee | strategy=TestStrategy | trades=10 | profit=0.0000%
+2026-04-16 15:14:08.821 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.822 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.822 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpcb_y9j7n\backtest_results\TestStrategy\run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.831 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-08_c800ee | strategy=TestStrategy | trades=10 | profit=0.0000%
+2026-04-16 15:14:08.833 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.833 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.833 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpj3a_qgrv\backtest_results\TestStrategy\run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.843 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-08_c800ee | strategy=TestStrategy | trades=10 | profit=0.0000%
+2026-04-16 15:14:08.845 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.845 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.845 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmp82jo70wq\backtest_results\TestStrategy\run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.854 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-08_c800ee | strategy=TestStrategy | trades=10 | profit=0.0000%
+2026-04-16 15:14:08.856 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.856 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.856 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpfsk5kxlf\backtest_results\TestStrategy\run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.870 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-08_c800ee | strategy=TestStrategy | trades=2 | profit=0.0000%
+2026-04-16 15:14:08.872 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.872 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.873 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpkxf1gvtt\backtest_results\TestStrategy\run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.881 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-08_c800ee | strategy=TestStrategy | trades=10 | profit=0.0000%
+2026-04-16 15:14:08.883 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.883 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.883 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpccr_4o8a\backtest_results\TestStrategy\run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.891 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-08_c800ee | strategy=TestStrategy | trades=10 | profit=0.0000%
+2026-04-16 15:14:08.893 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.894 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.894 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpeohei3f7\backtest_results\TestStrategy\run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.902 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-08_c800ee | strategy=TestStrategy | trades=10 | profit=0.0000%
+2026-04-16 15:14:08.904 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.904 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.904 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmp1_thgch1\backtest_results\TestStrategy\run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.913 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-08_c800ee | strategy=TestStrategy | trades=10 | profit=0.0000%
+2026-04-16 15:14:08.915 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.915 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.915 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmp7s4vz275\backtest_results\TestStrategy\run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.922 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-08_c800ee | strategy=TestStrategy | trades=10 | profit=0.0000%
+2026-04-16 15:14:08.924 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.925 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.925 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmp2gcollss\backtest_results\TestStrategy\run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.936 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-08_c800ee | strategy=TestStrategy | trades=10 | profit=0.0000%
+2026-04-16 15:14:08.938 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.939 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.939 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpjewcnegd\backtest_results\TestStrategy\run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.950 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-08_c800ee | strategy=TestStrategy | trades=10 | profit=0.0000%
+2026-04-16 15:14:08.952 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.953 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.953 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpev9tg6pe\backtest_results\TestStrategy\run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.963 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-08_c800ee | strategy=TestStrategy | trades=10 | profit=0.0000%
+2026-04-16 15:14:08.967 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.967 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.967 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpedd_hbqa\backtest_results\TestStrategy\run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.977 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-08_c800ee | strategy=TestStrategy | trades=10 | profit=0.0000%
+2026-04-16 15:14:08.979 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.979 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.979 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmp6mma3j52\backtest_results\TestStrategy\run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.988 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-08_c800ee | strategy=TestStrategy | trades=10 | profit=0.0000%
+2026-04-16 15:14:08.989 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.990 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.990 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmp4gzk0dv9\backtest_results\TestStrategy\run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:08.998 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-08_c800ee | strategy=TestStrategy | trades=7 | profit=0.0000%
+2026-04-16 15:14:09.000 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:09.000 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:09.000 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpvmyv9z5w\backtest_results\TestStrategy\run_2026-04-16_15-14-08_c800ee
+2026-04-16 15:14:09.009 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-09_653d85 | strategy=TestStrategy | trades=7 | profit=0.0000%
+2026-04-16 15:14:09.010 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-09_653d85
+2026-04-16 15:14:09.011 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-09_653d85
+2026-04-16 15:14:09.011 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpxxt4f528\backtest_results\TestStrategy\run_2026-04-16_15-14-09_653d85
+2026-04-16 15:14:09.019 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-09_653d85 | strategy=TestStrategy | trades=7 | profit=0.0000%
+2026-04-16 15:14:09.020 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-09_653d85
+2026-04-16 15:14:09.021 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-09_653d85
+2026-04-16 15:14:09.021 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpdnwbvb_s\backtest_results\TestStrategy\run_2026-04-16_15-14-09_653d85
+2026-04-16 15:14:09.029 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-09_653d85 | strategy=TestStrategy | trades=7 | profit=0.0000%
+2026-04-16 15:14:09.030 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-09_653d85
+2026-04-16 15:14:09.031 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-09_653d85
+2026-04-16 15:14:09.031 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmp011bgjbd\backtest_results\TestStrategy\run_2026-04-16_15-14-09_653d85
+2026-04-16 15:14:09.040 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-09_653d85 | strategy=TestStrategy | trades=10 | profit=0.0000%
+2026-04-16 15:14:09.042 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-09_653d85
+2026-04-16 15:14:09.042 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-09_653d85
+2026-04-16 15:14:09.042 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpy0tfd8_y\backtest_results\TestStrategy\run_2026-04-16_15-14-09_653d85
+2026-04-16 15:14:09.051 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-09_653d85 | strategy=TestStrategy | trades=10 | profit=0.0000%
+2026-04-16 15:14:09.054 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-09_653d85
+2026-04-16 15:14:09.054 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-09_653d85
+2026-04-16 15:14:09.054 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmp3ovv6z79\backtest_results\TestStrategy\run_2026-04-16_15-14-09_653d85
+2026-04-16 15:14:09.062 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-09_653d85 | strategy=TestStrategy | trades=10 | profit=0.0000%
+2026-04-16 15:14:09.064 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-09_653d85
+2026-04-16 15:14:09.064 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-09_653d85
+2026-04-16 15:14:09.064 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpc3hqcdqu\backtest_results\TestStrategy\run_2026-04-16_15-14-09_653d85
+2026-04-16 15:14:09.073 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-09_653d85 | strategy=TestStrategy | trades=10 | profit=0.0000%
+2026-04-16 15:14:09.075 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-09_653d85
+2026-04-16 15:14:09.075 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-09_653d85
+2026-04-16 15:14:09.075 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpmq98z3u5\backtest_results\TestStrategy\run_2026-04-16_15-14-09_653d85
+2026-04-16 15:14:09.084 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-09_653d85 | strategy=TestStrategy | trades=10 | profit=0.0000%
+2026-04-16 15:14:09.086 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-09_653d85
+2026-04-16 15:14:09.086 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-09_653d85
+2026-04-16 15:14:09.086 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmp8zddj0u8\backtest_results\TestStrategy\run_2026-04-16_15-14-09_653d85
+2026-04-16 15:14:16.961 | DEBUG    | freqtrade_gui.backtests.parser | Parsing zip: backtest-result-test.zip | entry=backtest-result-test.json
+2026-04-16 15:14:16.961 | INFO     | freqtrade_gui.backtests.parser | Parsed | strategy=TestStrategy | trades=2 | profit=0.8000%
+2026-04-16 15:14:16.964 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-16_d1a0ea | strategy=TestStrategy | trades=2 | profit=0.8000%
+2026-04-16 15:14:16.966 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-16_d1a0ea
+2026-04-16 15:14:16.966 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-16_d1a0ea
+2026-04-16 15:14:16.966 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\pytest-of-M4tie\pytest-92\test_save_creates_expected_fil0\backtest_results\TestStrategy\run_2026-04-16_15-14-16_d1a0ea
+2026-04-16 15:14:16.969 | DEBUG    | freqtrade_gui.backtests.parser | Parsing zip: backtest-result-test.zip | entry=backtest-result-test.json
+2026-04-16 15:14:16.969 | INFO     | freqtrade_gui.backtests.parser | Parsed | strategy=TestStrategy | trades=2 | profit=0.8000%
+2026-04-16 15:14:16.970 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-16_d1a0ea | strategy=TestStrategy | trades=2 | profit=0.8000%
+2026-04-16 15:14:16.972 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-16_d1a0ea
+2026-04-16 15:14:16.972 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-16_d1a0ea
+2026-04-16 15:14:16.973 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\pytest-of-M4tie\pytest-92\test_save_meta_fields0\backtest_results\TestStrategy\run_2026-04-16_15-14-16_d1a0ea
+2026-04-16 15:14:16.979 | DEBUG    | freqtrade_gui.backtests.parser | Parsing zip: backtest-result-test.zip | entry=backtest-result-test.json
+2026-04-16 15:14:16.979 | INFO     | freqtrade_gui.backtests.parser | Parsed | strategy=TestStrategy | trades=2 | profit=0.8000%
+2026-04-16 15:14:16.980 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-16_d1a0ea | strategy=TestStrategy | trades=2 | profit=0.8000%
+2026-04-16 15:14:16.982 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-16_d1a0ea
+2026-04-16 15:14:16.982 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-16_d1a0ea
+2026-04-16 15:14:16.982 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\pytest-of-M4tie\pytest-92\test_save_with_version_id0\backtest_results\TestStrategy\run_2026-04-16_15-14-16_d1a0ea
+2026-04-16 15:14:16.989 | DEBUG    | freqtrade_gui.backtests.parser | Parsing zip: backtest-result-test.zip | entry=backtest-result-test.json
+2026-04-16 15:14:16.989 | INFO     | freqtrade_gui.backtests.parser | Parsed | strategy=TestStrategy | trades=2 | profit=0.8000%
+2026-04-16 15:14:16.990 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-16_d1a0ea | strategy=TestStrategy | trades=2 | profit=0.8000%
+2026-04-16 15:14:16.991 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-16_d1a0ea
+2026-04-16 15:14:16.992 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-16_d1a0ea
+2026-04-16 15:14:16.992 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\pytest-of-M4tie\pytest-92\test_save_trades_contain_exit_0\backtest_results\TestStrategy\run_2026-04-16_15-14-16_d1a0ea
+2026-04-16 15:14:17.036 | DEBUG    | freqtrade_gui.backtests.parser | Parsing zip: backtest-result-test.zip | entry=backtest-result-test.json
+2026-04-16 15:14:17.036 | INFO     | freqtrade_gui.backtests.parser | Parsed | strategy=TestStrategy | trades=2 | profit=0.8000%
+2026-04-16 15:14:17.037 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-17_5c0236 | strategy=TestStrategy | trades=2 | profit=0.8000%
+2026-04-16 15:14:17.039 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-17_5c0236
+2026-04-16 15:14:17.039 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-17_5c0236
+2026-04-16 15:14:17.039 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\pytest-of-M4tie\pytest-92\test_load_run_round_trip0\backtest_results\TestStrategy\run_2026-04-16_15-14-17_5c0236
+2026-04-16 15:14:17.048 | DEBUG    | freqtrade_gui.backtests.parser | Parsing zip: backtest-result-test.zip | entry=backtest-result-test.json
+2026-04-16 15:14:17.048 | INFO     | freqtrade_gui.backtests.parser | Parsed | strategy=TestStrategy | trades=2 | profit=0.8000%
+2026-04-16 15:14:17.049 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-17_5c0236 | strategy=TestStrategy | trades=2 | profit=0.8000%
+2026-04-16 15:14:17.051 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-17_5c0236
+2026-04-16 15:14:17.051 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-17_5c0236
+2026-04-16 15:14:17.051 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\pytest-of-M4tie\pytest-92\test_load_run_trades_have_exit0\backtest_results\TestStrategy\run_2026-04-16_15-14-17_5c0236
+2026-04-16 15:14:17.056 | DEBUG    | freqtrade_gui.backtests.parser | Parsing zip: backtest-result-test.zip | entry=backtest-result-test.json
+2026-04-16 15:14:17.057 | INFO     | freqtrade_gui.backtests.parser | Parsed | strategy=TestStrategy | trades=2 | profit=0.8000%
+2026-04-16 15:14:17.057 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-17_5c0236 | strategy=TestStrategy | trades=2 | profit=0.8000%
+2026-04-16 15:14:17.059 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-17_5c0236
+2026-04-16 15:14:17.059 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-17_5c0236
+2026-04-16 15:14:17.059 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\pytest-of-M4tie\pytest-92\test_save_run_id_format0\backtest_results\TestStrategy\run_2026-04-16_15-14-17_5c0236
+2026-04-16 15:14:32.415 | DEBUG    | freqtrade_gui.backtests.parser | Parsing zip: backtest-result-test.zip | entry=backtest-result-test.json
+2026-04-16 15:14:32.416 | INFO     | freqtrade_gui.backtests.parser | Parsed | strategy=TestStrategy | trades=2 | profit=0.8000%
+2026-04-16 15:14:32.417 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=2 | profit=0.8000%
+2026-04-16 15:14:32.419 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.420 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.420 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\pytest-of-M4tie\pytest-93\test_save_creates_expected_fil0\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.422 | DEBUG    | freqtrade_gui.backtests.parser | Parsing zip: backtest-result-test.zip | entry=backtest-result-test.json
+2026-04-16 15:14:32.423 | INFO     | freqtrade_gui.backtests.parser | Parsed | strategy=TestStrategy | trades=2 | profit=0.8000%
+2026-04-16 15:14:32.423 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=2 | profit=0.8000%
+2026-04-16 15:14:32.425 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.425 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.425 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\pytest-of-M4tie\pytest-93\test_save_meta_fields0\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.432 | DEBUG    | freqtrade_gui.backtests.parser | Parsing zip: backtest-result-test.zip | entry=backtest-result-test.json
+2026-04-16 15:14:32.433 | INFO     | freqtrade_gui.backtests.parser | Parsed | strategy=TestStrategy | trades=2 | profit=0.8000%
+2026-04-16 15:14:32.434 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=2 | profit=0.8000%
+2026-04-16 15:14:32.436 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.436 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.436 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\pytest-of-M4tie\pytest-93\test_save_with_version_id0\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.443 | DEBUG    | freqtrade_gui.backtests.parser | Parsing zip: backtest-result-test.zip | entry=backtest-result-test.json
+2026-04-16 15:14:32.443 | INFO     | freqtrade_gui.backtests.parser | Parsed | strategy=TestStrategy | trades=2 | profit=0.8000%
+2026-04-16 15:14:32.444 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=2 | profit=0.8000%
+2026-04-16 15:14:32.445 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.446 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.446 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\pytest-of-M4tie\pytest-93\test_save_trades_contain_exit_0\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.449 | DEBUG    | freqtrade_gui.backtests.parser | Parsing zip: backtest-result-test.zip | entry=backtest-result-test.json
+2026-04-16 15:14:32.449 | INFO     | freqtrade_gui.backtests.parser | Parsed | strategy=TestStrategy | trades=2 | profit=0.8000%
+2026-04-16 15:14:32.450 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=2 | profit=0.8000%
+2026-04-16 15:14:32.451 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.451 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.451 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\pytest-of-M4tie\pytest-93\test_load_run_round_trip0\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.455 | DEBUG    | freqtrade_gui.backtests.parser | Parsing zip: backtest-result-test.zip | entry=backtest-result-test.json
+2026-04-16 15:14:32.456 | INFO     | freqtrade_gui.backtests.parser | Parsed | strategy=TestStrategy | trades=2 | profit=0.8000%
+2026-04-16 15:14:32.456 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=2 | profit=0.8000%
+2026-04-16 15:14:32.458 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.458 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.458 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\pytest-of-M4tie\pytest-93\test_load_run_trades_have_exit0\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.464 | DEBUG    | freqtrade_gui.backtests.parser | Parsing zip: backtest-result-test.zip | entry=backtest-result-test.json
+2026-04-16 15:14:32.464 | INFO     | freqtrade_gui.backtests.parser | Parsed | strategy=TestStrategy | trades=2 | profit=0.8000%
+2026-04-16 15:14:32.465 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=2 | profit=0.8000%
+2026-04-16 15:14:32.467 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.467 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.467 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\pytest-of-M4tie\pytest-93\test_save_run_id_format0\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.486 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=0 | profit=0.0000%
+2026-04-16 15:14:32.488 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.488 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.488 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpu8g676l0\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.491 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=1 | profit=0.0000%
+2026-04-16 15:14:32.492 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.493 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.493 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpyqnve4z8\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.496 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=3 | profit=0.0000%
+2026-04-16 15:14:32.498 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.498 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.498 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpot9plp9p\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.504 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=1 | profit=0.0000%
+2026-04-16 15:14:32.506 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.506 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.506 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpeorzptow\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.513 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=1 | profit=0.0000%
+2026-04-16 15:14:32.515 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.515 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.515 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpustbeiba\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.522 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=1 | profit=0.0000%
+2026-04-16 15:14:32.524 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.524 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.524 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpg486imcw\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.531 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=9 | profit=0.0000%
+2026-04-16 15:14:32.533 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.533 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.534 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpjto2zw9h\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.546 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=6 | profit=0.0000%
+2026-04-16 15:14:32.547 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.548 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.548 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmppm_lziw_\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.559 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=9 | profit=0.0000%
+2026-04-16 15:14:32.561 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.561 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.561 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpgmy731io\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.568 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=10 | profit=0.0000%
+2026-04-16 15:14:32.570 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.570 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.570 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpl0l62h9w\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.578 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=10 | profit=0.0000%
+2026-04-16 15:14:32.580 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.580 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.580 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpz9hn552k\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.588 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=10 | profit=0.0000%
+2026-04-16 15:14:32.590 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.590 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.590 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmptts7sscf\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.598 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=10 | profit=0.0000%
+2026-04-16 15:14:32.599 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.600 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.600 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmp262syo1l\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.607 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=10 | profit=0.0000%
+2026-04-16 15:14:32.608 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.609 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.609 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpagposvt2\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.616 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=10 | profit=0.0000%
+2026-04-16 15:14:32.618 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.618 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.618 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpvu3yv61h\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.626 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=10 | profit=0.0000%
+2026-04-16 15:14:32.628 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.628 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.628 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmp07zfn_zv\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.635 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=10 | profit=0.0000%
+2026-04-16 15:14:32.637 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.637 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.637 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmph47z9r_j\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.645 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=3 | profit=0.0000%
+2026-04-16 15:14:32.646 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.647 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.647 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpuswzcn_s\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.654 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=3 | profit=0.0000%
+2026-04-16 15:14:32.655 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.656 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.656 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmp63uka4c9\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.663 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=3 | profit=0.0000%
+2026-04-16 15:14:32.664 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.665 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.665 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmplrpej3ax\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.672 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=3 | profit=0.0000%
+2026-04-16 15:14:32.673 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.674 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.674 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpde5h8j79\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.681 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=3 | profit=0.0000%
+2026-04-16 15:14:32.682 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.682 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.683 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmp_9ifyk4l\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.690 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=3 | profit=0.0000%
+2026-04-16 15:14:32.691 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.691 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.691 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpdxup_cux\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.698 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=3 | profit=0.0000%
+2026-04-16 15:14:32.699 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.700 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.700 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpdg4_hi5f\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.706 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=3 | profit=0.0000%
+2026-04-16 15:14:32.708 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.708 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.709 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmprmj171bj\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.715 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=3 | profit=0.0000%
+2026-04-16 15:14:32.717 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.717 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.717 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpqxw3w5ty\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.726 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=10 | profit=0.0000%
+2026-04-16 15:14:32.727 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.728 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.728 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpp0z5ozj8\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.736 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=10 | profit=0.0000%
+2026-04-16 15:14:32.737 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.738 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.738 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpgh7e1o3z\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.745 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=10 | profit=0.0000%
+2026-04-16 15:14:32.747 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.747 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.747 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmp8rxobw4v\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.755 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=10 | profit=0.0000%
+2026-04-16 15:14:32.757 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.758 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.758 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpy3k626_j\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.768 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=10 | profit=0.0000%
+2026-04-16 15:14:32.770 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.771 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.771 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpl0xa2z8x\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.779 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=10 | profit=0.0000%
+2026-04-16 15:14:32.780 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.780 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.780 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpykkzhgpw\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.793 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=10 | profit=0.0000%
+2026-04-16 15:14:32.795 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.795 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.795 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmp3t3h8u2f\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.803 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=1 | profit=0.0000%
+2026-04-16 15:14:32.805 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.806 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.806 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmp3wuewcux\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.813 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=2 | profit=0.0000%
+2026-04-16 15:14:32.815 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.815 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.815 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmp39navm4h\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.819 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=4 | profit=0.0000%
+2026-04-16 15:14:32.820 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.820 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.820 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpn25__nmx\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.833 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=3 | profit=0.0000%
+2026-04-16 15:14:32.835 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.835 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.835 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmp9ve6e367\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.843 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=3 | profit=0.0000%
+2026-04-16 15:14:32.844 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.844 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.844 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmp615bb2at\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.852 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=3 | profit=0.0000%
+2026-04-16 15:14:32.854 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.854 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.854 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpiitefwz4\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.861 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=3 | profit=0.0000%
+2026-04-16 15:14:32.863 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.863 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.863 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpg3snyi68\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.871 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=1 | profit=0.0000%
+2026-04-16 15:14:32.873 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.873 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.873 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpya8l__1s\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.880 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=5 | profit=0.0000%
+2026-04-16 15:14:32.882 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.882 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.882 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpeq0wuijp\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.889 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=5 | profit=0.0000%
+2026-04-16 15:14:32.891 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.891 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.891 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmp_4l0l02g\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.899 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=5 | profit=0.0000%
+2026-04-16 15:14:32.901 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.901 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.901 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpowqpm9r8\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.908 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=5 | profit=0.0000%
+2026-04-16 15:14:32.909 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.910 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.910 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpcqarv190\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.917 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=5 | profit=0.0000%
+2026-04-16 15:14:32.919 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.919 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.919 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmp5p_onyrz\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.926 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=5 | profit=0.0000%
+2026-04-16 15:14:32.927 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.928 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.928 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpahb8e8i8\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.935 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=2 | profit=0.0000%
+2026-04-16 15:14:32.936 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.936 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.936 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmp068hfblf\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.943 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=2 | profit=0.0000%
+2026-04-16 15:14:32.945 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.945 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.945 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmp47fo7jdb\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.952 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-16_15-14-32_bfd047 | strategy=TestStrategy | trades=7 | profit=0.0000%
+2026-04-16 15:14:32.954 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.955 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=TestStrategy | run_id=run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:14:32.955 | INFO     | freqtrade_gui.backtests.store  | Run saved → C:\Users\M4tie\AppData\Local\Temp\tmpbnqzo3gt\backtest_results\TestStrategy\run_2026-04-16_15-14-32_bfd047
+2026-04-16 15:16:22.108 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:22.108 | INFO     | freqtrade_gui.startup          | ============================================================
+2026-04-16 15:16:22.109 | INFO     | freqtrade_gui.startup          | Freqtrade GUI starting
+2026-04-16 15:16:22.109 | INFO     | freqtrade_gui.startup          | Python     : 3.12.10
+2026-04-16 15:16:22.128 | INFO     | freqtrade_gui.startup          | Platform   : Windows 11
+2026-04-16 15:16:22.128 | INFO     | freqtrade_gui.startup          | PySide6    : 6.11.0
+2026-04-16 15:16:22.128 | INFO     | freqtrade_gui.startup          | user_data  : T:\ae\pyside6\user_data
+2026-04-16 15:16:22.128 | INFO     | freqtrade_gui.startup          | venv       : T:\ae\pyside6\.venv
+2026-04-16 15:16:22.128 | INFO     | freqtrade_gui.startup          | python_exe : T:\ae\pyside6\.venv\Scripts\python.exe
+2026-04-16 15:16:22.128 | INFO     | freqtrade_gui.startup          | freqtrade  : T:\ae\pyside6\.venv\Scripts\freqtrade.exe
+2026-04-16 15:16:22.128 | INFO     | freqtrade_gui.startup          | use_module : True
+2026-04-16 15:16:22.128 | INFO     | freqtrade_gui.startup          | ============================================================
+2026-04-16 15:16:22.145 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:22.147 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:22.147 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\AIStrategy.py
+2026-04-16 15:16:22.148 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:16:22.149 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:22.149 | DEBUG    | freqtrade_gui.backtests.parser | Parsing zip: backtest-result-2026-04-16_05-38-45.zip | entry=backtest-result-2026-04-16_05-38-45.json
+2026-04-16 15:16:22.156 | INFO     | freqtrade_gui.backtests.parser | Parsed | strategy=MultiMa | trades=231 | profit=-4.6510%
+2026-04-16 15:16:22.156 | DEBUG    | freqtrade_gui.backtests.parser | Parsing zip: backtest-result-2026-04-16_07-39-33.zip | entry=backtest-result-2026-04-16_07-39-33.json
+2026-04-16 15:16:22.160 | INFO     | freqtrade_gui.backtests.parser | Parsed | strategy=MultiMeee | trades=283 | profit=29.4270%
+2026-04-16 15:16:22.160 | DEBUG    | freqtrade_gui.backtests.parser | Parsing zip: backtest-result-2026-04-16_08-19-17.zip | entry=backtest-result-2026-04-16_08-19-17.json
+2026-04-16 15:16:22.163 | INFO     | freqtrade_gui.backtests.parser | Parsed | strategy=MultiMeee | trades=271 | profit=30.4266%
+2026-04-16 15:16:22.164 | DEBUG    | freqtrade_gui.backtests.parser | Parsing zip: backtest-result-2026-04-16_08-21-15.zip | entry=backtest-result-2026-04-16_08-21-15.json
+2026-04-16 15:16:22.167 | INFO     | freqtrade_gui.backtests.parser | Parsed | strategy=MultiMeee | trades=283 | profit=29.4270%
+2026-04-16 15:16:22.168 | DEBUG    | freqtrade_gui.backtests.parser | Parsing zip: backtest-result-2026-04-16_08-24-16.zip | entry=backtest-result-2026-04-16_08-24-16.json
+2026-04-16 15:16:22.171 | INFO     | freqtrade_gui.backtests.parser | Parsed | strategy=MultiMeee | trades=271 | profit=30.4266%
+2026-04-16 15:16:22.172 | DEBUG    | freqtrade_gui.backtests.parser | Parsing zip: backtest-result-2026-04-16_13-41-55.zip | entry=backtest-result-2026-04-16_13-41-55.json
+2026-04-16 15:16:22.174 | INFO     | freqtrade_gui.backtests.parser | Parsed | strategy=MultiMeee | trades=221 | profit=1.3079%
+2026-04-16 15:16:22.175 | DEBUG    | freqtrade_gui.backtests.parser | Parsing zip: backtest-result-2026-04-16_13-49-02.zip | entry=backtest-result-2026-04-16_13-49-02.json
+2026-04-16 15:16:22.177 | INFO     | freqtrade_gui.backtests.parser | Parsed | strategy=MultiMeee | trades=221 | profit=1.3079%
+2026-04-16 15:16:22.178 | DEBUG    | freqtrade_gui.backtests.parser | Parsing zip: backtest-result-2026-04-16_13-52-28.zip | entry=backtest-result-2026-04-16_13-52-28.json
+2026-04-16 15:16:22.182 | INFO     | freqtrade_gui.backtests.parser | Parsed | strategy=MultiMeee | trades=440 | profit=-21.7307%
+2026-04-16 15:16:22.182 | DEBUG    | freqtrade_gui.backtests.parser | Parsing zip: backtest-result-2026-04-16_14-07-05.zip | entry=backtest-result-2026-04-16_14-07-05.json
+2026-04-16 15:16:22.191 | INFO     | freqtrade_gui.backtests.parser | Parsed | strategy=MultiMeee | trades=943 | profit=-59.4415%
+2026-04-16 15:16:22.192 | DEBUG    | freqtrade_gui.backtests.parser | Parsing zip: backtest-result-2026-04-16_14-19-10.zip | entry=backtest-result-2026-04-16_14-19-10.json
+2026-04-16 15:16:22.195 | INFO     | freqtrade_gui.backtests.parser | Parsed | strategy=MultiMeee | trades=312 | profit=-55.9028%
+2026-04-16 15:16:22.196 | INFO     | freqtrade_gui.services.backtest | Index rebuild: imported=0 skipped=10
+2026-04-16 15:16:22.201 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:23.771 | DEBUG    | freqtrade_gui.strategy_config  | Loaded strategy JSON: MohsBaseline_v2.json
+2026-04-16 15:16:23.772 | INFO     | freqtrade_gui.strategy_config_page | Loaded: MohsBaseline_v2.json
+2026-04-16 15:16:23.891 | INFO     | freqtrade_gui.startup          | Main window shown
+2026-04-16 15:16:23.906 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:23.907 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\AIStrategy.py
+2026-04-16 15:16:23.907 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:16:24.208 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:24.208 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\AIStrategy.py
+2026-04-16 15:16:24.209 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:16:25.195 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:25.195 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\AIStrategy.py
+2026-04-16 15:16:25.196 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:16:26.204 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:26.204 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\AIStrategy.py
+2026-04-16 15:16:26.205 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:16:27.195 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:27.196 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\AIStrategy.py
+2026-04-16 15:16:27.196 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:16:28.196 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:28.196 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\AIStrategy.py
+2026-04-16 15:16:28.197 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:16:29.207 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:29.208 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\AIStrategy.py
+2026-04-16 15:16:29.208 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:16:29.295 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:29.295 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:16:29.295 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:16:30.195 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:30.195 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:16:30.196 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:16:30.655 | INFO     | freqtrade_gui.backtest         | Loading run | id=run_2026-04-16_14-19-11_6d9c1e | strategy=MultiMeee | profit=-55.9028%
+2026-04-16 15:16:30.665 | INFO     | freqtrade_gui.backtest         | Run loaded | strategy=MultiMeee | trades=312
+2026-04-16 15:16:31.195 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:31.196 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:16:31.196 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:16:32.198 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:32.199 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:16:32.199 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:16:33.203 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:33.204 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:16:33.204 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:16:34.199 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:34.199 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:16:34.199 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:16:35.195 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:35.195 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:16:35.195 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:16:36.196 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:36.196 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:16:36.196 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:16:37.199 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:37.200 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:16:37.200 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:16:38.195 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:38.195 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:16:38.195 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:16:39.207 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:39.208 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:16:39.208 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:16:40.202 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:40.202 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:16:40.203 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:16:40.796 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:40.797 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:16:40.797 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:16:40.798 | INFO     | freqtrade_gui.settings         | Settings saved to T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:40.798 | DEBUG    | freqtrade_gui.settings         | Saved: python=T:\ae\pyside6\.venv\Scripts\python.exe venv=T:\ae\pyside6\.venv user_data=T:\ae\pyside6\user_data
+2026-04-16 15:16:40.804 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:40.806 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:40.806 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:16:40.806 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:16:40.807 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:42.258 | DEBUG    | freqtrade_gui.strategy_config  | Loaded strategy JSON: MohsBaseline_v2.json
+2026-04-16 15:16:42.259 | INFO     | freqtrade_gui.strategy_config_page | Loaded: MohsBaseline_v2.json
+2026-04-16 15:16:42.260 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:42.260 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:16:42.261 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:16:43.207 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:43.207 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:16:43.207 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:16:44.195 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:44.196 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:16:44.196 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:16:44.796 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:44.797 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:16:44.797 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:16:45.200 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:45.200 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:16:45.201 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:16:45.508 | INFO     | freqtrade_gui.backtest         | Backtest requested | strategy=MultiMeee | timeframe=5m | timerange=20250421-20260416 | pairs=['ADA/USDT', 'ETH/USDT']
+2026-04-16 15:16:45.508 | INFO     | freqtrade_gui.settings         | Settings saved to T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:45.508 | DEBUG    | freqtrade_gui.settings         | Saved: python=T:\ae\pyside6\.venv\Scripts\python.exe venv=T:\ae\pyside6\.venv user_data=T:\ae\pyside6\user_data
+2026-04-16 15:16:45.515 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:45.516 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:45.516 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:16:45.517 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:16:45.517 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:46.987 | DEBUG    | freqtrade_gui.strategy_config  | Loaded strategy JSON: MohsBaseline_v2.json
+2026-04-16 15:16:46.988 | INFO     | freqtrade_gui.strategy_config_page | Loaded: MohsBaseline_v2.json
+2026-04-16 15:16:46.988 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:46.989 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:16:46.989 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:16:46.989 | INFO     | freqtrade_gui.backtest         | Command built | strategy=MultiMeee
+2026-04-16 15:16:46.994 | INFO     | freqtrade_gui.process          | Process started | cmd=T:\ae\pyside6\.venv\Scripts\python.exe -m freqtrade backtesting --user-data-dir T:\ae\pyside6\user_data --config T:\ae\pyside6\user_data\config.json --strategy-path T:\ae\pyside6\user_data\strategies --strategy MultiMeee --timeframe 5m --export trades --timerange 20250421-20260416 -p ADA/USDT ETH/USDT --max-open-trades 2 --dry-run-wallet 80.0 | cwd=T:\ae\pyside6\user_data
+2026-04-16 15:16:47.142 | DEBUG    | freqtrade_gui.process          | stderr chunk: 63 bytes
+2026-04-16 15:16:48.369 | DEBUG    | freqtrade_gui.process          | stderr chunk: 126 bytes
+2026-04-16 15:16:48.370 | DEBUG    | freqtrade_gui.process          | stderr chunk: 81 bytes
+2026-04-16 15:16:48.371 | DEBUG    | freqtrade_gui.process          | stderr chunk: 73 bytes
+2026-04-16 15:16:48.371 | DEBUG    | freqtrade_gui.process          | stderr chunk: 146 bytes
+2026-04-16 15:16:48.372 | DEBUG    | freqtrade_gui.process          | stderr chunk: 194 bytes
+2026-04-16 15:16:48.372 | DEBUG    | freqtrade_gui.process          | stderr chunk: 136 bytes
+2026-04-16 15:16:48.372 | DEBUG    | freqtrade_gui.process          | stderr chunk: 149 bytes
+2026-04-16 15:16:48.373 | DEBUG    | freqtrade_gui.process          | stderr chunk: 278 bytes
+2026-04-16 15:16:48.373 | DEBUG    | freqtrade_gui.process          | stderr chunk: 129 bytes
+2026-04-16 15:16:48.373 | DEBUG    | freqtrade_gui.process          | stderr chunk: 251 bytes
+2026-04-16 15:16:48.374 | DEBUG    | freqtrade_gui.process          | stderr chunk: 109 bytes
+2026-04-16 15:16:48.374 | DEBUG    | freqtrade_gui.process          | stderr chunk: 231 bytes
+2026-04-16 15:16:48.375 | DEBUG    | freqtrade_gui.process          | stderr chunk: 26 bytes
+2026-04-16 15:16:48.375 | DEBUG    | freqtrade_gui.process          | stderr chunk: 65 bytes
+2026-04-16 15:16:48.379 | DEBUG    | freqtrade_gui.process          | stderr chunk: 148 bytes
+2026-04-16 15:16:48.379 | DEBUG    | freqtrade_gui.process          | stderr chunk: 107 bytes
+2026-04-16 15:16:48.380 | DEBUG    | freqtrade_gui.process          | stderr chunk: 112 bytes
+2026-04-16 15:16:48.382 | DEBUG    | freqtrade_gui.process          | stderr chunk: 213 bytes
+2026-04-16 15:16:48.382 | DEBUG    | freqtrade_gui.process          | stderr chunk: 116 bytes
+2026-04-16 15:16:48.385 | DEBUG    | freqtrade_gui.process          | stderr chunk: 142 bytes
+2026-04-16 15:16:48.390 | DEBUG    | freqtrade_gui.process          | stderr chunk: 89 bytes
+2026-04-16 15:16:49.465 | DEBUG    | freqtrade_gui.process          | stderr chunk: 111 bytes
+2026-04-16 15:16:49.473 | DEBUG    | freqtrade_gui.process          | stderr chunk: 158 bytes
+2026-04-16 15:16:49.474 | DEBUG    | freqtrade_gui.process          | stderr chunk: 140 bytes
+2026-04-16 15:16:49.474 | DEBUG    | freqtrade_gui.process          | stderr chunk: 143 bytes
+2026-04-16 15:16:49.474 | DEBUG    | freqtrade_gui.process          | stderr chunk: 150 bytes
+2026-04-16 15:16:49.475 | DEBUG    | freqtrade_gui.process          | stderr chunk: 153 bytes
+2026-04-16 15:16:49.475 | DEBUG    | freqtrade_gui.process          | stderr chunk: 151 bytes
+2026-04-16 15:16:49.476 | DEBUG    | freqtrade_gui.process          | stderr chunk: 148 bytes
+2026-04-16 15:16:49.476 | DEBUG    | freqtrade_gui.process          | stderr chunk: 151 bytes
+2026-04-16 15:16:49.476 | DEBUG    | freqtrade_gui.process          | stderr chunk: 103 bytes
+2026-04-16 15:16:49.477 | DEBUG    | freqtrade_gui.process          | stderr chunk: 215 bytes
+2026-04-16 15:16:49.477 | DEBUG    | freqtrade_gui.process          | stderr chunk: 119 bytes
+2026-04-16 15:16:49.477 | DEBUG    | freqtrade_gui.process          | stderr chunk: 254 bytes
+2026-04-16 15:16:49.478 | DEBUG    | freqtrade_gui.process          | stderr chunk: 236 bytes
+2026-04-16 15:16:49.478 | DEBUG    | freqtrade_gui.process          | stderr chunk: 229 bytes
+2026-04-16 15:16:49.478 | DEBUG    | freqtrade_gui.process          | stderr chunk: 142 bytes
+2026-04-16 15:16:49.478 | DEBUG    | freqtrade_gui.process          | stderr chunk: 223 bytes
+2026-04-16 15:16:49.479 | DEBUG    | freqtrade_gui.process          | stderr chunk: 113 bytes
+2026-04-16 15:16:49.479 | DEBUG    | freqtrade_gui.process          | stderr chunk: 111 bytes
+2026-04-16 15:16:49.480 | DEBUG    | freqtrade_gui.process          | stderr chunk: 236 bytes
+2026-04-16 15:16:49.480 | DEBUG    | freqtrade_gui.process          | stderr chunk: 113 bytes
+2026-04-16 15:16:49.480 | DEBUG    | freqtrade_gui.process          | stderr chunk: 121 bytes
+2026-04-16 15:16:49.481 | DEBUG    | freqtrade_gui.process          | stderr chunk: 250 bytes
+2026-04-16 15:16:49.481 | DEBUG    | freqtrade_gui.process          | stderr chunk: 123 bytes
+2026-04-16 15:16:49.481 | DEBUG    | freqtrade_gui.process          | stderr chunk: 215 bytes
+2026-04-16 15:16:49.486 | DEBUG    | freqtrade_gui.process          | stderr chunk: 198 bytes
+2026-04-16 15:16:49.493 | DEBUG    | freqtrade_gui.process          | stderr chunk: 131 bytes
+2026-04-16 15:16:49.556 | INFO     | freqtrade_gui.settings         | Validating settings...
+2026-04-16 15:16:50.261 | INFO     | freqtrade_gui.settings         | Validation result: valid=True python=True freqtrade=True user_data=True
+2026-04-16 15:16:50.262 | INFO     | freqtrade_gui.settings         |   Python 3.12.10
+2026-04-16 15:16:50.262 | INFO     | freqtrade_gui.settings         |   Operating System:	Windows-11-10.0.26200-SP0
+Python Version:		Python 3.12.10
+CCXT Version:		4.5.49
+
+Freqtrade Version:	freqtrade 2026.3
+2026-04-16 15:16:50.280 | DEBUG    | freqtrade_gui.process          | stderr chunk: 425 bytes
+2026-04-16 15:16:50.558 | DEBUG    | freqtrade_gui.process          | stderr chunk: 109 bytes
+2026-04-16 15:16:50.566 | DEBUG    | freqtrade_gui.process          | stderr chunk: 183 bytes
+2026-04-16 15:16:50.566 | DEBUG    | freqtrade_gui.process          | stderr chunk: 2 bytes
+2026-04-16 15:16:50.570 | DEBUG    | freqtrade_gui.process          | stderr chunk: 117 bytes
+2026-04-16 15:16:50.574 | DEBUG    | freqtrade_gui.process          | stdout chunk: 344 bytes
+2026-04-16 15:16:50.575 | DEBUG    | freqtrade_gui.process          | stdout chunk: 599 bytes
+2026-04-16 15:16:50.576 | DEBUG    | freqtrade_gui.process          | stdout chunk: 247 bytes
+2026-04-16 15:16:50.577 | DEBUG    | freqtrade_gui.process          | stdout chunk: 551 bytes
+2026-04-16 15:16:50.578 | DEBUG    | freqtrade_gui.process          | stdout chunk: 287 bytes
+2026-04-16 15:16:50.578 | DEBUG    | freqtrade_gui.process          | stdout chunk: 518 bytes
+2026-04-16 15:16:50.580 | DEBUG    | freqtrade_gui.process          | stdout chunk: 293 bytes
+2026-04-16 15:16:50.581 | DEBUG    | freqtrade_gui.process          | stdout chunk: 957 bytes
+2026-04-16 15:16:50.583 | DEBUG    | freqtrade_gui.process          | stdout chunk: 1025 bytes
+2026-04-16 15:16:50.585 | DEBUG    | freqtrade_gui.process          | stdout chunk: 355 bytes
+2026-04-16 15:16:50.589 | DEBUG    | freqtrade_gui.process          | stdout chunk: 1656 bytes
+2026-04-16 15:16:50.591 | DEBUG    | freqtrade_gui.process          | stdout chunk: 2614 bytes
+2026-04-16 15:16:50.939 | INFO     | freqtrade_gui.backtest         | Backtest process finished | exit_code=0
+2026-04-16 15:16:51.642 | INFO     | freqtrade_gui.settings         | Settings saved to T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:51.642 | DEBUG    | freqtrade_gui.settings         | Saved: python=T:\ae\pyside6\.venv\Scripts\python.exe venv=T:\ae\pyside6\.venv user_data=T:\ae\pyside6\user_data
+2026-04-16 15:16:51.648 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:51.649 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:51.649 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:16:51.650 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:16:51.650 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:53.110 | DEBUG    | freqtrade_gui.strategy_config  | Loaded strategy JSON: MohsBaseline_v2.json
+2026-04-16 15:16:53.110 | INFO     | freqtrade_gui.strategy_config_page | Loaded: MohsBaseline_v2.json
+2026-04-16 15:16:53.128 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:53.128 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:16:53.129 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:16:53.935 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:53.935 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:16:53.935 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:16:54.931 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:54.932 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:16:54.932 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:16:55.931 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:55.932 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:16:55.932 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:16:56.932 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:56.932 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:16:56.933 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:16:57.929 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:57.930 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:16:57.930 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:16:58.930 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:58.930 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:16:58.931 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:16:59.808 | INFO     | freqtrade_gui.settings         | Settings saved to T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:59.809 | DEBUG    | freqtrade_gui.settings         | Saved: python=T:\ae\pyside6\.venv\Scripts\python.exe venv=T:\ae\pyside6\.venv user_data=T:\ae\pyside6\user_data
+2026-04-16 15:16:59.814 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:59.816 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:16:59.816 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:16:59.817 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:16:59.817 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:01.279 | DEBUG    | freqtrade_gui.strategy_config  | Loaded strategy JSON: MohsBaseline_v2.json
+2026-04-16 15:17:01.279 | INFO     | freqtrade_gui.strategy_config_page | Loaded: MohsBaseline_v2.json
+2026-04-16 15:17:01.297 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:01.297 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:01.298 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:01.933 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:01.934 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:01.934 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:02.930 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:02.931 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:02.931 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:03.930 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:03.930 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:03.930 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:04.933 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:04.933 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:04.933 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:05.942 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:05.942 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:05.943 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:06.937 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:06.937 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:06.938 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:07.934 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:07.934 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:07.935 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:08.945 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:08.946 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:08.946 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:09.955 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:09.955 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:09.956 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:10.949 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:10.950 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:10.950 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:11.945 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:11.945 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:11.945 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:12.659 | INFO     | freqtrade_gui.settings         | Settings saved to T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:12.659 | DEBUG    | freqtrade_gui.settings         | Saved: python=T:\ae\pyside6\.venv\Scripts\python.exe venv=T:\ae\pyside6\.venv user_data=T:\ae\pyside6\user_data
+2026-04-16 15:17:12.666 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:12.668 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:12.668 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:12.668 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:12.669 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:14.123 | DEBUG    | freqtrade_gui.strategy_config  | Loaded strategy JSON: MohsBaseline_v2.json
+2026-04-16 15:17:14.124 | INFO     | freqtrade_gui.strategy_config_page | Loaded: MohsBaseline_v2.json
+2026-04-16 15:17:14.141 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:14.141 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:14.141 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:14.948 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:14.949 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:14.949 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:15.945 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:15.945 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:15.946 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:16.945 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:16.945 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:16.945 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:17.945 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:17.946 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:17.946 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:18.948 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:18.949 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:18.949 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:19.945 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:19.945 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:19.946 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:20.957 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:20.957 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:20.957 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:21.954 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:21.955 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:21.955 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:22.945 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:22.945 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:22.946 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:23.945 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:23.945 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:23.945 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:24.945 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:24.946 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:24.946 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:25.958 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:25.959 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:25.959 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:26.945 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:26.945 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:26.946 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:27.471 | INFO     | freqtrade_gui.settings         | Settings saved to T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:27.471 | DEBUG    | freqtrade_gui.settings         | Saved: python=T:\ae\pyside6\.venv\Scripts\python.exe venv=T:\ae\pyside6\.venv user_data=T:\ae\pyside6\user_data
+2026-04-16 15:17:27.477 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:27.479 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:27.479 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:27.480 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:27.481 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:28.946 | DEBUG    | freqtrade_gui.strategy_config  | Loaded strategy JSON: MohsBaseline_v2.json
+2026-04-16 15:17:28.947 | INFO     | freqtrade_gui.strategy_config_page | Loaded: MohsBaseline_v2.json
+2026-04-16 15:17:28.965 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:28.966 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:28.966 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:29.945 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:29.945 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:29.946 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:30.948 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:30.949 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:30.949 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:31.946 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:31.946 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:31.947 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:32.945 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:32.945 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:32.946 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:33.945 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:33.945 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:33.946 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:34.947 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:34.947 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:34.947 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:35.951 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:35.951 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:35.951 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:36.945 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:36.945 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:36.946 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:37.945 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:37.946 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:37.946 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:38.945 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:38.946 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:38.946 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:39.556 | INFO     | freqtrade_gui.settings         | Settings saved to T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:39.557 | DEBUG    | freqtrade_gui.settings         | Saved: python=T:\ae\pyside6\.venv\Scripts\python.exe venv=T:\ae\pyside6\.venv user_data=T:\ae\pyside6\user_data
+2026-04-16 15:17:39.563 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:39.565 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:39.566 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:39.566 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:39.566 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:41.040 | DEBUG    | freqtrade_gui.strategy_config  | Loaded strategy JSON: MohsBaseline_v2.json
+2026-04-16 15:17:41.041 | INFO     | freqtrade_gui.strategy_config_page | Loaded: MohsBaseline_v2.json
+2026-04-16 15:17:41.059 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:41.060 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:41.060 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:41.946 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:41.946 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:41.947 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:42.948 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:42.948 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:42.949 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:43.949 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:43.949 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:43.950 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:44.946 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:44.946 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:44.946 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:45.945 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:45.945 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:45.946 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:46.655 | INFO     | freqtrade_gui.settings         | Settings saved to T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:46.655 | DEBUG    | freqtrade_gui.settings         | Saved: python=T:\ae\pyside6\.venv\Scripts\python.exe venv=T:\ae\pyside6\.venv user_data=T:\ae\pyside6\user_data
+2026-04-16 15:17:46.672 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:46.675 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:46.675 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:46.675 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:46.676 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:48.137 | DEBUG    | freqtrade_gui.strategy_config  | Loaded strategy JSON: MohsBaseline_v2.json
+2026-04-16 15:17:48.138 | INFO     | freqtrade_gui.strategy_config_page | Loaded: MohsBaseline_v2.json
+2026-04-16 15:17:48.157 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:48.157 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:48.157 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:48.945 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:48.945 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:48.946 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:49.945 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:49.945 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:49.945 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:50.432 | INFO     | freqtrade_gui.backtest         | Backtest requested | strategy=MultiMeee | timeframe=5m | timerange=20250421-20260416 | pairs=['ADA/USDT', 'ETH/USDT']
+2026-04-16 15:17:50.432 | INFO     | freqtrade_gui.settings         | Settings saved to T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:50.433 | DEBUG    | freqtrade_gui.settings         | Saved: python=T:\ae\pyside6\.venv\Scripts\python.exe venv=T:\ae\pyside6\.venv user_data=T:\ae\pyside6\user_data
+2026-04-16 15:17:50.439 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:50.441 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:50.441 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:50.441 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:50.442 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:51.893 | DEBUG    | freqtrade_gui.strategy_config  | Loaded strategy JSON: MohsBaseline_v2.json
+2026-04-16 15:17:51.894 | INFO     | freqtrade_gui.strategy_config_page | Loaded: MohsBaseline_v2.json
+2026-04-16 15:17:51.895 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:51.895 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:51.895 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:51.896 | INFO     | freqtrade_gui.backtest         | Command built | strategy=MultiMeee
+2026-04-16 15:17:51.898 | INFO     | freqtrade_gui.process          | Process started | cmd=T:\ae\pyside6\.venv\Scripts\python.exe -m freqtrade backtesting --user-data-dir T:\ae\pyside6\user_data --config T:\ae\pyside6\user_data\config.json --strategy-path T:\ae\pyside6\user_data\strategies --strategy MultiMeee --timeframe 5m --export trades --timerange 20250421-20260416 -p ADA/USDT ETH/USDT --max-open-trades 2 --dry-run-wallet 80.0 | cwd=T:\ae\pyside6\user_data
+2026-04-16 15:17:52.040 | DEBUG    | freqtrade_gui.process          | stderr chunk: 63 bytes
+2026-04-16 15:17:53.234 | DEBUG    | freqtrade_gui.process          | stderr chunk: 126 bytes
+2026-04-16 15:17:53.235 | DEBUG    | freqtrade_gui.process          | stderr chunk: 154 bytes
+2026-04-16 15:17:53.236 | DEBUG    | freqtrade_gui.process          | stderr chunk: 221 bytes
+2026-04-16 15:17:53.238 | DEBUG    | freqtrade_gui.process          | stderr chunk: 948 bytes
+2026-04-16 15:17:53.238 | DEBUG    | freqtrade_gui.process          | stderr chunk: 334 bytes
+2026-04-16 15:17:53.243 | DEBUG    | freqtrade_gui.process          | stderr chunk: 211 bytes
+2026-04-16 15:17:53.246 | DEBUG    | freqtrade_gui.process          | stderr chunk: 472 bytes
+2026-04-16 15:17:53.247 | DEBUG    | freqtrade_gui.process          | stderr chunk: 224 bytes
+2026-04-16 15:17:53.251 | DEBUG    | freqtrade_gui.process          | stderr chunk: 142 bytes
+2026-04-16 15:17:53.255 | DEBUG    | freqtrade_gui.process          | stderr chunk: 89 bytes
+2026-04-16 15:17:54.295 | DEBUG    | freqtrade_gui.process          | stderr chunk: 111 bytes
+2026-04-16 15:17:54.304 | DEBUG    | freqtrade_gui.process          | stderr chunk: 158 bytes
+2026-04-16 15:17:54.305 | DEBUG    | freqtrade_gui.process          | stderr chunk: 140 bytes
+2026-04-16 15:17:54.308 | DEBUG    | freqtrade_gui.process          | stderr chunk: 1703 bytes
+2026-04-16 15:17:54.308 | DEBUG    | freqtrade_gui.process          | stderr chunk: 601 bytes
+2026-04-16 15:17:54.311 | DEBUG    | freqtrade_gui.process          | stderr chunk: 1395 bytes
+2026-04-16 15:17:54.316 | DEBUG    | freqtrade_gui.process          | stderr chunk: 198 bytes
+2026-04-16 15:17:54.321 | DEBUG    | freqtrade_gui.process          | stderr chunk: 131 bytes
+2026-04-16 15:17:54.415 | DEBUG    | freqtrade_gui.process          | stderr chunk: 141 bytes
+2026-04-16 15:17:54.539 | DEBUG    | freqtrade_gui.process          | stderr chunk: 141 bytes
+2026-04-16 15:17:54.569 | DEBUG    | freqtrade_gui.process          | stderr chunk: 143 bytes
+2026-04-16 15:17:55.388 | DEBUG    | freqtrade_gui.process          | stderr chunk: 109 bytes
+2026-04-16 15:17:55.391 | DEBUG    | freqtrade_gui.process          | stderr chunk: 185 bytes
+2026-04-16 15:17:55.394 | DEBUG    | freqtrade_gui.process          | stderr chunk: 117 bytes
+2026-04-16 15:17:55.398 | DEBUG    | freqtrade_gui.process          | stdout chunk: 943 bytes
+2026-04-16 15:17:55.399 | DEBUG    | freqtrade_gui.process          | stdout chunk: 798 bytes
+2026-04-16 15:17:55.402 | DEBUG    | freqtrade_gui.process          | stdout chunk: 805 bytes
+2026-04-16 15:17:55.403 | DEBUG    | freqtrade_gui.process          | stdout chunk: 1250 bytes
+2026-04-16 15:17:55.407 | DEBUG    | freqtrade_gui.process          | stdout chunk: 1380 bytes
+2026-04-16 15:17:55.411 | DEBUG    | freqtrade_gui.process          | stdout chunk: 3381 bytes
+2026-04-16 15:17:55.416 | DEBUG    | freqtrade_gui.process          | stdout chunk: 889 bytes
+2026-04-16 15:17:55.777 | INFO     | freqtrade_gui.backtest         | Backtest process finished | exit_code=0
+2026-04-16 15:17:56.785 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:56.785 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:56.785 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:57.779 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:57.780 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:57.780 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:58.777 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:58.777 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:58.778 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:17:59.788 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:17:59.789 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:17:59.789 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:18:00.788 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:18:00.788 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:18:00.789 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:18:01.783 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:18:01.784 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:18:01.784 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:18:02.780 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:18:02.780 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:18:02.781 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:18:03.777 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:18:03.778 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:18:03.778 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:18:04.776 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:18:04.777 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:18:04.777 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:18:05.774 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:18:05.774 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:18:05.774 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:18:06.787 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:18:06.787 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:18:06.787 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:18:07.782 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:18:07.782 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:18:07.782 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:18:08.776 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:18:08.777 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:18:08.777 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:18:09.788 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:18:09.788 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:18:09.788 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:18:10.786 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:18:10.787 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:18:10.787 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:18:11.782 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:18:11.782 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:18:11.783 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:18:12.780 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:18:12.780 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:18:12.780 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:18:13.777 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:18:13.778 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:18:13.778 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:18:14.791 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:18:14.791 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:18:14.791 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:18:15.790 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:18:15.790 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:18:15.791 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:18:16.790 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:18:16.790 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:18:16.790 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:18:17.804 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:18:17.804 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:18:17.805 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:18:18.803 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:18:18.803 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:18:18.804 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:18:19.789 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:18:19.789 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:18:19.789 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:18:20.789 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:18:20.789 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:18:20.790 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:18:21.789 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:18:21.789 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:18:21.789 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:18:22.794 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:18:22.794 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:18:22.795 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:18:23.790 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:18:23.791 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:18:23.791 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:18:24.789 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:18:24.789 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:18:24.789 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:18:25.802 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:18:25.803 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:18:25.803 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:18:26.799 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:18:26.799 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:18:26.800 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:18:27.790 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:18:27.790 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:18:27.790 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:18:28.789 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:18:28.789 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:18:28.790 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:18:29.454 | INFO     | freqtrade_gui.backtest         | Loading run | id=run_2026-04-16_14-19-11_6d9c1e | strategy=MultiMeee | profit=-55.9028%
+2026-04-16 15:18:29.455 | INFO     | freqtrade_gui.backtest         | Run loaded | strategy=MultiMeee | trades=312
+2026-04-16 15:19:05.067 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:05.067 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:05.067 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:05.805 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:05.805 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:05.806 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:06.809 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:06.809 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:06.810 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:07.813 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:07.813 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:07.814 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:08.808 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:08.808 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:08.809 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:09.804 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:09.805 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:09.805 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:10.816 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:10.816 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:10.816 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:11.812 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:11.813 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:11.813 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:12.809 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:12.810 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:12.810 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:13.808 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:13.808 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:13.808 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:14.805 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:14.805 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:14.806 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:15.817 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:15.818 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:15.819 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:16.815 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:16.815 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:16.815 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:17.807 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:17.807 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:17.808 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:18.808 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:18.809 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:18.809 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:19.805 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:19.805 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:19.805 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:20.809 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:20.809 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:20.810 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:21.818 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:21.819 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:21.819 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:22.828 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:22.828 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:22.828 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:23.821 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:23.822 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:23.822 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:24.820 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:24.820 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:24.821 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:25.825 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:25.826 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:25.826 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:26.820 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:26.820 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:26.820 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:27.829 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:27.830 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:27.831 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:28.824 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:28.825 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:28.825 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:29.835 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:29.835 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:29.836 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:30.820 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:30.820 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:30.821 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:31.820 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:31.821 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:31.821 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:32.822 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:32.822 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:32.822 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:33.820 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:33.821 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:33.821 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:34.822 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:34.823 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:34.823 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:35.823 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:35.824 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:35.824 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:36.821 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:36.822 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:36.822 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:37.820 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:37.820 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:37.821 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:38.832 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:38.833 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:38.833 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:40.491 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:40.492 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:40.492 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:40.820 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:40.820 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:40.821 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:41.821 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:41.821 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:41.822 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:42.828 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:42.828 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:42.828 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:43.820 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:43.821 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:43.821 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:44.820 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:44.820 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:44.821 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:45.828 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:45.828 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:45.829 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:46.824 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:46.824 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:46.824 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:47.833 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:47.833 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:47.834 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:48.831 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:48.832 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:48.832 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:49.827 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:49.827 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:49.828 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:50.820 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:50.820 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:50.821 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:51.821 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:51.822 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:51.822 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:52.823 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-16 15:19:52.824 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-16 15:19:52.824 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-16 15:19:53.278 | INFO     | freqtrade_gui.startup          | Application exiting — code=0

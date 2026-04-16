@@ -122,12 +122,15 @@ class RunStore:
                 profit_abs=float(t.get("profit_abs", 0)),
                 duration=int(t.get("duration_min", 0)),
                 is_open=bool(t.get("is_open", False)),
-                exit_reason=t.get("reason", ""),
+                exit_reason=t.get("exit_reason", t.get("reason", "")),
             )
             for t in t_data
         ]
 
-        raw_data = {"result": {"trades": [{"exit_reason": t.get("reason", "")} for t in t_data]}}
+        for record in t_data:
+            if "exit_reason" not in record and "reason" in record:
+                record["exit_reason"] = record["reason"]
+        raw_data = {"result": {"trades": t_data}}
         return BacktestResults(summary=summary, trades=trades, raw_data=raw_data)
 
 
@@ -213,7 +216,7 @@ def _write_trades(run_dir: Path, results: BacktestResults) -> None:
             "entry_rate":   t.open_rate,
             "exit_rate":    t.close_rate,
             "duration_min": t.duration,
-            "reason":       t.exit_reason,
+            "exit_reason":  t.exit_reason,
             "profit_pct":   round(t.profit, 6),
             "profit_abs":   round(t.profit_abs, 8),
             "stake_amount": t.stake_amount,
