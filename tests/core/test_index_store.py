@@ -1,5 +1,6 @@
 """Tests for IndexStore (global backtest index)."""
 import json
+import time
 
 import pytest
 
@@ -36,7 +37,6 @@ def test_index_contains_strategy(sample_results, backtest_results_dir):
 
 
 def test_get_strategy_runs_returns_entries(sample_results, backtest_results_dir):
-    import time
     strat_dir = backtest_results_dir / SAMPLE_STRATEGY
     strat_dir.mkdir(parents=True, exist_ok=True)
 

@@ -1,7 +1,9 @@
 """Unit tests for VersioningService — full lifecycle, accept, reject, queries, diff."""
-import pytest
+import uuid
 from pathlib import Path
 from unittest.mock import MagicMock
+
+import pytest
 
 from app.core.versioning.version_models import VersionStatus
 from app.core.versioning.versioning_service import VersioningService
@@ -42,7 +44,6 @@ def test_create_candidate_status_is_candidate(tmp_path):
 
 
 def test_create_candidate_version_id_is_uuid(tmp_path):
-    import uuid
     svc = VersioningService(make_settings_service(tmp_path))
     py_file, json_file = create_strategy_files(tmp_path)
 

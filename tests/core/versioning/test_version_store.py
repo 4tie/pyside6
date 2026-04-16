@@ -1,5 +1,7 @@
 """Unit tests for VersionStore — save, load, update_status."""
 import json
+import time
+
 import pytest
 
 from app.core.versioning.version_models import (
@@ -158,7 +160,6 @@ def test_update_status_updates_updated_at(tmp_path):
     version_dir = VersionStore.save_version(version, py_file, json_file, versions_root)
     original_updated_at = version.updated_at
 
-    import time
     time.sleep(0.01)
     VersionStore.update_status(version_dir, "active")
 

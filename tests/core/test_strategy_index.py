@@ -1,5 +1,6 @@
 """Tests for StrategyIndexStore (per-strategy index)."""
 import json
+import time
 
 import pytest
 
@@ -31,7 +32,6 @@ def test_strategy_index_run_dir_is_folder_name_only(sample_results, strategy_res
 
 
 def test_strategy_index_multiple_runs_sorted_newest_first(sample_results, strategy_results_dir):
-    import time
     RunStore.save(results=sample_results, strategy_results_dir=str(strategy_results_dir))
     time.sleep(1.1)
     RunStore.save(results=sample_results, strategy_results_dir=str(strategy_results_dir))
@@ -42,7 +42,6 @@ def test_strategy_index_multiple_runs_sorted_newest_first(sample_results, strate
 
 
 def test_strategy_index_rebuild(sample_results, strategy_results_dir):
-    import time
     RunStore.save(results=sample_results, strategy_results_dir=str(strategy_results_dir))
     time.sleep(1.1)
     RunStore.save(results=sample_results, strategy_results_dir=str(strategy_results_dir))

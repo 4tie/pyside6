@@ -2,13 +2,12 @@
 
 Uses Hypothesis to verify correctness properties across arbitrary inputs.
 """
-import shutil
 import tempfile
+from pathlib import Path
 from unittest.mock import MagicMock
 
-from hypothesis import given, settings
+from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
-from hypothesis import HealthCheck
 
 from app.core.versioning.version_models import (
     StrategyVersion,
@@ -24,15 +23,14 @@ from app.core.versioning.versioning_service import VersioningService
 # Helpers
 # ---------------------------------------------------------------------------
 
-def make_settings_service(tmp_path_str: str):
+def _make_settings_service(tmp_path_str: str) -> MagicMock:
     svc = MagicMock()
     svc.settings.user_data_path = tmp_path_str
     return svc
 
 
-def create_strategy_files(base_dir: str, strategy: str = "MyStrategy"):
-    from pathlib import Path
-    strategies_dir = Path(base_dir) / "strategies"
+def _create_strategy_files(base_dir: Path, strategy: str = "MyStrategy"):
+    strategies_dir = base_dir / "strategies"
     strategies_dir.mkdir(parents=True, exist_ok=True)
     py_file = strategies_dir / f"{strategy}.py"
     json_file = strategies_dir / f"{strategy}.json"
@@ -42,11 +40,12 @@ def create_strategy_files(base_dir: str, strategy: str = "MyStrategy"):
 
 
 # ---------------------------------------------------------------------------
-# Strategies (Hypothesis)
+# Hypothesis strategies
 # ---------------------------------------------------------------------------
 
 _strategy_name_st = st.text(
-    min_size=1, max_size=30,
+    min_size=1,
+    max_size=30,
     alphabet=st.characters(whitelist_categories=("Lu", "Ll", "Nd"), whitelist_characters="_"),
 )
 _path_st = st.text(min_size=1, max_size=80)
@@ -101,10 +100,10 @@ def test_property_1_serialization_round_trip(version: StrategyVersion):
 @settings(max_examples=100)
 def test_property_2_index_consistency(operations):
     # Feature: strategy-versioning, Property 2: index consistency after random operations
-    tmp_dir = tempfile.mkdtemp()
-    try:
-        svc = VersioningService(make_settings_service(tmp_dir))
-        py_file, json_file = create_strategy_files(tmp_dir)
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        tmp_path = Path(tmp_dir)
+        svc = VersioningService(_make_settings_service(tmp_dir))
+        py_file, json_file = _create_strategy_files(tmp_path)
 
         candidates = []
 
@@ -141,9 +140,6 @@ def test_property_2_index_consistency(operations):
         ids = [v.version_id for v in versions]
         assert len(ids) == len(set(ids))
 
-    finally:
-        shutil.rmtree(tmp_dir, ignore_errors=True)
-
 
 # ---------------------------------------------------------------------------
 # Property 3: At Most One Active Version Per Strategy
@@ -155,10 +151,10 @@ def test_property_2_index_consistency(operations):
 @settings(max_examples=100, deadline=None, suppress_health_check=[HealthCheck.too_slow])
 def test_property_3_at_most_one_active(n: int):
     # Feature: strategy-versioning, Property 3: at-most-one-active invariant
-    tmp_dir = tempfile.mkdtemp()
-    try:
-        svc = VersioningService(make_settings_service(tmp_dir))
-        py_file, json_file = create_strategy_files(tmp_dir)
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        tmp_path = Path(tmp_dir)
+        svc = VersioningService(_make_settings_service(tmp_dir))
+        py_file, json_file = _create_strategy_files(tmp_path)
 
         for _ in range(n):
             candidate = svc.create_candidate("MyStrategy", py_file, json_file)
@@ -168,9 +164,6 @@ def test_property_3_at_most_one_active(n: int):
         active_count = sum(1 for v in versions if v.status == VersionStatus.ACTIVE)
 
         assert active_count <= 1
-
-    finally:
-        shutil.rmtree(tmp_dir, ignore_errors=True)
 
 
 # ---------------------------------------------------------------------------
@@ -183,10 +176,10 @@ def test_property_3_at_most_one_active(n: int):
 @settings(max_examples=100, deadline=None, suppress_health_check=[HealthCheck.too_slow])
 def test_property_4_unique_version_ids(n: int):
     # Feature: strategy-versioning, Property 4: unique version IDs
-    tmp_dir = tempfile.mkdtemp()
-    try:
-        svc = VersioningService(make_settings_service(tmp_dir))
-        py_file, json_file = create_strategy_files(tmp_dir)
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        tmp_path = Path(tmp_dir)
+        svc = VersioningService(_make_settings_service(tmp_dir))
+        py_file, json_file = _create_strategy_files(tmp_path)
 
         version_ids = []
         for _ in range(n):
@@ -194,6 +187,3 @@ def test_property_4_unique_version_ids(n: int):
             version_ids.append(v.version_id)
 
         assert len(version_ids) == len(set(version_ids))
-
-    finally:
-        shutil.rmtree(tmp_dir, ignore_errors=True)
