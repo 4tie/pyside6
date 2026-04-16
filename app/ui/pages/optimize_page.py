@@ -1,4 +1,5 @@
 from typing import List, Optional
+from datetime import datetime, timedelta
 
 from PySide6.QtWidgets import (
     QComboBox,
@@ -14,6 +15,8 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QColor
 
 from app.app_state.settings_state import SettingsState
 from app.core.services.optimize_service import OptimizeService
