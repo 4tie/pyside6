@@ -1,161 +1,159 @@
-# AGENTS.md — AI Execution Rules
+# AGENTS.md — Project Rules for AI Coders
 
-## MANDATORY STARTUP SEQUENCE
+## Primary Product Rule
+This application is a **Freqtrade strategy workstation**.
+Its core job is to let the user:
+- run backtests,
+- inspect results,
+- understand weaknesses,
+- create candidate changes,
+- compare versions,
+- accept or roll back safely.
 
-Before touching any file, call these MCP tools in order:
-
-```
-1. get_workflow_rules()        → load enforced rules
-2. get_paths()                 → load project paths
-3. read_doc("WORKFLOW.md")     → load the change policy
-4. read_rule("guidelines.md")  → load coding standards
-5. read_rule("structure.md")   → load project layout
-```
-
-If any of these fail → stop and report the error. Do not proceed.
-
----
-
-## THE 7-STEP POLICY (non-negotiable)
-
-```
-1. ANALYZE   → read files first, understand fully
-2. IDENTIFY  → name exact files to change, state the plan
-3. APPLY     → minimal patch only
-4. VALIDATE  → call run_checks() MCP tool
-5. SUMMARIZE → call write_update_summary() MCP tool
-6. WAIT      → present to user, wait for explicit approval
-7. COMMIT    → call generate_commit_message() MCP tool, then commit
-```
-
-**NEVER skip step 6. NEVER commit without step 7.**
+**Do not treat AI as the main product yet.**
+AI is a later layer.
+For now, build and stabilize the product so it works **without requiring an AI provider**.
 
 ---
 
-## MCP Tool Reference
+## Current Priority Order
+Build in this order unless the user explicitly changes it:
 
-### Workflow tools (steps 4–7)
-```python
-run_checks()
-# → runs pytest + ruff lint + ruff format + structure checks
-# → returns: {"passed": bool, "output": str}
-
-write_update_summary(feature, change_type)
-# → runs post_change_report.py
-# → writes to data/docs/updates/ or CHANGELOG.md
-# → returns: path to written file
-
-update_changelog(change_type, description, files, why, verified, breaking)
-# → adds entry to data/docs/CHANGELOG.md
-# → returns: confirmation
-
-generate_commit_message()
-# → runs make_commit_message.py on staged files
-# → returns: suggested commit message string
-```
-
-### Memory tools (startup)
-```python
-get_workflow_rules()     → list of enforced rules
-get_paths()              → project path map
-get_assumptions()        → saved project assumptions
-save_fact(cat, key, val) → persist a new fact
-```
-
-### Knowledge tools
-```python
-read_doc("WORKFLOW.md")       → change policy
-read_doc("ARCHITECTURE.md")   → system layers + flows
-read_doc("STRUCTURE.md")      → folder map + protected files
-read_rule("guidelines.md")    → coding standards
-read_rule("tech.md")          → tech stack
-list_docs()                   → all available docs
-list_rules()                  → all available rules
-```
+1. Settings, paths, validation, execution reliability
+2. Download data flow
+3. Backtest flow
+4. Results parsing and display
+5. Logic-based analysis and suggestions
+6. Strategy/config editing and diff display
+7. Candidate version flow
+8. Compare / accept / rollback / history
+9. Chat panel placeholder and AI placeholders
+10. AI provider integration and deep AI assistance
 
 ---
 
-## Code Rules (enforced by CI)
+## Non-Negotiable Product Rules
 
-### No UI imports in services
-```python
-# FORBIDDEN in app/core/**
-from app.ui import ...
-import app.ui
-```
+### Rule 1 — AI optimization never edits the accepted strategy directly
+Any AI-generated change must:
+1. create a **candidate version**,
+2. show a **diff** before apply,
+3. show the diff **before** the next backtest,
+4. run backtest on the candidate only,
+5. require explicit **user accept** before promotion.
 
-### No hardcoded paths
-```python
-# FORBIDDEN
-path = "T:/ae/pyside6/user_data"
-sys.path.insert(0, "T:/ae/pyside6")
+### Rule 2 — Candidate first, accept later
+- `Apply` means: apply to the candidate version only.
+- `Accept` means: promote the candidate to the accepted version.
+- `Rollback` means: restore the previously accepted strategy code + matching parameter JSON.
 
-# CORRECT
-ROOT = Path(__file__).parent.parent
-path = ROOT / "user_data"
-```
+### Rule 3 — Profit is always after fees
+Do not present profit as if fees do not exist.
+All product wording and metrics must assume **after-fee profitability**.
 
-### Process execution
-```python
-# CORRECT — spaces-safe
-process_service.execute_command([cmd.program] + cmd.args, ...)
+### Rule 4 — Results are not only profit
+Good results are judged by a combination of:
+- after-fee profitability,
+- stability across more than one period,
+- drawdown/risk,
+- number of trades when relevant,
+- fit with the strategy style.
 
-# FORBIDDEN — breaks paths with spaces
-command_list = f"{cmd.program} {' '.join(cmd.args)}".split()
-```
+### Rule 5 — Logic analysis comes before AI analysis
+When possible, first provide:
+- rule-based issues,
+- obvious known fixes,
+- deterministic suggestions.
 
-### No duplicate logic
-- `CommandRunner` builds commands → don't build commands in UI
-- `ProcessService` runs processes → don't use `subprocess` in UI
-- `RunStore` saves runs → don't write JSON directly from UI
+Deep AI analysis is an additional layer, not a replacement.
 
-### Minimal changes only
-- Don't rewrite working code
-- Don't reorganize imports unless that's the task
-- Don't change `@staticmethod` to instance method without reason
-- Don't change Pydantic fields without a migration plan
+### Rule 6 — Core product before AI provider work
+You may add:
+- AI placeholders,
+- chat panel shell,
+- provider settings placeholders,
+- disabled buttons / empty states.
 
----
-
-## Logging Pattern
-
-```python
-from app.core.utils.app_logger import get_logger
-_log = get_logger("module_name")
-
-_log.debug("...")    # data details
-_log.info("...")     # lifecycle events
-_log.cmd("...")      # command execution → green in console
-_log.warning("...")  # recoverable issues
-_log.error("...")    # failures
-```
-
-| Logger prefix | File |
-|---------------|------|
-| `ui.*` | `data/log/ui.log` |
-| `services.*`, `backtest`, `settings`, `download` | `data/log/services.log` |
-| `process` | `data/log/process.log` |
-| everything | `data/log/app.log` |
+Do **not** make provider integrations the center of the implementation unless the user explicitly asks.
 
 ---
 
-## Freqtrade-Specific Rules
+## Required Reading Before Major Changes
+Read these files before changing architecture or workflow behavior:
 
-- freqtrade writes zip to `backtest_results/*.zip` — ignores `--export-filename`
-- `_try_load_results` uses timestamp filter — do not change this logic
-- Strategy JSON must have `strategy_name` + `params` wrapper — enforced by CI
-- Never pass `--export-filename` to freqtrade backtesting command
+1. `data/docs/PRODUCT.md`
+2. `data/docs/PRODUCT_FLOW.md`
+3. `data/docs/ARCHITECTURE.md`
+4. `data/docs/WORKFLOW.md`
+5. `data/docs/STRUCTURE.md`
+6. `data/rules/guidelines.md`
+7. `data/rules/product.md`
+8. `data/rules/structure.md`
+9. `data/rules/tech.md`
 
 ---
 
-## NEVER DO
+## Mandatory Change Workflow
+Follow this order for any meaningful code change:
 
-- Commit without user approval
-- Skip `run_checks()` after a code change
-- Skip `write_update_summary()` before presenting to user
-- Import `app.ui` from `app.core`
-- Use `string.split()` to build a command list
-- Use hardcoded absolute paths
-- Use `sys.path.insert` in app code
-- Delete or rewrite existing test cases
-- Add unrequested features in the same patch
+1. **Analyze** the request and current code
+2. **Identify** the smallest set of files to change
+3. **Apply** the smallest correct patch
+4. **Validate** behavior and structure
+5. **Summarize** what changed
+6. **Wait** for user confirmation if the change is substantial
+7. **Commit** only after approval
+
+---
+
+## Scope Control Rules
+
+### Do
+- Extend the existing flow.
+- Reuse existing services and widgets.
+- Keep execution logic in `app/core/**`.
+- Keep UI orchestration in `app/ui/**`.
+- Preserve current working features.
+- Prefer safe incremental steps.
+
+### Do Not
+- Turn the app into an AI-first chatbot.
+- Skip versioning for AI optimization.
+- Write directly over accepted strategies from AI flows.
+- Mix unrelated refactors into feature work.
+- Add a provider dependency just because a placeholder exists.
+- Hide important user decisions behind automation.
+
+---
+
+## UI Behavior Rules
+- The user must be able to understand what happened.
+- Important actions should expose state clearly:
+  - current strategy,
+  - current accepted version,
+  - candidate version,
+  - changed files,
+  - diff,
+  - result comparison.
+- `Accept`, `Rollback`, and `Continue Optimization` must remain explicit.
+
+---
+
+## Backtest and Optimization Rules
+- Backtests must be runnable without AI.
+- Optimize tab must support non-AI optimization modes first.
+- Strategy/config editing must work without AI.
+- Suggestions generated from logic should be actionable from the UI.
+- If data is missing, the product may guide the user to download data first.
+
+---
+
+## Chat Panel Rule
+The chat panel is a future control layer over the product.
+For now it may exist as:
+- layout placeholder,
+- disabled shell,
+- command routing stub,
+- provider configuration placeholder.
+
+It should not block building the main product.

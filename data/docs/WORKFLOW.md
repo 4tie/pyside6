@@ -1,98 +1,130 @@
-# WORKFLOW.md — Change Policy
+# WORKFLOW.md — Build and Change Workflow
 
-## THE POLICY
+## 1) Product-first workflow
+أي عمل على هذا المشروع يجب أن يمر بهذا السؤال أولًا:
 
-```
-ANY code change MUST follow this exact order:
+**هل هذا يخدم المنتج الأساسي الآن، أم أنه يقدم طبقة AI قبل أوانها؟**
 
-  1. ANALYZE    — understand the request fully, read relevant files
-  2. IDENTIFY   — name the minimal set of files to change
-  3. APPLY      — make the smallest correct patch
-  4. VALIDATE   — run checks, confirm nothing broke
-  5. SUMMARIZE  — write an update summary (via script)
-  6. WAIT       — present summary, wait for explicit user approval
-  7. COMMIT     — only after approval (via script)
+إذا كان العمل يخص:
+- execution stability
+- results clarity
+- logic analysis
+- candidate versions
+- compare / accept / rollback
 
-NO EXCEPTIONS. NO SHORTCUTS.
-```
+فهو داخل الأولوية.
 
-This policy is enforced by:
-- Scripts in `data/tools/` that must be called at steps 4, 5, 7
-- MCP tools that wrap those scripts
-- CI that rejects any push that skips validation
+إذا كان العمل يخص:
+- provider complexity
+- agent orchestration complexity
+- deep AI integration مبكرًا
 
----
-
-## Step-by-Step
-
-### Step 1 — ANALYZE
-- Read every file that will be touched before writing any code
-- For bugs: identify root cause, not just symptoms
-- For features: confirm scope — what is in/out of bounds (see `PRODUCT.md`)
-- If the request is ambiguous → ask, don't guess
-
-### Step 2 — IDENTIFY
-- List exact files to change before touching anything
-- If more than 3 files → pause and find a simpler approach
-- Never create a new file if the change fits an existing one
-- State the plan explicitly: "I will change X in file Y because Z"
-
-### Step 3 — APPLY
-- Smallest correct patch only
-- No style/formatting changes mixed with logic changes
-- No unrequested features added
-- No rewriting of working code
-
-### Step 4 — VALIDATE
-```bash
-python data/tools/run_checks.py
-```
-- Must pass before proceeding
-- If tests fail → fix first, do not skip
-
-### Step 5 — SUMMARIZE
-```bash
-python data/tools/post_change_report.py --feature "<name>" --type <fix|feat|refactor>
-```
-- Generates: changed files, diff stat, test result, timestamp
-- Output goes to `data/docs/updates/` or appended to `CHANGELOG.md`
-- Do NOT write the summary manually — use the script
-
-### Step 6 — WAIT
-- Present the summary to the user
-- State clearly: what changed, why, any side effects
-- **Do not proceed to commit without explicit "yes" or "approved"**
-- If user requests changes → go back to Step 3
-
-### Step 7 — COMMIT
-```bash
-python data/tools/make_commit_message.py
-# → copy the suggested message
-git add <files>
-git commit -m "<suggested message>"
-```
-- Never commit without running `make_commit_message.py` first
-- Never bundle unrelated changes in one commit
+فهو مؤجل إلا إذا طلبه المستخدم صراحة.
 
 ---
 
-## Tool Bindings
+## 2) Mandatory change sequence
 
-| Step | Tool | Command |
-|------|------|---------|
-| 4 — Validate | `run_checks` (MCP) | `python data/tools/run_checks.py` |
-| 5 — Summarize | `write_update_summary` (MCP) | `python data/tools/post_change_report.py` |
-| 5 — Changelog | `update_changelog` (MCP) | `python data/tools/update_changelog.py` |
-| 7 — Commit msg | `generate_commit_message` (MCP) | `python data/tools/make_commit_message.py` |
+1. Analyze request and current code
+2. Identify the smallest correct file set
+3. Patch incrementally
+4. Validate
+5. Summarize
+6. Wait for approval if the change is substantial
+7. Commit only after approval
 
 ---
 
-## Quick Rules
+## 3) Implementation order for this product
 
-| Change type | Rule |
-|-------------|------|
-| Bug fix | Smallest patch, don't rewrite the function |
-| New feature | Service layer first, then UI |
-| Refactor | No behavior change, structure only |
-| Docs only | No tests needed, but still needs approval |
-| Breaking change | Must be flagged in summary and CHANGELOG |
+### Phase 1 — Core execution
+- settings
+- path validation
+- freqtrade execution readiness
+- download data
+- run backtest
+
+### Phase 2 — Core reading
+- parse results
+- display results cleanly
+- expose pair/trade details
+- normalize important metrics
+
+### Phase 3 — Core diagnosis
+- rule-based analysis
+- deterministic suggestions
+- actionable UI buttons
+
+### Phase 4 — Controlled modification
+- strategy/config editing
+- diff presentation
+- candidate version creation
+- candidate re-test flow
+
+### Phase 5 — Controlled decision
+- compare current vs candidate
+- accept
+- rollback
+- history view
+
+### Phase 6 — AI shell only
+- chat panel placeholder
+- provider settings placeholder
+- AI integration entry points
+
+### Phase 7 — Full AI later
+- deep analysis
+- AI recommendation engine
+- AI code changes
+- natural-language control
+
+---
+
+## 4) Rule for AI-related tasks
+إذا كان المطلوب متعلقًا بالـ AI، اتبع هذه القاعدة:
+
+### Allowed now
+- create placeholders
+- create settings shell
+- create architecture hooks
+- define interfaces/contracts
+- define disabled UI sections
+
+### Not default priority now
+- shipping provider integration as core work
+- making backtest/results depend on AI
+- designing the whole app around the chat panel
+
+---
+
+## 5) Rule for optimization work
+أي optimization meaningful يجب أن يمر بهذا المسار:
+
+1. understand current result
+2. create suggestion/fix
+3. create candidate version
+4. show diff
+5. let user apply candidate
+6. run backtest on candidate
+7. compare
+8. accept / reject / rollback / continue
+
+---
+
+## 6) Rule for direct edits
+### User direct edits
+يمكن دعمها مباشرة في editor، لكن يجب أن تكون واضحة ومفهومة.
+
+### AI edits
+لا تُطبَّق مباشرة على accepted version.
+دائمًا candidate first.
+
+---
+
+## 7) Definition of done for a feature
+الميزة تعتبر مكتملة فقط إذا:
+- تعمل داخل المسار الحقيقي للمنتج
+- لا تكسر flows الحالية
+- واجهتها واضحة للمستخدم
+- لا تعتمد على AI بلا ضرورة
+- لها place واضح في accepted/candidate/history logic إذا كانت تمس الاستراتيجية
