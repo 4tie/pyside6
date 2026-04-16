@@ -1,5 +1,6 @@
 import sys
 import platform
+from pathlib import Path
 
 from PySide6.QtWidgets import QApplication
 from PySide6 import __version__ as pyside_version
@@ -17,7 +18,8 @@ def main():
     settings_state = SettingsState()
     settings = settings_state.load_settings()
 
-    setup_logging(settings.user_data_path)
+    _log_dir = Path(__file__).parent / "data" / "log"
+    setup_logging(str(_log_dir))
     log = get_logger("startup")
 
     log.info("=" * 60)
