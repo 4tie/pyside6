@@ -238,10 +238,15 @@ class BacktestResultsWidget(QWidget):
             self.trades_table.setItem(row, 6, _colored_item(f"{t.profit_abs:+.4f}", t.profit_abs))
             self.trades_table.setItem(row, 7, _right_item(str(t.duration)))
 
-            # exit reason from raw trade if available
+            # exit reason from raw data (handles both zip and bt-*.result.json formats)
             exit_reason = ""
             if self.results and self.results.raw_data:
-                raw_trades = self.results.raw_data.get('result', {}).get('trades', [])
+                strategy_block = self.results.raw_data.get('strategy', {})
+                if isinstance(strategy_block, dict):
+                    strategy_name = self.results.summary.strategy
+                    raw_trades = strategy_block.get(strategy_name, {}).get('trades', [])
+                else:
+                    raw_trades = self.results.raw_data.get('result', {}).get('trades', [])
                 if row < len(raw_trades):
                     exit_reason = raw_trades[row].get('exit_reason', '')
             self.trades_table.setItem(row, 8, QTableWidgetItem(exit_reason))

@@ -22,7 +22,7 @@ from PySide6.QtWidgets import (
 from app.app_state.settings_state import SettingsState
 from app.core.services.backtest_service import BacktestService
 from app.core.services.backtest_results_service import BacktestResultsService
-from app.core.services.run_store import RunStore
+from app.core.services.run_store import RunStore, IndexStore
 from app.core.services.settings_service import SettingsService
 from app.core.services.process_service import ProcessService
 from app.ui.widgets.terminal_widget import TerminalWidget
@@ -51,6 +51,7 @@ class BacktestPage(QWidget):
         self._load_preferences()
         self._initializing = False
         self._update_command_preview()
+        self._refresh_run_picker()
 
     def init_ui(self):
         """Initialize UI components."""
@@ -176,15 +177,27 @@ class BacktestPage(QWidget):
         # Right panel: Output + Results
         output_layout = QVBoxLayout()
 
-        tabs = QTabWidget()
+        # Run picker toolbar
+        run_picker_layout = QHBoxLayout()
+        run_picker_layout.addWidget(QLabel("Run:"))
+        self.run_combo = QComboBox()
+        self.run_combo.setMinimumWidth(260)
+        self.run_combo.setToolTip("Select a previous run to load")
+        run_picker_layout.addWidget(self.run_combo, 1)
+        self.load_run_btn = QPushButton("Load")
+        self.load_run_btn.clicked.connect(self._on_load_run)
+        run_picker_layout.addWidget(self.load_run_btn)
+        output_layout.addLayout(run_picker_layout)
+
+        self.output_tabs = QTabWidget()
 
         self.terminal = TerminalWidget()
-        tabs.addTab(self.terminal, "Terminal Output")
+        self.output_tabs.addTab(self.terminal, "Terminal Output")
 
         self.results_widget = BacktestResultsWidget()
-        tabs.addTab(self.results_widget, "Results")
+        self.output_tabs.addTab(self.results_widget, "Results")
 
-        output_layout.addWidget(tabs)
+        output_layout.addWidget(self.output_tabs)
 
         # Main horizontal layout
         h_layout = QHBoxLayout()
@@ -196,16 +209,13 @@ class BacktestPage(QWidget):
 
     def _connect_signals(self):
         """Connect settings signals for live command preview updates."""
-        # Signal for settings changes
         self.settings_state.settings_changed.connect(self._on_settings_changed)
-
-        # Signals for backtest command preview updates
         self.strategy_combo.currentTextChanged.connect(self._update_command_preview)
+        self.strategy_combo.currentTextChanged.connect(self._refresh_run_picker)
         self.timeframe_input.textChanged.connect(self._update_command_preview)
         self.timerange_input.textChanged.connect(self._update_command_preview)
         self.dry_run_wallet.valueChanged.connect(self._update_command_preview)
         self.max_open_trades.valueChanged.connect(self._update_command_preview)
-        # Also update when settings that affect the command change (venv path, etc)
         self.settings_state.settings_changed.connect(self._update_command_preview)
 
 
@@ -226,6 +236,130 @@ class BacktestPage(QWidget):
     def _on_settings_changed(self, settings):
         """Called when settings change."""
         self._refresh_strategies()
+        self._refresh_run_picker()
+
+    def _refresh_run_picker(self, _=None):
+        """Populate the run combo with existing runs for the selected strategy."""
+        self.run_combo.blockSignals(True)
+        self.run_combo.clear()
+
+        settings = self.settings_state.current_settings
+        if not settings or not settings.user_data_path:
+            self.run_combo.blockSignals(False)
+            return
+
+        strategy = self.strategy_combo.currentText().strip()
+        if not strategy:
+            self.run_combo.blockSignals(False)
+            return
+
+        backtest_results_dir = str(
+            Path(settings.user_data_path) / "backtest_results"
+        )
+        runs = IndexStore.get_strategy_runs(backtest_results_dir, strategy)
+
+        for run in runs:
+            run_id   = run.get("run_id", "")
+            profit   = run.get("profit_total_pct", 0)
+            trades   = run.get("trades_count", 0)
+            saved_at = run.get("saved_at", "")[:16]
+            label    = f"{run_id}  |  {profit:+.2f}%  |  {trades} trades  |  {saved_at}"
+            self.run_combo.addItem(label, userData=run)
+
+        if self.run_combo.count() == 0:
+            self.run_combo.addItem("No saved runs found", userData=None)
+
+        self.run_combo.blockSignals(False)
+
+    def _on_load_run(self):
+        """Load the selected run from the index into the results widget."""
+        run_meta = self.run_combo.currentData()
+        if not run_meta:
+            return
+
+        settings = self.settings_state.current_settings
+        if not settings or not settings.user_data_path:
+            return
+
+        backtest_results_dir = Path(settings.user_data_path) / "backtest_results"
+        run_dir = backtest_results_dir / run_meta["run_dir"]
+        results_file = run_dir / "results.json"
+        trades_file  = run_dir / "trades.json"
+
+        if not results_file.exists() or not trades_file.exists():
+            QMessageBox.warning(self, "Load Failed",
+                                f"Run folder incomplete:\n{run_dir}")
+            return
+
+        try:
+            from app.core.services.backtest_results_service import (
+                BacktestResults, BacktestSummary, BacktestTrade
+            )
+            import json
+            from dataclasses import fields
+
+            r_data = json.loads(results_file.read_text(encoding="utf-8"))
+            t_data = json.loads(trades_file.read_text(encoding="utf-8"))
+
+            # Rebuild BacktestSummary from results.json
+            summary = BacktestSummary(
+                strategy=r_data.get("strategy", ""),
+                timeframe=r_data.get("timeframe", ""),
+                total_trades=r_data.get("total_trades", 0),
+                wins=r_data.get("wins", 0),
+                losses=r_data.get("losses", 0),
+                draws=r_data.get("draws", 0),
+                win_rate=r_data.get("win_rate_pct", 0.0),
+                avg_profit=r_data.get("avg_profit_pct", 0.0),
+                total_profit=r_data.get("total_profit_pct", 0.0),
+                total_profit_abs=r_data.get("total_profit_abs", 0.0),
+                sharpe_ratio=r_data.get("sharpe_ratio"),
+                sortino_ratio=r_data.get("sortino_ratio"),
+                calmar_ratio=r_data.get("calmar_ratio"),
+                max_drawdown=r_data.get("max_drawdown_pct", 0.0),
+                max_drawdown_abs=r_data.get("max_drawdown_abs", 0.0),
+                trade_duration_avg=r_data.get("avg_duration_min", 0),
+                starting_balance=r_data.get("starting_balance", 0.0),
+                final_balance=r_data.get("final_balance", 0.0),
+                timerange=r_data.get("timerange", ""),
+                pairlist=r_data.get("pairs", []),
+                backtest_start=r_data.get("backtest_start", ""),
+                backtest_end=r_data.get("backtest_end", ""),
+                expectancy=r_data.get("expectancy", 0.0),
+                profit_factor=r_data.get("profit_factor", 0.0),
+                max_consecutive_wins=r_data.get("max_consecutive_wins", 0),
+                max_consecutive_losses=r_data.get("max_consecutive_losses", 0),
+            )
+
+            # Rebuild trades from trades.json
+            trades = []
+            for t in t_data:
+                trades.append(BacktestTrade(
+                    pair=t.get("pair", ""),
+                    stake_amount=float(t.get("stake_amount", 0)),
+                    amount=0.0,
+                    open_date=t.get("entry", ""),
+                    close_date=t.get("exit") or None,
+                    open_rate=float(t.get("entry_rate", 0)),
+                    close_rate=float(t.get("exit_rate", 0)) if t.get("exit_rate") else None,
+                    profit=float(t.get("profit_pct", 0)),
+                    profit_abs=float(t.get("profit_abs", 0)),
+                    duration=int(t.get("duration_min", 0)),
+                    is_open=bool(t.get("is_open", False)),
+                ))
+
+            # Inject exit_reason into raw_data so the widget can display it
+            raw_trades = [
+                {"exit_reason": t.get("reason", "")} for t in t_data
+            ]
+            raw_data = {"result": {"trades": raw_trades}}
+
+            results = BacktestResults(summary=summary, trades=trades, raw_data=raw_data)
+            self.results_widget.display_results(results, export_dir=str(run_dir))
+            self.output_tabs.setCurrentIndex(1)
+
+        except Exception as e:
+            QMessageBox.critical(self, "Load Failed", str(e))
 
     def _update_command_preview(self):
         """Update the command preview in terminal based on current UI values."""
@@ -374,11 +508,8 @@ class BacktestPage(QWidget):
                 self.terminal.append_output(f"✓ Run saved → {run_dir}\n")
                 self.results_widget.display_results(results, export_dir=str(run_dir))
                 self.terminal.append_output("✓ Results loaded successfully!\n")
-
-                # Switch to results tab
-                parent_tabs = self.results_widget.parent()
-                if hasattr(parent_tabs, "setCurrentIndex"):
-                    parent_tabs.setCurrentIndex(1)  # Switch to Results tab
+                self._refresh_run_picker()
+                self.output_tabs.setCurrentIndex(1)
 
         except Exception as e:
             error_msg = f"Failed to parse backtest results: {e}\n"

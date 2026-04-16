@@ -1,0 +1,69 @@
+{
+  "updated_at": "2026-04-16T04:20:04.546434",
+  "strategies": {
+    "MultiMeee": {
+      "runs": [
+        {
+          "run_id": "run_2026-04-16_04-20-04_969ea9",
+          "strategy": "MultiMeee",
+          "timeframe": "5m",
+          "pairs": [
+            "ADA/USDT",
+            "ETH/USDT"
+          ],
+          "start_time": "2026-04-16T04:20:04.532411",
+          "timerange": "20250421-20260416",
+          "backtest_start": "2025-04-21 00:00:00",
+          "backtest_end": "2026-04-11 01:10:00",
+          "status": "completed",
+          "profit_total_pct": -4.651,
+          "profit_total_abs": -3.7208,
+          "starting_balance": 80.0,
+          "final_balance": 76.2792,
+          "max_drawdown_pct": 9.9041,
+          "max_drawdown_abs": 8.0248,
+          "trades_count": 231,
+          "wins": 84,
+          "losses": 147,
+          "win_rate_pct": 36.36,
+          "sharpe": -0.3,
+          "sortino": -0.5349,
+          "calmar": -2.5273,
+          "profit_factor": 0.9306,
+          "expectancy": -0.0161,
+          "run_dir": "MultiMeee\\run_2026-04-16_04-20-04_969ea9"
+        },
+        {
+          "run_id": "run_2026-04-16_04-17-06_6098ac",
+          "strategy": "MultiMeee",
+          "timeframe": "5m",
+          "pairs": [
+            "ADA/USDT",
+            "ETH/USDT"
+          ],
+          "start_time": "2026-04-16T04:17:06.276965",
+          "timerange": "20250421-20260416",
+          "backtest_start": "2025-04-21 00:00:00",
+          "backtest_end": "2026-04-11 01:10:00",
+          "status": "completed",
+          "profit_total_pct": -4.651,
+          "profit_total_abs": -3.7208,
+          "starting_balance": 80.0,
+          "final_balance": 76.2792,
+          "max_drawdown_pct": 9.9041,
+          "max_drawdown_abs": 8.0248,
+          "trades_count": 231,
+          "wins": 84,
+          "losses": 147,
+          "win_rate_pct": 36.36,
+          "sharpe": -0.3,
+          "sortino": -0.5349,
+          "calmar": -2.5273,
+          "profit_factor": 0.9306,
+          "expectancy": -0.0161,
+          "run_dir": "MultiMeee\\run_2026-04-16_04-17-06_6098ac"
+        }
+      ]
+    }
+  }
+}

@@ -7,6 +7,198 @@ from typing import Optional
 from app.core.services.backtest_results_service import BacktestResults
 
 
+class IndexStore:
+    """Manages user_data/backtest_results/index.json.
+
+    The index is a fast lookup file — no need to open individual run folders.
+
+    Structure:
+    {
+      "updated_at": "...",
+      "strategies": {
+        "MultiMeee": {
+          "runs": [
+            {
+              "run_id": "run_2026-04-16_14-32-10_6098ac",
+              "run_dir": "MultiMeee/run_2026-04-16_14-32-10_6098ac",
+              "strategy": "MultiMeee",
+              "timeframe": "5m",
+              "pairs": ["ADA/USDT", "ETH/USDT"],
+              "timerange": "20250421-20260416",
+              "backtest_start": "...",
+              "backtest_end": "...",
+              "saved_at": "...",
+              "profit_total_pct": -4.651,
+              "profit_total_abs": -3.7208,
+              "starting_balance": 80.0,
+              "final_balance": 76.279,
+              "max_drawdown_pct": 9.9,
+              "trades_count": 231,
+              "wins": 84,
+              "losses": 147,
+              "win_rate_pct": 36.36,
+              "sharpe": -0.3,
+              "profit_factor": 0.93
+            },
+            ...
+          ]
+        }
+      }
+    }
+    """
+
+    INDEX_FILENAME = "index.json"
+
+    @staticmethod
+    def update(backtest_results_dir: str, run_id: str, run_dir: Path, results: BacktestResults):
+        """Add or update a run entry in the index.
+
+        Args:
+            backtest_results_dir: Root dir, e.g. user_data/backtest_results
+            run_id: The run identifier string
+            run_dir: Absolute path to the run folder
+            results: Parsed BacktestResults for this run
+        """
+        index_path = Path(backtest_results_dir) / IndexStore.INDEX_FILENAME
+        index = IndexStore._load(index_path)
+
+        s = results.summary
+        strategy = s.strategy
+
+        entry = {
+            "run_id":           run_id,
+            "run_dir":          str(run_dir.relative_to(Path(backtest_results_dir))),
+            "strategy":         strategy,
+            "timeframe":        s.timeframe,
+            "pairs":            s.pairlist,
+            "timerange":        s.timerange,
+            "backtest_start":   s.backtest_start,
+            "backtest_end":     s.backtest_end,
+            "saved_at":         datetime.now().isoformat(),
+            "profit_total_pct": round(s.total_profit, 4),
+            "profit_total_abs": round(s.total_profit_abs, 4),
+            "starting_balance": s.starting_balance,
+            "final_balance":    round(s.final_balance, 4),
+            "max_drawdown_pct": round(s.max_drawdown, 4),
+            "max_drawdown_abs": round(s.max_drawdown_abs, 4),
+            "trades_count":     s.total_trades,
+            "wins":             s.wins,
+            "losses":           s.losses,
+            "win_rate_pct":     round(s.win_rate, 2),
+            "sharpe":           round(s.sharpe_ratio, 4) if s.sharpe_ratio is not None else None,
+            "sortino":          round(s.sortino_ratio, 4) if s.sortino_ratio is not None else None,
+            "profit_factor":    round(s.profit_factor, 4),
+            "expectancy":       round(s.expectancy, 4),
+        }
+
+        strategies = index.setdefault("strategies", {})
+        strat_block = strategies.setdefault(strategy, {"runs": []})
+
+        # Replace existing entry for same run_id, otherwise append
+        runs = strat_block["runs"]
+        for i, r in enumerate(runs):
+            if r.get("run_id") == run_id:
+                runs[i] = entry
+                break
+        else:
+            runs.append(entry)
+
+        # Keep runs sorted newest-first
+        runs.sort(key=lambda r: r.get("saved_at", ""), reverse=True)
+
+        index["updated_at"] = datetime.now().isoformat()
+        IndexStore._save(index_path, index)
+
+    @staticmethod
+    def load(backtest_results_dir: str) -> dict:
+        """Load the full index.
+
+        Args:
+            backtest_results_dir: Root dir, e.g. user_data/backtest_results
+
+        Returns:
+            Index dict (empty structure if file doesn't exist)
+        """
+        return IndexStore._load(Path(backtest_results_dir) / IndexStore.INDEX_FILENAME)
+
+    @staticmethod
+    def get_strategy_runs(backtest_results_dir: str, strategy: str) -> list[dict]:
+        """Return all run entries for a strategy, newest first.
+
+        Args:
+            backtest_results_dir: Root dir
+            strategy: Strategy name
+
+        Returns:
+            List of run entry dicts
+        """
+        index = IndexStore.load(backtest_results_dir)
+        return index.get("strategies", {}).get(strategy, {}).get("runs", [])
+
+    @staticmethod
+    def get_all_strategies(backtest_results_dir: str) -> list[str]:
+        """Return all strategy names present in the index.
+
+        Args:
+            backtest_results_dir: Root dir
+
+        Returns:
+            Sorted list of strategy names
+        """
+        index = IndexStore.load(backtest_results_dir)
+        return sorted(index.get("strategies", {}).keys())
+
+    @staticmethod
+    def rebuild(backtest_results_dir: str) -> dict:
+        """Rebuild the index by scanning all run folders on disk.
+
+        Reads only meta.json from each run folder — does not open trades or results.
+
+        Args:
+            backtest_results_dir: Root dir, e.g. user_data/backtest_results
+
+        Returns:
+            The rebuilt index dict
+        """
+        root = Path(backtest_results_dir)
+        index: dict = {"updated_at": datetime.now().isoformat(), "strategies": {}}
+
+        for strategy_dir in sorted(root.iterdir()):
+            if not strategy_dir.is_dir():
+                continue
+            runs = []
+            for run_dir in sorted(strategy_dir.iterdir(), reverse=True):
+                meta_path = run_dir / "meta.json"
+                if not run_dir.is_dir() or not meta_path.exists():
+                    continue
+                try:
+                    meta = json.loads(meta_path.read_text(encoding="utf-8"))
+                    meta["run_dir"] = str(run_dir.relative_to(root))
+                    runs.append(meta)
+                except Exception:
+                    continue
+            if runs:
+                index["strategies"][strategy_dir.name] = {"runs": runs}
+
+        IndexStore._save(root / IndexStore.INDEX_FILENAME, index)
+        return index
+
+    # ------------------------------------------------------------------ #
+
+    @staticmethod
+    def _load(path: Path) -> dict:
+        if path.exists():
+            try:
+                return json.loads(path.read_text(encoding="utf-8"))
+            except Exception:
+                pass
+        return {"updated_at": "", "strategies": {}}
+
+    @staticmethod
+    def _save(path: Path, index: dict):
+        path.write_text(json.dumps(index, indent=2, ensure_ascii=False), encoding="utf-8")
+
+
 class RunStore:
     """Persists a single backtest run as a structured folder under the strategy results dir.
 
@@ -18,6 +210,8 @@ class RunStore:
             ├── trades.json
             ├── config.snapshot.json
             └── params.json
+
+    Also updates user_data/backtest_results/index.json automatically.
     """
 
     @staticmethod
@@ -27,7 +221,7 @@ class RunStore:
         config_path: Optional[str] = None,
         run_params: Optional[dict] = None,
     ) -> Path:
-        """Save a backtest run to a timestamped folder.
+        """Save a backtest run to a timestamped folder and update the index.
 
         Args:
             results: Parsed BacktestResults
@@ -38,7 +232,6 @@ class RunStore:
         Returns:
             Path to the created run folder
         """
-        s = results.summary
         ts = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         short_hash = hashlib.md5(ts.encode()).hexdigest()[:6]
         run_id = f"run_{ts}_{short_hash}"
@@ -51,6 +244,10 @@ class RunStore:
         RunStore._write_trades(run_dir, results)
         RunStore._write_config_snapshot(run_dir, config_path, results)
         RunStore._write_params(run_dir, run_params, results)
+
+        # Update the shared index
+        backtest_results_dir = str(Path(strategy_results_dir).parent)
+        IndexStore.update(backtest_results_dir, run_id, run_dir, results)
 
         return run_dir
 
@@ -95,32 +292,32 @@ class RunStore:
         """Write results.json — full summary stats."""
         s = results.summary
         data = {
-            "strategy":              s.strategy,
-            "timeframe":             s.timeframe,
-            "timerange":             s.timerange,
-            "backtest_start":        s.backtest_start,
-            "backtest_end":          s.backtest_end,
-            "pairs":                 s.pairlist,
-            "total_trades":          s.total_trades,
-            "wins":                  s.wins,
-            "losses":                s.losses,
-            "draws":                 s.draws,
-            "win_rate_pct":          round(s.win_rate, 4),
-            "avg_profit_pct":        round(s.avg_profit, 6),
-            "total_profit_pct":      round(s.total_profit, 6),
-            "total_profit_abs":      round(s.total_profit_abs, 6),
-            "starting_balance":      s.starting_balance,
-            "final_balance":         round(s.final_balance, 6),
-            "max_drawdown_pct":      round(s.max_drawdown, 4),
-            "max_drawdown_abs":      round(s.max_drawdown_abs, 6),
-            "avg_duration_min":      s.trade_duration_avg,
-            "max_consecutive_wins":  s.max_consecutive_wins,
-            "max_consecutive_losses":s.max_consecutive_losses,
-            "sharpe_ratio":          round(s.sharpe_ratio, 4) if s.sharpe_ratio is not None else None,
-            "sortino_ratio":         round(s.sortino_ratio, 4) if s.sortino_ratio is not None else None,
-            "calmar_ratio":          round(s.calmar_ratio, 4) if s.calmar_ratio is not None else None,
-            "profit_factor":         round(s.profit_factor, 4),
-            "expectancy":            round(s.expectancy, 4),
+            "strategy":               s.strategy,
+            "timeframe":              s.timeframe,
+            "timerange":              s.timerange,
+            "backtest_start":         s.backtest_start,
+            "backtest_end":           s.backtest_end,
+            "pairs":                  s.pairlist,
+            "total_trades":           s.total_trades,
+            "wins":                   s.wins,
+            "losses":                 s.losses,
+            "draws":                  s.draws,
+            "win_rate_pct":           round(s.win_rate, 4),
+            "avg_profit_pct":         round(s.avg_profit, 6),
+            "total_profit_pct":       round(s.total_profit, 6),
+            "total_profit_abs":       round(s.total_profit_abs, 6),
+            "starting_balance":       s.starting_balance,
+            "final_balance":          round(s.final_balance, 6),
+            "max_drawdown_pct":       round(s.max_drawdown, 4),
+            "max_drawdown_abs":       round(s.max_drawdown_abs, 6),
+            "avg_duration_min":       s.trade_duration_avg,
+            "max_consecutive_wins":   s.max_consecutive_wins,
+            "max_consecutive_losses": s.max_consecutive_losses,
+            "sharpe_ratio":           round(s.sharpe_ratio, 4) if s.sharpe_ratio is not None else None,
+            "sortino_ratio":          round(s.sortino_ratio, 4) if s.sortino_ratio is not None else None,
+            "calmar_ratio":           round(s.calmar_ratio, 4) if s.calmar_ratio is not None else None,
+            "profit_factor":          round(s.profit_factor, 4),
+            "expectancy":             round(s.expectancy, 4),
         }
         (run_dir / "results.json").write_text(
             json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8"
@@ -166,18 +363,14 @@ class RunStore:
     ):
         """Write config.snapshot.json — config used at run time."""
         snapshot: dict = {}
-
         if config_path and Path(config_path).exists():
             try:
                 snapshot = json.loads(Path(config_path).read_text(encoding="utf-8"))
             except Exception:
                 pass
-
-        # Enrich with runtime values from parsed results if available
         s = results.summary
         snapshot.setdefault("timeframe", s.timeframe)
         snapshot.setdefault("dry_run_wallet", s.starting_balance)
-
         (run_dir / "config.snapshot.json").write_text(
             json.dumps(snapshot, indent=2, ensure_ascii=False), encoding="utf-8"
         )
@@ -185,12 +378,9 @@ class RunStore:
     @staticmethod
     def _write_params(run_dir: Path, run_params: Optional[dict], results: BacktestResults):
         """Write params.json — strategy knobs / hyperopt params."""
-        params: dict = {}
-
         if run_params:
             params = run_params
         else:
-            # Try to extract buy/sell params from raw data
             sd = {}
             strategy_block = results.raw_data.get("strategy", {})
             if isinstance(strategy_block, dict):
@@ -201,7 +391,6 @@ class RunStore:
                 "minimal_roi": sd.get("minimal_roi", {}),
                 "stoploss":    sd.get("stoploss"),
             }
-
         (run_dir / "params.json").write_text(
             json.dumps(params, indent=2, ensure_ascii=False), encoding="utf-8"
         )
