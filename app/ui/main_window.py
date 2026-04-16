@@ -7,6 +7,7 @@ from app.app_state.settings_state import SettingsState
 from app.ui.pages.settings_page import SettingsPage
 from app.ui.pages.backtest_page import BacktestPage
 from app.ui.pages.download_data_page import DownloadDataPage
+from app.ui.pages.strategy_config_page import StrategyConfigPage
 from app.ui.widgets.terminal_widget import TerminalWidget
 
 
@@ -45,6 +46,10 @@ class MainWindow(QMainWindow):
         #Downlaod data tab
         self.dd_page = DownloadDataPage(self.settings_state)
         self.tabs.addTab(self.dd_page, "Download Data")
+
+        # Strategy config tab
+        self.strategy_config_page = StrategyConfigPage(self.settings_state)
+        self.tabs.addTab(self.strategy_config_page, "Strategy Config")
 
         # Terminal tab (for ad-hoc testing)
         terminal_page = self._create_terminal_tab()
