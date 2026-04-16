@@ -25,6 +25,7 @@ class RunStore:
         strategy_results_dir: str,
         config_path: Optional[str] = None,
         run_params: Optional[dict] = None,
+        version_id: Optional[str] = None,
     ) -> Path:
         """Save a backtest run and update indexes."""
         ts = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
@@ -38,15 +39,15 @@ class RunStore:
         _log.info("Saving run | id=%s | strategy=%s | trades=%d | profit=%.4f%%",
                   run_id, s.strategy, s.total_trades, s.total_profit)
 
-        _write_meta(run_dir, run_id, results)
+        _write_meta(run_dir, run_id, results, version_id)
         _write_results(run_dir, results)
         _write_trades(run_dir, results)
         _write_config_snapshot(run_dir, config_path)
         _write_params(run_dir, run_params, results)
 
         backtest_results_dir = str(Path(strategy_results_dir).parent)
-        IndexStore.update(backtest_results_dir, run_id, run_dir, results)
-        StrategyIndexStore.update(Path(strategy_results_dir), run_id, run_dir, results)
+        IndexStore.update(backtest_results_dir, run_id, run_dir, results, version_id)
+        StrategyIndexStore.update(Path(strategy_results_dir), run_id, run_dir, results, version_id)
 
         _log.info("Run saved → %s", run_dir)
         return run_dir
@@ -134,10 +135,11 @@ class RunStore:
 # Private writers
 # ─────────────────────────────────────────────
 
-def _write_meta(run_dir: Path, run_id: str, results: BacktestResults) -> None:
+def _write_meta(run_dir: Path, run_id: str, results: BacktestResults, version_id: Optional[str] = None) -> None:
     s = results.summary
     meta = {
         "run_id":           run_id,
+        "version_id":       version_id,
         "strategy":         s.strategy,
         "timeframe":        s.timeframe,
         "pairs":            s.pairlist,

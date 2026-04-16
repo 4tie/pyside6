@@ -7,7 +7,7 @@ StrategyIndexStore : manages backtest_results/{strategy}/index.json (per strateg
 import json
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from app.core.backtests.results_models import BacktestResults
 from app.core.utils.app_logger import get_logger
@@ -35,10 +35,11 @@ def _save_json(path: Path, data: dict) -> None:
 
 
 def _entry_from_results(run_id: str, run_dir: Path, results: BacktestResults,
-                        relative_to: Path) -> Dict:
+                        relative_to: Path, version_id: Optional[str] = None) -> Dict:
     s = results.summary
     return {
         "run_id":           run_id,
+        "version_id":       version_id,
         "run_dir":          str(run_dir.relative_to(relative_to)),
         "strategy":         s.strategy,
         "timeframe":        s.timeframe,
@@ -82,13 +83,14 @@ class IndexStore:
 
     @staticmethod
     def update(backtest_results_dir: str, run_id: str,
-               run_dir: Path, results: BacktestResults) -> None:
+               run_dir: Path, results: BacktestResults,
+               version_id: Optional[str] = None) -> None:
         """Add or update a run entry in the global index."""
         root = Path(backtest_results_dir)
         index_path = root / _INDEX_FILE
         index = _load_json(index_path, {"updated_at": "", "strategies": {}})
 
-        entry = _entry_from_results(run_id, run_dir, results, root)
+        entry = _entry_from_results(run_id, run_dir, results, root, version_id)
         strategy = results.summary.strategy
         strat_block = index.setdefault("strategies", {}).setdefault(strategy, {"runs": []})
         _upsert_run(strat_block["runs"], run_id, entry)
@@ -153,12 +155,13 @@ class StrategyIndexStore:
 
     @staticmethod
     def update(strategy_dir: Path, run_id: str,
-               run_dir: Path, results: BacktestResults) -> None:
+               run_dir: Path, results: BacktestResults,
+               version_id: Optional[str] = None) -> None:
         """Add or update a run entry in the strategy-level index."""
         index_path = strategy_dir / _INDEX_FILE
         index = _load_json(index_path, {"strategy": results.summary.strategy,
                                         "updated_at": "", "runs": []})
-        entry = _entry_from_results(run_id, run_dir, results, strategy_dir)
+        entry = _entry_from_results(run_id, run_dir, results, strategy_dir, version_id)
         entry["run_dir"] = run_dir.name   # relative to strategy dir
         _upsert_run(index["runs"], run_id, entry)
         index["runs"].sort(key=lambda r: r.get("saved_at", ""), reverse=True)

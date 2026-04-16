@@ -53,22 +53,58 @@ flowchart TD
 
 ## Components and Interfaces
 
+### `VersionStatus` / `VersionSource` enums — `app/core/versioning/version_models.py`
+
+```python
+class VersionStatus(str, Enum):
+    ACTIVE    = "active"
+    CANDIDATE = "candidate"
+    ACCEPTED  = "accepted"
+    REJECTED  = "rejected"
+
+class VersionSource(str, Enum):
+    MANUAL_EDIT        = "manual_edit"
+    OPTIMIZE           = "optimize"
+    AI_CANDIDATE       = "ai_candidate_future"
+    RULE_BASED         = "rule_based_future"
+```
+
+`str` mixin يجعل القيم قابلة للتسلسل مباشرة في JSON بدون تحويل إضافي.
+
+---
+
 ### `StrategyVersion` (dataclass — `app/core/versioning/version_models.py`)
 
-الـ DTO الأساسي. يُستخدم داخلياً في كل طبقات النظام.
+الـ DTO الأساسي. يُستخدم داخلياً في كل طبقات النظام. مصمم ليحمل كل ما يُحتاج لاحقاً بدون ترقيع.
 
 ```python
 @dataclass
 class StrategyVersion:
-    version_id: str                  # UUID string
+    # --- Identity ---
+    version_id: str                   # UUID string
     strategy_name: str
-    base_version_id: Optional[str]   # None للنسخة الأولى
-    status: str                      # "active" | "candidate" | "accepted" | "rejected"
-    strategy_snapshot_path: str      # مسار مطلق لـ strategy.py داخل version_dir
-    config_snapshot_path: str        # مسار مطلق لـ config.json داخل version_dir
-    source_type: str                 # "manual_edit" | "optimize" | "ai_candidate_future" | "rule_based_future"
-    created_at: str                  # ISO-8601
+    base_version_id: Optional[str]    # None للنسخة الأولى
+
+    # --- State ---
+    status: VersionStatus             # active | candidate | accepted | rejected
+    source_type: VersionSource        # manual_edit | optimize | ...
+
+    # --- Live file paths (الملفات الفعلية في user_data/strategies/) ---
+    strategy_file_path: str           # المسار الفعلي لـ strategy.py
+    live_params_path: str             # المسار الفعلي لـ MyStrategy.json داخل user_data/strategies/
+
+    # --- Snapshot paths (داخل version_dir) ---
+    snapshot_strategy_path: str       # {version_dir}/strategy.py
+    snapshot_params_path: str         # {version_dir}/strategy_params.json
+
+    # --- Timestamps ---
+    created_at: str                   # ISO-8601
+    updated_at: str                   # ISO-8601 — يُحدَّث عند كل تغيير status
+
+    # --- Optional / future ---
     notes: Optional[str] = None
+    last_run_id: Optional[str] = None      # آخر run_id شغّل هذه النسخة
+    diff_summary: Optional[str] = None    # ملخص نصي للفرق عن base_version (للعرض لاحقاً)
 ```
 
 **Serialization helpers** (module-level functions):
@@ -83,7 +119,7 @@ class VersionStore:
     def save_version(
         version: StrategyVersion,
         strategy_py_path: Path,
-        config_json_path: Path,
+        strategy_params_path: Path,    # MyStrategy.json داخل user_data/strategies/
         versions_root: Path,
     ) -> Path:
         """Copy snapshots + write version.json atomically. Returns version_dir."""
@@ -124,12 +160,23 @@ class VersioningService:
         self,
         strategy_name: str,
         strategy_py_path: Path,
-        config_json_path: Path,
+        strategy_params_path: Path,    # MyStrategy.json — ليس config.json العام
         source_type: str = "manual_edit",
         notes: Optional[str] = None,
     ) -> StrategyVersion: ...
 
-    def accept_version(self, version_id: str) -> StrategyVersion: ...
+    def accept_version(self, version_id: str) -> StrategyVersion:
+        """
+        الخطوات — كلها تتم بترتيب آمن ذري:
+        1. نسخ snapshot_strategy_path → strategy_file_path عبر temp file + replace
+        2. نسخ snapshot_params_path → live_params_path عبر temp file + replace
+        3. بعد نجاح النسخ فقط: نقل الـ active السابق → accepted + تحديث updated_at
+        4. تحويل الـ candidate → active + ضبط base_version_id + تحديث updated_at
+        5. تحديث الفهرس لكلا النسختين
+
+        الترتيب مقصود: الملفات الحية تُكتب أولاً قبل تغيير الحالة في الفهرس،
+        حتى لا ينتهي الحال بـ active في الفهرس بينما الملف الحي انقطع نصف كتابة.
+        """
 
     def reject_version(self, version_id: str) -> StrategyVersion: ...
 
@@ -139,7 +186,22 @@ class VersioningService:
 
     def get_version(self, version_id: str) -> Optional[StrategyVersion]: ...
 
-    def get_version_for_run(self, run_meta: dict) -> Optional[StrategyVersion]: ...
+    def get_version_for_run(self, run_meta: dict) -> Optional[StrategyVersion]:
+        """
+        Source of truth: run_meta["version_id"] من meta.json.
+        الفهرس cache فقط — القراءة الفعلية من version.json على القرص.
+        يُرجع None إذا لم يوجد version_id أو لم تُوجد النسخة.
+        """
+
+    def build_diff_preview(
+        self,
+        candidate_version_id: str,
+    ) -> dict:
+        """
+        يقارن الملفات الفعلية الحالية في user_data/strategies/ مع snapshots الـ candidate.
+        Returns: {"strategy_diff": str, "params_diff": str}
+        الـ diff نصي unified format — للاستخدام لاحقاً في UI.
+        """
 
     def _versions_root(self) -> Path: ...
     def _strategy_versions_dir(self, strategy_name: str) -> Path: ...
@@ -174,8 +236,8 @@ def save(
     └── {strategy_name}/
         ├── index.json
         └── {version_id}/
-            ├── strategy.py
-            ├── config.json
+            ├── strategy.py           ← snapshot of .py
+            ├── strategy_params.json  ← snapshot of MyStrategy.json
             └── version.json
 ```
 
@@ -187,11 +249,16 @@ def save(
   "strategy_name": "MyStrategy",
   "base_version_id": null,
   "status": "active",
-  "strategy_snapshot_path": "/home/user/.../strategy_versions/MyStrategy/a1b2c3d4-.../strategy.py",
-  "config_snapshot_path": "/home/user/.../strategy_versions/MyStrategy/a1b2c3d4-.../config.json",
   "source_type": "manual_edit",
+  "strategy_file_path": "/home/user/.../user_data/strategies/MyStrategy.py",
+  "live_params_path": "/home/user/.../user_data/strategies/MyStrategy.json",
+  "snapshot_strategy_path": "/home/user/.../strategy_versions/MyStrategy/a1b2c3d4-.../strategy.py",
+  "snapshot_params_path": "/home/user/.../strategy_versions/MyStrategy/a1b2c3d4-.../strategy_params.json",
   "created_at": "2024-01-15T10:30:00.123456",
-  "notes": null
+  "updated_at": "2024-01-15T10:32:00.000000",
+  "notes": null,
+  "last_run_id": null,
+  "diff_summary": null
 }
 ```
 
@@ -278,7 +345,7 @@ def save(
 | Situation | Behaviour |
 |-----------|-----------|
 | `strategy.py` not found at given path | `FileNotFoundError` with descriptive message |
-| `config.json` not found at given path | `FileNotFoundError` with descriptive message |
+| `MyStrategy.json` (params) not found at given path | `FileNotFoundError` with descriptive message |
 | `accept_version` called on non-candidate | `ValueError("Version {id} has status '{status}', expected 'candidate'")` |
 | `reject_version` called on non-candidate | `ValueError("Version {id} has status '{status}', expected 'candidate'")` |
 | Duplicate `version_id` directory exists | `ValueError("Version directory already exists: {path}")` |
@@ -286,7 +353,9 @@ def save(
 | `version_id` in `meta.json` not found | Return `None` (no exception) |
 | `index.json` missing | Return `[]` (no exception) |
 
-الكتابة الذرية: كل `version.json` يُكتب أولاً في `{path}.tmp` ثم يُعاد تسميته إلى المسار النهائي عبر `Path.rename()`.
+الكتابة الذرية لـ `version.json`: يُكتب أولاً في `{path}.tmp` ثم يُعاد تسميته إلى المسار النهائي عبر `Path.rename()`.
+
+الكتابة الذرية للملفات الحية في `accept_version`: كل ملف يُنسخ إلى `{target}.tmp` أولاً، ثم `Path.replace(target)` — وهذا يحدث **قبل** أي تغيير في الحالة أو الفهرس. إذا فشل النسخ، تبقى الحالة `candidate` ولا يتغير شيء.
 
 ---
 
@@ -302,7 +371,7 @@ def save(
 
 ### Property-Based Tests (`tests/core/versioning/test_properties.py`)
 
-المكتبة المستخدمة: **Hypothesis** (متوفرة في بيئة Python، لا تحتاج تثبيتاً إضافياً في معظم الحالات).
+المكتبة المستخدمة: **Hypothesis** — مضافة صراحةً في `requirements.txt` (انظر task 6.0). لا يُفترض وجودها مسبقاً.
 
 كل property test يعمل بحد أدنى **100 iteration**.
 
