@@ -1,4 +1,5 @@
 from pathlib import Path
+import time
 from typing import Optional, List
 
 from PySide6.QtCore import Qt, QTimer
@@ -494,37 +495,30 @@ class BacktestPage(QWidget):
             self.last_export_path = cmd.export_zip
             self._last_export_dir = cmd.export_dir
             command_string = f"{cmd.program} {' '.join(cmd.args)}"
-            _log.info("Command built | strategy=%s | export=%s",
-                      strategy, cmd.export_zip)
+            _log.info("Command built | strategy=%s", strategy)
 
         except (ValueError, FileNotFoundError) as e:
             QMessageBox.critical(self, "Backtest Setup Failed", str(e))
             return
 
-        # Parse command string into list for execution
-        command_list = command_string.split() if command_string else []
-
         # Clear terminal and show command
         self.terminal.clear_output()
         self.terminal.append_output(f"$ {command_string}\n")
         self.terminal.append_output(
-            f"Strategy: {cmd.strategy_file}\n"
-            f"Export: {cmd.export_zip}\n\n"
+            f"Strategy: {cmd.strategy_file}\n\n"
         )
 
-        # Update export label
-        self.export_label.setText(f"Export: {cmd.export_zip}")
+        self.export_label.setText(f"Export dir: {cmd.export_dir}")
 
-        # Mark as running before executing
         self.run_button.setEnabled(False)
         self.stop_button.setEnabled(True)
         self._preview_timer.stop()
         self.terminal.append_output("[Process started]\n\n")
+        self._run_started_at = time.time()
 
-        # Execute command with callbacks (use user's edited command if any)
         try:
             self.process_service.execute_command(
-                command=command_list,
+                command=[cmd.program] + cmd.args,
                 on_output=self.terminal.append_output,
                 on_error=self.terminal.append_error,
                 on_finished=self._on_process_finished_internal,
@@ -552,7 +546,7 @@ class BacktestPage(QWidget):
             _log.warning("Backtest exited with non-zero code: %d", exit_code)
 
     def _try_load_results(self):
-        """Find the most recently written zip in backtest_results/ and load it."""
+        """Find the zip freqtrade wrote during this run and load it."""
         settings = self.settings_state.current_settings
         if not settings or not settings.user_data_path:
             self.terminal.append_error("\nWarning: user_data_path not configured.\n")
@@ -562,14 +556,18 @@ class BacktestPage(QWidget):
             Path(settings.user_data_path).expanduser().resolve() / "backtest_results"
         )
 
-        # Find the newest zip Freqtrade wrote (it ignores --export-filename location)
+        # Only consider zips written after this run started
+        run_started = getattr(self, "_run_started_at", 0.0)
         zips = sorted(
-            backtest_results_dir.glob("*.zip"),
+            [
+                p for p in backtest_results_dir.glob("*.zip")
+                if p.stat().st_mtime >= run_started
+            ],
             key=lambda p: p.stat().st_mtime,
             reverse=True,
         )
         if not zips:
-            self.terminal.append_error("\nWarning: No zip files found in backtest_results/.\n")
+            self.terminal.append_error("\nWarning: No new zip found in backtest_results/.\n")
             return
 
         zip_path = zips[0]

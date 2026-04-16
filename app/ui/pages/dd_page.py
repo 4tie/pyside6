@@ -222,8 +222,7 @@ class DDPage(QWidget):
             QMessageBox.critical(self, "Download Setup Failed", str(e))
             return
 
-        command_string = self.terminal.get_command()
-        command_list = command_string.split() if command_string else []
+        command_string = f"{cmd.program} {' '.join(cmd.args)}"
 
         self.terminal.clear_output()
         self.terminal.append_output(f"$ {command_string}\n")
@@ -239,7 +238,7 @@ class DDPage(QWidget):
 
         try:
             self.process_service.execute_command(
-                command=command_list,
+                command=[cmd.program] + cmd.args,
                 on_output=self.terminal.append_output,
                 on_error=self.terminal.append_error,
                 on_finished=self._on_process_finished,

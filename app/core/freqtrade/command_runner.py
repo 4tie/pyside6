@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from datetime import datetime
 from pathlib import Path
 from typing import List, Optional
 
@@ -148,11 +147,11 @@ class CommandRunner:
                 f"Strategy file not found: {strategy_file}"
             )
 
-        export_dir = user_data / "backtest_results" / strategy_name
+        # Freqtrade ignores --export-filename directory and always writes
+        # the zip to backtest_results/*.zip in the root. We accept this
+        # and let _try_load_results pick up the newest zip after the run.
+        export_dir = user_data / "backtest_results"
         export_dir.mkdir(parents=True, exist_ok=True)
-
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        export_zip = export_dir / f"{strategy_name}_{timestamp}.backtest.zip"
 
         args = [
             "-m", "freqtrade", "backtesting",
@@ -161,7 +160,6 @@ class CommandRunner:
             "--strategy", strategy_name,
             "--timeframe", timeframe,
             "--export", "trades",
-            "--export-filename", str(export_zip),
         ]
 
         if timerange:
@@ -187,6 +185,6 @@ class CommandRunner:
             args=args,
             cwd=cwd,
             export_dir=str(export_dir),
-            export_zip=str(export_zip),
+            export_zip="",  # determined at runtime after freqtrade writes it
             strategy_file=str(strategy_file),
         )
