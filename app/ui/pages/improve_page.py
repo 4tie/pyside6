@@ -278,9 +278,273 @@ def _fade_in_widget(widget: QWidget, duration: int = 350) -> None:
     widget._fade_anim = anim
 
 
+class StepIndicator(QWidget):
+    """Horizontal workflow step indicator showing five named stages."""
+
+    STEPS = [
+        (1, "Select"),
+        (2, "Analyze"),
+        (3, "Apply"),
+        (4, "Backtest"),
+        (5, "Decide"),
+    ]
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self._node_labels: List[QLabel] = []
+        self._connector_lines: List[QFrame] = []
+        self._build_ui()
+        self.set_active_step(1)
+
+    def _build_ui(self) -> None:
+        """Build the horizontal step node layout."""
+        self.setFixedHeight(48)
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        self.setStyleSheet(f"background: transparent;")
+
+        layout = QHBoxLayout(self)
+        layout.setContentsMargins(8, 4, 8, 4)
+        layout.setSpacing(0)
+
+        for i, (num, label) in enumerate(self.STEPS):
+            node_lbl = QLabel(f"{num} · {label}")
+            node_lbl.setAlignment(Qt.AlignCenter)
+            node_lbl.setMinimumWidth(80)
+            self._node_labels.append(node_lbl)
+            layout.addWidget(node_lbl)
+
+            if i < len(self.STEPS) - 1:
+                line = QFrame()
+                line.setFrameShape(QFrame.HLine)
+                line.setFixedHeight(2)
+                line.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+                self._connector_lines.append(line)
+                layout.addWidget(line, 1)
+
+    def set_active_step(self, step: int) -> None:
+        """Set the currently active step (1–5). Steps < active are complete.
+
+        Args:
+            step: The active workflow step number (1–5).
+        """
+        for i, (num, label) in enumerate(self.STEPS):
+            lbl = self._node_labels[i]
+            if num < step:
+                # Complete
+                lbl.setText(f"✓ {num} · {label}")
+                lbl.setStyleSheet(
+                    f"color: {_C_TEXT_DIM}; font-size: 11px; font-weight: normal;"
+                )
+            elif num == step:
+                # Active
+                lbl.setText(f"{num} · {label}")
+                lbl.setStyleSheet(
+                    f"color: {_C_GREEN}; font-size: 11px; font-weight: bold;"
+                )
+            else:
+                # Pending
+                lbl.setText(f"{num} · {label}")
+                lbl.setStyleSheet(
+                    f"color: {_C_TEXT_DIM}; font-size: 11px; font-weight: normal;"
+                )
+
+        # Update connector line colors
+        for i, line in enumerate(self._connector_lines):
+            # Connector i connects step (i+1) to step (i+2)
+            if i + 2 <= step:
+                # Completed segment
+                line.setStyleSheet(f"background: {_C_GREEN}; border: none;")
+            else:
+                # Pending segment
+                line.setStyleSheet(f"background: {_C_BORDER}; border: none;")
+
+
+class ContextBanner(QWidget):
+    """Dismissible instruction banner showing per-step guidance text."""
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self._dismissed = False
+        self._build_ui()
+
+    def _build_ui(self) -> None:
+        """Build the banner layout."""
+        self.setStyleSheet(f"""
+            ContextBanner {{
+                background: {_C_ELEVATED};
+                border-left: 3px solid {_C_GREEN};
+                border-radius: 4px;
+            }}
+        """)
+
+        layout = QHBoxLayout(self)
+        layout.setContentsMargins(12, 6, 8, 6)
+        layout.setSpacing(8)
+
+        self._msg_lbl = QLabel("")
+        self._msg_lbl.setTextFormat(Qt.RichText)
+        self._msg_lbl.setWordWrap(True)
+        self._msg_lbl.setStyleSheet(
+            f"color: {_C_TEXT}; font-size: 12px; background: transparent; border: none;"
+        )
+        layout.addWidget(self._msg_lbl, 1)
+
+        self._dismiss_btn = QPushButton("✕")
+        self._dismiss_btn.setFixedSize(20, 20)
+        self._dismiss_btn.setStyleSheet(f"""
+            QPushButton {{
+                background: transparent;
+                color: {_C_TEXT_DIM};
+                border: none;
+                font-size: 11px;
+                font-weight: bold;
+            }}
+            QPushButton:hover {{
+                color: {_C_TEXT};
+            }}
+        """)
+        self._dismiss_btn.clicked.connect(self._on_dismiss)
+        layout.addWidget(self._dismiss_btn)
+
+    def _on_dismiss(self) -> None:
+        """Handle dismiss button click."""
+        self._dismissed = True
+        self.hide()
+
+    def set_step(self, step: int) -> None:
+        """Update the displayed message for the given step. No-op if dismissed.
+
+        Args:
+            step: Workflow step number (1–5).
+        """
+        if self._dismissed:
+            return
+        self._msg_lbl.setText(_build_banner_message(step))
+        self.setVisible(True)
+
+    def is_dismissed(self) -> bool:
+        """Return True if the user has dismissed the banner this session."""
+        return self._dismissed
+
+
+class EmptyStatePanel(QWidget):
+    """Placeholder shown inside a group box when it has no data yet."""
+
+    def __init__(self, icon: str, text: str, hint: str, parent=None):
+        super().__init__(parent)
+        self._build_ui(icon, text, hint)
+
+    def _build_ui(self, icon: str, text: str, hint: str) -> None:
+        """Build the vertically centered placeholder layout."""
+        self.setMinimumHeight(80)
+        self.setStyleSheet("background: transparent;")
+
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(8, 12, 8, 12)
+        layout.setSpacing(4)
+        layout.setAlignment(Qt.AlignCenter)
+
+        self._icon_lbl = QLabel(icon)
+        self._icon_lbl.setAlignment(Qt.AlignCenter)
+        self._icon_lbl.setStyleSheet(
+            f"color: {_C_TEXT_DIM}; font-size: 28px; background: transparent; border: none;"
+        )
+        layout.addWidget(self._icon_lbl)
+
+        self._text_lbl = QLabel(text)
+        self._text_lbl.setAlignment(Qt.AlignCenter)
+        self._text_lbl.setStyleSheet(
+            f"color: {_C_TEXT_DIM}; font-size: 13px; background: transparent; border: none;"
+        )
+        layout.addWidget(self._text_lbl)
+
+        self._hint_lbl = QLabel(hint)
+        self._hint_lbl.setAlignment(Qt.AlignCenter)
+        self._hint_lbl.setStyleSheet(
+            f"color: {_C_TEXT_DIM}; font-size: 11px; font-style: italic; background: transparent; border: none;"
+        )
+        layout.addWidget(self._hint_lbl)
+
+
+# ---------------------------------------------------------------------------
+# Banner messages per workflow step
+# ---------------------------------------------------------------------------
+
+BANNER_MESSAGES: Dict[int, str] = {
+    1: "Choose a strategy and a saved backtest run, then click <b>Analyze Run</b> to detect performance issues.",
+    2: "Review the detected issues and suggested parameter changes below.",
+    3: "Click <b>Apply</b> on one or more suggestions to build your candidate configuration, then click <b>Run Candidate Backtest</b>.",
+    4: "The candidate backtest is running. Wait for it to finish, then review the comparison.",
+    5: "Compare the results. Click <b>Accept &amp; Save</b> to save the improvements, or <b>Reject &amp; Discard</b> to discard them.",
+}
+
 # ---------------------------------------------------------------------------
 # Module-level pure functions (testable without instantiating ImprovePage)
 # ---------------------------------------------------------------------------
+
+
+def _build_banner_message(step: int) -> str:
+    """Return the instruction banner message for the given workflow step (1–5).
+
+    Args:
+        step: Workflow step number, must be in range 1–5.
+
+    Returns:
+        HTML-formatted instruction string for the step.
+    """
+    return BANNER_MESSAGES[step]
+
+
+def _build_status_message(trigger: str, n_issues: int = 0) -> Tuple[str, str]:
+    """Return (message, color) for the given status trigger key.
+
+    Args:
+        trigger: One of the trigger keys defined in the Status Message Mapping.
+        n_issues: Number of detected issues (used for analysis_complete_issues).
+
+    Returns:
+        Tuple of (message_text, color_hex_string).
+    """
+    _STATUS_MAP: Dict[str, Tuple[str, str]] = {
+        "analyze_loading": (
+            "⏳ Loading run — please wait…",
+            _C_GREEN,
+        ),
+        "analysis_complete_issues": (
+            f"✅ Analysis complete — {n_issues} issue(s) found. Review suggestions below and click Apply.",
+            _C_GREEN_LIGHT,
+        ),
+        "analysis_complete_no_issues": (
+            "✅ Analysis complete — no issues detected. Your strategy looks healthy!",
+            _C_GREEN_LIGHT,
+        ),
+        "candidate_backtest_start": (
+            "⏳ Running candidate backtest — see terminal output below…",
+            _C_GREEN,
+        ),
+        "candidate_backtest_success": (
+            "✅ Candidate backtest complete — review the comparison below and click Accept or Reject.",
+            _C_GREEN_LIGHT,
+        ),
+        "candidate_backtest_failed": (
+            "❌ Candidate backtest failed — check the terminal output above for errors.",
+            _C_RED_LIGHT,
+        ),
+        "accept": (
+            "✅ Accepted — strategy parameters saved. You can run another iteration or switch to a different run.",
+            _C_GREEN_LIGHT,
+        ),
+        "reject": (
+            "↩ Rejected — candidate discarded. Apply different suggestions or select a new run.",
+            _C_YELLOW,
+        ),
+        "rollback": (
+            "↩ Rolled back — parameters restored to the previous accepted state.",
+            _C_YELLOW,
+        ),
+    }
+    return _STATUS_MAP[trigger]
+
 
 def _build_run_label(run: dict) -> str:
     """Format a run metadata dict into a combo-box display string."""
@@ -353,6 +617,10 @@ class ImprovePage(QWidget):
         self._diagnosis_service = ResultsDiagnosisService()
         self._suggestion_service = RuleSuggestionService()
 
+        # Workflow step state (1–5)
+        self._workflow_step: int = 1
+        self._banner_dismissed: bool = False
+
         # Internal state
         self._baseline_run: Optional[BacktestResults] = None
         self._baseline_params: Optional[dict] = None
@@ -370,15 +638,16 @@ class ImprovePage(QWidget):
         self._terminal = TerminalWidget()
 
         # Pre-create comparison buttons (added to layout in _update_comparison_view)
-        self.accept_btn = QPushButton("Accept")
+        self.accept_btn = QPushButton("✅ Accept & Save")
         self.accept_btn.clicked.connect(self._on_accept)
-        self.reject_btn = QPushButton("Reject")
+        self.reject_btn = QPushButton("✕ Reject & Discard")
         self.reject_btn.clicked.connect(self._on_reject)
-        self.rollback_btn = QPushButton("Rollback")
+        self.rollback_btn = QPushButton("↩ Rollback to Previous")
         self.rollback_btn.clicked.connect(self._on_rollback)
 
         # Connect settings signal
         settings_state.settings_changed.connect(self._refresh_strategies)
+        settings_state.settings_changed.connect(self._check_config_guard)
 
         self._init_ui()
         self._refresh_strategies()
@@ -464,6 +733,34 @@ class ImprovePage(QWidget):
         main_layout.setContentsMargins(8, 8, 8, 8)
         main_layout.setSpacing(6)
 
+        # ---- No-configuration warning banner ----
+        self._no_config_banner = QLabel(
+            "⚠️ User data path is not configured. "
+            "Go to Settings and set your Freqtrade user_data directory to use this tab."
+        )
+        self._no_config_banner.setWordWrap(True)
+        self._no_config_banner.setStyleSheet(f"""
+            QLabel {{
+                background: {_C_ELEVATED};
+                border-left: 3px solid {_C_ORANGE};
+                border-radius: 4px;
+                color: {_C_TEXT};
+                font-size: 12px;
+                padding: 8px 12px;
+            }}
+        """)
+        self._no_config_banner.setVisible(False)
+        main_layout.addWidget(self._no_config_banner)
+
+        # ---- Step indicator ----
+        self._step_indicator = StepIndicator()
+        main_layout.addWidget(self._step_indicator)
+
+        # ---- Context banner ----
+        self._context_banner = ContextBanner()
+        self._context_banner.set_step(1)
+        main_layout.addWidget(self._context_banner)
+
         # ---- Top controls row ----
         top_controls = QHBoxLayout()
         top_controls.setSpacing(6)
@@ -473,6 +770,9 @@ class ImprovePage(QWidget):
         top_controls.addWidget(strategy_lbl)
         self.strategy_combo = QComboBox()
         self.strategy_combo.setMinimumWidth(180)
+        self.strategy_combo.setToolTip(
+            "Select the strategy whose backtest results you want to improve."
+        )
         top_controls.addWidget(self.strategy_combo)
 
         run_lbl = QLabel("Run:")
@@ -480,15 +780,24 @@ class ImprovePage(QWidget):
         top_controls.addWidget(run_lbl)
         self.run_combo = QComboBox()
         self.run_combo.setMinimumWidth(320)
+        self.run_combo.setToolTip(
+            "Select a saved backtest run to use as the baseline for comparison."
+        )
         top_controls.addWidget(self.run_combo, 1)
 
-        self.load_latest_btn = QPushButton("Load Latest")
+        self.load_latest_btn = QPushButton("↓ Load Latest Run")
         self.load_latest_btn.setStyleSheet(self._btn_style(_C_BORDER, _C_TEXT))
+        self.load_latest_btn.setToolTip(
+            "Automatically select the most recently saved run for this strategy."
+        )
         self.load_latest_btn.clicked.connect(self._on_load_latest)
         top_controls.addWidget(self.load_latest_btn)
 
-        self.analyze_btn = QPushButton("⚡ Analyze")
+        self.analyze_btn = QPushButton("⚡ Analyze Run")
         self.analyze_btn.setStyleSheet(self._btn_style(_C_TEAL, "white"))
+        self.analyze_btn.setToolTip(
+            "Load the selected run, detect performance issues, and generate parameter suggestions."
+        )
         self.analyze_btn.clicked.connect(self._on_analyze)
         top_controls.addWidget(self.analyze_btn)
 
@@ -532,46 +841,125 @@ class ImprovePage(QWidget):
 
         # Baseline Summary group
         self.baseline_group = QGroupBox("Baseline Summary")
-        self.baseline_group.setVisible(False)
         self._baseline_form = QFormLayout()
         self._baseline_form.setSpacing(6)
         self._baseline_form.setContentsMargins(10, 8, 10, 8)
-        self.baseline_group.setLayout(self._baseline_form)
+        baseline_container = QVBoxLayout()
+        baseline_container.setContentsMargins(0, 0, 0, 0)
+        baseline_container.setSpacing(0)
+        self._empty_baseline = EmptyStatePanel(
+            "📊",
+            "No run loaded yet",
+            "Select a strategy and run above, then click Analyze.",
+        )
+        baseline_container.addWidget(self._empty_baseline)
+        baseline_container.addLayout(self._baseline_form)
+        self.baseline_group.setLayout(baseline_container)
         scroll_layout.addWidget(self.baseline_group)
 
         # Detected Issues group
         self.issues_group = QGroupBox("Detected Issues")
-        self.issues_group.setVisible(False)
         self._issues_layout = QVBoxLayout()
         self._issues_layout.setSpacing(6)
         self._issues_layout.setContentsMargins(10, 8, 10, 8)
+        # Subtitle label
+        _issues_subtitle = QLabel(
+            "Issues found in the baseline run that may be limiting strategy performance."
+        )
+        _issues_subtitle.setStyleSheet(
+            f"color: {_C_TEXT_DIM}; font-size: 11px; padding-left: 10px;"
+        )
+        _issues_subtitle.setWordWrap(False)
+        self._issues_layout.addWidget(_issues_subtitle)
+        self._empty_issues = EmptyStatePanel(
+            "🔍",
+            "Issues will appear here after analysis",
+            "Click Analyze to scan your backtest results.",
+        )
+        self._issues_layout.addWidget(self._empty_issues)
         self.issues_group.setLayout(self._issues_layout)
         scroll_layout.addWidget(self.issues_group)
 
         # Suggested Actions group
         self.suggestions_group = QGroupBox("Suggested Actions")
-        self.suggestions_group.setVisible(False)
         self._suggestions_layout = QVBoxLayout()
         self._suggestions_layout.setSpacing(6)
         self._suggestions_layout.setContentsMargins(10, 8, 10, 8)
+        # Subtitle label
+        _suggestions_subtitle = QLabel(
+            "Rule-based parameter changes that address the detected issues. "
+            "Apply one or more, then run the candidate backtest."
+        )
+        _suggestions_subtitle.setStyleSheet(
+            f"color: {_C_TEXT_DIM}; font-size: 11px; padding-left: 10px;"
+        )
+        _suggestions_subtitle.setWordWrap(False)
+        self._suggestions_layout.addWidget(_suggestions_subtitle)
+        self._empty_suggestions = EmptyStatePanel(
+            "💡",
+            "Suggestions will appear here after analysis",
+            "Each suggestion targets a specific performance issue.",
+        )
+        self._suggestions_layout.addWidget(self._empty_suggestions)
         self.suggestions_group.setLayout(self._suggestions_layout)
         scroll_layout.addWidget(self.suggestions_group)
 
-        # Candidate Preview group
-        self.candidate_group = QGroupBox("Candidate Preview")
-        self.candidate_group.setVisible(False)
+        # Candidate Changes group (was "Candidate Preview")
+        self.candidate_group = QGroupBox("Candidate Changes")
         self._candidate_layout = QVBoxLayout()
         self._candidate_layout.setContentsMargins(10, 8, 10, 8)
+        # Subtitle label
+        _candidate_subtitle = QLabel(
+            "Parameters that will be changed from the baseline when the candidate backtest runs."
+        )
+        _candidate_subtitle.setStyleSheet(
+            f"color: {_C_TEXT_DIM}; font-size: 11px; padding-left: 10px;"
+        )
+        _candidate_subtitle.setWordWrap(False)
+        self._candidate_layout.addWidget(_candidate_subtitle)
+        self._empty_candidate = EmptyStatePanel(
+            "⚙️",
+            "No changes applied yet",
+            "Click Apply on a suggestion above to start building your candidate.",
+        )
+        self._candidate_layout.addWidget(self._empty_candidate)
         self.candidate_group.setLayout(self._candidate_layout)
         scroll_layout.addWidget(self.candidate_group)
 
-        # Comparison group
-        self.comparison_group = QGroupBox("Comparison")
-        self.comparison_group.setVisible(False)
+        # Results Comparison group (was "Comparison")
+        self.comparison_group = QGroupBox("Results Comparison")
         self._comparison_layout = QVBoxLayout()
         self._comparison_layout.setContentsMargins(10, 8, 10, 8)
+        # Subtitle label
+        _comparison_subtitle = QLabel(
+            "Side-by-side metrics for the baseline and candidate runs. "
+            "Green = improvement, red = regression."
+        )
+        _comparison_subtitle.setStyleSheet(
+            f"color: {_C_TEXT_DIM}; font-size: 11px; padding-left: 10px;"
+        )
+        _comparison_subtitle.setWordWrap(False)
+        self._comparison_layout.addWidget(_comparison_subtitle)
+        self._empty_comparison = EmptyStatePanel(
+            "⚖️",
+            "Comparison will appear after the candidate backtest",
+            "Apply suggestions and run the candidate backtest to see results here.",
+        )
+        self._comparison_layout.addWidget(self._empty_comparison)
         self.comparison_group.setLayout(self._comparison_layout)
         scroll_layout.addWidget(self.comparison_group)
+
+        # Set tooltips on accept/reject/rollback buttons
+        self.accept_btn.setToolTip(
+            "Write the candidate parameters to the strategy file. "
+            "This replaces the current parameters permanently."
+        )
+        self.reject_btn.setToolTip(
+            "Discard the candidate parameters. The strategy file is not modified."
+        )
+        self.rollback_btn.setToolTip(
+            "Restore the strategy parameters to the state before the last Accept."
+        )
 
         scroll_layout.addStretch()
         scroll_area.setWidget(scroll_content)
@@ -607,6 +995,36 @@ class ImprovePage(QWidget):
         """
 
     # ------------------------------------------------------------------
+    # Workflow step management
+    # ------------------------------------------------------------------
+
+    def _set_workflow_step(self, step: int) -> None:
+        """Advance the workflow to the given step and sync all guidance widgets.
+
+        Args:
+            step: The new active workflow step (1–5).
+        """
+        self._workflow_step = step
+        self._step_indicator.set_active_step(step)
+        self._context_banner.set_step(step)
+
+    # ------------------------------------------------------------------
+    # No-configuration guard
+    # ------------------------------------------------------------------
+
+    def _check_config_guard(self) -> None:
+        """Show/hide the no-config banner and enable/disable controls based on user_data_path."""
+        settings = self._settings_state.settings_service.load_settings()
+        user_data_path = getattr(settings, "user_data_path", "") or ""
+        unconfigured = not str(user_data_path).strip()
+
+        self._no_config_banner.setVisible(unconfigured)
+        self.strategy_combo.setEnabled(not unconfigured)
+        self.run_combo.setEnabled(not unconfigured)
+        self.load_latest_btn.setEnabled(not unconfigured)
+        self.analyze_btn.setEnabled(not unconfigured)
+
+    # ------------------------------------------------------------------
     # Strategy / run selector helpers
     # ------------------------------------------------------------------
 
@@ -628,6 +1046,7 @@ class ImprovePage(QWidget):
 
         # Trigger run refresh for the (possibly new) current strategy
         self._refresh_runs()
+        self._check_config_guard()
 
     def _refresh_runs(self) -> None:
         """Populate run_combo for the currently selected strategy."""
@@ -675,8 +1094,9 @@ class ImprovePage(QWidget):
         run_dir = backtest_results_dir / run.get("run_dir", "")
 
         self.analyze_btn.setEnabled(False)
-        self.status_label.setText("⏳  Loading...")
-        self.status_label.setStyleSheet(f"color: {_C_TEAL}; font-size: 11px; padding: 2px 4px;")
+        msg, color = _build_status_message("analyze_loading")
+        self.status_label.setText(msg)
+        self.status_label.setStyleSheet(f"color: {color}; font-size: 11px; padding: 2px 4px;")
 
         try:
             baseline = self._improve_service.load_baseline(run_dir)
@@ -685,8 +1105,15 @@ class ImprovePage(QWidget):
             self._baseline_params = params
             self._candidate_config = copy.deepcopy(params)
             self._display_baseline_summary(baseline.summary)
-            self._display_issues_and_suggestions(baseline.summary, params)
-            self.status_label.setText("")
+            issues = self._display_issues_and_suggestions(baseline.summary, params)
+            n_issues = len(issues)
+            if n_issues > 0:
+                msg, color = _build_status_message("analysis_complete_issues", n_issues)
+            else:
+                msg, color = _build_status_message("analysis_complete_no_issues")
+            self.status_label.setText(msg)
+            self.status_label.setStyleSheet(f"color: {color}; font-size: 11px; padding: 2px 4px;")
+            self._set_workflow_step(3)
         except (FileNotFoundError, ValueError) as e:
             self.status_label.setText(f"❌  Error: {e}")
             self.status_label.setStyleSheet(f"color: {_C_RED_LIGHT}; font-size: 11px; padding: 2px 4px;")
@@ -695,6 +1122,11 @@ class ImprovePage(QWidget):
 
     def _display_baseline_summary(self, summary: BacktestSummary) -> None:
         """Clear and repopulate the baseline summary form and metric cards."""
+        # Remove empty state panel if present
+        if self._empty_baseline is not None:
+            self._empty_baseline.deleteLater()
+            self._empty_baseline = None
+
         while self._baseline_form.rowCount() > 0:
             self._baseline_form.removeRow(0)
 
@@ -727,8 +1159,6 @@ class ImprovePage(QWidget):
 
         self.baseline_group.setVisible(True)
         _fade_in_widget(self.baseline_group)
-
-        # Update animated metric cards
         self._cards_widget.setVisible(True)
         _fade_in_widget(self._cards_widget, duration=500)
 
