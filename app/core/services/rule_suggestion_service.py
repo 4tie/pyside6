@@ -54,6 +54,8 @@ class RuleSuggestionService:
             "drawdown_high": RuleSuggestionService._suggest_drawdown_high,
             "poor_pair_concentration": RuleSuggestionService._suggest_poor_pair_concentration,
             "negative_profit": RuleSuggestionService._suggest_negative_profit,
+            "profit_factor_low": RuleSuggestionService._suggest_profit_factor_low,
+            "expectancy_negative": RuleSuggestionService._suggest_expectancy_negative,
         }
         handler = handlers.get(issue.issue_id)
         if handler is None:
@@ -142,4 +144,28 @@ class RuleSuggestionService:
             proposed_value=proposed,
             reason="Negative total profit — cutting losses earlier may recover profitability",
             expected_effect="Reduced losses per trade",
+        )
+
+    @staticmethod
+    def _suggest_profit_factor_low(_params: dict) -> ParameterSuggestion:
+        """Advisory-only suggestion for profit factor below 1.0."""
+        _log.debug("profit_factor_low: advisory suggestion")
+        return ParameterSuggestion(
+            parameter="entry_conditions",
+            proposed_value=None,
+            reason="Profit factor below 1.0 — losses exceed gains",
+            expected_effect="Review entry/exit conditions to improve trade quality",
+            is_advisory=True,
+        )
+
+    @staticmethod
+    def _suggest_expectancy_negative(_params: dict) -> ParameterSuggestion:
+        """Advisory-only suggestion for negative expectancy."""
+        _log.debug("expectancy_negative: advisory suggestion")
+        return ParameterSuggestion(
+            parameter="entry_filters",
+            proposed_value=None,
+            reason="Negative expectancy — average trade loses money",
+            expected_effect="Consider tightening entry filters to improve trade selectivity",
+            is_advisory=True,
         )

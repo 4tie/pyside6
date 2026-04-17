@@ -154,6 +154,8 @@ class IssueBadge(QFrame):
         "weak_win_rate": (_C_ORANGE, "🟠"),
         "trades_too_low": (_C_YELLOW, "🟡"),
         "poor_pair_concentration": (_C_TEAL, "🔵"),
+        "profit_factor_low": (_C_ORANGE, "🟠"),
+        "expectancy_negative": (_C_ORANGE, "🟠"),
     }
 
     def __init__(self, issue: DiagnosedIssue, parent=None):
@@ -1100,7 +1102,8 @@ class ImprovePage(QWidget):
 
         try:
             baseline = self._improve_service.load_baseline(run_dir)
-            params = self._improve_service.load_baseline_params(run_dir)
+            strategy_name = self.strategy_combo.currentText().strip()
+            params = self._improve_service.load_baseline_params(run_dir, strategy_name)
             self._baseline_run = baseline
             self._baseline_params = params
             self._candidate_config = copy.deepcopy(params)
@@ -1492,7 +1495,25 @@ class ImprovePage(QWidget):
                 self.status_label.setText(f"❌  Error loading candidate results: {e}")
                 self.status_label.setStyleSheet(f"color: {_C_RED_LIGHT}; font-size: 11px; padding: 2px 4px;")
         else:
-            msg, color = _build_status_message("candidate_backtest_failed")
+            terminal_text = self._terminal.get_output()
+            known_phrases = [
+                "Invalid parameter file",
+                "Strategy not found",
+                "No data found",
+                "Configuration error",
+                "No pairs defined",
+            ]
+            matched_phrase = next(
+                (phrase for phrase in known_phrases if phrase in terminal_text), None
+            )
+            if matched_phrase:
+                base_msg, color = _build_status_message("candidate_backtest_failed")
+                msg = base_msg.replace(
+                    "check the terminal output above for errors",
+                    f"check the terminal output above for errors ({matched_phrase})",
+                )
+            else:
+                msg, color = _build_status_message("candidate_backtest_failed")
             self.status_label.setText(msg)
             self.status_label.setStyleSheet(f"color: {color}; font-size: 11px; padding: 2px 4px;")
 
@@ -1688,6 +1709,11 @@ class ImprovePage(QWidget):
         except OSError as e:
             QMessageBox.critical(self, "Accept Failed", str(e))
             return
+
+        # Clean up sandbox directory after successful accept
+        if self._sandbox_dir is not None:
+            self._improve_service.reject_candidate(self._sandbox_dir)
+            self._sandbox_dir = None
 
         # Update all state atomically before any UI refresh
         self._baseline_history.append(copy.deepcopy(self._baseline_params))

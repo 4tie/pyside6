@@ -7,7 +7,7 @@ listing strategies, fetching run history, and loading baseline results.
 import json
 import os
 import shutil
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
@@ -111,7 +111,7 @@ class ImproveService:
         shutil.copy2(strategy_py, sandbox_dir / f"{strategy_name}.py")
 
         config_file = sandbox_dir / f"{strategy_name}.json"
-        config_file.write_text(json.dumps(candidate_config, indent=2), encoding="utf-8")
+        config_file.write_text(json.dumps(self._build_freqtrade_params_file(strategy_name, candidate_config), indent=2), encoding="utf-8")
 
         _log.info("Sandbox prepared at %s", sandbox_dir)
         return sandbox_dir
@@ -162,17 +162,22 @@ class ImproveService:
         _log.info("Candidate command built; export_dir=%s", export_dir)
         return (command, export_dir)
 
-    def load_baseline_params(self, run_dir: Path) -> Dict:
+    def load_baseline_params(self, run_dir: Path, strategy_name: str = "") -> Dict:
         """Load strategy parameters from a saved run folder.
 
-        Reads params.json from the run directory. If the file is absent,
-        logs a warning and returns an empty dict rather than raising.
+        Reads params.json from the run directory. If the file is absent and
+        ``strategy_name`` is provided, falls back to reading the live strategy
+        JSON at ``{user_data_path}/strategies/{strategy_name}.json`` and
+        converting it to the flat params format.
 
         Args:
             run_dir: Path to the run folder.
+            strategy_name: Optional strategy class name used for the fallback
+                when params.json is missing.
 
         Returns:
-            Dict of strategy parameters, or {} if params.json is missing.
+            Dict of strategy parameters, or {} if params.json is missing and
+            no fallback is available.
 
         Raises:
             ValueError: If params.json exists but cannot be parsed.
@@ -180,12 +185,121 @@ class ImproveService:
         params_file = run_dir / "params.json"
         if not params_file.exists():
             _log.warning("params.json not found in %s — returning empty params", run_dir)
+            if strategy_name:
+                return self._load_params_from_live_strategy(strategy_name)
             return {}
         try:
             return json.loads(params_file.read_text(encoding="utf-8"))
         except json.JSONDecodeError as e:
             _log.error("Failed to parse params.json in %s: %s", run_dir, e)
             raise ValueError(f"Failed to parse params.json: {e}")
+
+    def _load_params_from_live_strategy(self, strategy_name: str) -> Dict:
+        """Load flat params from the live strategy JSON as a fallback.
+
+        Reads the live strategy JSON at
+        ``{user_data_path}/strategies/{strategy_name}.json`` and converts the
+        nested ``params`` sub-object to the flat params format.
+
+        Args:
+            strategy_name: Strategy class name.
+
+        Returns:
+            Flat params dict, or {} if the live strategy JSON is missing or
+            cannot be parsed.
+        """
+        settings = self.settings_service.load_settings()
+        live_json_path = Path(settings.user_data_path) / "strategies" / f"{strategy_name}.json"
+
+        if not live_json_path.exists():
+            _log.warning(
+                "Live strategy JSON not found at %s — returning empty params", live_json_path
+            )
+            return {}
+
+        try:
+            live_data = json.loads(live_json_path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError as e:
+            _log.error("Failed to parse live strategy JSON at %s: %s", live_json_path, e)
+            return {}
+
+        nested_params = live_data.get("params", {})
+        flat: Dict = {}
+
+        stoploss_block = nested_params.get("stoploss")
+        if isinstance(stoploss_block, dict) and "stoploss" in stoploss_block:
+            flat["stoploss"] = stoploss_block["stoploss"]
+
+        mot_block = nested_params.get("max_open_trades")
+        if isinstance(mot_block, dict) and "max_open_trades" in mot_block:
+            flat["max_open_trades"] = mot_block["max_open_trades"]
+
+        roi_block = nested_params.get("roi")
+        if roi_block is not None:
+            flat["minimal_roi"] = roi_block
+
+        buy_block = nested_params.get("buy")
+        if buy_block is not None:
+            flat["buy_params"] = buy_block
+
+        sell_block = nested_params.get("sell")
+        if sell_block is not None:
+            flat["sell_params"] = sell_block
+
+        _log.info(
+            "Loaded baseline params from live strategy JSON for '%s': %d keys",
+            strategy_name,
+            len(flat),
+        )
+        return flat
+
+    def _build_freqtrade_params_file(self, strategy_name: str, flat_params: dict) -> dict:
+        """Convert a flat params dict to the freqtrade nested strategy JSON format.
+
+        Reads the live strategy JSON as a base (preserving fields like ``trailing``
+        that are not tracked in ``params.json``), merges the flat candidate config
+        into the nested ``params`` sub-object using the defined key mapping, and
+        updates ``export_time``.
+
+        Args:
+            strategy_name: Strategy class name.
+            flat_params: Flat params dict with keys: stoploss, max_open_trades,
+                minimal_roi, buy_params, sell_params.
+
+        Returns:
+            Dict in freqtrade nested format with strategy_name, params, ft_stratparam_v,
+            export_time.
+        """
+        settings = self.settings_service.load_settings()
+        live_json_path = Path(settings.user_data_path) / "strategies" / f"{strategy_name}.json"
+
+        if live_json_path.exists():
+            try:
+                base = json.loads(live_json_path.read_text(encoding="utf-8"))
+            except json.JSONDecodeError:
+                base = {"strategy_name": strategy_name, "params": {}, "ft_stratparam_v": 1}
+        else:
+            base = {"strategy_name": strategy_name, "params": {}, "ft_stratparam_v": 1}
+
+        ft_params = dict(base.get("params", {}))
+
+        if "stoploss" in flat_params and flat_params["stoploss"] is not None:
+            ft_params["stoploss"] = {"stoploss": flat_params["stoploss"]}
+        if "max_open_trades" in flat_params and flat_params["max_open_trades"] is not None:
+            ft_params["max_open_trades"] = {"max_open_trades": flat_params["max_open_trades"]}
+        if "minimal_roi" in flat_params and flat_params["minimal_roi"]:
+            ft_params["roi"] = flat_params["minimal_roi"]
+        if "buy_params" in flat_params and flat_params["buy_params"]:
+            ft_params["buy"] = flat_params["buy_params"]
+        if "sell_params" in flat_params and flat_params["sell_params"]:
+            ft_params["sell"] = flat_params["sell_params"]
+
+        base["params"] = ft_params
+        base["strategy_name"] = strategy_name
+        base["ft_stratparam_v"] = 1
+        base["export_time"] = datetime.now(timezone.utc).isoformat()
+
+        return base
 
     def resolve_candidate_zip(self, export_dir: Path, started_at: float = 0.0) -> Optional[Path]:
         """Return the single .zip from export_dir, or fall back to mtime scan.
@@ -250,7 +364,7 @@ class ImproveService:
         final_path = strategies_dir / f"{strategy_name}.json"
         tmp_path = strategies_dir / f"{strategy_name}.json.tmp"
 
-        tmp_path.write_text(json.dumps(candidate_config, indent=2), encoding="utf-8")
+        tmp_path.write_text(json.dumps(self._build_freqtrade_params_file(strategy_name, candidate_config), indent=2), encoding="utf-8")
         os.replace(tmp_path, final_path)
         _log.info("Candidate accepted; written to %s", final_path)
 
@@ -275,6 +389,6 @@ class ImproveService:
         final_path = strategies_dir / f"{strategy_name}.json"
         tmp_path = strategies_dir / f"{strategy_name}.json.tmp"
 
-        tmp_path.write_text(json.dumps(baseline_params, indent=2), encoding="utf-8")
+        tmp_path.write_text(json.dumps(self._build_freqtrade_params_file(strategy_name, baseline_params), indent=2), encoding="utf-8")
         os.replace(tmp_path, final_path)
         _log.info("Rollback complete; restored %s", final_path)

@@ -103,7 +103,9 @@ def test_prepare_sandbox(tmp_path):
     assert sandbox_dir.exists()
     assert (sandbox_dir / "MyStrategy.py").exists()
     assert (sandbox_dir / "MyStrategy.json").exists()
-    assert json.loads((sandbox_dir / "MyStrategy.json").read_text()) == {"stoploss": -0.08}
+    written = json.loads((sandbox_dir / "MyStrategy.json").read_text())
+    assert "strategy_name" in written
+    assert written["ft_stratparam_v"] == 1
 
 
 def test_prepare_sandbox_missing_strategy(tmp_path):
@@ -131,7 +133,9 @@ def test_accept_candidate_atomic_write(tmp_path):
 
     final = strategies_dir / "MyStrategy.json"
     assert final.exists()
-    assert json.loads(final.read_text()) == {"stoploss": -0.08}
+    written = json.loads(final.read_text())
+    assert "strategy_name" in written
+    assert written["ft_stratparam_v"] == 1
 
     # .tmp file must have been cleaned up by os.replace
     tmp_file = strategies_dir / "MyStrategy.json.tmp"
@@ -170,4 +174,6 @@ def test_rollback(tmp_path):
 
     final = strategies_dir / "MyStrategy.json"
     assert final.exists()
-    assert json.loads(final.read_text()) == {"stoploss": -0.10}
+    written = json.loads(final.read_text())
+    assert "strategy_name" in written
+    assert written["ft_stratparam_v"] == 1

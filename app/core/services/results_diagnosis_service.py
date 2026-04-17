@@ -15,6 +15,8 @@ TRADES_TOO_LOW: int = 30
 WEAK_WIN_RATE: float = 45.0
 DRAWDOWN_HIGH: float = 30.0
 POOR_PAIR_CONCENTRATION: int = 3
+PROFIT_FACTOR_LOW: float = 1.0
+EXPECTANCY_NEGATIVE: float = 0.0
 
 
 class ResultsDiagnosisService:
@@ -87,6 +89,24 @@ class ResultsDiagnosisService:
                 description=(
                     f"Total profit {summary.total_profit:.4f}% is negative — "
                     "the strategy lost money over the backtest period."
+                ),
+            ))
+
+        if 0.0 < summary.profit_factor < PROFIT_FACTOR_LOW:
+            issues.append(DiagnosedIssue(
+                issue_id="profit_factor_low",
+                description=(
+                    f"Profit factor {summary.profit_factor:.2f} is below 1.0 — "
+                    "losses exceed gains over the backtest period."
+                ),
+            ))
+
+        if summary.expectancy < EXPECTANCY_NEGATIVE:
+            issues.append(DiagnosedIssue(
+                issue_id="expectancy_negative",
+                description=(
+                    f"Expectancy {summary.expectancy:.4f} is negative — "
+                    "the average trade loses money."
                 ),
             ))
 
