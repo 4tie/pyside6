@@ -26,8 +26,11 @@ class ProviderFactory:
                 timeout=ai_settings.timeout_seconds,
             )
         if ai_settings.provider == "openrouter":
+            keys = list(ai_settings.openrouter_api_keys)
+            if not keys and ai_settings.openrouter_api_key:
+                keys = [ai_settings.openrouter_api_key]
             return OpenRouterProvider(
-                api_key=ai_settings.openrouter_api_key,
+                api_keys=keys,
                 timeout=ai_settings.timeout_seconds,
                 free_only=ai_settings.openrouter_free_only,
             )

@@ -16,12 +16,16 @@ class UserMessageWidget(QWidget):
     def __init__(self, text: str, parent=None):
         super().__init__(parent)
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(40, 4, 8, 4)
+        layout.setContentsMargins(60, 4, 8, 4)
         label = QLabel(text)
         label.setWordWrap(True)
         label.setAlignment(Qt.AlignRight)
         label.setStyleSheet(
-            "background-color: #0078d4; color: white; border-radius: 8px; padding: 8px;"
+            "background-color: #0e639c;"
+            "color: #ffffff;"
+            "border-radius: 10px;"
+            "padding: 8px 12px;"
+            "font-size: 13px;"
         )
         layout.addWidget(label)
 
@@ -32,12 +36,17 @@ class AssistantMessageWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(8, 4, 40, 4)
+        layout.setContentsMargins(8, 4, 60, 4)
         self._label = QLabel("")
         self._label.setWordWrap(True)
         self._label.setAlignment(Qt.AlignLeft)
         self._label.setStyleSheet(
-            "background-color: #f0f0f0; border-radius: 8px; padding: 8px;"
+            "background-color: #2d2d2d;"
+            "color: #d4d4d4;"
+            "border-radius: 10px;"
+            "padding: 8px 12px;"
+            "font-size: 13px;"
+            "border: 1px solid #3c3c3c;"
         )
         self._label.setTextFormat(Qt.RichText)
         layout.addWidget(self._label)

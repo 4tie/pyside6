@@ -4,7 +4,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton,
     QFileDialog, QGroupBox, QCheckBox, QMessageBox, QSpinBox, QComboBox,
-    QColorDialog, QFormLayout
+    QColorDialog, QFormLayout, QListWidget, QListWidgetItem, QInputDialog,
 )
 from PySide6.QtGui import QColor, QFont
 
@@ -150,10 +150,26 @@ class SettingsPage(QWidget):
         self.ai_ollama_base_url_input.setPlaceholderText("http://localhost:11434")
         ai_form.addRow("Ollama Base URL:", self.ai_ollama_base_url_input)
 
-        self.ai_openrouter_api_key_input = QLineEdit()
-        self.ai_openrouter_api_key_input.setEchoMode(QLineEdit.EchoMode.Password)
-        self.ai_openrouter_api_key_input.setPlaceholderText("sk-or-...")
-        ai_form.addRow("OpenRouter API Key:", self.ai_openrouter_api_key_input)
+        # Multi-key widget for OpenRouter key rotation
+        keys_widget = QWidget()
+        keys_layout = QVBoxLayout(keys_widget)
+        keys_layout.setContentsMargins(0, 0, 0, 0)
+
+        self.ai_openrouter_keys_list = QListWidget()
+        self.ai_openrouter_keys_list.setFixedHeight(90)
+        keys_layout.addWidget(self.ai_openrouter_keys_list)
+
+        keys_btn_layout = QHBoxLayout()
+        self.ai_openrouter_add_key_btn = QPushButton("Add Key")
+        self.ai_openrouter_add_key_btn.clicked.connect(self._add_openrouter_key)
+        keys_btn_layout.addWidget(self.ai_openrouter_add_key_btn)
+        self.ai_openrouter_remove_key_btn = QPushButton("Remove Selected")
+        self.ai_openrouter_remove_key_btn.clicked.connect(self._remove_openrouter_key)
+        keys_btn_layout.addWidget(self.ai_openrouter_remove_key_btn)
+        keys_btn_layout.addStretch()
+        keys_layout.addLayout(keys_btn_layout)
+
+        ai_form.addRow("OpenRouter API Keys:", keys_widget)
 
         self.ai_chat_model_input = QLineEdit()
         self.ai_chat_model_input.setPlaceholderText("e.g. llama3")
@@ -254,6 +270,50 @@ class SettingsPage(QWidget):
             self._set_color_button(self.terminal_text_btn, color.name())
             self._on_settings_changed()
 
+    # ------------------------------------------------------------------
+    # OpenRouter key management
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _mask_key(key: str) -> str:
+        """Return a masked display string for an API key."""
+        if len(key) <= 12:
+            return key[:8] + "****"
+        return key[:8] + "****" + key[-4:]
+
+    def _append_key_item(self, key: str) -> None:
+        """Add a key entry to the list widget, storing the real key as UserRole data."""
+        item = QListWidgetItem(self._mask_key(key))
+        item.setData(Qt.ItemDataRole.UserRole, key)
+        self.ai_openrouter_keys_list.addItem(item)
+
+    def _add_openrouter_key(self) -> None:
+        """Prompt the user for a new API key and add it to the list."""
+        key, ok = QInputDialog.getText(
+            self,
+            "Add OpenRouter API Key",
+            "Enter API key (sk-or-...):",
+            QLineEdit.EchoMode.Password,
+        )
+        if ok and key.strip():
+            # Avoid duplicates
+            existing = [
+                self.ai_openrouter_keys_list.item(i).data(Qt.ItemDataRole.UserRole)
+                for i in range(self.ai_openrouter_keys_list.count())
+            ]
+            if key.strip() in existing:
+                QMessageBox.information(self, "Duplicate Key", "That key is already in the list.")
+                return
+            self._append_key_item(key.strip())
+            self._on_settings_changed()
+
+    def _remove_openrouter_key(self) -> None:
+        """Remove the currently selected key from the list."""
+        row = self.ai_openrouter_keys_list.currentRow()
+        if row >= 0:
+            self.ai_openrouter_keys_list.takeItem(row)
+            self._on_settings_changed()
+
     def _load_current_settings(self):
         """Load current settings into UI."""
         if not self.current_settings:
@@ -277,7 +337,13 @@ class SettingsPage(QWidget):
         ai = self.current_settings.ai
         self.ai_provider_combo.setCurrentText(ai.provider)
         self.ai_ollama_base_url_input.setText(ai.ollama_base_url)
-        self.ai_openrouter_api_key_input.setText(ai.openrouter_api_key or "")
+        # Populate multi-key list
+        self.ai_openrouter_keys_list.clear()
+        keys = list(ai.openrouter_api_keys)
+        if not keys and ai.openrouter_api_key:
+            keys = [ai.openrouter_api_key]
+        for key in keys:
+            self._append_key_item(key)
         self.ai_chat_model_input.setText(ai.chat_model)
         self.ai_task_model_input.setText(ai.task_model)
         self.ai_routing_mode_combo.setCurrentText(ai.routing_mode)
@@ -345,10 +411,12 @@ class SettingsPage(QWidget):
 
         result = self.settings_state.validate_current_settings()
 
-        # Also check AI provider connectivity
+        # Test each OpenRouter key individually
+        key_results = self._check_all_openrouter_keys()
+
+        # Single Ollama/OpenRouter health (for the status label)
         ai_health = self._check_ai_provider()
 
-        # Update UI label
         ai_ok = ai_health is None or ai_health.ok
         overall_ok = result.valid and ai_ok
         if overall_ok:
@@ -356,22 +424,41 @@ class SettingsPage(QWidget):
             self.validation_result.setText(f"✓ {result.message}")
         else:
             self.validation_result.setStyleSheet("padding: 10px; background-color: #ff6666; color: darkred;")
-            details = "\n".join(f"  {k}: {v}" for k, v in result.details.items())
-            msg = f"✗ {result.message}\n{details}"
-            self.validation_result.setText(msg)
+            self.validation_result.setText(f"✗ {result.message}")
 
-        # Show detailed message
-        detail_text = self._format_validation_details(result, ai_health)
+        detail_text = self._format_validation_details(result, ai_health, key_results)
         QMessageBox.information(self, "Validation Result", detail_text)
 
     def _check_ai_provider(self):
-        """Run a health check on the configured AI provider. Returns ProviderHealth or None."""
+        """Run a health check on the configured AI provider."""
         try:
             provider = ProviderFactory.create(self.current_settings.ai)
             return provider.health_check()
         except Exception as exc:
             from app.core.ai.providers.provider_base import ProviderHealth
             return ProviderHealth(ok=False, message=str(exc))
+
+    def _check_all_openrouter_keys(self) -> list:
+        """Test every OpenRouter key individually. Returns list of (masked_key, ok, message)."""
+        from app.core.ai.providers.openrouter_provider import OpenRouterProvider
+        keys = [
+            self.ai_openrouter_keys_list.item(i).data(Qt.ItemDataRole.UserRole)
+            for i in range(self.ai_openrouter_keys_list.count())
+        ]
+        if not keys:
+            return []
+
+        results = []
+        timeout = self.ai_timeout_spinbox.value()
+        for key in keys:
+            masked = self._mask_key(key)
+            try:
+                provider = OpenRouterProvider(api_key=key, timeout=timeout)
+                health = provider.health_check()
+                results.append((masked, health.ok, health.message, health.latency_ms))
+            except Exception as exc:
+                results.append((masked, False, str(exc), None))
+        return results
 
     def _validate_async(self):
         """Validate settings asynchronously."""
@@ -391,10 +478,15 @@ class SettingsPage(QWidget):
 
     def _collect_settings(self):
         """Collect settings from UI."""
+        keys = [
+            self.ai_openrouter_keys_list.item(i).data(Qt.ItemDataRole.UserRole)
+            for i in range(self.ai_openrouter_keys_list.count())
+        ]
         ai_settings = AISettings(
             provider=self.ai_provider_combo.currentText(),
             ollama_base_url=self.ai_ollama_base_url_input.text() or "http://localhost:11434",
-            openrouter_api_key=self.ai_openrouter_api_key_input.text() or None,
+            openrouter_api_key=keys[0] if keys else None,
+            openrouter_api_keys=keys,
             chat_model=self.ai_chat_model_input.text(),
             task_model=self.ai_task_model_input.text(),
             routing_mode=self.ai_routing_mode_combo.currentText(),
@@ -431,26 +523,45 @@ class SettingsPage(QWidget):
                 self.settings_service._resolve_freqtrade_from_venv(venv_path)
             )
 
-    def _format_validation_details(self, result, ai_health=None) -> str:
+    def _format_validation_details(self, result, ai_health=None, key_results=None) -> str:
         """Format validation result for display."""
-        lines = [result.message]
-        lines.append("")
-        lines.append("Details:")
-        lines.append(f"  Python: {'✓' if result.python_ok else '✗'}")
-        lines.append(f"  Freqtrade: {'✓' if result.freqtrade_ok else '✗'}")
-        lines.append(f"  User Data: {'✓' if result.user_data_ok else '✗'}")
+        lines = [result.message, ""]
+        lines.append("── Environment ──────────────────────")
+        lines.append(f"  Python:     {'✓' if result.python_ok else '✗'}")
+        lines.append(f"  Freqtrade:  {'✓' if result.freqtrade_ok else '✗'}")
+        lines.append(f"  User Data:  {'✓' if result.user_data_ok else '✗'}")
 
+        # Clean up the raw details (strip the noisy freqtrade --version output)
         if result.details:
-            lines.append("")
-            for key, value in result.details.items():
-                if key not in ["python_ok", "freqtrade_ok", "user_data_ok"]:
-                    lines.append(f"  {key}: {value}")
+            for k, v in result.details.items():
+                if k in ("python_ok", "freqtrade_ok", "user_data_ok"):
+                    continue
+                if k == "freqtrade_version":
+                    # Keep only the first line (e.g. "freqtrade 2026.3")
+                    v = str(v).splitlines()[0].strip()
+                if k == "python_version":
+                    v = str(v).strip()
+                lines.append(f"  {k}: {v}")
 
+        # AI provider (Ollama or single-key OpenRouter)
         if ai_health is not None:
-            lines.append("")
-            provider_name = self.current_settings.ai.provider.capitalize() if self.current_settings else "AI"
+            provider_name = (
+                self.current_settings.ai.provider.capitalize()
+                if self.current_settings else "AI"
+            )
             status = "✓" if ai_health.ok else "✗"
             latency = f" ({ai_health.latency_ms:.0f} ms)" if ai_health.latency_ms is not None else ""
+            lines.append("")
+            lines.append("── AI Provider ──────────────────────")
             lines.append(f"  {provider_name}: {status} {ai_health.message}{latency}")
+
+        # Per-key OpenRouter results
+        if key_results:
+            lines.append("")
+            lines.append("── OpenRouter API Keys ──────────────")
+            for i, (masked, ok, message, latency_ms) in enumerate(key_results, 1):
+                status = "✓" if ok else "✗"
+                latency = f" ({latency_ms:.0f} ms)" if latency_ms is not None else ""
+                lines.append(f"  Key {i} ({masked}): {status} {message}{latency}")
 
         return "\n".join(lines)

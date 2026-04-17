@@ -35,6 +35,7 @@ class AIService:
 
     def __init__(self, settings_state=None) -> None:
         self._settings_state = settings_state
+        self._backtest_page = None  # set via set_backtest_page() after UI is built
 
         # Shared journal — records backtest and settings events
         self.journal: EventJournal = EventJournal()
@@ -52,14 +53,18 @@ class AIService:
     # ------------------------------------------------------------------
 
     def connect_backtest_service(self, backtest_service) -> None:
-        """Wire the BacktestJournalAdapter to a BacktestService instance.
-
-        Args:
-            backtest_service: Service with ``process_started`` /
-                ``process_finished`` signals.
-        """
+        """Wire the BacktestJournalAdapter to a BacktestService instance."""
         self.backtest_adapter._connect(backtest_service)
         _log.debug("BacktestJournalAdapter connected to BacktestService")
+
+    def set_backtest_page(self, backtest_page) -> None:
+        """Register the live BacktestPage so tools can read/trigger it.
+
+        Args:
+            backtest_page: The :class:`BacktestPage` instance from MainWindow.
+        """
+        self._backtest_page = backtest_page
+        _log.debug("BacktestPage registered with AIService")
 
     def get_runtime(self, ai_settings: Optional[AISettings] = None) -> ConversationRuntime:
         """Build and return a fully wired :class:`ConversationRuntime`.
@@ -91,15 +96,54 @@ class AIService:
         register_app_tools(registry, settings=settings, event_journal=self.journal)
         register_backtest_tools(registry, settings=settings)
         register_strategy_tools(registry, settings=settings)
+
+        # Register run_backtest_with_current_config tool if backtest_page is available
+        if self._backtest_page is not None:
+            from app.core.ai.tools.tool_registry import ToolDefinition
+            backtest_page = self._backtest_page
+
+            def _run_backtest_with_current_config() -> dict:
+                """Trigger a backtest using the current Backtest tab configuration."""
+                try:
+                    config = backtest_page.get_current_config()
+                    if not config.get("strategy"):
+                        return {"error": "No strategy selected in the Backtest tab."}
+                    if not config.get("pairs"):
+                        return {"error": "No pairs selected in the Backtest tab."}
+                    # Schedule on main thread via Qt signal-safe call
+                    from PySide6.QtCore import QMetaObject, Qt
+                    QMetaObject.invokeMethod(
+                        backtest_page, "_run_backtest", Qt.QueuedConnection
+                    )
+                    return {
+                        "output": (
+                            f"Backtest started with current configuration: "
+                            f"strategy={config['strategy']}, "
+                            f"timeframe={config['timeframe']}, "
+                            f"pairs={config['pairs']}"
+                        )
+                    }
+                except Exception as exc:
+                    return {"error": str(exc)}
+
+            registry.register(ToolDefinition(
+                name="run_backtest_with_current_config",
+                description=(
+                    "Run a backtest using the exact configuration currently set in the "
+                    "Backtest tab (strategy, timeframe, timerange, pairs, wallet, max trades). "
+                    "Use this when the user says 'run backtest', 'run it', or 'use current config'."
+                ),
+                parameters_schema={"type": "object", "properties": {}, "required": []},
+                callable=_run_backtest_with_current_config,
+            ))
+
         _log.debug("ToolRegistry built with %d tools", len(registry._tools))
 
         # Build context providers
-        backtest_prefs = (
-            settings.backtest_preferences if settings else None
-        )
+        backtest_prefs = settings.backtest_preferences if settings else None
         context_providers: List[AppContextProvider] = [
             AppStateContextProvider(self._settings_state),
-            BacktestContextProvider(backtest_prefs),
+            BacktestContextProvider(backtest_prefs, backtest_page=self._backtest_page),
             StrategyContextProvider(),
         ]
 

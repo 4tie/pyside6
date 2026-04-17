@@ -595,6 +595,57 @@ class BacktestPage(QWidget):
             self._update_pairs_display()
             self._update_command_preview()
 
+    def get_current_config(self) -> dict:
+        """Return the current backtest configuration as a plain dict for AI context.
+
+        Returns:
+            Dict with strategy, timeframe, timerange, pairs, dry_run_wallet,
+            max_open_trades.
+        """
+        return {
+            "strategy": self.strategy_combo.currentText().strip(),
+            "timeframe": self.timeframe_input.text().strip(),
+            "timerange": self.timerange_input.text().strip() or None,
+            "pairs": list(self.selected_pairs),
+            "dry_run_wallet": self.dry_run_wallet.value(),
+            "max_open_trades": self.max_open_trades.value(),
+        }
+
+    def run_with_config(self, config: dict) -> None:
+        """Populate the backtest form from a config dict and run.
+
+        Args:
+            config: Dict with optional keys: strategy, timeframe, timerange,
+                pairs, dry_run_wallet, max_open_trades.
+        """
+        if "strategy" in config and config["strategy"]:
+            idx = self.strategy_combo.findText(config["strategy"])
+            if idx >= 0:
+                self.strategy_combo.setCurrentIndex(idx)
+            else:
+                self.strategy_combo.setCurrentText(config["strategy"])
+
+        if "timeframe" in config and config["timeframe"]:
+            self.timeframe_input.setText(config["timeframe"])
+
+        if "timerange" in config and config["timerange"]:
+            self.timerange_input.setText(config["timerange"])
+        elif "timerange" in config and config["timerange"] is None:
+            self.timerange_input.clear()
+
+        if "pairs" in config and config["pairs"]:
+            self.selected_pairs = list(config["pairs"])
+            self._update_pairs_display()
+
+        if "dry_run_wallet" in config:
+            self.dry_run_wallet.setValue(float(config["dry_run_wallet"]))
+
+        if "max_open_trades" in config:
+            self.max_open_trades.setValue(int(config["max_open_trades"]))
+
+        self._update_command_preview()
+        self._run_backtest()
+
     def _update_pairs_display(self):
         """Update pairs button and display label."""
         count = len(self.selected_pairs)
