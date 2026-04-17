@@ -45,3 +45,5 @@
 2026-04-17 21:38:43.848 | DEBUG    | freqtrade_gui.ui.settings_dialog | SettingsDialog created
 2026-04-17 21:43:48.445 | DEBUG    | freqtrade_gui.ui.ai_chat_dock  | AIChatDock initialised (ai_service=True)
 2026-04-17 21:43:48.448 | INFO     | freqtrade_gui.ui.main_window   | MainWindow initialised
+2026-04-17 21:46:05.701 | DEBUG    | freqtrade_gui.ui.improve_page  | Applied suggestion: minimal_roi = {'0': 0.104, '13': 0.034, '38': 0.024, '146': 0}
+2026-04-17 21:46:32.811 | DEBUG    | freqtrade_gui.ui.improve_page  | Applied suggestion: stoploss = -0.215
