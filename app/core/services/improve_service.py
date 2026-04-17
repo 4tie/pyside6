@@ -187,11 +187,14 @@ class ImproveService:
             _log.error("Failed to parse params.json in %s: %s", run_dir, e)
             raise ValueError(f"Failed to parse params.json: {e}")
 
-    def resolve_candidate_zip(self, export_dir: Path) -> Optional[Path]:
+    def resolve_candidate_zip(self, export_dir: Path, started_at: float = 0.0) -> Optional[Path]:
         """Return the single .zip from export_dir, or fall back to mtime scan.
 
         Args:
             export_dir: Directory where the candidate backtest wrote its zip.
+            started_at: Unix timestamp of when the candidate process started.
+                Used to filter the fallback mtime scan so only zips written
+                after the run started are considered.
 
         Returns:
             Path to the zip file, or None if no zip is found anywhere.
@@ -207,16 +210,22 @@ class ImproveService:
         )
         settings = self.settings_service.load_settings()
         scan_root = Path(settings.user_data_path) / "backtest_results"
-        all_zips = list(scan_root.rglob("*.zip"))
+        all_zips = [
+            p for p in scan_root.rglob("*.zip")
+            if p.stat().st_mtime >= started_at
+        ]
         if not all_zips:
             return None
         return max(all_zips, key=lambda p: p.stat().st_mtime)
 
-    def parse_candidate_run(self, export_dir: Path) -> BacktestResults:
+    def parse_candidate_run(self, export_dir: Path, started_at: float = 0.0) -> BacktestResults:
         """Parse the candidate backtest zip from export_dir.
 
         Args:
             export_dir: Directory where the candidate backtest wrote its zip.
+            started_at: Unix timestamp of when the candidate process started.
+                Passed through to ``resolve_candidate_zip`` for the fallback
+                mtime filter.
 
         Returns:
             BacktestResults parsed from the zip.
@@ -224,7 +233,7 @@ class ImproveService:
         Raises:
             FileNotFoundError: If no candidate zip is found.
         """
-        zip_path = self.resolve_candidate_zip(export_dir)
+        zip_path = self.resolve_candidate_zip(export_dir, started_at)
         if zip_path is None:
             raise FileNotFoundError("No candidate zip found in export_dir")
         return parse_backtest_zip(str(zip_path))

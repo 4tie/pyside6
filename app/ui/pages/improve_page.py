@@ -524,7 +524,9 @@ class ImprovePage(QWidget):
 
         if exit_code == 0:
             try:
-                candidate_run = self._improve_service.parse_candidate_run(self._export_dir)
+                candidate_run = self._improve_service.parse_candidate_run(
+                    self._export_dir, self._run_started_at
+                )
                 self._candidate_run = candidate_run
                 self._update_comparison_view()
             except (FileNotFoundError, ValueError) as e:
