@@ -11,8 +11,8 @@ from PySide6.QtWidgets import (
 
 from app.core.backtests.results_models import BacktestSummary
 
-_GREEN = QColor("#1a7f37")
-_RED = QColor("#cf222e")
+_GREEN = QColor("#4ec9a0")   # mint-green — matches theme accent / success
+_RED   = QColor("#f44747")   # VS Code red — matches theme danger
 _BOLD = QFont()
 _BOLD.setBold(True)
 

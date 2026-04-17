@@ -22,10 +22,10 @@ from app.core.utils.app_logger import get_logger
 
 _log = get_logger("ui.data_status")
 
-_GREEN  = QColor("#1a7f37")
-_YELLOW = QColor("#856404")
-_RED    = QColor("#cc0000")
-_GRAY   = QColor("#888888")
+_GREEN  = QColor("#4ec9a0")   # mint-green — OK / up to date
+_YELLOW = QColor("#ce9178")   # VS Code orange-brown — stale
+_RED    = QColor("#f44747")   # VS Code red — gaps / errors
+_GRAY   = QColor("#555558")   # disabled — no data
 
 # Candles older than this many days are considered stale
 _STALE_DAYS = 3
@@ -243,7 +243,7 @@ class DataStatusWidget(QWidget):
 
                     row = QTreeWidgetItem(["", tf, from_str, to_str, candles, gaps_str, status])
                     row.setForeground(6, color)
-                    row.setForeground(1, QColor("#0a7"))
+                    row.setForeground(1, QColor("#4ec9a0"))
                     pair_item.addChild(row)
                     total_files += 1
 

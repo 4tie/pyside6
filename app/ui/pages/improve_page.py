@@ -1,5 +1,8 @@
 """
 improve_page.py — ImprovePage: strategy improvement workflow UI.
+
+Enhanced with animated metric cards, color-coded severity indicators,
+progress bar gauges, and animated comparison deltas.
 """
 import copy
 import time
@@ -10,9 +13,10 @@ from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
     QComboBox, QGroupBox, QScrollArea, QFormLayout, QMessageBox,
     QTableWidget, QTableWidgetItem, QHeaderView, QSizePolicy,
+    QProgressBar, QFrame, QGraphicsOpacityEffect, QGridLayout,
 )
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QColor
+from PySide6.QtCore import Qt, QPropertyAnimation, QEasingCurve, QTimer, QSequentialAnimationGroup
+from PySide6.QtGui import QColor, QFont, QPalette
 
 from app.app_state.settings_state import SettingsState
 from app.core.backtests.results_models import BacktestResults, BacktestSummary
@@ -25,6 +29,253 @@ from app.core.utils.app_logger import get_logger
 from app.ui.widgets.terminal_widget import TerminalWidget
 
 _log = get_logger("ui.improve_page")
+
+# ---------------------------------------------------------------------------
+# Color palette — mirrors app/ui/theme.py PALETTE exactly
+# ---------------------------------------------------------------------------
+_C_GREEN = "#4ec9a0"          # success / profit positive (mint-green = theme accent)
+_C_GREEN_LIGHT = "#6ad4b0"    # lighter mint for highlights
+_C_RED = "#f44747"            # danger / loss (VS Code red)
+_C_RED_LIGHT = "#f47070"      # softer red for text
+_C_ORANGE = "#ce9178"         # warning (VS Code orange-brown)
+_C_YELLOW = "#dcdcaa"         # VS Code yellow — advisory labels
+_C_TEAL = "#4ec9a0"           # accent (same as _C_GREEN — mint)
+_C_TEAL_HOVER = "#6ad4b0"
+_C_DARK_BG = "#1e1e1e"        # bg_base
+_C_CARD_BG = "#252526"        # bg_surface
+_C_ELEVATED = "#2d2d30"       # bg_elevated
+_C_CARD_HIGH = "#333337"      # bg_card
+_C_BORDER = "#3e3e42"         # border
+_C_TEXT = "#d4d4d4"           # text_primary
+_C_TEXT_DIM = "#9d9d9d"       # text_secondary
+
+
+# ---------------------------------------------------------------------------
+# Helper widgets
+# ---------------------------------------------------------------------------
+
+class AnimatedMetricCard(QFrame):
+    """A card widget showing a metric with a color-coded value and animated bar."""
+
+    def __init__(self, label: str, parent=None):
+        super().__init__(parent)
+        self._label = label
+        self._target_pct = 0.0
+        self._anim: Optional[QPropertyAnimation] = None
+        self._build_ui()
+
+    def _build_ui(self) -> None:
+        self.setFrameShape(QFrame.StyledPanel)
+        self.setMinimumWidth(140)
+        self.setMaximumWidth(200)
+        self.setStyleSheet(f"""
+            AnimatedMetricCard {{
+                background: {_C_CARD_BG};
+                border: 1px solid {_C_BORDER};
+                border-radius: 8px;
+            }}
+        """)
+
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(10, 8, 10, 8)
+        layout.setSpacing(4)
+
+        self._lbl = QLabel(self._label)
+        self._lbl.setStyleSheet(f"color: {_C_TEXT_DIM}; font-size: 10px; font-weight: 600; letter-spacing: 1px;")
+        self._lbl.setAlignment(Qt.AlignCenter)
+        layout.addWidget(self._lbl)
+
+        self._value_lbl = QLabel("—")
+        self._value_lbl.setStyleSheet(f"color: {_C_TEXT}; font-size: 18px; font-weight: bold;")
+        self._value_lbl.setAlignment(Qt.AlignCenter)
+        layout.addWidget(self._value_lbl)
+
+        self._bar = QProgressBar()
+        self._bar.setRange(0, 100)
+        self._bar.setValue(0)
+        self._bar.setTextVisible(False)
+        self._bar.setFixedHeight(5)
+        self._bar.setStyleSheet(f"""
+            QProgressBar {{
+                background: {_C_BORDER};
+                border-radius: 2px;
+                border: none;
+            }}
+            QProgressBar::chunk {{
+                background: {_C_TEAL};
+                border-radius: 2px;
+            }}
+        """)
+        layout.addWidget(self._bar)
+
+        self._sub_lbl = QLabel("")
+        self._sub_lbl.setStyleSheet(f"color: {_C_TEXT_DIM}; font-size: 9px;")
+        self._sub_lbl.setAlignment(Qt.AlignCenter)
+        layout.addWidget(self._sub_lbl)
+
+    def set_value(self, text: str, color: str = _C_TEXT, bar_pct: float = 0.0,
+                  bar_color: str = _C_TEAL, sub_text: str = "") -> None:
+        """Update the card value, bar fill, and optional sub-label with animation."""
+        self._value_lbl.setText(text)
+        self._value_lbl.setStyleSheet(
+            f"color: {color}; font-size: 18px; font-weight: bold;"
+        )
+        self._bar.setStyleSheet(f"""
+            QProgressBar {{
+                background: {_C_BORDER};
+                border-radius: 2px;
+                border: none;
+            }}
+            QProgressBar::chunk {{
+                background: {bar_color};
+                border-radius: 2px;
+            }}
+        """)
+        self._sub_lbl.setText(sub_text)
+
+        # Animate bar from current to target
+        if self._anim:
+            self._anim.stop()
+        self._anim = QPropertyAnimation(self._bar, b"value")
+        self._anim.setDuration(600)
+        self._anim.setStartValue(self._bar.value())
+        self._anim.setEndValue(int(min(max(bar_pct, 0), 100)))
+        self._anim.setEasingCurve(QEasingCurve.OutCubic)
+        self._anim.start()
+
+
+class IssueBadge(QFrame):
+    """A colored badge widget for a single diagnosed issue."""
+
+    SEVERITY_COLORS = {
+        "stoploss_too_wide": (_C_RED, "🔴"),
+        "drawdown_high": (_C_RED, "🔴"),
+        "negative_profit": (_C_RED, "🔴"),
+        "weak_win_rate": (_C_ORANGE, "🟠"),
+        "trades_too_low": (_C_YELLOW, "🟡"),
+        "poor_pair_concentration": (_C_TEAL, "🔵"),
+    }
+
+    def __init__(self, issue: DiagnosedIssue, parent=None):
+        super().__init__(parent)
+        color, icon = self.SEVERITY_COLORS.get(issue.issue_id, (_C_TEXT_DIM, "⚪"))
+        self.setStyleSheet(f"""
+            IssueBadge {{
+                background: {color}22;
+                border: 1px solid {color}66;
+                border-left: 3px solid {color};
+                border-radius: 4px;
+            }}
+        """)
+        layout = QHBoxLayout(self)
+        layout.setContentsMargins(8, 6, 8, 6)
+        layout.setSpacing(8)
+
+        icon_lbl = QLabel(icon)
+        icon_lbl.setFixedWidth(18)
+        layout.addWidget(icon_lbl)
+
+        text_lbl = QLabel(issue.description)
+        text_lbl.setWordWrap(True)
+        text_lbl.setStyleSheet(f"color: {_C_TEXT}; font-size: 12px; background: transparent; border: none;")
+        layout.addWidget(text_lbl, 1)
+
+
+class SuggestionRow(QFrame):
+    """A styled row for a single parameter suggestion with Apply button."""
+
+    PARAM_ICONS = {
+        "stoploss": "🛑",
+        "max_open_trades": "📊",
+        "minimal_roi": "🎯",
+        "pairlist": "💱",
+    }
+
+    def __init__(self, suggestion: ParameterSuggestion, on_apply, parent=None):
+        super().__init__(parent)
+        self.setStyleSheet(f"""
+            SuggestionRow {{
+                background: {_C_CARD_BG};
+                border: 1px solid {_C_BORDER};
+                border-radius: 6px;
+            }}
+        """)
+        layout = QHBoxLayout(self)
+        layout.setContentsMargins(10, 8, 10, 8)
+        layout.setSpacing(10)
+
+        icon = self.PARAM_ICONS.get(suggestion.parameter, "⚙️")
+        icon_lbl = QLabel(icon)
+        icon_lbl.setFixedWidth(22)
+        icon_lbl.setStyleSheet("font-size: 14px; background: transparent; border: none;")
+        layout.addWidget(icon_lbl)
+
+        text_col = QVBoxLayout()
+        text_col.setSpacing(2)
+
+        value_text = "Advisory" if suggestion.is_advisory else str(suggestion.proposed_value)
+        param_color = _C_YELLOW if suggestion.is_advisory else _C_GREEN_LIGHT
+        header = QLabel(f"<b style='color:{param_color}'>{suggestion.parameter}</b>: {value_text}")
+        header.setStyleSheet(f"color: {_C_TEXT}; font-size: 12px; background: transparent; border: none;")
+        text_col.addWidget(header)
+
+        detail = QLabel(f"{suggestion.reason} → <i style='color:{_C_TEAL}'>{suggestion.expected_effect}</i>")
+        detail.setWordWrap(True)
+        detail.setStyleSheet(f"color: {_C_TEXT_DIM}; font-size: 11px; background: transparent; border: none;")
+        text_col.addWidget(detail)
+
+        layout.addLayout(text_col, 1)
+
+        if not suggestion.is_advisory:
+            apply_btn = QPushButton("Apply")
+            apply_btn.setFixedWidth(70)
+            apply_btn.setStyleSheet(f"""
+                QPushButton {{
+                    background: {_C_TEAL};
+                    color: white;
+                    border: none;
+                    border-radius: 4px;
+                    padding: 5px 10px;
+                    font-weight: bold;
+                    font-size: 11px;
+                }}
+                QPushButton:hover {{
+                    background: {_C_TEAL_HOVER};
+                }}
+                QPushButton:pressed {{
+                    background: #3aaa84;
+                }}
+            """)
+            apply_btn.clicked.connect(lambda: on_apply(suggestion))
+            layout.addWidget(apply_btn)
+        else:
+            adv_lbl = QLabel("Advisory")
+            adv_lbl.setFixedWidth(70)
+            adv_lbl.setAlignment(Qt.AlignCenter)
+            adv_lbl.setStyleSheet(f"""
+                color: {_C_YELLOW};
+                background: {_C_YELLOW}22;
+                border: 1px solid {_C_YELLOW}66;
+                border-radius: 4px;
+                padding: 4px;
+                font-size: 10px;
+                font-weight: bold;
+            """)
+            layout.addWidget(adv_lbl)
+
+
+def _fade_in_widget(widget: QWidget, duration: int = 350) -> None:
+    """Animate a widget fading in from transparent to opaque."""
+    effect = QGraphicsOpacityEffect(widget)
+    widget.setGraphicsEffect(effect)
+    anim = QPropertyAnimation(effect, b"opacity")
+    anim.setDuration(duration)
+    anim.setStartValue(0.0)
+    anim.setEndValue(1.0)
+    anim.setEasingCurve(QEasingCurve.OutCubic)
+    anim.start()
+    # Keep reference alive
+    widget._fade_anim = anim
 
 
 # ---------------------------------------------------------------------------
@@ -147,6 +398,68 @@ class ImprovePage(QWidget):
 
     def _init_ui(self) -> None:
         """Build the page layout."""
+        # Page-level dark background
+        self.setStyleSheet(f"""
+            QWidget {{
+                background: {_C_DARK_BG};
+                color: {_C_TEXT};
+            }}
+            QGroupBox {{
+                background: {_C_CARD_BG};
+                border: 1px solid {_C_BORDER};
+                border-radius: 8px;
+                margin-top: 10px;
+                font-weight: bold;
+                font-size: 12px;
+                color: {_C_TEXT};
+                padding-top: 6px;
+            }}
+            QGroupBox::title {{
+                subcontrol-origin: margin;
+                left: 12px;
+                padding: 0 4px;
+                color: {_C_TEXT_DIM};
+                font-size: 11px;
+                letter-spacing: 1px;
+                text-transform: uppercase;
+            }}
+            QComboBox {{
+                background: {_C_CARD_BG};
+                border: 1px solid {_C_BORDER};
+                border-radius: 4px;
+                padding: 4px 8px;
+                color: {_C_TEXT};
+            }}
+            QComboBox:hover {{
+                border-color: {_C_TEAL};
+            }}
+            QComboBox QAbstractItemView {{
+                background: {_C_CARD_BG};
+                border: 1px solid {_C_BORDER};
+                selection-background-color: {_C_TEAL};
+            }}
+            QScrollArea {{
+                border: none;
+                background: {_C_DARK_BG};
+            }}
+            QScrollBar:vertical {{
+                background: {_C_CARD_BG};
+                width: 8px;
+                border-radius: 4px;
+            }}
+            QScrollBar::handle:vertical {{
+                background: {_C_BORDER};
+                border-radius: 4px;
+                min-height: 20px;
+            }}
+            QScrollBar::handle:vertical:hover {{
+                background: {_C_TEAL};
+            }}
+            QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {{
+                height: 0;
+            }}
+        """)
+
         main_layout = QVBoxLayout()
         main_layout.setContentsMargins(8, 8, 8, 8)
         main_layout.setSpacing(6)
@@ -155,21 +468,27 @@ class ImprovePage(QWidget):
         top_controls = QHBoxLayout()
         top_controls.setSpacing(6)
 
-        top_controls.addWidget(QLabel("Strategy:"))
+        strategy_lbl = QLabel("Strategy:")
+        strategy_lbl.setStyleSheet(f"color: {_C_TEXT_DIM}; font-size: 11px;")
+        top_controls.addWidget(strategy_lbl)
         self.strategy_combo = QComboBox()
         self.strategy_combo.setMinimumWidth(180)
         top_controls.addWidget(self.strategy_combo)
 
-        top_controls.addWidget(QLabel("Run:"))
+        run_lbl = QLabel("Run:")
+        run_lbl.setStyleSheet(f"color: {_C_TEXT_DIM}; font-size: 11px;")
+        top_controls.addWidget(run_lbl)
         self.run_combo = QComboBox()
         self.run_combo.setMinimumWidth(320)
         top_controls.addWidget(self.run_combo, 1)
 
         self.load_latest_btn = QPushButton("Load Latest")
+        self.load_latest_btn.setStyleSheet(self._btn_style(_C_BORDER, _C_TEXT))
         self.load_latest_btn.clicked.connect(self._on_load_latest)
         top_controls.addWidget(self.load_latest_btn)
 
-        self.analyze_btn = QPushButton("Analyze")
+        self.analyze_btn = QPushButton("⚡ Analyze")
+        self.analyze_btn.setStyleSheet(self._btn_style(_C_TEAL, "white"))
         self.analyze_btn.clicked.connect(self._on_analyze)
         top_controls.addWidget(self.analyze_btn)
 
@@ -182,18 +501,41 @@ class ImprovePage(QWidget):
         scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
         scroll_content = QWidget()
+        scroll_content.setStyleSheet(f"background: {_C_DARK_BG};")
         scroll_layout = QVBoxLayout(scroll_content)
         scroll_layout.setContentsMargins(4, 4, 4, 4)
-        scroll_layout.setSpacing(8)
+        scroll_layout.setSpacing(10)
 
         # Status label
         self.status_label = QLabel("")
+        self.status_label.setStyleSheet(f"color: {_C_TEXT_DIM}; font-size: 11px; padding: 2px 4px;")
         scroll_layout.addWidget(self.status_label)
+
+        # Metric cards row (hidden until data loaded)
+        self._cards_widget = QWidget()
+        self._cards_widget.setVisible(False)
+        cards_layout = QHBoxLayout(self._cards_widget)
+        cards_layout.setContentsMargins(0, 0, 0, 0)
+        cards_layout.setSpacing(8)
+
+        self._card_profit = AnimatedMetricCard("TOTAL PROFIT")
+        self._card_winrate = AnimatedMetricCard("WIN RATE")
+        self._card_drawdown = AnimatedMetricCard("MAX DRAWDOWN")
+        self._card_sharpe = AnimatedMetricCard("SHARPE RATIO")
+        self._card_trades = AnimatedMetricCard("TOTAL TRADES")
+
+        for card in (self._card_profit, self._card_winrate, self._card_drawdown,
+                     self._card_sharpe, self._card_trades):
+            cards_layout.addWidget(card)
+        cards_layout.addStretch()
+        scroll_layout.addWidget(self._cards_widget)
 
         # Baseline Summary group
         self.baseline_group = QGroupBox("Baseline Summary")
         self.baseline_group.setVisible(False)
         self._baseline_form = QFormLayout()
+        self._baseline_form.setSpacing(6)
+        self._baseline_form.setContentsMargins(10, 8, 10, 8)
         self.baseline_group.setLayout(self._baseline_form)
         scroll_layout.addWidget(self.baseline_group)
 
@@ -201,6 +543,8 @@ class ImprovePage(QWidget):
         self.issues_group = QGroupBox("Detected Issues")
         self.issues_group.setVisible(False)
         self._issues_layout = QVBoxLayout()
+        self._issues_layout.setSpacing(6)
+        self._issues_layout.setContentsMargins(10, 8, 10, 8)
         self.issues_group.setLayout(self._issues_layout)
         scroll_layout.addWidget(self.issues_group)
 
@@ -208,6 +552,8 @@ class ImprovePage(QWidget):
         self.suggestions_group = QGroupBox("Suggested Actions")
         self.suggestions_group.setVisible(False)
         self._suggestions_layout = QVBoxLayout()
+        self._suggestions_layout.setSpacing(6)
+        self._suggestions_layout.setContentsMargins(10, 8, 10, 8)
         self.suggestions_group.setLayout(self._suggestions_layout)
         scroll_layout.addWidget(self.suggestions_group)
 
@@ -215,6 +561,7 @@ class ImprovePage(QWidget):
         self.candidate_group = QGroupBox("Candidate Preview")
         self.candidate_group.setVisible(False)
         self._candidate_layout = QVBoxLayout()
+        self._candidate_layout.setContentsMargins(10, 8, 10, 8)
         self.candidate_group.setLayout(self._candidate_layout)
         scroll_layout.addWidget(self.candidate_group)
 
@@ -222,6 +569,7 @@ class ImprovePage(QWidget):
         self.comparison_group = QGroupBox("Comparison")
         self.comparison_group.setVisible(False)
         self._comparison_layout = QVBoxLayout()
+        self._comparison_layout.setContentsMargins(10, 8, 10, 8)
         self.comparison_group.setLayout(self._comparison_layout)
         scroll_layout.addWidget(self.comparison_group)
 
@@ -233,6 +581,30 @@ class ImprovePage(QWidget):
 
         # Connect combo signals
         self.strategy_combo.currentTextChanged.connect(self._refresh_runs)
+
+    @staticmethod
+    def _btn_style(bg: str, fg: str) -> str:
+        """Return a QPushButton stylesheet for the given background/foreground."""
+        return f"""
+            QPushButton {{
+                background: {bg};
+                color: {fg};
+                border: 1px solid {bg};
+                border-radius: 4px;
+                padding: 5px 12px;
+                font-size: 12px;
+                font-weight: bold;
+            }}
+            QPushButton:hover {{
+                opacity: 0.85;
+                border-color: {_C_TEAL};
+            }}
+            QPushButton:disabled {{
+                background: {_C_BORDER};
+                color: {_C_TEXT_DIM};
+                border-color: {_C_BORDER};
+            }}
+        """
 
     # ------------------------------------------------------------------
     # Strategy / run selector helpers
@@ -303,7 +675,8 @@ class ImprovePage(QWidget):
         run_dir = backtest_results_dir / run.get("run_dir", "")
 
         self.analyze_btn.setEnabled(False)
-        self.status_label.setText("Loading...")
+        self.status_label.setText("⏳  Loading...")
+        self.status_label.setStyleSheet(f"color: {_C_TEAL}; font-size: 11px; padding: 2px 4px;")
 
         try:
             baseline = self._improve_service.load_baseline(run_dir)
@@ -315,28 +688,99 @@ class ImprovePage(QWidget):
             self._display_issues_and_suggestions(baseline.summary, params)
             self.status_label.setText("")
         except (FileNotFoundError, ValueError) as e:
-            self.status_label.setText(f"Error: {e}")
+            self.status_label.setText(f"❌  Error: {e}")
+            self.status_label.setStyleSheet(f"color: {_C_RED_LIGHT}; font-size: 11px; padding: 2px 4px;")
         finally:
             self.analyze_btn.setEnabled(True)
 
     def _display_baseline_summary(self, summary: BacktestSummary) -> None:
-        """Clear and repopulate the baseline summary form."""
+        """Clear and repopulate the baseline summary form and metric cards."""
         while self._baseline_form.rowCount() > 0:
             self._baseline_form.removeRow(0)
 
-        self._baseline_form.addRow("Strategy:", QLabel(summary.strategy))
-        self._baseline_form.addRow("Timeframe:", QLabel(summary.timeframe))
-        self._baseline_form.addRow("Total Trades:", QLabel(str(summary.total_trades)))
-        self._baseline_form.addRow("Win Rate:", QLabel(f"{summary.win_rate:.2f}%"))
-        self._baseline_form.addRow("Total Profit:", QLabel(f"{summary.total_profit:.4f}%"))
-        self._baseline_form.addRow("Max Drawdown:", QLabel(f"{summary.max_drawdown:.2f}%"))
+        def _lbl(text: str, color: str = _C_TEXT) -> QLabel:
+            l = QLabel(text)
+            l.setStyleSheet(f"color: {color}; background: transparent;")
+            return l
+
+        def _key(text: str) -> QLabel:
+            l = QLabel(text)
+            l.setStyleSheet(f"color: {_C_TEXT_DIM}; font-size: 11px; background: transparent;")
+            return l
+
+        profit_color = _C_GREEN_LIGHT if summary.total_profit >= 0 else _C_RED_LIGHT
+        sharpe_color = _C_GREEN_LIGHT if (summary.sharpe_ratio or 0) >= 0 else _C_RED_LIGHT
+        wr_color = _C_GREEN_LIGHT if summary.win_rate >= 50 else _C_RED_LIGHT
+        dd_color = _C_RED_LIGHT if summary.max_drawdown > 20 else (_C_YELLOW if summary.max_drawdown > 10 else _C_GREEN_LIGHT)
+
+        self._baseline_form.addRow(_key("Strategy:"), _lbl(summary.strategy))
+        self._baseline_form.addRow(_key("Timeframe:"), _lbl(summary.timeframe))
+        self._baseline_form.addRow(_key("Total Trades:"), _lbl(str(summary.total_trades)))
+        self._baseline_form.addRow(_key("Win Rate:"), _lbl(f"{summary.win_rate:.2f}%", wr_color))
+        self._baseline_form.addRow(_key("Total Profit:"), _lbl(f"{summary.total_profit:.4f}%", profit_color))
+        self._baseline_form.addRow(_key("Max Drawdown:"), _lbl(f"{summary.max_drawdown:.2f}%", dd_color))
         sharpe = f"{summary.sharpe_ratio:.4f}" if summary.sharpe_ratio is not None else "N/A"
-        self._baseline_form.addRow("Sharpe Ratio:", QLabel(sharpe))
+        self._baseline_form.addRow(_key("Sharpe Ratio:"), _lbl(sharpe, sharpe_color))
         self._baseline_form.addRow(
-            "Date Range:", QLabel(f"{summary.backtest_start} → {summary.backtest_end}")
+            _key("Date Range:"), _lbl(f"{summary.backtest_start} → {summary.backtest_end}")
         )
 
         self.baseline_group.setVisible(True)
+        _fade_in_widget(self.baseline_group)
+
+        # Update animated metric cards
+        self._cards_widget.setVisible(True)
+        _fade_in_widget(self._cards_widget, duration=500)
+
+        # Profit card
+        profit_bar = min(abs(summary.total_profit) / 100 * 100, 100)
+        self._card_profit.set_value(
+            f"{summary.total_profit:.2f}%",
+            color=profit_color,
+            bar_pct=profit_bar,
+            bar_color=profit_color,
+            sub_text="vs 0% target",
+        )
+
+        # Win rate card
+        self._card_winrate.set_value(
+            f"{summary.win_rate:.1f}%",
+            color=wr_color,
+            bar_pct=summary.win_rate,
+            bar_color=wr_color,
+            sub_text="50% threshold",
+        )
+
+        # Drawdown card
+        dd_bar = min(summary.max_drawdown / 60 * 100, 100)
+        self._card_drawdown.set_value(
+            f"{summary.max_drawdown:.1f}%",
+            color=dd_color,
+            bar_pct=dd_bar,
+            bar_color=dd_color,
+            sub_text="lower is better",
+        )
+
+        # Sharpe card
+        sharpe_val = summary.sharpe_ratio or 0.0
+        sharpe_bar = min(max((sharpe_val + 3) / 6 * 100, 0), 100)
+        self._card_sharpe.set_value(
+            f"{sharpe_val:.2f}" if summary.sharpe_ratio is not None else "N/A",
+            color=sharpe_color,
+            bar_pct=sharpe_bar,
+            bar_color=sharpe_color,
+            sub_text=">1.0 is good",
+        )
+
+        # Trades card
+        trades_bar = min(summary.total_trades / 500 * 100, 100)
+        self._card_trades.set_value(
+            str(summary.total_trades),
+            color=_C_TEXT,
+            bar_pct=trades_bar,
+            bar_color=_C_TEAL,
+            sub_text="30 min threshold",
+        )
 
     def _display_issues_and_suggestions(self, summary: BacktestSummary, params: dict) -> None:
         """Run diagnosis and suggestion services, then populate the UI groups."""
@@ -349,14 +793,18 @@ class ImprovePage(QWidget):
         issues = ResultsDiagnosisService.diagnose(summary)
 
         if not issues:
-            self._issues_layout.addWidget(QLabel("No issues detected — results look healthy"))
+            ok_lbl = QLabel("✅  No issues detected — results look healthy")
+            ok_lbl.setStyleSheet(f"color: {_C_GREEN_LIGHT}; font-size: 12px; padding: 4px;")
+            self._issues_layout.addWidget(ok_lbl)
         else:
-            for issue in issues:
-                lbl = QLabel(f"• {issue.issue_id}: {issue.description}")
-                lbl.setWordWrap(True)
-                self._issues_layout.addWidget(lbl)
+            for i, issue in enumerate(issues):
+                badge = IssueBadge(issue)
+                self._issues_layout.addWidget(badge)
+                # Stagger fade-in
+                QTimer.singleShot(i * 80, lambda w=badge: _fade_in_widget(w, 300))
 
         self.issues_group.setVisible(True)
+        _fade_in_widget(self.issues_group)
 
         # Clear suggestions layout
         while self._suggestions_layout.count():
@@ -367,28 +815,17 @@ class ImprovePage(QWidget):
         suggestions = RuleSuggestionService.suggest(issues, params)
 
         if not suggestions:
-            self._suggestions_layout.addWidget(QLabel("No suggestions available"))
+            no_lbl = QLabel("No suggestions available")
+            no_lbl.setStyleSheet(f"color: {_C_TEXT_DIM}; font-size: 12px; padding: 4px;")
+            self._suggestions_layout.addWidget(no_lbl)
         else:
-            for suggestion in suggestions:
-                row_widget = QWidget()
-                row_layout = QHBoxLayout(row_widget)
-                row_layout.setContentsMargins(0, 0, 0, 0)
-
-                value_text = "Advisory" if suggestion.is_advisory else str(suggestion.proposed_value)
-                lbl = QLabel(
-                    f"{suggestion.parameter}: {value_text} — "
-                    f"{suggestion.reason} → {suggestion.expected_effect}"
-                )
-                lbl.setWordWrap(True)
-                row_layout.addWidget(lbl, 1)
-
-                apply_btn = QPushButton("Apply")
-                apply_btn.clicked.connect(lambda checked=False, s=suggestion: self._on_apply_suggestion(s))
-                row_layout.addWidget(apply_btn)
-
-                self._suggestions_layout.addWidget(row_widget)
+            for i, suggestion in enumerate(suggestions):
+                row = SuggestionRow(suggestion, self._on_apply_suggestion)
+                self._suggestions_layout.addWidget(row)
+                QTimer.singleShot(i * 80, lambda w=row: _fade_in_widget(w, 300))
 
         self.suggestions_group.setVisible(True)
+        _fade_in_widget(self.suggestions_group)
 
     def _on_apply_suggestion(self, suggestion: ParameterSuggestion) -> None:
         """Apply a suggestion to the candidate config and update the diff preview."""
@@ -411,7 +848,6 @@ class ImprovePage(QWidget):
             if item.widget():
                 item.widget().deleteLater()
             elif item.layout():
-                # Clear sub-layouts
                 sub = item.layout()
                 while sub.count():
                     sub_item = sub.takeAt(0)
@@ -421,34 +857,81 @@ class ImprovePage(QWidget):
         diff = compute_diff(self._baseline_params or {}, self._candidate_config)
 
         if not diff:
-            self._candidate_layout.addWidget(QLabel("No changes applied yet"))
+            no_lbl = QLabel("No changes applied yet")
+            no_lbl.setStyleSheet(f"color: {_C_TEXT_DIM}; font-size: 12px; padding: 4px;")
+            self._candidate_layout.addWidget(no_lbl)
         else:
+            diff_frame = QFrame()
+            diff_frame.setStyleSheet(f"""
+                QFrame {{
+                    background: {_C_DARK_BG};
+                    border: 1px solid {_C_BORDER};
+                    border-radius: 6px;
+                }}
+            """)
+            diff_layout = QVBoxLayout(diff_frame)
+            diff_layout.setContentsMargins(10, 8, 10, 8)
+            diff_layout.setSpacing(4)
+
+            header = QLabel("Parameter Changes")
+            header.setStyleSheet(f"color: {_C_TEXT_DIM}; font-size: 10px; font-weight: bold; letter-spacing: 1px;")
+            diff_layout.addWidget(header)
+
             for key, value in diff.items():
-                self._candidate_layout.addWidget(QLabel(f"{key}: {value}"))
+                old_val = (self._baseline_params or {}).get(key, "—")
+                row = QHBoxLayout()
+                key_lbl = QLabel(f"  {key}")
+                key_lbl.setStyleSheet(f"color: {_C_TEXT}; font-size: 12px; font-weight: bold;")
+                key_lbl.setFixedWidth(160)
+                row.addWidget(key_lbl)
+
+                old_lbl = QLabel(str(old_val))
+                old_lbl.setStyleSheet(f"color: {_C_RED_LIGHT}; font-size: 12px; text-decoration: line-through;")
+                row.addWidget(old_lbl)
+
+                arrow = QLabel("  →  ")
+                arrow.setStyleSheet(f"color: {_C_TEXT_DIM}; font-size: 12px;")
+                row.addWidget(arrow)
+
+                new_lbl = QLabel(str(value))
+                new_lbl.setStyleSheet(f"color: {_C_GREEN_LIGHT}; font-size: 12px; font-weight: bold;")
+                row.addWidget(new_lbl)
+                row.addStretch()
+
+                diff_layout.addLayout(row)
+
+            self._candidate_layout.addWidget(diff_frame)
+            _fade_in_widget(diff_frame)
 
         # Buttons row
         btn_row = QHBoxLayout()
-        self.run_backtest_btn = QPushButton("Run Backtest on Candidate")
+        self.run_backtest_btn = QPushButton("▶  Run Backtest on Candidate")
         self.run_backtest_btn.setEnabled(bool(diff))
+        self.run_backtest_btn.setStyleSheet(self._btn_style(_C_GREEN, "white"))
         self.run_backtest_btn.clicked.connect(self._on_run_candidate)
         btn_row.addWidget(self.run_backtest_btn)
 
-        self.stop_btn = QPushButton("Stop")
+        self.stop_btn = QPushButton("⏹  Stop")
         self.stop_btn.setVisible(False)
+        self.stop_btn.setStyleSheet(self._btn_style(_C_RED, "white"))
         self.stop_btn.clicked.connect(self._on_stop_candidate)
         btn_row.addWidget(self.stop_btn)
 
-        self.reset_candidate_btn = QPushButton("Reset Candidate")
+        self.reset_candidate_btn = QPushButton("↺  Reset Candidate")
+        self.reset_candidate_btn.setStyleSheet(self._btn_style(_C_BORDER, _C_TEXT))
         self.reset_candidate_btn.clicked.connect(self._on_reset_candidate)
         btn_row.addWidget(self.reset_candidate_btn)
+        btn_row.addStretch()
 
         btn_widget = QWidget()
+        btn_widget.setStyleSheet(f"background: transparent;")
         btn_widget.setLayout(btn_row)
         self._candidate_layout.addWidget(btn_widget)
 
         self._candidate_layout.addWidget(self._terminal)
 
         self.candidate_group.setVisible(True)
+        _fade_in_widget(self.candidate_group)
 
     def _on_reset_candidate(self) -> None:
         """Reset candidate config to baseline params."""
@@ -505,7 +988,8 @@ class ImprovePage(QWidget):
                 env=env,
             )
         except Exception as e:
-            self.status_label.setText(f"Process error: {e}")
+            self.status_label.setText(f"❌  Process error: {e}")
+            self.status_label.setStyleSheet(f"color: {_C_RED_LIGHT}; font-size: 11px; padding: 2px 4px;")
             self.run_backtest_btn.setEnabled(True)
             self.stop_btn.setVisible(False)
 
@@ -530,9 +1014,11 @@ class ImprovePage(QWidget):
                 self._candidate_run = candidate_run
                 self._update_comparison_view()
             except (FileNotFoundError, ValueError) as e:
-                self.status_label.setText(f"Error loading candidate results: {e}")
+                self.status_label.setText(f"❌  Error loading candidate results: {e}")
+                self.status_label.setStyleSheet(f"color: {_C_RED_LIGHT}; font-size: 11px; padding: 2px 4px;")
         else:
-            self.status_label.setText("Candidate backtest failed — see terminal output")
+            self.status_label.setText("❌  Candidate backtest failed — see terminal output")
+            self.status_label.setStyleSheet(f"color: {_C_RED_LIGHT}; font-size: 11px; padding: 2px 4px;")
 
     def _update_comparison_view(self) -> None:
         """Build or rebuild the comparison table when both runs are available."""
@@ -556,57 +1042,159 @@ class ImprovePage(QWidget):
             ("expectancy", "Expectancy", lambda s: s.expectancy),
         ]
 
-        table = QTableWidget(len(METRICS), 3)
-        table.setHorizontalHeaderLabels(["Metric", "Baseline", "Candidate"])
-        table.setEditTriggers(QTableWidget.NoEditTriggers)
-        table.horizontalHeader().setStretchLastSection(True)
-        table.verticalHeader().setVisible(False)
-
         baseline_summary = self._baseline_run.summary
         candidate_summary = self._candidate_run.summary
+
+        # Summary delta cards at the top
+        delta_widget = QWidget()
+        delta_widget.setStyleSheet(f"background: transparent;")
+        delta_layout = QHBoxLayout(delta_widget)
+        delta_layout.setContentsMargins(0, 0, 0, 8)
+        delta_layout.setSpacing(8)
+
+        for metric_key, display_name, getter in METRICS[:4]:
+            b_val = getter(baseline_summary)
+            c_val = getter(candidate_summary)
+            delta = c_val - b_val
+            color = compute_highlight(metric_key, b_val, c_val)
+            card_color = _C_GREEN_LIGHT if color == "green" else (_C_RED_LIGHT if color == "red" else _C_TEXT_DIM)
+            sign = "+" if delta > 0 else ""
+            delta_card = QFrame()
+            delta_card.setStyleSheet(f"""
+                QFrame {{
+                    background: {card_color}18;
+                    border: 1px solid {card_color}55;
+                    border-radius: 6px;
+                }}
+            """)
+            dc_layout = QVBoxLayout(delta_card)
+            dc_layout.setContentsMargins(8, 6, 8, 6)
+            dc_layout.setSpacing(2)
+
+            name_lbl = QLabel(display_name)
+            name_lbl.setStyleSheet(f"color: {_C_TEXT_DIM}; font-size: 9px; font-weight: bold; letter-spacing: 1px; background: transparent; border: none;")
+            name_lbl.setAlignment(Qt.AlignCenter)
+            dc_layout.addWidget(name_lbl)
+
+            if metric_key in ("win_rate", "total_profit", "max_drawdown"):
+                delta_str = f"{sign}{delta:.2f}%"
+            elif metric_key == "total_trades":
+                delta_str = f"{sign}{int(delta)}"
+            else:
+                delta_str = f"{sign}{delta:.4f}"
+
+            delta_lbl = QLabel(delta_str)
+            delta_lbl.setStyleSheet(f"color: {card_color}; font-size: 16px; font-weight: bold; background: transparent; border: none;")
+            delta_lbl.setAlignment(Qt.AlignCenter)
+            dc_layout.addWidget(delta_lbl)
+
+            delta_layout.addWidget(delta_card)
+            _fade_in_widget(delta_card, 400)
+
+        delta_layout.addStretch()
+        self._comparison_layout.addWidget(delta_widget)
+
+        # Full comparison table
+        table = QTableWidget(len(METRICS), 4)
+        table.setHorizontalHeaderLabels(["Metric", "Baseline", "Candidate", "Δ Change"])
+        table.setEditTriggers(QTableWidget.NoEditTriggers)
+        table.horizontalHeader().setStretchLastSection(True)
+        table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)
+        table.verticalHeader().setVisible(False)
+        table.setAlternatingRowColors(True)
+        table.setStyleSheet(f"""
+            QTableWidget {{
+                background: {_C_CARD_BG};
+                alternate-background-color: {_C_DARK_BG};
+                gridline-color: {_C_BORDER};
+                border: 1px solid {_C_BORDER};
+                border-radius: 6px;
+                color: {_C_TEXT};
+                font-size: 12px;
+            }}
+            QHeaderView::section {{
+                background: {_C_DARK_BG};
+                color: {_C_TEXT_DIM};
+                border: none;
+                border-bottom: 1px solid {_C_BORDER};
+                padding: 6px 8px;
+                font-size: 11px;
+                font-weight: bold;
+                letter-spacing: 1px;
+            }}
+            QTableWidget::item {{
+                padding: 6px 8px;
+            }}
+        """)
 
         for row, (metric_key, display_name, getter) in enumerate(METRICS):
             baseline_val = getter(baseline_summary)
             candidate_val = getter(candidate_summary)
+            delta = candidate_val - baseline_val
 
-            # Format values
             if metric_key == "total_trades":
                 b_str = str(int(baseline_val))
                 c_str = str(int(candidate_val))
+                d_str = f"{'+' if delta >= 0 else ''}{int(delta)}"
             elif metric_key in ("win_rate", "total_profit", "max_drawdown"):
                 b_str = f"{baseline_val:.2f}%"
                 c_str = f"{candidate_val:.2f}%"
+                d_str = f"{'+' if delta >= 0 else ''}{delta:.2f}%"
             else:
                 b_str = f"{baseline_val:.4f}"
                 c_str = f"{candidate_val:.4f}"
+                d_str = f"{'+' if delta >= 0 else ''}{delta:.4f}"
 
-            table.setItem(row, 0, QTableWidgetItem(display_name))
+            metric_item = QTableWidgetItem(display_name)
+            metric_item.setForeground(QColor(_C_TEXT_DIM))
+            table.setItem(row, 0, metric_item)
             table.setItem(row, 1, QTableWidgetItem(b_str))
 
             candidate_item = QTableWidgetItem(c_str)
             color = compute_highlight(metric_key, baseline_val, candidate_val)
             if color == "green":
-                candidate_item.setBackground(QColor("#2ecc71"))
+                candidate_item.setForeground(QColor(_C_GREEN_LIGHT))
+                candidate_item.setFont(QFont("", -1, QFont.Bold))
             elif color == "red":
-                candidate_item.setBackground(QColor("#e74c3c"))
+                candidate_item.setForeground(QColor(_C_RED_LIGHT))
+                candidate_item.setFont(QFont("", -1, QFont.Bold))
             table.setItem(row, 2, candidate_item)
 
-        self._comparison_layout.addWidget(table)
+            delta_item = QTableWidgetItem(d_str)
+            if color == "green":
+                delta_item.setForeground(QColor(_C_GREEN_LIGHT))
+                delta_item.setBackground(QColor(_C_GREEN + "22"))
+            elif color == "red":
+                delta_item.setForeground(QColor(_C_RED_LIGHT))
+                delta_item.setBackground(QColor(_C_RED + "22"))
+            else:
+                delta_item.setForeground(QColor(_C_TEXT_DIM))
+            table.setItem(row, 3, delta_item)
 
-        # Re-add accept/reject/rollback buttons
+        self._comparison_layout.addWidget(table)
+        _fade_in_widget(table)
+
+        # Accept / Reject / Rollback buttons
         self.accept_btn.setVisible(True)
         self.reject_btn.setVisible(True)
         self.rollback_btn.setVisible(len(self._baseline_history) > 0)
+
+        self.accept_btn.setStyleSheet(self._btn_style(_C_GREEN, "white"))
+        self.reject_btn.setStyleSheet(self._btn_style(_C_RED, "white"))
+        self.rollback_btn.setStyleSheet(self._btn_style(_C_ORANGE, "white"))
 
         arb_row = QHBoxLayout()
         arb_row.addWidget(self.accept_btn)
         arb_row.addWidget(self.reject_btn)
         arb_row.addWidget(self.rollback_btn)
+        arb_row.addStretch()
         arb_widget = QWidget()
+        arb_widget.setStyleSheet("background: transparent;")
         arb_widget.setLayout(arb_row)
         self._comparison_layout.addWidget(arb_widget)
 
         self.comparison_group.setVisible(True)
+        _fade_in_widget(self.comparison_group)
 
     def _on_accept(self) -> None:
         """Accept the candidate: write params, promote candidate to baseline."""
@@ -632,7 +1220,8 @@ class ImprovePage(QWidget):
 
         # Single UI refresh after all state is updated
         self._update_comparison_view()
-        self.status_label.setText("Candidate accepted — strategy parameters updated")
+        self.status_label.setText("✅  Candidate accepted — strategy parameters updated")
+        self.status_label.setStyleSheet(f"color: {_C_GREEN_LIGHT}; font-size: 11px; padding: 2px 4px;")
         _log.info("Candidate accepted for strategy '%s'", strategy_name)
 
     def _on_reject(self) -> None:
@@ -671,5 +1260,6 @@ class ImprovePage(QWidget):
 
         self._update_comparison_view()
         self._update_candidate_preview()
-        self.status_label.setText("Rolled back to previous baseline parameters")
+        self.status_label.setText("↩  Rolled back to previous baseline parameters")
+        self.status_label.setStyleSheet(f"color: {_C_YELLOW}; font-size: 11px; padding: 2px 4px;")
         _log.info("Rolled back to previous baseline for strategy '%s'", strategy_name)
