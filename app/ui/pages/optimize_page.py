@@ -20,6 +20,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QColor
 
 from app.app_state.settings_state import SettingsState
+from app.ui.theme import SPACING
 from app.core.services.hyperopt_advisor import analyse as advise_hyperopt
 from app.core.services.optimize_service import OptimizeService
 from app.core.services.process_service import ProcessService
@@ -58,6 +59,8 @@ class OptimizePage(QWidget):
         root = QVBoxLayout(self)
 
         params_layout = QVBoxLayout()
+        params_layout.setContentsMargins(SPACING["md"], SPACING["md"], SPACING["md"], SPACING["md"])
+        params_layout.setSpacing(SPACING["sm"])
 
         strategy_layout = QHBoxLayout()
         strategy_layout.addWidget(QLabel("Strategy:"))
@@ -107,7 +110,7 @@ class OptimizePage(QWidget):
         pairs_layout.addLayout(pairs_button_layout)
 
         self.pairs_display_label = QLabel("Selected: None")
-        self.pairs_display_label.setStyleSheet("color: #666; font-size: 9pt; padding-left: 4px;")
+        self.pairs_display_label.setObjectName("hint_label")
         pairs_layout.addWidget(self.pairs_display_label)
         params_layout.addLayout(pairs_layout)
 
@@ -154,7 +157,7 @@ class OptimizePage(QWidget):
         self.revert_button = QPushButton("\u21a9 Revert Parameters")
         self.revert_button.setEnabled(False)
         self.revert_button.setToolTip("Restore strategy parameters to values before this optimization run")
-        self.revert_button.setStyleSheet("color: #b85c00; font-weight: bold;")
+        self.revert_button.setObjectName("secondary")
         self.revert_button.clicked.connect(self._revert_parameters)
         button_layout.addWidget(self.revert_button)
 
@@ -164,20 +167,14 @@ class OptimizePage(QWidget):
         # Data quality warning
         self.data_warning_label = QLabel("")
         self.data_warning_label.setWordWrap(True)
-        self.data_warning_label.setStyleSheet(
-            "background: #fff3cd; color: #856404; border: 1px solid #ffc107; "
-            "border-radius: 4px; padding: 6px; font-size: 9pt;"
-        )
+        self.data_warning_label.setObjectName("warning_banner")
         self.data_warning_label.setVisible(False)
         params_layout.addWidget(self.data_warning_label)
 
         # Result quality warning
         self.result_warning_label = QLabel("")
         self.result_warning_label.setWordWrap(True)
-        self.result_warning_label.setStyleSheet(
-            "background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; "
-            "border-radius: 4px; padding: 6px; font-size: 9pt;"
-        )
+        self.result_warning_label.setObjectName("warning_banner")
         self.result_warning_label.setVisible(False)
         params_layout.addWidget(self.result_warning_label)
 
@@ -191,7 +188,7 @@ class OptimizePage(QWidget):
 
         advisor_header = QHBoxLayout()
         self._advisor_status = QLabel("Select a strategy to see recommendations.")
-        self._advisor_status.setStyleSheet("color: #555; font-size: 9pt;")
+        self._advisor_status.setObjectName("hint_label")
         self._advisor_status.setWordWrap(True)
         advisor_header.addWidget(self._advisor_status, 1)
 
@@ -206,31 +203,40 @@ class OptimizePage(QWidget):
 
         self._advisor_tips = QLabel("")
         self._advisor_tips.setWordWrap(True)
-        self._advisor_tips.setStyleSheet(
-            "background: #e8f4fd; color: #0c5460; border: 1px solid #bee5eb; "
-            "border-radius: 4px; padding: 8px; font-size: 9pt;"
-        )
+        self._advisor_tips.setObjectName("success_banner")
         self._advisor_tips.setVisible(False)
         advisor_vbox.addWidget(self._advisor_tips)
 
         self._advisor_warnings = QLabel("")
         self._advisor_warnings.setWordWrap(True)
-        self._advisor_warnings.setStyleSheet(
-            "background: #fff3cd; color: #856404; border: 1px solid #ffc107; "
-            "border-radius: 4px; padding: 8px; font-size: 9pt;"
-        )
+        self._advisor_warnings.setObjectName("warning_banner")
         self._advisor_warnings.setVisible(False)
         advisor_vbox.addWidget(self._advisor_warnings)
 
         params_layout.addWidget(advisor_group)
 
+        # Wrap params in scroll area
+        params_content = QWidget()
+        params_content.setLayout(params_layout)
+
+        params_scroll = QScrollArea()
+        params_scroll.setWidgetResizable(True)
+        params_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        params_scroll.setWidget(params_content)
+        params_scroll.setMinimumWidth(380)
+        params_scroll.setMaximumWidth(500)
+
         output_layout = QVBoxLayout()
+        output_layout.setContentsMargins(SPACING["sm"], SPACING["sm"], SPACING["sm"], SPACING["sm"])
         self.terminal = TerminalWidget()
         output_layout.addWidget(self.terminal)
 
+        output_widget = QWidget()
+        output_widget.setLayout(output_layout)
+
         h_layout = QHBoxLayout()
-        h_layout.addLayout(params_layout, 1)
-        h_layout.addLayout(output_layout, 2)
+        h_layout.addWidget(params_scroll, 1)
+        h_layout.addWidget(output_widget, 2)
         root.addLayout(h_layout)
 
     def _connect_signals(self):
@@ -611,10 +617,6 @@ class OptimizePage(QWidget):
         prefs.spaces = self.spaces_input.text().strip()
         prefs.hyperopt_loss = self.loss_combo.currentText().strip()
 
-        for pair in self.selected_pairs:
-            if pair not in prefs.paired_favorites and len(prefs.paired_favorites) < 20:
-                prefs.paired_favorites.append(pair)
-
         self.settings_state.save_settings(settings)
 
     def _on_timerange_preset(self, preset: str):
@@ -628,9 +630,14 @@ class OptimizePage(QWidget):
 
     def _on_select_pairs(self):
         settings = self.settings_state.current_settings
-        favorites = settings.optimize_preferences.paired_favorites if settings else []
+        favorites = settings.favorite_pairs if settings else []
 
-        dialog = PairsSelectorDialog(favorites, self.selected_pairs, self)
+        dialog = PairsSelectorDialog(
+            favorites=favorites,
+            selected=self.selected_pairs,
+            settings_state=self.settings_state,
+            parent=self,
+        )
         if dialog.exec() == QDialog.Accepted:
             self.selected_pairs = dialog.get_selected_pairs()
             self._update_pairs_display()

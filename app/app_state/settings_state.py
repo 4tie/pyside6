@@ -15,6 +15,7 @@ class SettingsState(QObject):
     settings_validated = Signal(SettingsValidationResult)
     settings_changed = Signal(AppSettings)
     ai_settings_changed = Signal(object)
+    favorites_changed = Signal(list)
 
     def __init__(self):
         super().__init__()
@@ -61,6 +62,23 @@ class SettingsState(QObject):
         self.last_validation = self.settings_service.validate_settings(self.current_settings)
         self.settings_validated.emit(self.last_validation)
         return self.last_validation
+
+    def toggle_favorite_pair(self, pair: str) -> None:
+        """Add pair to favorites if absent, remove if present; save and emit.
+
+        Args:
+            pair: The trading pair string to toggle (e.g. "BTC/USDT").
+        """
+        if not self.current_settings:
+            return
+        favs = list(self.current_settings.favorite_pairs)
+        if pair in favs:
+            favs.remove(pair)
+        else:
+            favs.append(pair)
+        self.current_settings.favorite_pairs = favs
+        self.save_settings(self.current_settings)
+        self.favorites_changed.emit(favs)
 
     def is_valid(self) -> bool:
         """Check if current settings are valid."""

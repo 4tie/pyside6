@@ -150,7 +150,7 @@ class StrategyConfigPage(QWidget):
 
         # Bottom path label
         self._path_label = QLabel("")
-        self._path_label.setStyleSheet("color: #666; font-size: 9pt;")
+        self._path_label.setObjectName("path_label")
         root.addWidget(self._path_label)
 
     # ------------------------------------------------------------------ #
@@ -360,5 +360,7 @@ class StrategyConfigPage(QWidget):
 
     def _set_status(self, msg: str, error: bool):
         self.status_label.setText(msg)
-        color = "#cc0000" if error else "#1a7f37"
-        self.status_label.setStyleSheet(f"color: {color}; font-weight: bold;")
+        self.status_label.setObjectName("status_error" if error else "status_ok")
+        # Force style refresh after object name change
+        self.status_label.style().unpolish(self.status_label)
+        self.status_label.style().polish(self.status_label)

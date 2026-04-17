@@ -127,14 +127,14 @@ class DataStatusWidget(QWidget):
 
         # Legend
         legend = QHBoxLayout()
-        for color, label in [
+        for _, label in [
             (_GREEN,  "● Up to date"),
             (_YELLOW, "● Stale (>3d old)"),
             (_RED,    "● Has gaps"),
             (_GRAY,   "● No data"),
         ]:
             lbl = QLabel(label)
-            lbl.setStyleSheet(f"color: {color.name()}; font-size: 8pt;")
+            lbl.setObjectName("hint_label")
             legend.addWidget(lbl)
         legend.addStretch()
         layout.addLayout(legend)
@@ -157,7 +157,7 @@ class DataStatusWidget(QWidget):
 
         # Summary bar
         self._summary_label = QLabel("")
-        self._summary_label.setStyleSheet("color: #555; font-size: 9pt; padding: 2px;")
+        self._summary_label.setObjectName("hint_label")
         layout.addWidget(self._summary_label)
 
     def set_user_data_path(self, path: Optional[str]):

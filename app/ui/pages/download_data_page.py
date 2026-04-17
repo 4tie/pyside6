@@ -11,9 +11,12 @@ from PySide6.QtWidgets import (
     QPushButton,
     QMessageBox,
     QGroupBox,
+    QScrollArea,
     QTabWidget,
 )
+from PySide6.QtCore import Qt
 from app.app_state.settings_state import SettingsState
+from app.ui.theme import SPACING
 from app.core.services.download_data_service import DownloadDataService
 from app.core.services.process_service import ProcessService
 from app.core.services.settings_service import SettingsService
@@ -46,6 +49,8 @@ class DownloadDataPage(QWidget):
         main_layout = QVBoxLayout()
 
         params_layout = QVBoxLayout()
+        params_layout.setContentsMargins(SPACING["md"], SPACING["md"], SPACING["md"], SPACING["md"])
+        params_layout.setSpacing(SPACING["sm"])
 
         timeframe_layout = QHBoxLayout()
         timeframe_layout.addWidget(QLabel("Timeframe:"))
@@ -84,9 +89,7 @@ class DownloadDataPage(QWidget):
         pairs_layout.addLayout(pairs_button_layout)
 
         self.pairs_display_label = QLabel("Selected: None")
-        self.pairs_display_label.setStyleSheet(
-            "color: #666; font-size: 9pt; padding-left: 4px;"
-        )
+        self.pairs_display_label.setObjectName("hint_label")
         pairs_layout.addWidget(self.pairs_display_label)
         params_layout.addLayout(pairs_layout)
 
@@ -106,16 +109,25 @@ class DownloadDataPage(QWidget):
         # Validation warning
         self.validation_label = QLabel("")
         self.validation_label.setWordWrap(True)
-        self.validation_label.setStyleSheet(
-            "background: #fff3cd; color: #856404; border: 1px solid #ffc107; "
-            "border-radius: 4px; padding: 6px; font-size: 9pt;"
-        )
+        self.validation_label.setObjectName("warning_banner")
         self.validation_label.setVisible(False)
         params_layout.addWidget(self.validation_label)
 
         params_layout.addStretch()
 
+        # Wrap params in scroll area
+        params_content = QWidget()
+        params_content.setLayout(params_layout)
+
+        params_scroll = QScrollArea()
+        params_scroll.setWidgetResizable(True)
+        params_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        params_scroll.setWidget(params_content)
+        params_scroll.setMinimumWidth(380)
+        params_scroll.setMaximumWidth(500)
+
         output_layout = QVBoxLayout()
+        output_layout.setContentsMargins(SPACING["sm"], SPACING["sm"], SPACING["sm"], SPACING["sm"])
         self.output_tabs = QTabWidget()
 
         self.terminal = TerminalWidget()
@@ -126,9 +138,12 @@ class DownloadDataPage(QWidget):
 
         output_layout.addWidget(self.output_tabs)
 
+        output_widget = QWidget()
+        output_widget.setLayout(output_layout)
+
         h_layout = QHBoxLayout()
-        h_layout.addLayout(params_layout, 1)
-        h_layout.addLayout(output_layout, 2)
+        h_layout.addWidget(params_scroll, 1)
+        h_layout.addWidget(output_widget, 2)
 
         main_layout.addLayout(h_layout)
         self.setLayout(main_layout)
@@ -308,10 +323,6 @@ class DownloadDataPage(QWidget):
         prefs.default_timerange = self.timerange_input.text().strip()
         prefs.default_pairs = ",".join(self.selected_pairs) if self.selected_pairs else ""
 
-        for pair in self.selected_pairs:
-            if pair not in prefs.paired_favorites and len(prefs.paired_favorites) < 20:
-                prefs.paired_favorites.append(pair)
-
         self.settings_state.save_settings(settings)
 
     def _on_timerange_preset(self, preset: str):
@@ -328,9 +339,14 @@ class DownloadDataPage(QWidget):
     def _on_select_pairs(self):
         """Open pairs selector dialog."""
         settings = self.settings_state.current_settings
-        favorites = settings.download_preferences.paired_favorites if settings else []
+        favorites = settings.favorite_pairs if settings else []
 
-        dialog = PairsSelectorDialog(favorites, self.selected_pairs, self)
+        dialog = PairsSelectorDialog(
+            favorites=favorites,
+            selected=self.selected_pairs,
+            settings_state=self.settings_state,
+            parent=self,
+        )
         if dialog.exec() == QDialog.Accepted:
             self.selected_pairs = dialog.get_selected_pairs()
             self._update_pairs_display()

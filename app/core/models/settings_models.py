@@ -137,6 +137,32 @@ class AppSettings(BaseModel):
     ai: AISettings = Field(
         default_factory=AISettings, description="AI panel configuration"
     )
+    favorite_pairs: list[str] = Field(
+        default_factory=list,
+        description="Shared favorite trading pairs across all sections",
+    )
+    theme_mode: str = Field("dark", description="UI colour mode: dark or light")
+
+    @model_validator(mode="before")
+    @classmethod
+    def migrate_legacy_favorites(cls, data: Any) -> Any:
+        """Merge per-section paired_favorites into top-level favorite_pairs."""
+        if not isinstance(data, dict):
+            return data
+        data = dict(data)
+        # Only migrate when top-level field is absent or empty
+        if data.get("favorite_pairs"):
+            return data
+        collected: list[str] = []
+        for section_key in ("backtest_preferences", "optimize_preferences", "download_preferences"):
+            section = data.get(section_key)
+            if isinstance(section, dict):
+                for pair in section.get("paired_favorites", []):
+                    if pair not in collected:
+                        collected.append(pair)
+        if collected:
+            data["favorite_pairs"] = collected
+        return data
 
     @field_validator(
         "venv_path",

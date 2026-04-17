@@ -27,7 +27,7 @@ class BacktestResultsWidget(QWidget):
 
         toolbar = QHBoxLayout()
         self._export_path_label = QLabel("No results loaded")
-        self._export_path_label.setStyleSheet("color: #555; font-size: 9pt;")
+        self._export_path_label.setObjectName("path_label")
         toolbar.addWidget(self._export_path_label, 1)
 
         self._export_btn = QPushButton("Export Results")

@@ -111,17 +111,12 @@ class AIChatDock(QDockWidget):
 
     def _build_ui(self) -> None:
         root = QWidget()
-        root.setStyleSheet("background-color: #1e1e1e;")
         root_layout = QVBoxLayout(root)
         root_layout.setContentsMargins(0, 0, 0, 0)
         root_layout.setSpacing(0)
 
         # --- Header: status dot + provider label + tools toggle ---
         header = QWidget()
-        header.setStyleSheet(
-            "background-color: #252526;"
-            "border-bottom: 1px solid #3c3c3c;"
-        )
         header_layout = QHBoxLayout(header)
         header_layout.setContentsMargins(10, 6, 10, 6)
         header_layout.setSpacing(8)
@@ -132,9 +127,7 @@ class AIChatDock(QDockWidget):
         header_layout.addWidget(self._status_label)
 
         self._provider_label = QLabel()
-        self._provider_label.setStyleSheet(
-            "color: #888888; font-size: 11px; background: transparent; border: none;"
-        )
+        self._provider_label.setObjectName("hint_label")
         header_layout.addWidget(self._provider_label)
 
         header_layout.addStretch()
@@ -144,25 +137,6 @@ class AIChatDock(QDockWidget):
         self._tools_btn.setCheckable(True)
         self._tools_btn.setToolTip("Configure tools in Settings → AI")
         self._tools_btn.setEnabled(True)
-        self._tools_btn.setStyleSheet(
-            "QToolButton {"
-            "  background-color: transparent;"
-            "  color: #888888;"
-            "  border: 1px solid #3c3c3c;"
-            "  border-radius: 3px;"
-            "  padding: 2px 8px;"
-            "  font-size: 11px;"
-            "}"
-            "QToolButton:checked {"
-            "  background-color: #094771;"
-            "  color: #9cdcfe;"
-            "  border-color: #007acc;"
-            "}"
-            "QToolButton:hover {"
-            "  background-color: #3c3c3c;"
-            "  color: #cccccc;"
-            "}"
-        )
         self._tools_btn.clicked.connect(self._on_tools_btn_clicked)
         header_layout.addWidget(self._tools_btn)
 
@@ -172,10 +146,8 @@ class AIChatDock(QDockWidget):
         self._scroll_area = QScrollArea()
         self._scroll_area.setWidgetResizable(True)
         self._scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self._scroll_area.setStyleSheet("background-color: #1e1e1e; border: none;")
 
         self._messages_widget = QWidget()
-        self._messages_widget.setStyleSheet("background-color: #1e1e1e;")
         self._messages_layout = QVBoxLayout(self._messages_widget)
         self._messages_layout.setContentsMargins(8, 8, 8, 8)
         self._messages_layout.setSpacing(6)
@@ -197,12 +169,11 @@ class AIChatDock(QDockWidget):
         self._no_model_label = QLabel("Select a model in Settings → AI to get started.")
         self._no_model_label.setAlignment(Qt.AlignCenter)
         self._no_model_label.setWordWrap(True)
-        self._no_model_label.setStyleSheet("color: #666666; font-size: 12px; padding: 16px;")
+        self._no_model_label.setObjectName("hint_label")
         self._no_model_label.setVisible(False)
         root_layout.addWidget(self._no_model_label)
 
         self._input_widget = QWidget()
-        self._input_widget.setStyleSheet("background-color: #252526;")
         input_layout = QVBoxLayout(self._input_widget)
         input_layout.setContentsMargins(8, 8, 8, 8)
         input_layout.setSpacing(6)
@@ -212,19 +183,6 @@ class AIChatDock(QDockWidget):
         self._input_edit.setMaximumHeight(80)
         self._input_edit.setMinimumHeight(44)
         self._input_edit.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-        self._input_edit.setStyleSheet(
-            "QPlainTextEdit {"
-            "  background-color: #3c3c3c;"
-            "  color: #d4d4d4;"
-            "  border: 1px solid #555555;"
-            "  border-radius: 6px;"
-            "  padding: 6px 10px;"
-            "  font-size: 13px;"
-            "}"
-            "QPlainTextEdit:focus {"
-            "  border: 1px solid #007acc;"
-            "}"
-        )
         self._input_edit.send_requested.connect(self._send_message)
 
         btn_row = QHBoxLayout()
@@ -409,14 +367,7 @@ class AIChatDock(QDockWidget):
     def _append_error_message(self, error: str) -> None:
         label = QLabel(f"⚠ {error}")
         label.setWordWrap(True)
-        label.setStyleSheet(
-            "color: #f87171;"
-            "background-color: #3b1a1a;"
-            "border: 1px solid #7f1d1d;"
-            "border-radius: 8px;"
-            "padding: 8px 12px;"
-            "font-size: 13px;"
-        )
+        label.setObjectName("status_error")
         self._messages_layout.insertWidget(self._messages_layout.count() - 1, label)
         self._scroll_to_bottom()
 

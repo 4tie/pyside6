@@ -17,10 +17,12 @@ from PySide6.QtWidgets import (
     QMessageBox,
     QGroupBox,
     QFormLayout,
+    QScrollArea,
     QTabWidget,
 )
 
 from app.app_state.settings_state import SettingsState
+from app.ui.theme import SPACING
 from app.core.services.backtest_service import BacktestService
 from app.core.backtests.results_parser import parse_backtest_zip
 from app.core.backtests.results_store import RunStore
@@ -71,6 +73,8 @@ class BacktestPage(QWidget):
 
         # Left panel: Parameters
         params_layout = QVBoxLayout()
+        params_layout.setContentsMargins(SPACING["md"], SPACING["md"], SPACING["md"], SPACING["md"])
+        params_layout.setSpacing(SPACING["sm"])
 
         # Strategy selection
         strategy_layout = QHBoxLayout()
@@ -131,9 +135,7 @@ class BacktestPage(QWidget):
 
         # Display selected pairs
         self.pairs_display_label = QLabel("Selected: None")
-        self.pairs_display_label.setStyleSheet(
-            "color: #666; font-size: 9pt; padding-left: 4px;"
-        )
+        self.pairs_display_label.setObjectName("hint_label")
         pairs_layout.addWidget(self.pairs_display_label)
 
         params_layout.addLayout(pairs_layout)
@@ -162,9 +164,7 @@ class BacktestPage(QWidget):
 
         # Export label
         self.export_label = QLabel("Export: -")
-        self.export_label.setStyleSheet(
-            "padding: 8px; background-color: #f0f0f0; border-radius: 4px; font-family: Courier;"
-        )
+        self.export_label.setObjectName("path_label")
         params_layout.addWidget(self.export_label)
 
         # Run button (context-sensitive based on mode)
@@ -183,8 +183,20 @@ class BacktestPage(QWidget):
 
         params_layout.addStretch()
 
+        # Wrap params in scroll area
+        params_content = QWidget()
+        params_content.setLayout(params_layout)
+
+        params_scroll = QScrollArea()
+        params_scroll.setWidgetResizable(True)
+        params_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        params_scroll.setWidget(params_content)
+        params_scroll.setMinimumWidth(380)
+        params_scroll.setMaximumWidth(500)
+
         # Right panel: Output + Results
         output_layout = QVBoxLayout()
+        output_layout.setContentsMargins(SPACING["sm"], SPACING["sm"], SPACING["sm"], SPACING["sm"])
 
         # Run picker toolbar
         run_picker_layout = QHBoxLayout()
@@ -208,10 +220,13 @@ class BacktestPage(QWidget):
 
         output_layout.addWidget(self.output_tabs)
 
+        output_widget = QWidget()
+        output_widget.setLayout(output_layout)
+
         # Main horizontal layout
         h_layout = QHBoxLayout()
-        h_layout.addLayout(params_layout, 1)
-        h_layout.addLayout(output_layout, 2)
+        h_layout.addWidget(params_scroll, 1)
+        h_layout.addWidget(output_widget, 2)
 
         main_layout.addLayout(h_layout)
         self.setLayout(main_layout)
@@ -563,11 +578,6 @@ class BacktestPage(QWidget):
         prefs.dry_run_wallet = self.dry_run_wallet.value()
         prefs.max_open_trades = self.max_open_trades.value()
 
-        # Update favorites with selected pairs (auto-grow list)
-        for pair in self.selected_pairs:
-            if pair not in prefs.paired_favorites and len(prefs.paired_favorites) < 10:
-                prefs.paired_favorites.append(pair)
-
         # Save to disk
         self.settings_state.save_settings(settings)
 
@@ -587,9 +597,14 @@ class BacktestPage(QWidget):
     def _on_select_pairs(self):
         """Open pairs selector dialog."""
         settings = self.settings_state.current_settings
-        favorites = settings.backtest_preferences.paired_favorites if settings else []
+        favorites = settings.favorite_pairs if settings else []
 
-        dialog = PairsSelectorDialog(favorites, self.selected_pairs, self)
+        dialog = PairsSelectorDialog(
+            favorites=favorites,
+            selected=self.selected_pairs,
+            settings_state=self.settings_state,
+            parent=self,
+        )
         if dialog.exec() == QDialog.Accepted:
             self.selected_pairs = dialog.get_selected_pairs()
             self._update_pairs_display()

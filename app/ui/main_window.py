@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import (
     QMainWindow, QTabWidget, QVBoxLayout, QWidget,
-    QPushButton, QHBoxLayout, QToolBar,
+    QPushButton, QHBoxLayout, QToolBar, QApplication,
 )
 from PySide6.QtGui import QAction
 from PySide6.QtCore import Qt
@@ -14,290 +14,9 @@ from app.ui.pages.strategy_config_page import StrategyConfigPage
 from app.ui.widgets.terminal_widget import TerminalWidget
 from app.ui.widgets.ai_chat_dock import AIChatDock
 from app.core.utils.app_logger import get_logger
+from app.ui.theme import ThemeMode, build_stylesheet
 
 _log = get_logger("ui.main_window")
-
-_STYLESHEET = """
-    /* ── Base ─────────────────────────────────────────── */
-    QMainWindow, QWidget {
-        background-color: #1e1e1e;
-        color: #d4d4d4;
-    }
-    QDialog {
-        background-color: #252526;
-        color: #d4d4d4;
-    }
-
-    /* ── Tabs ─────────────────────────────────────────── */
-    QTabWidget::pane {
-        border: 1px solid #3c3c3c;
-        background-color: #1e1e1e;
-    }
-    QTabBar::tab {
-        background-color: #2d2d2d;
-        color: #aaaaaa;
-        padding: 8px 18px;
-        border: none;
-        border-bottom: 2px solid transparent;
-        font-size: 13px;
-    }
-    QTabBar::tab:selected {
-        background-color: #1e1e1e;
-        color: #ffffff;
-        border-bottom: 2px solid #007acc;
-    }
-    QTabBar::tab:hover:!selected {
-        background-color: #3c3c3c;
-        color: #cccccc;
-    }
-
-    /* ── Toolbar ──────────────────────────────────────── */
-    QToolBar {
-        background-color: #2d2d2d;
-        border-bottom: 1px solid #3c3c3c;
-        spacing: 6px;
-        padding: 3px 6px;
-    }
-    QToolBar QToolButton {
-        background-color: transparent;
-        color: #cccccc;
-        border: none;
-        padding: 4px 10px;
-        border-radius: 3px;
-        font-size: 13px;
-    }
-    QToolBar QToolButton:hover {
-        background-color: #3c3c3c;
-        color: #ffffff;
-    }
-
-    /* ── Buttons ──────────────────────────────────────── */
-    QPushButton {
-        background-color: #0e639c;
-        color: #ffffff;
-        border: none;
-        padding: 6px 16px;
-        border-radius: 4px;
-        font-size: 13px;
-        font-weight: 500;
-    }
-    QPushButton:hover {
-        background-color: #1177bb;
-    }
-    QPushButton:pressed {
-        background-color: #0a4f7e;
-    }
-    QPushButton:disabled {
-        background-color: #2d2d2d;
-        color: #666666;
-        border: 1px solid #3c3c3c;
-    }
-
-    /* Danger / destructive buttons — use object name "danger" */
-    QPushButton#danger {
-        background-color: #c72e2e;
-        color: #ffffff;
-    }
-    QPushButton#danger:hover {
-        background-color: #e03333;
-    }
-
-    /* Secondary / ghost buttons — use object name "secondary" */
-    QPushButton#secondary {
-        background-color: transparent;
-        color: #9cdcfe;
-        border: 1px solid #3c3c3c;
-    }
-    QPushButton#secondary:hover {
-        background-color: #2d2d2d;
-        border-color: #007acc;
-    }
-
-    /* Success buttons — use object name "success" */
-    QPushButton#success {
-        background-color: #1a7a3c;
-        color: #ffffff;
-    }
-    QPushButton#success:hover {
-        background-color: #1e9147;
-    }
-
-    /* ── Inputs ───────────────────────────────────────── */
-    QLineEdit, QSpinBox, QDoubleSpinBox, QComboBox, QPlainTextEdit, QTextEdit {
-        background-color: #3c3c3c;
-        color: #d4d4d4;
-        border: 1px solid #555555;
-        border-radius: 4px;
-        padding: 5px 8px;
-        font-size: 13px;
-        selection-background-color: #264f78;
-    }
-    QLineEdit:focus, QSpinBox:focus, QDoubleSpinBox:focus,
-    QComboBox:focus, QPlainTextEdit:focus, QTextEdit:focus {
-        border: 1px solid #007acc;
-        background-color: #3c3c3c;
-    }
-    QComboBox::drop-down {
-        border: none;
-        width: 20px;
-    }
-    QComboBox QAbstractItemView {
-        background-color: #3c3c3c;
-        color: #d4d4d4;
-        selection-background-color: #094771;
-        border: 1px solid #555555;
-    }
-    QSpinBox::up-button, QSpinBox::down-button,
-    QDoubleSpinBox::up-button, QDoubleSpinBox::down-button {
-        background-color: #555555;
-        border: none;
-        width: 16px;
-    }
-
-    /* ── Labels ───────────────────────────────────────── */
-    QLabel {
-        color: #d4d4d4;
-        background-color: transparent;
-    }
-
-    /* ── Checkboxes ───────────────────────────────────── */
-    QCheckBox {
-        color: #d4d4d4;
-        spacing: 6px;
-    }
-    QCheckBox::indicator {
-        width: 14px;
-        height: 14px;
-        border: 1px solid #555555;
-        border-radius: 3px;
-        background-color: #3c3c3c;
-    }
-    QCheckBox::indicator:checked {
-        background-color: #007acc;
-        border-color: #007acc;
-    }
-
-    /* ── GroupBox ─────────────────────────────────────── */
-    QGroupBox {
-        color: #9cdcfe;
-        border: 1px solid #3c3c3c;
-        border-radius: 5px;
-        margin-top: 10px;
-        padding-top: 10px;
-        font-weight: 600;
-    }
-    QGroupBox::title {
-        subcontrol-origin: margin;
-        left: 10px;
-        padding: 0 4px;
-    }
-
-    /* ── Lists ────────────────────────────────────────── */
-    QListWidget {
-        background-color: #2d2d2d;
-        color: #d4d4d4;
-        border: 1px solid #3c3c3c;
-        border-radius: 4px;
-    }
-    QListWidget::item:selected {
-        background-color: #094771;
-        color: #ffffff;
-    }
-    QListWidget::item:hover {
-        background-color: #3c3c3c;
-    }
-
-    /* ── Scrollbars ───────────────────────────────────── */
-    QScrollBar:vertical {
-        background-color: #1e1e1e;
-        width: 10px;
-        border: none;
-    }
-    QScrollBar::handle:vertical {
-        background-color: #555555;
-        border-radius: 5px;
-        min-height: 20px;
-    }
-    QScrollBar::handle:vertical:hover {
-        background-color: #777777;
-    }
-    QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
-        height: 0;
-    }
-    QScrollBar:horizontal {
-        background-color: #1e1e1e;
-        height: 10px;
-        border: none;
-    }
-    QScrollBar::handle:horizontal {
-        background-color: #555555;
-        border-radius: 5px;
-        min-width: 20px;
-    }
-    QScrollBar::handle:horizontal:hover {
-        background-color: #777777;
-    }
-    QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {
-        width: 0;
-    }
-
-    /* ── Dock ─────────────────────────────────────────── */
-    QDockWidget {
-        color: #d4d4d4;
-        titlebar-close-icon: none;
-    }
-    QDockWidget::title {
-        background-color: #2d2d2d;
-        color: #cccccc;
-        padding: 5px 8px;
-        border-bottom: 1px solid #3c3c3c;
-        font-size: 12px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    /* ── MenuBar ──────────────────────────────────────── */
-    QMenuBar {
-        background-color: #2d2d2d;
-        color: #cccccc;
-        border-bottom: 1px solid #3c3c3c;
-    }
-    QMenuBar::item:selected {
-        background-color: #3c3c3c;
-    }
-    QMenu {
-        background-color: #2d2d2d;
-        color: #d4d4d4;
-        border: 1px solid #3c3c3c;
-    }
-    QMenu::item:selected {
-        background-color: #094771;
-    }
-
-    /* ── Misc ─────────────────────────────────────────── */
-    QScrollArea {
-        border: none;
-        background-color: transparent;
-    }
-    QSplitter::handle {
-        background-color: #3c3c3c;
-    }
-    QToolTip {
-        background-color: #3c3c3c;
-        color: #d4d4d4;
-        border: 1px solid #555555;
-        padding: 4px;
-        border-radius: 3px;
-    }
-    QMessageBox {
-        background-color: #252526;
-        color: #d4d4d4;
-    }
-    QDialogButtonBox QPushButton {
-        min-width: 80px;
-    }
-"""
 
 
 class MainWindow(QMainWindow):
@@ -309,14 +28,16 @@ class MainWindow(QMainWindow):
         self.setMinimumSize(1200, 800)
         self.showMaximized()
 
-        self.setStyleSheet(_STYLESHEET)
-
-        # Initialize state
+        # Initialize state first so theme_mode is available
         if settings_state is None:
             settings_state = SettingsState()
             settings_state.load_settings()
-
         self.settings_state = settings_state
+
+        # Apply theme from settings
+        _mode_str = settings_state.current_settings.theme_mode if settings_state.current_settings else "dark"
+        _mode = ThemeMode.DARK if _mode_str != "light" else ThemeMode.LIGHT
+        QApplication.instance().setStyleSheet(build_stylesheet(_mode))
 
         # AI service — wires journal, tools, context providers
         self.ai_service = AIService(settings_state)
@@ -384,17 +105,12 @@ class MainWindow(QMainWindow):
         toolbar = QToolBar("Main Toolbar")
         toolbar.setMovable(False)
         toolbar.setFloatable(False)
-        toolbar.setStyleSheet(
-            "QToolBar { background-color: #2d2d2d; border-bottom: 1px solid #3c3c3c; padding: 4px 8px; spacing: 8px; }"
-        )
+        toolbar.setFixedHeight(40)
         self.addToolBar(Qt.TopToolBarArea, toolbar)
 
         # App title label
         from PySide6.QtWidgets import QLabel
         title_label = QLabel("Freqtrade GUI")
-        title_label.setStyleSheet(
-            "color: #ffffff; font-size: 14px; font-weight: 600; padding: 0 8px;"
-        )
         toolbar.addWidget(title_label)
 
         # Spacer
@@ -441,10 +157,13 @@ class MainWindow(QMainWindow):
             t.apply_preferences(prefs)
 
     def _on_settings_saved(self, settings):
-        """Re-apply terminal preferences when settings are saved."""
+        """Re-apply terminal preferences and theme when settings are saved."""
         prefs = settings.terminal_preferences
         for t in self._all_terminals:
             t.apply_preferences(prefs)
+        # Re-apply stylesheet if theme_mode changed
+        _mode = ThemeMode.DARK if settings.theme_mode != "light" else ThemeMode.LIGHT
+        QApplication.instance().setStyleSheet(build_stylesheet(_mode))
 
     def _create_terminal_tab(self) -> QWidget:
         """Create terminal tab with quick action buttons."""

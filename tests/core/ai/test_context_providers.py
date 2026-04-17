@@ -44,11 +44,12 @@ class TestBacktestContextProvider:
     def test_backtest_context_returns_expected_keys(self):
         provider = BacktestContextProvider(backtest_preferences=None)
         result = provider.get_context()
-        assert "last_strategy" in result
-        assert "last_timeframe" in result
-        assert "last_timerange" in result
-        assert "last_exit_code" in result
-        assert "last_result_summary" in result
+        assert "strategy" in result
+        assert "timeframe" in result
+        assert "timerange" in result
+        assert "pairs" in result
+        assert "dry_run_wallet" in result
+        assert "max_open_trades" in result
 
 
 class TestStrategyContextProvider:

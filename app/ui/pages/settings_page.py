@@ -50,7 +50,7 @@ class SettingsPage(QWidget):
         python_layout.addWidget(QLabel("Python:"))
         self.python_path_display = QLineEdit()
         self.python_path_display.setReadOnly(True)
-        self.python_path_display.setStyleSheet("color: gray;")
+        self.python_path_display.setObjectName("hint_label")
         python_layout.addWidget(self.python_path_display)
         venv_layout.addLayout(python_layout)
 
@@ -59,7 +59,7 @@ class SettingsPage(QWidget):
         freqtrade_layout.addWidget(QLabel("Freqtrade:"))
         self.freqtrade_path_display = QLineEdit()
         self.freqtrade_path_display.setReadOnly(True)
-        self.freqtrade_path_display.setStyleSheet("color: gray;")
+        self.freqtrade_path_display.setObjectName("hint_label")
         freqtrade_layout.addWidget(self.freqtrade_path_display)
         venv_layout.addLayout(freqtrade_layout)
 
@@ -213,9 +213,20 @@ class SettingsPage(QWidget):
         ai_group.setLayout(ai_form)
         layout.addWidget(ai_group)
 
+        # Appearance
+        appearance_group = QGroupBox("Appearance")
+        appearance_layout = QFormLayout()
+
+        self.theme_mode_combo = QComboBox()
+        self.theme_mode_combo.addItems(["Dark", "Light"])
+        appearance_layout.addRow("Theme Mode:", self.theme_mode_combo)
+
+        appearance_group.setLayout(appearance_layout)
+        layout.addWidget(appearance_group)
+
         # Validation result
         self.validation_result = QLabel("Not validated")
-        self.validation_result.setStyleSheet("padding: 10px; background-color: #f0f0f0;")
+        self.validation_result.setObjectName("hint_label")
         layout.addWidget(self.validation_result)
 
         # Action buttons
@@ -355,6 +366,10 @@ class SettingsPage(QWidget):
         self.ai_openrouter_free_only_checkbox.setChecked(ai.openrouter_free_only)
         self.ai_cloud_fallback_checkbox.setChecked(ai.cloud_fallback_enabled)
 
+        # Load theme mode
+        theme_mode = self.current_settings.theme_mode if hasattr(self.current_settings, 'theme_mode') else "dark"
+        self.theme_mode_combo.setCurrentText("Light" if theme_mode == "light" else "Dark")
+
     def _on_venv_changed(self):
         """Update paths when venv changes."""
         venv_path = self.venv_path_input.text()
@@ -373,7 +388,6 @@ class SettingsPage(QWidget):
     def _on_settings_changed(self):
         """Handle settings change."""
         self.validation_result.setText("Not validated - settings changed")
-        self.validation_result.setStyleSheet("padding: 10px; background-color: #ffffcc;")
 
     def _browse_venv(self):
         """Browse for venv directory."""
@@ -420,10 +434,14 @@ class SettingsPage(QWidget):
         ai_ok = ai_health is None or ai_health.ok
         overall_ok = result.valid and ai_ok
         if overall_ok:
-            self.validation_result.setStyleSheet("padding: 10px; background-color: #00ff00; color: darkgreen;")
+            self.validation_result.setObjectName("status_ok")
+            self.validation_result.style().unpolish(self.validation_result)
+            self.validation_result.style().polish(self.validation_result)
             self.validation_result.setText(f"✓ {result.message}")
         else:
-            self.validation_result.setStyleSheet("padding: 10px; background-color: #ff6666; color: darkred;")
+            self.validation_result.setObjectName("status_error")
+            self.validation_result.style().unpolish(self.validation_result)
+            self.validation_result.style().polish(self.validation_result)
             self.validation_result.setText(f"✗ {result.message}")
 
         detail_text = self._format_validation_details(result, ai_health, key_results)
@@ -511,9 +529,8 @@ class SettingsPage(QWidget):
                 text_color=self.terminal_text_btn.text() or "#d4d4d4",
             ),
             ai=ai_settings,
+            theme_mode="light" if self.theme_mode_combo.currentText() == "Light" else "dark",
         )
-
-        # Resolve paths
         venv_path = self.current_settings.venv_path
         if venv_path:
             self.current_settings.python_executable = (
