@@ -442,12 +442,12 @@ class TestNoConfigGuard:
 
     def test_banner_visible_when_no_path(self, qapp):
         page = _make_page(qapp, "")
-        assert page._no_config_banner.isVisible()
+        assert not page._no_config_banner.isHidden()
         page.deleteLater()
 
     def test_banner_hidden_when_path_set(self, qapp):
         page = _make_page(qapp, "/valid/path")
-        assert not page._no_config_banner.isVisible()
+        assert page._no_config_banner.isHidden()
         page.deleteLater()
 
     def test_controls_disabled_when_no_path(self, qapp):

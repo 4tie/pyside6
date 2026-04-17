@@ -1212,13 +1212,20 @@ class ImprovePage(QWidget):
             sub_text="30 min threshold",
         )
 
-    def _display_issues_and_suggestions(self, summary: BacktestSummary, params: dict) -> None:
-        """Run diagnosis and suggestion services, then populate the UI groups."""
-        # Clear issues layout
-        while self._issues_layout.count():
-            item = self._issues_layout.takeAt(0)
+    def _display_issues_and_suggestions(self, summary: BacktestSummary, params: dict) -> list:
+        """Run diagnosis and suggestion services, then populate the UI groups.
+
+        Returns:
+            List of diagnosed issues (for status message count).
+        """
+        # Clear issues layout (preserves subtitle label at index 0)
+        while self._issues_layout.count() > 1:
+            item = self._issues_layout.takeAt(1)
             if item.widget():
                 item.widget().deleteLater()
+
+        # Remove empty state panel reference (already cleared above)
+        self._empty_issues = None
 
         issues = ResultsDiagnosisService.diagnose(summary)
 
@@ -1226,6 +1233,7 @@ class ImprovePage(QWidget):
             ok_lbl = QLabel("✅  No issues detected — results look healthy")
             ok_lbl.setStyleSheet(f"color: {_C_GREEN_LIGHT}; font-size: 12px; padding: 4px;")
             self._issues_layout.addWidget(ok_lbl)
+            _fade_in_widget(ok_lbl)
         else:
             for i, issue in enumerate(issues):
                 badge = IssueBadge(issue)
@@ -1236,11 +1244,19 @@ class ImprovePage(QWidget):
         self.issues_group.setVisible(True)
         _fade_in_widget(self.issues_group)
 
-        # Clear suggestions layout
-        while self._suggestions_layout.count():
-            item = self._suggestions_layout.takeAt(0)
+        # Update group box title with count
+        if issues:
+            self.issues_group.setTitle(f"Detected Issues ({len(issues)})")
+        else:
+            self.issues_group.setTitle("Detected Issues")
+
+        # Clear suggestions layout (preserves subtitle label at index 0)
+        while self._suggestions_layout.count() > 1:
+            item = self._suggestions_layout.takeAt(1)
             if item.widget():
                 item.widget().deleteLater()
+
+        self._empty_suggestions = None
 
         suggestions = RuleSuggestionService.suggest(issues, params)
 
@@ -1254,8 +1270,16 @@ class ImprovePage(QWidget):
                 self._suggestions_layout.addWidget(row)
                 QTimer.singleShot(i * 80, lambda w=row: _fade_in_widget(w, 300))
 
+        # Update group box title with count
+        if suggestions:
+            self.suggestions_group.setTitle(f"Suggested Actions ({len(suggestions)})")
+        else:
+            self.suggestions_group.setTitle("Suggested Actions")
+
         self.suggestions_group.setVisible(True)
         _fade_in_widget(self.suggestions_group)
+
+        return issues
 
     def _on_apply_suggestion(self, suggestion: ParameterSuggestion) -> None:
         """Apply a suggestion to the candidate config and update the diff preview."""
@@ -1268,13 +1292,16 @@ class ImprovePage(QWidget):
         # Merge suggestion into candidate config
         self._candidate_config[suggestion.parameter] = suggestion.proposed_value
         _log.debug("Applied suggestion: %s = %s", suggestion.parameter, suggestion.proposed_value)
+        # Advance to Backtest step on first non-advisory apply
+        if self._workflow_step < 4:
+            self._set_workflow_step(4)
         self._update_candidate_preview()
 
     def _update_candidate_preview(self) -> None:
         """Recompute and display the diff between baseline and candidate config."""
-        # Clear existing widgets
-        while self._candidate_layout.count():
-            item = self._candidate_layout.takeAt(0)
+        # Clear existing widgets (preserves subtitle label at index 0)
+        while self._candidate_layout.count() > 1:
+            item = self._candidate_layout.takeAt(1)
             if item.widget():
                 item.widget().deleteLater()
             elif item.layout():
@@ -1283,6 +1310,9 @@ class ImprovePage(QWidget):
                     sub_item = sub.takeAt(0)
                     if sub_item.widget():
                         sub_item.widget().deleteLater()
+
+        # Remove empty state panel reference
+        self._empty_candidate = None
 
         diff = compute_diff(self._baseline_params or {}, self._candidate_config)
 
@@ -1335,9 +1365,12 @@ class ImprovePage(QWidget):
 
         # Buttons row
         btn_row = QHBoxLayout()
-        self.run_backtest_btn = QPushButton("▶  Run Backtest on Candidate")
+        self.run_backtest_btn = QPushButton("▶ Run Candidate Backtest")
         self.run_backtest_btn.setEnabled(bool(diff))
         self.run_backtest_btn.setStyleSheet(self._btn_style(_C_GREEN, "white"))
+        self.run_backtest_btn.setToolTip(
+            "Run a backtest using the candidate parameters. Results will be compared to the baseline."
+        )
         self.run_backtest_btn.clicked.connect(self._on_run_candidate)
         btn_row.addWidget(self.run_backtest_btn)
 
@@ -1347,8 +1380,11 @@ class ImprovePage(QWidget):
         self.stop_btn.clicked.connect(self._on_stop_candidate)
         btn_row.addWidget(self.stop_btn)
 
-        self.reset_candidate_btn = QPushButton("↺  Reset Candidate")
+        self.reset_candidate_btn = QPushButton("↺ Reset to Baseline")
         self.reset_candidate_btn.setStyleSheet(self._btn_style(_C_BORDER, _C_TEXT))
+        self.reset_candidate_btn.setToolTip(
+            "Clear all applied suggestions and reset the candidate to match the current baseline parameters."
+        )
         self.reset_candidate_btn.clicked.connect(self._on_reset_candidate)
         btn_row.addWidget(self.reset_candidate_btn)
         btn_row.addStretch()
@@ -1397,6 +1433,11 @@ class ImprovePage(QWidget):
         self.run_backtest_btn.setEnabled(False)
         self.stop_btn.setVisible(True)
 
+        # Update status message
+        msg, color = _build_status_message("candidate_backtest_start")
+        self.status_label.setText(msg)
+        self.status_label.setStyleSheet(f"color: {color}; font-size: 11px; padding: 2px 4px;")
+
         # Stream to terminal
         self._terminal.clear_output()
         self._terminal.append_output(f"$ {' '.join(command.as_list())}\n\n")
@@ -1443,23 +1484,30 @@ class ImprovePage(QWidget):
                 )
                 self._candidate_run = candidate_run
                 self._update_comparison_view()
+                msg, color = _build_status_message("candidate_backtest_success")
+                self.status_label.setText(msg)
+                self.status_label.setStyleSheet(f"color: {color}; font-size: 11px; padding: 2px 4px;")
+                self._set_workflow_step(5)
             except (FileNotFoundError, ValueError) as e:
                 self.status_label.setText(f"❌  Error loading candidate results: {e}")
                 self.status_label.setStyleSheet(f"color: {_C_RED_LIGHT}; font-size: 11px; padding: 2px 4px;")
         else:
-            self.status_label.setText("❌  Candidate backtest failed — see terminal output")
-            self.status_label.setStyleSheet(f"color: {_C_RED_LIGHT}; font-size: 11px; padding: 2px 4px;")
+            msg, color = _build_status_message("candidate_backtest_failed")
+            self.status_label.setText(msg)
+            self.status_label.setStyleSheet(f"color: {color}; font-size: 11px; padding: 2px 4px;")
 
     def _update_comparison_view(self) -> None:
         """Build or rebuild the comparison table when both runs are available."""
-        # Clear all items from comparison layout
-        while self._comparison_layout.count():
-            item = self._comparison_layout.takeAt(0)
+        # Clear all items from comparison layout (preserves subtitle label at index 0)
+        while self._comparison_layout.count() > 1:
+            item = self._comparison_layout.takeAt(1)
             if item.widget():
                 item.widget().deleteLater()
 
+        # Remove empty state panel reference
+        self._empty_comparison = None
+
         if self._baseline_run is None or self._candidate_run is None:
-            self.comparison_group.setVisible(False)
             return
 
         METRICS = [
@@ -1650,8 +1698,10 @@ class ImprovePage(QWidget):
 
         # Single UI refresh after all state is updated
         self._update_comparison_view()
-        self.status_label.setText("✅  Candidate accepted — strategy parameters updated")
-        self.status_label.setStyleSheet(f"color: {_C_GREEN_LIGHT}; font-size: 11px; padding: 2px 4px;")
+        msg, color = _build_status_message("accept")
+        self.status_label.setText(msg)
+        self.status_label.setStyleSheet(f"color: {color}; font-size: 11px; padding: 2px 4px;")
+        self._set_workflow_step(1)
         _log.info("Candidate accepted for strategy '%s'", strategy_name)
 
     def _on_reject(self) -> None:
@@ -1665,6 +1715,10 @@ class ImprovePage(QWidget):
 
         self._update_comparison_view()
         self._update_candidate_preview()
+        msg, color = _build_status_message("reject")
+        self.status_label.setText(msg)
+        self.status_label.setStyleSheet(f"color: {color}; font-size: 11px; padding: 2px 4px;")
+        self._set_workflow_step(1)
         _log.info("Candidate rejected")
 
     def _on_rollback(self) -> None:
@@ -1690,6 +1744,7 @@ class ImprovePage(QWidget):
 
         self._update_comparison_view()
         self._update_candidate_preview()
-        self.status_label.setText("↩  Rolled back to previous baseline parameters")
-        self.status_label.setStyleSheet(f"color: {_C_YELLOW}; font-size: 11px; padding: 2px 4px;")
+        msg, color = _build_status_message("rollback")
+        self.status_label.setText(msg)
+        self.status_label.setStyleSheet(f"color: {color}; font-size: 11px; padding: 2px 4px;")
         _log.info("Rolled back to previous baseline for strategy '%s'", strategy_name)
