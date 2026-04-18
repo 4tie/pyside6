@@ -220,7 +220,7 @@ QPushButton {{
 
 QPushButton:hover {{
     background-color: {p["bg_card"]};
-    border-color: {p["accent"]};
+    border-color: {p["accent_hover"]};
     color: {p["text_primary"]};
 }}
 

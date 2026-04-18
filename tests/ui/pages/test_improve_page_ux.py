@@ -70,6 +70,51 @@ def _make_page(qapp, user_data_path: str = "/some/valid/path"):
         return ImprovePage(state)
 
 
+def _collect_buttons_from_layout(layout):
+    """Walk a QLayout recursively and collect all QPushButton children."""
+    from PySide6.QtWidgets import QPushButton
+    buttons = []
+    for i in range(layout.count()):
+        item = layout.itemAt(i)
+        if item is None:
+            continue
+        widget = item.widget()
+        if widget is not None:
+            if isinstance(widget, QPushButton):
+                buttons.append(widget)
+            child_layout = widget.layout()
+            if child_layout is not None:
+                buttons.extend(_collect_buttons_from_layout(child_layout))
+        sub_layout = item.layout()
+        if sub_layout is not None:
+            buttons.extend(_collect_buttons_from_layout(sub_layout))
+    return buttons
+
+
+def _make_backtest_results():
+    """Return a minimal BacktestResults for comparison view tests."""
+    from app.core.backtests.results_models import BacktestResults, BacktestSummary
+    summary = BacktestSummary(
+        strategy="TestStrategy",
+        timeframe="5m",
+        total_trades=10,
+        wins=6,
+        losses=4,
+        draws=0,
+        win_rate=60.0,
+        avg_profit=0.5,
+        total_profit=5.0,
+        total_profit_abs=50.0,
+        sharpe_ratio=1.2,
+        sortino_ratio=1.5,
+        calmar_ratio=0.8,
+        max_drawdown=10.0,
+        max_drawdown_abs=100.0,
+        trade_duration_avg=60,
+    )
+    return BacktestResults(summary=summary)
+
+
 # ===========================================================================
 # Task 1 — Pure helper functions
 # ===========================================================================
@@ -362,13 +407,34 @@ class TestImprovePageButtonsAndTooltips:
         assert page.load_latest_btn.text() == "↓ Load Latest Run"
 
     def test_accept_btn_text(self, page):
-        assert page.accept_btn.text() == "✅ Accept & Save"
+        results = _make_backtest_results()
+        page._baseline_run = results
+        page._candidate_run = results
+        page._update_comparison_view()
+        buttons = _collect_buttons_from_layout(page._comparison_layout)
+        accept_btns = [b for b in buttons if "Accept" in b.text()]
+        assert len(accept_btns) >= 1
+        assert accept_btns[0].text() == "✅ Accept & Save"
 
     def test_reject_btn_text(self, page):
-        assert page.reject_btn.text() == "✕ Reject & Discard"
+        results = _make_backtest_results()
+        page._baseline_run = results
+        page._candidate_run = results
+        page._update_comparison_view()
+        buttons = _collect_buttons_from_layout(page._comparison_layout)
+        reject_btns = [b for b in buttons if "Reject" in b.text()]
+        assert len(reject_btns) >= 1
+        assert reject_btns[0].text() == "✕ Reject & Discard"
 
     def test_rollback_btn_text(self, page):
-        assert page.rollback_btn.text() == "↩ Rollback to Previous"
+        results = _make_backtest_results()
+        page._baseline_run = results
+        page._candidate_run = results
+        page._update_comparison_view()
+        buttons = _collect_buttons_from_layout(page._comparison_layout)
+        rollback_btns = [b for b in buttons if "Rollback" in b.text()]
+        assert len(rollback_btns) >= 1
+        assert rollback_btns[0].text() == "↩ Rollback to Previous"
 
     def test_strategy_combo_tooltip(self, page):
         assert "strategy" in page.strategy_combo.toolTip().lower()
@@ -383,13 +449,34 @@ class TestImprovePageButtonsAndTooltips:
         assert len(page.load_latest_btn.toolTip()) > 0
 
     def test_accept_btn_tooltip(self, page):
-        assert len(page.accept_btn.toolTip()) > 0
+        results = _make_backtest_results()
+        page._baseline_run = results
+        page._candidate_run = results
+        page._update_comparison_view()
+        buttons = _collect_buttons_from_layout(page._comparison_layout)
+        accept_btns = [b for b in buttons if "Accept" in b.text()]
+        assert len(accept_btns) >= 1
+        assert len(accept_btns[0].toolTip()) > 0
 
     def test_reject_btn_tooltip(self, page):
-        assert len(page.reject_btn.toolTip()) > 0
+        results = _make_backtest_results()
+        page._baseline_run = results
+        page._candidate_run = results
+        page._update_comparison_view()
+        buttons = _collect_buttons_from_layout(page._comparison_layout)
+        reject_btns = [b for b in buttons if "Reject" in b.text()]
+        assert len(reject_btns) >= 1
+        assert len(reject_btns[0].toolTip()) > 0
 
     def test_rollback_btn_tooltip(self, page):
-        assert len(page.rollback_btn.toolTip()) > 0
+        results = _make_backtest_results()
+        page._baseline_run = results
+        page._candidate_run = results
+        page._update_comparison_view()
+        buttons = _collect_buttons_from_layout(page._comparison_layout)
+        rollback_btns = [b for b in buttons if "Rollback" in b.text()]
+        assert len(rollback_btns) >= 1
+        assert len(rollback_btns[0].toolTip()) > 0
 
 
 # ===========================================================================

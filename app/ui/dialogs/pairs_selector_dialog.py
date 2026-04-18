@@ -1,3 +1,4 @@
+import random
 from typing import List
 
 from PySide6.QtCore import Qt
@@ -70,6 +71,7 @@ class PairsSelectorDialog(QDialog):
         favorites: List[str],
         selected: List[str],
         settings_state: SettingsState,
+        max_open_trades: int = 1,
         parent=None,
     ):
         super().__init__(parent)
@@ -81,6 +83,9 @@ class PairsSelectorDialog(QDialog):
         self.favorites: set[str] = set(favorites or [])
         self.all_pairs: List[str] = sorted(set(BINANCE_USDT_PAIRS) | set(favorites or []))
         self.selected: set[str] = set(selected) if selected else set()
+        self.max_open_trades: int = max(1, max_open_trades)
+        self.locked_pairs: set[str] = set()
+        self.lock_buttons: dict[str, QPushButton] = {}
 
         self.checkboxes: dict[str, QCheckBox] = {}
         self.fav_buttons: dict[str, QPushButton] = {}
@@ -136,7 +141,7 @@ class PairsSelectorDialog(QDialog):
         custom_layout.addWidget(add_btn)
         layout.addLayout(custom_layout)
 
-        # Select all / Deselect all
+        # Select all / Deselect all / Randomize
         action_layout = QHBoxLayout()
         select_all_btn = QPushButton("Select All")
         select_all_btn.clicked.connect(self._select_all)
@@ -144,6 +149,9 @@ class PairsSelectorDialog(QDialog):
         deselect_all_btn = QPushButton("Deselect All")
         deselect_all_btn.clicked.connect(self._deselect_all)
         action_layout.addWidget(deselect_all_btn)
+        self.randomize_btn = QPushButton(f"🎲 Randomize ({self.max_open_trades})")
+        self.randomize_btn.clicked.connect(self._randomize_pairs)
+        action_layout.addWidget(self.randomize_btn)
         action_layout.addStretch()
         layout.addLayout(action_layout)
 
@@ -167,8 +175,11 @@ class PairsSelectorDialog(QDialog):
         self._update_count()
 
     def _build_rows(self):
-        """Build one row widget (FavoriteButton + QCheckBox) per pair and apply initial sort."""
+        """Build one row widget (LockButton + FavoriteButton + QCheckBox) per pair and apply initial sort."""
         for pair in self.all_pairs:
+            lock_btn = self._make_lock_button(pair)
+            self.lock_buttons[pair] = lock_btn
+
             btn = self._make_favorite_button(pair)
             checkbox = QCheckBox(pair)
             checkbox.setChecked(pair in self.selected)
@@ -177,6 +188,7 @@ class PairsSelectorDialog(QDialog):
             row_layout = QHBoxLayout()
             row_layout.setContentsMargins(0, 0, 0, 0)
             row_layout.setSpacing(4)
+            row_layout.addWidget(lock_btn)
             row_layout.addWidget(btn)
             row_layout.addWidget(checkbox)
 
@@ -191,6 +203,27 @@ class PairsSelectorDialog(QDialog):
 
         self.checkboxes_layout.addStretch()
         self._sort_rows()
+
+    def _make_lock_button(self, pair: str) -> QPushButton:
+        """Create and return a flat lock-toggle button for the given pair."""
+        btn = QPushButton()
+        btn.setFlat(True)
+        btn.setFixedWidth(28)
+        btn.setStyleSheet("border: none;")
+        btn.setText("🔒" if pair in self.locked_pairs else "🔓")
+        btn.clicked.connect(lambda checked, p=pair: self._on_lock_clicked(p))
+        return btn
+
+    def _on_lock_clicked(self, pair: str) -> None:
+        """Toggle lock state for a pair, update icon, ensure pair is checked when locked."""
+        if pair in self.locked_pairs:
+            self.locked_pairs.discard(pair)
+            self.lock_buttons[pair].setText("🔓")
+        else:
+            self.locked_pairs.add(pair)
+            self.lock_buttons[pair].setText("🔒")
+            self.checkboxes[pair].setChecked(True)
+        self._update_count()
 
     def _make_favorite_button(self, pair: str) -> QPushButton:
         """Create and return a flat heart-toggle button for the given pair."""
@@ -253,6 +286,9 @@ class PairsSelectorDialog(QDialog):
         pairs = [p.strip() for p in text.split(",") if p.strip()]
         for pair in pairs:
             if pair not in self.checkboxes:
+                lock_btn = self._make_lock_button(pair)
+                self.lock_buttons[pair] = lock_btn
+
                 btn = self._make_favorite_button(pair)
                 checkbox = QCheckBox(pair)
                 checkbox.setChecked(True)
@@ -261,6 +297,7 @@ class PairsSelectorDialog(QDialog):
                 row_layout = QHBoxLayout()
                 row_layout.setContentsMargins(0, 0, 0, 0)
                 row_layout.setSpacing(4)
+                row_layout.addWidget(lock_btn)
                 row_layout.addWidget(btn)
                 row_layout.addWidget(checkbox)
 
@@ -276,6 +313,40 @@ class PairsSelectorDialog(QDialog):
                 self.checkboxes_layout.insertWidget(self.checkboxes_layout.count() - 1, row_widget)
 
         self.custom_input.clear()
+        self._update_selected()
+
+    def _randomize_pairs(self) -> None:
+        """Randomly select up to max_open_trades pairs, preserving locked visible pairs."""
+        effective_budget = max(1, self.max_open_trades)
+
+        # Step 1: Determine visible pairs
+        visible_pairs = [p for p in self.all_pairs if p in self.row_widgets and self.row_widgets[p].isVisible()]
+
+        # Step 2: Partition into locked and unlocked pool
+        locked_visible = [p for p in visible_pairs if p in self.locked_pairs]
+        pool = [p for p in visible_pairs if p not in self.locked_pairs]
+
+        # Step 3: Calculate remaining slots
+        slots_needed = effective_budget - len(locked_visible)
+
+        # Step 4: Sample from pool
+        if slots_needed <= 0:
+            sampled = []
+        elif len(pool) <= slots_needed:
+            sampled = pool
+        else:
+            sampled = random.sample(pool, slots_needed)
+
+        # Step 5: Build new selection
+        new_selection = set(locked_visible) | set(sampled)
+
+        # Step 6: Apply to checkboxes with signal blocking
+        for pair, checkbox in self.checkboxes.items():
+            checkbox.blockSignals(True)
+            checkbox.setChecked(pair in new_selection)
+            checkbox.blockSignals(False)
+
+        # Step 7: Sync internal state and count label
         self._update_selected()
 
     def _select_all(self):

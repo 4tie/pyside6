@@ -603,6 +603,7 @@ class BacktestPage(QWidget):
             favorites=favorites,
             selected=self.selected_pairs,
             settings_state=self.settings_state,
+            max_open_trades=self.max_open_trades.value(),
             parent=self,
         )
         if dialog.exec() == QDialog.Accepted:

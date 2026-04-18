@@ -1,0 +1,114 @@
+# Implementation Plan
+
+- [x] 1. Write bug condition exploration tests
+  - **Property 1: Bug Condition** - Terminal Deleted on Second Preview Call / Buttons Deleted on Second Comparison Call
+  - **CRITICAL**: These tests MUST FAIL on unfixed code — failure confirms the bugs exist
+  - **DO NOT attempt to fix the tests or the code when they fail**
+  - **NOTE**: These tests encode the expected behavior — they will validate the fix when they pass after implementation
+  - **GOAL**: Surface counterexamples that demonstrate both bugs exist
+  - **Scoped PBT Approach**: Scope each property to the concrete failing case (callCount=2) for reproducibility, then generalise to callCount in [2, 5]
+  - Create `tests/test_improve_page_bug.py` using `pytest` and `hypothesis`
+  - Requires a minimal `QApplication` fixture and a mock `SettingsState` / `SettingsService` that returns a valid `AppSettings` with a dummy `user_data_path`
+  - **Test 1 — Terminal deletion (Bug 1)**:
+    - Instantiate `ImprovePage`, set `_baseline_params = {}` and `_candidate_config = {}`
+    - Call `_update_candidate_preview()` twice
+    - Assert `self._terminal` is a valid (non-deleted) Qt object using `shiboken6.isValid(page._terminal)`
+    - Assert `page._terminal.append_output("x")` executes without error
+    - Bug condition: `isBugCondition_Terminal(callCount)` where `callCount >= 2`
+    - Run on UNFIXED code — **EXPECTED OUTCOME**: test FAILS (terminal is deleted after second call)
+    - Document counterexample: `self._terminal` is a deleted C++ object after call 2
+  - **Test 2 — Button deletion (Bug 2)**:
+    - Instantiate `ImprovePage`, set `_baseline_run` and `_candidate_run` to minimal mock `BacktestResults`
+    - Call `_update_comparison_view()` twice (both times with `_candidate_run` set)
+    - Walk `_comparison_layout` to find QPushButton children; assert at least one Accept and one Reject button are valid Qt objects with `isVisible() == True`
+    - Bug condition: `isBugCondition_Buttons(comparisonViewCallCount)` where `comparisonViewCallCount >= 2`
+    - Run on UNFIXED code — **EXPECTED OUTCOME**: test FAILS (buttons are deleted C++ objects after second call)
+    - Document counterexample: Accept/Reject buttons are deleted C++ objects after call 2
+  - Mark task complete when both tests are written, run, and failures are documented
+  - _Requirements: 1.1, 1.2, 1.3, 1.4_
+
+- [x] 2. Write preservation property tests (BEFORE implementing fix)
+  - **Property 2: Preservation** - First-Call Rendering, Terminal Streaming, Comparison Table, Rollback Visibility
+  - **IMPORTANT**: Follow observation-first methodology — observe behavior on UNFIXED code first, then encode as tests
+  - **Scoped to non-buggy inputs**: all cases where `isBugCondition_Terminal` and `isBugCondition_Buttons` return False (i.e. first-call behavior)
+  - Add preservation tests to `tests/test_improve_page_bug.py`
+  - **Observation step (run on UNFIXED code before writing assertions)**:
+    - Observe: `_update_candidate_preview()` on call 1 adds a diff table widget and a Run Candidate Backtest button to `_candidate_layout`
+    - Observe: `_terminal.append_output(text)` appends `text` to the terminal after the first call
+    - Observe: `_update_comparison_view()` on call 1 with both runs set adds delta cards and a QTableWidget to `_comparison_layout`
+    - Observe: Rollback button is hidden when `_baseline_history` is empty, visible when non-empty
+  - **Test 3 — First-call candidate preview preservation**:
+    - Use `@given(st.just(1))` (single call, non-buggy input)
+    - Call `_update_candidate_preview()` once with a non-empty diff
+    - Assert `_candidate_layout` contains a QFrame (diff table) and a QPushButton with text containing "Run Candidate Backtest"
+    - Verify test PASSES on UNFIXED code
+  - **Test 4 — Terminal streaming preservation (property-based)**:
+    - Use `@given(st.text(min_size=1, max_size=200))` for random text strings
+    - Call `_update_candidate_preview()` once, then call `_terminal.append_output(text)`
+    - Assert the terminal's output contains `text`
+    - Verify test PASSES on UNFIXED code
+  - **Test 5 — Comparison table preservation**:
+    - Use `@given(st.just(1))` (single call, non-buggy input)
+    - Call `_update_comparison_view()` once with both `_baseline_run` and `_candidate_run` set
+    - Assert `_comparison_layout` contains a QTableWidget and at least one delta card QFrame
+    - Verify test PASSES on UNFIXED code
+  - **Test 6 — Rollback button visibility preservation (property-based)**:
+    - Use `@given(st.lists(st.just({"stoploss": -0.10}), min_size=0, max_size=5))` for history depth
+    - Set `_baseline_history` to the generated list, call `_update_comparison_view()` once
+    - Assert rollback button visibility equals `len(_baseline_history) > 0`
+    - Verify test PASSES on UNFIXED code
+  - Mark task complete when all preservation tests are written, run, and passing on unfixed code
+  - _Requirements: 3.1, 3.2, 3.3, 3.6, 3.7_
+
+- [x] 3. Fix the two Qt object-lifetime bugs in `app/ui/pages/improve_page.py`
+
+  - [x] 3.1 Protect terminal widget from deletion in `_update_candidate_preview()`
+    - In `_update_candidate_preview()`, add `self._candidate_layout.removeWidget(self._terminal)` immediately before the `while self._candidate_layout.count() > 1:` clearing loop
+    - This detaches `self._terminal` from the layout without scheduling it for deletion, so the loop never encounters it
+    - The existing loop body and the final `self._candidate_layout.addWidget(self._terminal)` at the end of the method remain unchanged
+    - _Bug_Condition: `isBugCondition_Terminal(callCount)` where `callCount >= 2` — terminal is encountered by the clearing loop on the second call_
+    - _Expected_Behavior: after any number of calls, `self._terminal` is a valid Qt object and `append_output(text)` appends text_
+    - _Preservation: first-call rendering of diff table and Run Candidate Backtest button is unchanged_
+    - _Requirements: 2.1, 2.2, 3.1, 3.2_
+
+  - [x] 3.2 Remove pre-created Accept/Reject/Rollback buttons from `__init__` and `_init_ui()`
+    - In `__init__`, delete the six lines that create `self.accept_btn`, `self.reject_btn`, `self.rollback_btn` and connect their `clicked` signals
+    - In `_init_ui()`, delete the three `self.accept_btn.setToolTip(...)`, `self.reject_btn.setToolTip(...)`, `self.rollback_btn.setToolTip(...)` calls
+    - _Bug_Condition: `isBugCondition_Buttons(comparisonViewCallCount)` where `comparisonViewCallCount >= 2` — pre-created buttons become children of `arb_widget` which is destroyed by the clearing loop_
+    - _Requirements: 2.3, 2.4_
+
+  - [x] 3.3 Replace button section in `_update_comparison_view()` with local button creation
+    - Remove the block that calls `.setVisible()`, `.setStyleSheet()` on the pre-created buttons and adds them to `arb_row`
+    - Replace with fresh local variable creation on every call:
+      - `accept_btn = QPushButton("✅ Accept & Save")` with `_btn_style(_C_GREEN, "white")`, tooltip, and `clicked.connect(self._on_accept)`
+      - `reject_btn = QPushButton("✕ Reject & Discard")` with `_btn_style(_C_RED, "white")`, tooltip, and `clicked.connect(self._on_reject)`
+      - `rollback_btn = QPushButton("↩ Rollback to Previous")` with `_btn_style(_C_ORANGE, "white")`, tooltip, `setVisible(len(self._baseline_history) > 0)`, and `clicked.connect(self._on_rollback)`
+      - Build `arb_row`, `arb_widget`, and add to `_comparison_layout` as before
+    - `_on_accept`, `_on_reject`, `_on_rollback` require no changes (they do not reference `self.accept_btn` etc.)
+    - _Expected_Behavior: after any number of calls with `_candidate_run` set, fresh valid Accept/Reject/Rollback buttons are rendered with correct visibility, style, and signal connections_
+    - _Preservation: comparison table, delta cards, and rollback visibility logic are unchanged_
+    - _Requirements: 2.3, 2.4, 3.3, 3.4, 3.5, 3.6_
+
+  - [x] 3.4 Verify bug condition exploration tests now pass
+    - **Property 1: Expected Behavior** - Terminal Survives Repeated Calls / Buttons Valid After Repeated Calls
+    - **IMPORTANT**: Re-run the SAME tests from task 1 — do NOT write new tests
+    - The tests from task 1 encode the expected behavior
+    - When these tests pass, it confirms the expected behavior is satisfied
+    - Run `pytest tests/test_improve_page_bug.py -k "bug_condition" --tb=short`
+    - **EXPECTED OUTCOME**: Both bug condition tests PASS (confirms both bugs are fixed)
+    - _Requirements: 2.1, 2.2, 2.3, 2.4_
+
+  - [x] 3.5 Verify preservation tests still pass
+    - **Property 2: Preservation** - First-Call Rendering, Terminal Streaming, Comparison Table, Rollback Visibility
+    - **IMPORTANT**: Re-run the SAME tests from task 2 — do NOT write new tests
+    - Run `pytest tests/test_improve_page_bug.py -k "preservation" --tb=short`
+    - **EXPECTED OUTCOME**: All preservation tests PASS (confirms no regressions)
+    - Confirm all preservation tests still pass after the fix
+    - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7_
+
+- [x] 4. Checkpoint — Ensure all tests pass and lint is clean
+  - Run the full test suite: `pytest --tb=short`
+  - Run the linter: `ruff check app/ui/pages/improve_page.py tests/test_improve_page_bug.py`
+  - Ensure all tests pass with no failures or errors
+  - Ensure no new lint warnings are introduced
+  - Ask the user if any questions arise

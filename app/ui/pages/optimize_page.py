@@ -631,11 +631,13 @@ class OptimizePage(QWidget):
     def _on_select_pairs(self):
         settings = self.settings_state.current_settings
         favorites = settings.favorite_pairs if settings else []
+        max_open_trades = settings.backtest_preferences.max_open_trades if settings else 1
 
         dialog = PairsSelectorDialog(
             favorites=favorites,
             selected=self.selected_pairs,
             settings_state=self.settings_state,
+            max_open_trades=max_open_trades,
             parent=self,
         )
         if dialog.exec() == QDialog.Accepted:

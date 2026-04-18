@@ -639,14 +639,6 @@ class ImprovePage(QWidget):
         # Terminal (created early so it's always available)
         self._terminal = TerminalWidget()
 
-        # Pre-create comparison buttons (added to layout in _update_comparison_view)
-        self.accept_btn = QPushButton("✅ Accept & Save")
-        self.accept_btn.clicked.connect(self._on_accept)
-        self.reject_btn = QPushButton("✕ Reject & Discard")
-        self.reject_btn.clicked.connect(self._on_reject)
-        self.rollback_btn = QPushButton("↩ Rollback to Previous")
-        self.rollback_btn.clicked.connect(self._on_rollback)
-
         # Connect settings signal
         settings_state.settings_changed.connect(self._refresh_strategies)
         settings_state.settings_changed.connect(self._check_config_guard)
@@ -951,18 +943,6 @@ class ImprovePage(QWidget):
         self.comparison_group.setLayout(self._comparison_layout)
         scroll_layout.addWidget(self.comparison_group)
 
-        # Set tooltips on accept/reject/rollback buttons
-        self.accept_btn.setToolTip(
-            "Write the candidate parameters to the strategy file. "
-            "This replaces the current parameters permanently."
-        )
-        self.reject_btn.setToolTip(
-            "Discard the candidate parameters. The strategy file is not modified."
-        )
-        self.rollback_btn.setToolTip(
-            "Restore the strategy parameters to the state before the last Accept."
-        )
-
         scroll_layout.addStretch()
         scroll_area.setWidget(scroll_content)
         main_layout.addWidget(scroll_area, 1)
@@ -1161,9 +1141,7 @@ class ImprovePage(QWidget):
         )
 
         self.baseline_group.setVisible(True)
-        _fade_in_widget(self.baseline_group)
         self._cards_widget.setVisible(True)
-        _fade_in_widget(self._cards_widget, duration=500)
 
         # Profit card
         profit_bar = min(abs(summary.total_profit) / 100 * 100, 100)
@@ -1245,7 +1223,6 @@ class ImprovePage(QWidget):
                 QTimer.singleShot(i * 80, lambda w=badge: _fade_in_widget(w, 300))
 
         self.issues_group.setVisible(True)
-        _fade_in_widget(self.issues_group)
 
         # Update group box title with count
         if issues:
@@ -1280,7 +1257,6 @@ class ImprovePage(QWidget):
             self.suggestions_group.setTitle("Suggested Actions")
 
         self.suggestions_group.setVisible(True)
-        _fade_in_widget(self.suggestions_group)
 
         return issues
 
@@ -1302,6 +1278,8 @@ class ImprovePage(QWidget):
 
     def _update_candidate_preview(self) -> None:
         """Recompute and display the diff between baseline and candidate config."""
+        # Detach terminal before clearing so it is never passed to deleteLater()
+        self._candidate_layout.removeWidget(self._terminal)
         # Clear existing widgets (preserves subtitle label at index 0)
         while self._candidate_layout.count() > 1:
             item = self._candidate_layout.takeAt(1)
@@ -1400,7 +1378,6 @@ class ImprovePage(QWidget):
         self._candidate_layout.addWidget(self._terminal)
 
         self.candidate_group.setVisible(True)
-        _fade_in_widget(self.candidate_group)
 
     def _on_reset_candidate(self) -> None:
         """Reset candidate config to baseline params."""
@@ -1673,19 +1650,32 @@ class ImprovePage(QWidget):
         self._comparison_layout.addWidget(table)
         _fade_in_widget(table)
 
-        # Accept / Reject / Rollback buttons
-        self.accept_btn.setVisible(True)
-        self.reject_btn.setVisible(True)
-        self.rollback_btn.setVisible(len(self._baseline_history) > 0)
+        # Accept / Reject / Rollback buttons — create fresh instances on every call
+        accept_btn = QPushButton("✅ Accept & Save")
+        accept_btn.setStyleSheet(self._btn_style(_C_GREEN, "white"))
+        accept_btn.setToolTip(
+            "Write the candidate parameters to the strategy file. "
+            "This replaces the current parameters permanently."
+        )
+        accept_btn.clicked.connect(self._on_accept)
 
-        self.accept_btn.setStyleSheet(self._btn_style(_C_GREEN, "white"))
-        self.reject_btn.setStyleSheet(self._btn_style(_C_RED, "white"))
-        self.rollback_btn.setStyleSheet(self._btn_style(_C_ORANGE, "white"))
+        reject_btn = QPushButton("✕ Reject & Discard")
+        reject_btn.setStyleSheet(self._btn_style(_C_RED, "white"))
+        reject_btn.setToolTip("Discard the candidate parameters. The strategy file is not modified.")
+        reject_btn.clicked.connect(self._on_reject)
+
+        rollback_btn = QPushButton("↩ Rollback to Previous")
+        rollback_btn.setStyleSheet(self._btn_style(_C_ORANGE, "white"))
+        rollback_btn.setToolTip(
+            "Restore the strategy parameters to the state before the last Accept."
+        )
+        rollback_btn.setVisible(len(self._baseline_history) > 0)
+        rollback_btn.clicked.connect(self._on_rollback)
 
         arb_row = QHBoxLayout()
-        arb_row.addWidget(self.accept_btn)
-        arb_row.addWidget(self.reject_btn)
-        arb_row.addWidget(self.rollback_btn)
+        arb_row.addWidget(accept_btn)
+        arb_row.addWidget(reject_btn)
+        arb_row.addWidget(rollback_btn)
         arb_row.addStretch()
         arb_widget = QWidget()
         arb_widget.setStyleSheet("background: transparent;")
@@ -1693,7 +1683,6 @@ class ImprovePage(QWidget):
         self._comparison_layout.addWidget(arb_widget)
 
         self.comparison_group.setVisible(True)
-        _fade_in_widget(self.comparison_group)
 
     def _on_accept(self) -> None:
         """Accept the candidate: write params, promote candidate to baseline."""
