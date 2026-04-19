@@ -70,6 +70,11 @@ class AssistantMessageWidget(QWidget):
         self._text = text
         self._label.setText(self._render(text))
 
+    @property
+    def has_content(self) -> bool:
+        """Return True if any text has been appended or set."""
+        return bool(self._text)
+
     def _render(self, text: str) -> str:
         """Render text with basic fenced code block support.
 

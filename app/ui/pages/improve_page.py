@@ -1182,7 +1182,7 @@ class ImprovePage(QWidget):
 
         self._empty_suggestions = None
 
-        suggestions = RuleSuggestionService.suggest(issues, params)
+        suggestions = RuleSuggestionService.suggest(issues, params, structural)
 
         if not suggestions:
             no_lbl = QLabel("No suggestions available")
@@ -1852,6 +1852,9 @@ class ImprovePage(QWidget):
             self._baseline_history.pop()
 
         self._baseline_params = copy.deepcopy(last_round.params_before)
+        # Restore _baseline_run.summary from the popped round (task 3.3)
+        if self._baseline_run is not None:
+            self._baseline_run.summary = last_round.summary
         self._candidate_run = None
         self._candidate_config = copy.deepcopy(self._baseline_params)
 

@@ -21,3 +21,5 @@ build/
 # App settings — contains API keys, paths, credentials
 settings.json
 data/settings.json
+# Test pollution — MagicMock directories created by broken test mocks
+MagicMock/

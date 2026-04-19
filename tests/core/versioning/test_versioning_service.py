@@ -15,7 +15,9 @@ from app.core.versioning.versioning_service import VersioningService
 
 def make_settings_service(tmp_path):
     svc = MagicMock()
-    svc.settings.user_data_path = str(tmp_path)
+    mock_settings = MagicMock()
+    mock_settings.user_data_path = str(tmp_path)
+    svc.load_settings.return_value = mock_settings
     return svc
 
 

@@ -83,3 +83,24 @@
 2026-04-19 08:12:45.077 | INFO     | freqtrade_gui.ui.improve_page  | Candidate accepted for strategy 'MultiMeee'
 2026-04-19 09:33:41.415 | DEBUG    | freqtrade_gui.ui.ai_chat_dock  | AIChatDock initialised (ai_service=True)
 2026-04-19 09:33:41.416 | INFO     | freqtrade_gui.ui.main_window   | MainWindow initialised
+2026-04-19 14:42:57.191 | DEBUG    | freqtrade_gui.ui.ai_chat_dock  | AIChatDock initialised (ai_service=True)
+2026-04-19 14:42:57.194 | INFO     | freqtrade_gui.ui.main_window   | MainWindow initialised
+2026-04-19 14:42:57.217 | DEBUG    | freqtrade_gui.ui.loop_page     | Cleaned up stale sandbox: T:\ae\pyside6\user_data\strategies\_improve_sandbox\MultiMeee_20260417_214610
+2026-04-19 14:42:57.217 | DEBUG    | freqtrade_gui.ui.loop_page     | Cleaned up stale sandbox: T:\ae\pyside6\user_data\strategies\_improve_sandbox\MultiMeee_20260417_214633
+2026-04-19 14:42:57.219 | DEBUG    | freqtrade_gui.ui.loop_page     | Cleaned up stale sandbox: T:\ae\pyside6\user_data\strategies\_improve_sandbox\MultiMeee_20260417_221028
+2026-04-19 14:42:57.219 | DEBUG    | freqtrade_gui.ui.loop_page     | Cleaned up stale sandbox: T:\ae\pyside6\user_data\strategies\_improve_sandbox\MultiMeee_20260417_221211
+2026-04-19 14:42:57.219 | DEBUG    | freqtrade_gui.ui.loop_page     | Cleaned up stale sandbox: T:\ae\pyside6\user_data\strategies\_improve_sandbox\MultiMeee_20260417_221247
+2026-04-19 14:42:57.219 | DEBUG    | freqtrade_gui.ui.loop_page     | Cleaned up stale sandbox: T:\ae\pyside6\user_data\strategies\_improve_sandbox\MultiMeee_20260417_221352
+2026-04-19 14:42:57.220 | DEBUG    | freqtrade_gui.ui.loop_page     | Cleaned up stale sandbox: T:\ae\pyside6\user_data\strategies\_improve_sandbox\MultiMeee_20260417_221459
+2026-04-19 14:42:57.220 | DEBUG    | freqtrade_gui.ui.loop_page     | Cleaned up stale sandbox: T:\ae\pyside6\user_data\strategies\_improve_sandbox\MultiMeee_20260417_221512
+2026-04-19 14:42:57.220 | DEBUG    | freqtrade_gui.ui.loop_page     | Cleaned up stale sandbox: T:\ae\pyside6\user_data\strategies\_improve_sandbox\MultiMeee_20260417_221522
+2026-04-19 14:42:57.222 | DEBUG    | freqtrade_gui.ui.loop_page     | Cleaned up stale sandbox: T:\ae\pyside6\user_data\strategies\_improve_sandbox\MultiMeee_20260417_221538
+2026-04-19 14:42:57.222 | DEBUG    | freqtrade_gui.ui.loop_page     | Cleaned up stale sandbox: T:\ae\pyside6\user_data\strategies\_improve_sandbox\MultiMeee_20260417_221550
+2026-04-19 14:42:57.223 | DEBUG    | freqtrade_gui.ui.loop_page     | Cleaned up stale sandbox: T:\ae\pyside6\user_data\strategies\_improve_sandbox\MultiMeee_20260417_221731
+2026-04-19 14:42:57.223 | DEBUG    | freqtrade_gui.ui.loop_page     | Cleaned up stale sandbox: T:\ae\pyside6\user_data\strategies\_improve_sandbox\MultiMeee_20260418_054026
+2026-04-19 15:42:24.199 | DEBUG    | freqtrade_gui.ui.ai_chat_dock  | AIChatDock initialised (ai_service=True)
+2026-04-19 15:42:24.201 | INFO     | freqtrade_gui.ui.main_window   | MainWindow initialised
+2026-04-19 15:42:37.264 | DEBUG    | freqtrade_gui.ui.settings_dialog | SettingsDialog created
+2026-04-19 15:44:09.951 | INFO     | freqtrade_gui.ui.ai_chat_dock  | AI settings changed — recreating runtime
+2026-04-19 15:44:39.783 | INFO     | freqtrade_gui.ui.ai_chat_dock  | AI settings changed — recreating runtime
+2026-04-19 15:44:52.310 | INFO     | freqtrade_gui.ui.ai_chat_dock  | AI settings changed — recreating runtime

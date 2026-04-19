@@ -14,8 +14,11 @@ class SettingsService:
     """Manages application settings persistence and resolution."""
 
     def __init__(self, settings_file: Optional[str] = None):
-        self.settings_file = settings_file or Path(__file__).parents[3] / "data" / "settings.json"
-        self.settings_file = Path(self.settings_file)
+        if settings_file:
+            self.settings_file = Path(settings_file)
+        else:
+            # Store settings in the user's home directory, not the repo
+            self.settings_file = Path.home() / ".freqtrade_gui" / "settings.json"
         self.settings: Optional[AppSettings] = None
 
     def load_settings(self) -> AppSettings:

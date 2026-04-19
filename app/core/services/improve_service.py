@@ -166,10 +166,15 @@ class ImproveService:
             "--backtest-directory", str(export_dir),
         ]
 
+        # Guard: use a sensible default timeframe if the baseline has none
+        timeframe = baseline.summary.timeframe or "5m"
+        # Guard: only pass pairs if the baseline has a non-empty pairlist
+        pairs = baseline.summary.pairlist if baseline.summary.pairlist else []
+
         command = self.backtest_service.build_command(
             strategy_name=strategy_name,
-            timeframe=baseline.summary.timeframe,
-            pairs=baseline.summary.pairlist,
+            timeframe=timeframe,
+            pairs=pairs,
             extra_flags=extra_flags,
         )
 

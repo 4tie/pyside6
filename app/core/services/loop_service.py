@@ -293,6 +293,7 @@ class SuggestionRotator:
         issues: List[DiagnosedIssue],
         current_params: dict,
         prev_iteration: Optional[LoopIteration],
+        structural: Optional[List] = None,
     ) -> List[ParameterSuggestion]:
         """Generate a varied set of suggestions for this iteration.
 
@@ -304,12 +305,13 @@ class SuggestionRotator:
             issues: Diagnosed issues from the latest backtest.
             current_params: Current strategy parameters.
             prev_iteration: The previous loop iteration, or None for the first.
+            structural: Optional structural diagnosis patterns from DiagnosisBundle.
 
         Returns:
             List of non-advisory ParameterSuggestion objects to apply.
         """
-        # Start with base suggestions from the rule service
-        base_suggestions = RuleSuggestionService.suggest(issues, current_params)
+        # Start with base suggestions from the rule service (pass structural too)
+        base_suggestions = RuleSuggestionService.suggest(issues, current_params, structural)
         actionable = [s for s in base_suggestions if not s.is_advisory]
 
         if not actionable:
@@ -594,16 +596,18 @@ class LoopService:
         diagnosis_input = DiagnosisInput(in_sample=latest_summary)
         bundle = ResultsDiagnosisService.diagnose(diagnosis_input)
         issues = bundle.issues
+        structural = bundle.structural
         _log.debug(
-            "Loop iter %d: %d issue(s) diagnosed", self._current_iteration, len(issues)
+            "Loop iter %d: %d issue(s) and %d structural pattern(s) diagnosed",
+            self._current_iteration, len(issues), len(structural),
         )
 
         # Get previous iteration for direction hints
         prev_iteration = self._result.iterations[-1] if self._result.iterations else None
 
-        # Generate varied suggestions
+        # Generate varied suggestions (pass structural so those patterns drive changes too)
         suggestions = self._rotator.generate_suggestions(
-            issues, self._current_params, prev_iteration
+            issues, self._current_params, prev_iteration, structural
         )
 
         if not suggestions:

@@ -771,10 +771,30 @@ class LoopPage(QWidget):
         from app.core.services.process_service import ProcessService
         from app.core.backtests.results_models import BacktestResults as _BR
 
+        # Resolve timeframe and pairs from the most recent saved run for this strategy,
+        # falling back to the settings default timeframe.
+        timeframe = "5m"
+        pairs: list = []
+        try:
+            runs = self._improve_service.get_strategy_runs(strategy)
+            if runs:
+                timeframe = runs[0].get("timeframe") or timeframe
+                pairs = runs[0].get("pairs") or []
+        except Exception:
+            pass
+        if not timeframe:
+            timeframe = getattr(
+                getattr(settings, "backtest_preferences", None), "default_timeframe", "5m"
+            ) or "5m"
+
         # Build a plain backtest command (no sandbox — just current strategy)
         backtest_svc = BacktestService(self._settings_state.settings_service)
         try:
-            command = backtest_svc.build_command(strategy_name=strategy)
+            command = backtest_svc.build_command(
+                strategy_name=strategy,
+                timeframe=timeframe,
+                pairs=pairs or [],
+            )
         except Exception as e:
             self._set_status(f"Error building command: {e}")
             self._finish_loop(f"Command build error: {e}")
@@ -854,7 +874,7 @@ class LoopPage(QWidget):
             self._finish_loop()
             return
 
-        prepared = self._loop_service.prepare_next_iteration(latest_results)
+        prepared = self._loop_service.prepare_next_iteration(latest_results.summary)
         if prepared is None:
             self._finish_loop()
             return

@@ -62,8 +62,9 @@ def _make_dialog(pairs, selected=None, favorites=None, max_open_trades=1):
     This keeps widget count small and prevents Qt emoji-button crashes in tests.
     """
     with patch.object(_dialog_module, "BINANCE_USDT_PAIRS", []):
+        # Use pairs as favorites so they appear in all_pairs
         dialog = PairsSelectorDialog(
-            favorites=favorites or [],
+            favorites=pairs,
             selected=selected or [],
             settings_state=_make_mock_state(),
             max_open_trades=max_open_trades,

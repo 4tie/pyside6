@@ -437,7 +437,7 @@ class AIChatDock(QDockWidget):
 
     def _on_response_complete(self, response: AIResponse) -> None:
         if self._current_assistant_widget is not None:
-            if not self._current_assistant_widget._text:
+            if not self._current_assistant_widget.has_content:
                 self._current_assistant_widget.set_text(response.content)
         self._current_assistant_widget = None
         self._send_btn.setEnabled(True)

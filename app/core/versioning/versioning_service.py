@@ -54,11 +54,7 @@ class VersioningService:
         Raises:
             ValueError: If settings or user_data_path is not configured.
         """
-        settings = self._settings_service.settings
-        if settings is None:
-            raise ValueError(
-                "Settings not loaded. Call settings_service.load_settings() first."
-            )
+        settings = self._settings_service.load_settings()
         if not settings.user_data_path:
             raise ValueError(
                 "user_data_path is not configured in settings. "
