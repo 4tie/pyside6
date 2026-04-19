@@ -1,5 +1,7 @@
 import logging
+import os
 import sys
+import tempfile
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 from typing import Optional
@@ -78,21 +80,63 @@ _DEFAULT_FILE = "app.log"
 
 _root_logger: Optional[logging.Logger] = None
 _log_dir: Optional[Path] = None
-_file_handlers: dict[str, RotatingFileHandler] = {}
+_file_handlers: dict[str, logging.Handler] = {}
 
 
-def _get_file_handler(log_dir: Path, filename: str) -> RotatingFileHandler:
+def _fallback_log_dir() -> Path:
+    """Return a temp-directory fallback for environments with read-only repo logs."""
+    fallback = Path(tempfile.gettempdir()) / "freqtrade_gui_logs"
+    fallback.mkdir(parents=True, exist_ok=True)
+    return fallback
+
+
+def _resolve_log_dir(log_dir_path: Optional[str] = None) -> Path:
+    """Resolve a writable log directory, honoring env override and temp fallback."""
+    preferred = (
+        Path(log_dir_path)
+        if log_dir_path
+        else Path(
+            os.environ.get(
+                "FREQTRADE_GUI_LOG_DIR",
+                Path(__file__).parent.parent.parent.parent / "data" / "log",
+            )
+        )
+    )
+    preferred = preferred.expanduser().resolve()
+
+    try:
+        preferred.mkdir(parents=True, exist_ok=True)
+        probe = preferred / ".write_test"
+        probe.write_text("", encoding="utf-8")
+        probe.unlink(missing_ok=True)
+        return preferred
+    except OSError:
+        return _fallback_log_dir()
+
+
+def _get_file_handler(log_dir: Path, filename: str) -> logging.Handler:
     """Return a cached RotatingFileHandler for the given filename."""
     if filename not in _file_handlers:
-        fh = RotatingFileHandler(
-            log_dir / filename,
-            maxBytes=5 * 1024 * 1024,
-            backupCount=3,
-            encoding="utf-8",
-        )
-        fh.setLevel(logging.DEBUG)
-        fh.setFormatter(_FILE_FMT)
-        _file_handlers[filename] = fh
+        target_dir = log_dir
+        try:
+            handler = RotatingFileHandler(
+                target_dir / filename,
+                maxBytes=5 * 1024 * 1024,
+                backupCount=3,
+                encoding="utf-8",
+            )
+        except OSError:
+            target_dir = _fallback_log_dir()
+            handler = RotatingFileHandler(
+                target_dir / filename,
+                maxBytes=5 * 1024 * 1024,
+                backupCount=3,
+                encoding="utf-8",
+            )
+
+        handler.setLevel(logging.DEBUG)
+        handler.setFormatter(_FILE_FMT)
+        _file_handlers[filename] = handler
     return _file_handlers[filename]
 
 
@@ -108,11 +152,7 @@ def setup_logging(log_dir_path: Optional[str] = None) -> logging.Logger:
     global _root_logger, _log_dir
 
     # Resolve log directory
-    if log_dir_path:
-        _log_dir = Path(log_dir_path)
-    else:
-        _log_dir = Path(__file__).parent.parent.parent.parent / "data" / "log"
-    _log_dir.mkdir(parents=True, exist_ok=True)
+    _log_dir = _resolve_log_dir(log_dir_path)
 
     logger = logging.getLogger("freqtrade_gui")
     logger.setLevel(logging.DEBUG)
@@ -162,7 +202,7 @@ def get_logger(name: Optional[str] = None) -> logging.Logger:
         existing_files = {
             getattr(h, "baseFilename", None)
             for h in child.handlers
-            if isinstance(h, RotatingFileHandler)
+            if isinstance(h, logging.FileHandler)
         }
         target = str(_log_dir / filename)
         if target not in existing_files and filename != "app.log":

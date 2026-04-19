@@ -2,12 +2,19 @@
 Shared pytest fixtures for the entire test suite.
 All paths are relative to tmp_path — no hardcoded machine paths.
 """
+import os
 import json
+import tempfile
 import zipfile
 from datetime import datetime
 from pathlib import Path
 
 import pytest
+
+
+TEST_LOG_DIR = Path(tempfile.gettempdir()) / "freqtrade_gui_test_logs"
+TEST_LOG_DIR.mkdir(parents=True, exist_ok=True)
+os.environ.setdefault("FREQTRADE_GUI_LOG_DIR", str(TEST_LOG_DIR))
 
 
 # ─────────────────────────────────────────────────────────────────────────────

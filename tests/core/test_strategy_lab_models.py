@@ -25,6 +25,8 @@ class TestStrategyLabPreferences:
         assert prefs.target_max_drawdown == 20.0
         assert prefs.target_min_trades == 30
         assert prefs.stop_on_first_profitable is True
+        assert prefs.date_from == ""
+        assert prefs.date_to == ""
         assert prefs.timerange == ""
         assert prefs.pairs == ""
         assert prefs.oos_split_pct == 20.0
@@ -53,6 +55,8 @@ class TestStrategyLabPreferences:
             hyperopt_loss_function="CalmarHyperOptLoss",
             ai_advisor_enabled=True,
             pairs="BTC/USDT,ETH/USDT",
+            date_from="20240101",
+            date_to="20241231",
             timerange="20240101-20241231",
         )
         serialised = prefs.model_dump_json()

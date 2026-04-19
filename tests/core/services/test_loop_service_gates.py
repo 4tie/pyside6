@@ -22,7 +22,14 @@ def _make_service() -> LoopService:
     return LoopService(improve_mock)
 
 
-def _summary(profit: float, trades: int = 50, win_rate: float = 55.0) -> BacktestSummary:
+def _summary(
+    profit: float,
+    trades: int = 50,
+    win_rate: float = 55.0,
+    profit_factor: float = 1.5,
+    expectancy: float = 0.2,
+    max_drawdown: float = 10.0,
+) -> BacktestSummary:
     return BacktestSummary(
         strategy="TestStrategy",
         timeframe="5m",
@@ -37,9 +44,12 @@ def _summary(profit: float, trades: int = 50, win_rate: float = 55.0) -> Backtes
         sharpe_ratio=1.0,
         sortino_ratio=1.0,
         calmar_ratio=1.0,
-        max_drawdown=10.0,
+        max_drawdown=max_drawdown,
         max_drawdown_abs=10.0,
         trade_duration_avg=60,
+        pairlist=["BTC/USDT", "ETH/USDT", "ADA/USDT"],
+        profit_factor=profit_factor,
+        expectancy=expectancy,
     )
 
 
@@ -277,11 +287,10 @@ class TestQuickMode:
         config = _config(validation_mode="full")
         iteration = _iteration()
 
-        call_count = [0]
         def run_bt(timerange, sandbox_dir, fee_multiplier=1.0, slippage_pct=0.0):
-            call_count[0] += 1
-            # OOS gate: in-sample=10%, OOS=1% (fails 50% threshold)
-            return _summary(10.0) if call_count[0] == 1 else _summary(1.0)
+            # OOS gate only needs one additional backtest here because the
+            # in-sample summary is already supplied to run_gate_sequence().
+            return _summary(1.0)
 
         passed = svc.run_gate_sequence(
             iteration, _summary(10.0), config, Path("."), run_bt
@@ -291,3 +300,74 @@ class TestQuickMode:
         # Should stop after Gate 2 failure — Gate 3 should not be in results
         gate_names = [g.gate_name for g in iteration.gate_results]
         assert "walk_forward" not in gate_names
+
+    def test_gate_sequence_marks_gate1_hard_filter_rejection(self):
+        svc = _make_service()
+        config = _config(target_min_trades=30)
+        iteration = _iteration()
+
+        passed = svc.run_gate_sequence(
+            iteration,
+            _summary(10.0, trades=5),
+            config,
+            Path("."),
+            lambda *args, **kwargs: _summary(10.0),
+        )
+
+        assert passed is False
+        assert iteration.status == "hard_filter_rejected"
+        assert iteration.validation_gate_passed is False
+        assert any(f.filter_name == "min_trade_count" for f in iteration.hard_filter_failures)
+
+    def test_gate_sequence_marks_oos_hard_filter_rejection(self):
+        svc = _make_service()
+        config = _config(validation_mode="quick")
+        iteration = _iteration()
+
+        def run_bt(timerange, sandbox_dir, fee_multiplier=1.0, slippage_pct=0.0):
+            return _summary(-1.0, profit_factor=1.5)
+
+        passed = svc.run_gate_sequence(
+            iteration,
+            _summary(-10.0, profit_factor=1.5),
+            config,
+            Path("."),
+            run_bt,
+        )
+
+        assert passed is False
+        assert iteration.status == "hard_filter_rejected"
+        assert any(f.filter_name == "oos_negativity" for f in iteration.hard_filter_failures)
+
+    def test_gate_sequence_marks_walk_forward_variance_rejection(self):
+        svc = _make_service()
+        config = _config(validation_mode="full", walk_forward_folds=3, validation_variance_ceiling=0.25)
+        iteration = _iteration()
+
+        call_count = {"count": 0}
+
+        def run_bt(timerange, sandbox_dir, fee_multiplier=1.0, slippage_pct=0.0):
+            call_count["count"] += 1
+            idx = call_count["count"]
+            if idx == 1:
+                return _summary(6.0)   # OOS
+            if idx == 2:
+                return _summary(1.0)   # fold 1
+            if idx == 3:
+                return _summary(12.0)  # fold 2
+            if idx == 4:
+                return _summary(3.0)   # fold 3
+            return _summary(10.0)      # stress (should not be reached)
+
+        passed = svc.run_gate_sequence(
+            iteration,
+            _summary(10.0),
+            config,
+            Path("."),
+            run_bt,
+        )
+
+        assert passed is False
+        assert iteration.status == "hard_filter_rejected"
+        assert iteration.validation_gate_reached == "walk_forward"
+        assert any(f.filter_name == "validation_variance" for f in iteration.hard_filter_failures)

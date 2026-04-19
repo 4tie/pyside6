@@ -12,7 +12,8 @@ import math
 import statistics
 from typing import Callable, Dict, List, Optional, Tuple
 
-from app.core.backtests.results_models import BacktestSummary
+from app.core.backtests.results_models import BacktestResults, BacktestSummary
+from app.core.models.diagnosis_models import DiagnosisInput
 from app.core.models.improve_models import DiagnosedIssue, ParameterSuggestion
 from app.core.models.loop_models import (
     GateResult,
@@ -23,6 +24,7 @@ from app.core.models.loop_models import (
     RobustScore,
     RobustScoreInput,
 )
+from app.core.services.hard_filter_service import HardFilterService
 from app.core.services.improve_service import ImproveService
 from app.core.services.results_diagnosis_service import ResultsDiagnosisService
 from app.core.services.rule_suggestion_service import RuleSuggestionService
@@ -218,6 +220,77 @@ def compute_score(input: RobustScoreInput) -> RobustScore:
     )
 
 
+def compute_trade_profit_contributions(
+    results: Optional[BacktestResults],
+) -> Optional[List[float]]:
+    """Return per-trade profit contributions as fractions of total positive profit."""
+    if results is None or not results.trades:
+        return None
+
+    positive_trades = [trade for trade in results.trades if trade.profit_abs > 0]
+    total_positive_profit = sum(trade.profit_abs for trade in positive_trades)
+    if total_positive_profit <= 0:
+        return None
+
+    return [
+        round(trade.profit_abs / total_positive_profit, 6)
+        for trade in positive_trades
+    ]
+
+
+def compute_pair_profit_distribution(
+    results: Optional[BacktestResults],
+) -> Optional[Dict[str, float]]:
+    """Return pair -> positive profit share distribution for stability scoring."""
+    if results is None or not results.trades:
+        return None
+
+    totals: Dict[str, float] = {}
+    for trade in results.trades:
+        if trade.profit_abs <= 0:
+            continue
+        totals[trade.pair] = totals.get(trade.pair, 0.0) + trade.profit_abs
+
+    total_positive_profit = sum(totals.values())
+    if total_positive_profit <= 0:
+        return None
+
+    return {
+        pair: round(value / total_positive_profit, 6)
+        for pair, value in totals.items()
+    }
+
+
+def build_diagnosis_input(
+    in_sample_results: BacktestResults,
+    oos_results: Optional[BacktestResults] = None,
+    fold_results: Optional[List[BacktestResults]] = None,
+) -> DiagnosisInput:
+    """Build a DiagnosisInput bundle from parsed backtest results."""
+    return DiagnosisInput(
+        in_sample=in_sample_results.summary,
+        oos_summary=oos_results.summary if oos_results is not None else None,
+        fold_summaries=[
+            result.summary for result in (fold_results or [])
+        ] or None,
+        trade_profit_contributions=compute_trade_profit_contributions(in_sample_results),
+    )
+
+
+def build_score_input(
+    in_sample_results: BacktestResults,
+    fold_results: Optional[List[BacktestResults]] = None,
+    stress_results: Optional[BacktestResults] = None,
+) -> RobustScoreInput:
+    """Build a RobustScoreInput bundle from parsed backtest results."""
+    return RobustScoreInput(
+        in_sample=in_sample_results.summary,
+        fold_summaries=[result.summary for result in (fold_results or [])] or None,
+        stress_summary=stress_results.summary if stress_results is not None else None,
+        pair_profit_distribution=compute_pair_profit_distribution(in_sample_results),
+    )
+
+
 def targets_met(summary: BacktestSummary, config: LoopConfig) -> bool:
     """Return True if all profitability targets in config are satisfied.
 
@@ -320,9 +393,7 @@ class SuggestionRotator:
         Returns:
             List of non-advisory ParameterSuggestion objects to apply.
         """
-        # Start with base suggestions from the rule service (pass structural too)
-        base_suggestions = RuleSuggestionService.suggest(issues, current_params, structural)
-        actionable = [s for s in base_suggestions if not s.is_advisory]
+        actionable = RuleSuggestionService.suggest(issues, current_params, structural)
 
         # Inject trailing-stop proposal when high-drawdown structural pattern is present
         # and trailing_stop is currently disabled
@@ -339,13 +410,6 @@ class SuggestionRotator:
                     reason="High-drawdown structural pattern detected — proposing trailing stop",
                     expected_effect="Trailing stop protects profits and limits drawdown",
                 ))
-
-            # Map remaining structural patterns to parameter mutations
-            structural_suggestions = self._suggestions_from_structural(structural, current_params)
-            for ss in structural_suggestions:
-                # Avoid duplicates with existing actionable suggestions
-                if not any(a.parameter == ss.parameter for a in actionable):
-                    actionable.append(ss)
 
         if not actionable:
             # No structured suggestions — go straight to random perturbations
@@ -893,6 +957,14 @@ class SuggestionRotator:
             ),
             expected_effect=f"Adjusted indicator parameter {target_key}",
         )
+
+    def _suggestions_from_structural(
+        self,
+        structural: List,
+        current_params: dict,
+    ) -> List[ParameterSuggestion]:
+        """Compatibility wrapper around RuleSuggestionService structural mapping."""
+        return RuleSuggestionService.suggest([], current_params, structural)
 
 
 class LoopService:
@@ -1842,3 +1914,727 @@ class LoopService:
         """Fire the status callback if registered."""
         if self._on_status is not None:
             self._on_status(message)
+
+    def _parse_config_dates(self, config: LoopConfig):
+        """Return parsed (date_from, date_to) datetimes, or None when invalid."""
+        if not config.date_from or not config.date_to:
+            return None
+
+        from datetime import datetime
+
+        fmt = "%Y%m%d"
+        try:
+            date_from = datetime.strptime(config.date_from, fmt)
+            date_to = datetime.strptime(config.date_to, fmt)
+        except ValueError:
+            return None
+
+        if date_to <= date_from:
+            return None
+        return date_from, date_to
+
+    def compute_full_timerange(self, config: LoopConfig) -> str:
+        """Return the full configured timerange, or an empty string when unset."""
+        if not config.date_from or not config.date_to:
+            return ""
+        return f"{config.date_from}-{config.date_to}"
+
+    def compute_in_sample_timerange(self, config: LoopConfig) -> str:
+        """Return the in-sample timerange used for Gate 1 and stress testing."""
+        parsed = self._parse_config_dates(config)
+        if parsed is None:
+            return self.compute_full_timerange(config)
+
+        from datetime import timedelta
+
+        date_from, date_to = parsed
+        total_days = (date_to - date_from).days
+        if total_days <= 1:
+            return self.compute_full_timerange(config)
+
+        oos_days = max(1, int(total_days * config.oos_split_pct / 100.0))
+        if oos_days >= total_days:
+            oos_days = total_days - 1
+        oos_start = date_to - timedelta(days=oos_days)
+        return f"{date_from.strftime('%Y%m%d')}-{oos_start.strftime('%Y%m%d')}"
+
+    def compute_oos_timerange(self, config: LoopConfig) -> str:
+        """Return the held-out out-of-sample timerange."""
+        parsed = self._parse_config_dates(config)
+        if parsed is None:
+            return ""
+
+        from datetime import timedelta
+
+        date_from, date_to = parsed
+        total_days = (date_to - date_from).days
+        if total_days <= 0:
+            return ""
+
+        oos_days = max(1, int(total_days * config.oos_split_pct / 100.0))
+        oos_start = date_to - timedelta(days=oos_days)
+        return f"{oos_start.strftime('%Y%m%d')}-{date_to.strftime('%Y%m%d')}"
+
+    def compute_walk_forward_timeranges(self, config: LoopConfig) -> List[str]:
+        """Return per-fold timeranges for the walk-forward gate."""
+        parsed = self._parse_config_dates(config)
+        if parsed is None:
+            return []
+
+        from datetime import timedelta
+
+        date_from, date_to = parsed
+        total_days = (date_to - date_from).days
+        k = max(2, config.walk_forward_folds)
+        fold_days = total_days // k
+        if total_days <= 0 or fold_days < 1:
+            return []
+
+        timeranges: List[str] = []
+        for i in range(k):
+            fold_start = date_from + timedelta(days=i * fold_days)
+            fold_end = date_from + timedelta(days=(i + 1) * fold_days)
+            if i == k - 1:
+                fold_end = date_to
+            timeranges.append(
+                f"{fold_start.strftime('%Y%m%d')}-{fold_end.strftime('%Y%m%d')}"
+            )
+        return timeranges
+
+    def build_in_sample_gate_result(self, summary: BacktestSummary) -> GateResult:
+        """Wrap the Gate 1 summary as a GateResult."""
+        return GateResult(
+            gate_name="in_sample",
+            passed=True,
+            metrics=summary,
+        )
+
+    def build_oos_gate_result(
+        self,
+        in_sample_summary: BacktestSummary,
+        oos_summary: Optional[BacktestSummary],
+    ) -> GateResult:
+        """Build the out-of-sample gate result from parsed summaries."""
+        if oos_summary is None:
+            return GateResult(
+                gate_name="out_of_sample",
+                passed=False,
+                failure_reason="OOS backtest failed",
+            )
+
+        threshold = in_sample_summary.total_profit * 0.5
+        passed = oos_summary.total_profit >= threshold
+        reason = None if passed else (
+            f"OOS profit {oos_summary.total_profit:.2f}% < 50% of "
+            f"in-sample profit {in_sample_summary.total_profit:.2f}%"
+        )
+        return GateResult(
+            gate_name="out_of_sample",
+            passed=passed,
+            metrics=oos_summary,
+            failure_reason=reason,
+        )
+
+    def build_walk_forward_gate_result(
+        self,
+        config: LoopConfig,
+        fold_summaries: List[BacktestSummary],
+    ) -> GateResult:
+        """Build the walk-forward gate result from per-fold summaries."""
+        if not fold_summaries:
+            return GateResult(
+                gate_name="walk_forward",
+                passed=False,
+                failure_reason="All walk-forward folds failed",
+            )
+
+        profitable_folds = sum(1 for fs in fold_summaries if fs.total_profit > 0)
+        pct_profitable = profitable_folds / len(fold_summaries)
+        passed = pct_profitable >= 0.60
+        reason = None if passed else (
+            f"Only {profitable_folds}/{len(fold_summaries)} folds profitable "
+            f"({pct_profitable * 100:.0f}% < 60%)"
+        )
+        return GateResult(
+            gate_name="walk_forward",
+            passed=passed,
+            fold_summaries=fold_summaries,
+            failure_reason=reason,
+        )
+
+    def build_stress_gate_result(
+        self,
+        config: LoopConfig,
+        stress_summary: Optional[BacktestSummary],
+    ) -> GateResult:
+        """Build the stress-test gate result from a parsed summary."""
+        if stress_summary is None:
+            return GateResult(
+                gate_name="stress_test",
+                passed=False,
+                failure_reason="Stress backtest failed",
+            )
+
+        threshold = config.target_profit_pct * config.stress_profit_target_pct / 100.0
+        passed = stress_summary.total_profit >= threshold
+        reason = None if passed else (
+            f"Stress profit {stress_summary.total_profit:.2f}% < "
+            f"{config.stress_profit_target_pct:.0f}% of target "
+            f"({threshold:.2f}%)"
+        )
+        return GateResult(
+            gate_name="stress_test",
+            passed=passed,
+            metrics=stress_summary,
+            failure_reason=reason,
+        )
+
+    def build_consistency_gate_result(
+        self,
+        config: LoopConfig,
+        fold_summaries: List[BacktestSummary],
+    ) -> GateResult:
+        """Build the consistency gate result from walk-forward fold profits."""
+        if not fold_summaries or len(fold_summaries) < 2:
+            return GateResult(
+                gate_name="consistency",
+                passed=True,
+            )
+
+        try:
+            fold_profits = [fs.total_profit for fs in fold_summaries]
+            mean_profit = statistics.mean(fold_profits)
+            std_profit = statistics.stdev(fold_profits)
+            cv = (std_profit / abs(mean_profit) * 100.0) if mean_profit != 0 else float("inf")
+            passed = cv <= config.consistency_threshold_pct
+            reason = None if passed else (
+                f"Profit CV {cv:.1f}% exceeds threshold "
+                f"{config.consistency_threshold_pct:.0f}%"
+            )
+            return GateResult(
+                gate_name="consistency",
+                passed=passed,
+                failure_reason=reason,
+            )
+        except Exception as exc:
+            return GateResult(
+                gate_name="consistency",
+                passed=False,
+                failure_reason=f"Consistency gate error: {exc}",
+            )
+
+    def evaluate_gate1_hard_filters(
+        self,
+        gate1_result: GateResult,
+        config: LoopConfig,
+    ) -> List[HardFilterFailure]:
+        """Evaluate post-Gate1 hard filters."""
+        return HardFilterService.evaluate_post_gate1(gate1_result, config)
+
+    def evaluate_post_gate_hard_filters(
+        self,
+        gate_result: GateResult,
+        config: LoopConfig,
+    ) -> List[HardFilterFailure]:
+        """Evaluate gate-specific post-gate hard filters."""
+        return HardFilterService.evaluate_post_gate(gate_result.gate_name, gate_result, config)
+
+    def _mark_hard_filter_rejection(
+        self,
+        iteration: LoopIteration,
+        gate_name: str,
+        failures: List[HardFilterFailure],
+    ) -> None:
+        """Mutate iteration to represent a hard-filter rejection."""
+        iteration.status = "hard_filter_rejected"
+        iteration.is_improvement = False
+        iteration.validation_gate_reached = gate_name
+        iteration.validation_gate_passed = False
+        iteration.hard_filter_failures = list(failures)
+
+    def record_hard_filter_rejection(
+        self,
+        iteration: LoopIteration,
+        gate_name: str,
+        failures: List[HardFilterFailure],
+    ) -> None:
+        """Record a hard-filter rejection as a completed iteration."""
+        self._mark_hard_filter_rejection(iteration, gate_name, failures)
+        self._record_iteration(iteration)
+
+    def _mark_gate_failure(
+        self,
+        iteration: LoopIteration,
+        gate_result: GateResult,
+    ) -> None:
+        """Mutate iteration to represent a validation gate failure."""
+        iteration.status = "gate_failed"
+        iteration.is_improvement = False
+        iteration.validation_gate_reached = gate_result.gate_name
+        iteration.validation_gate_passed = False
+
+    def record_gate_failure(
+        self,
+        iteration: LoopIteration,
+        gate_result: GateResult,
+    ) -> None:
+        """Record a validation gate failure as a completed iteration."""
+        self._mark_gate_failure(iteration, gate_result)
+        self._record_iteration(iteration)
+
+    def _eligible_best_iterations(self) -> List[LoopIteration]:
+        """Return iterations eligible to be considered the best result."""
+        return [
+            iteration
+            for iteration in (self._result.iterations if self._result is not None else [])
+            if iteration.validation_gate_passed
+            and iteration.status == "success"
+            and iteration.score is not None
+            and not iteration.below_min_trades
+        ]
+
+    def prepare_next_iteration(
+        self,
+        latest_summary: BacktestSummary,
+        diagnosis_input: Optional[DiagnosisInput] = None,
+    ) -> Optional[Tuple[LoopIteration, List[ParameterSuggestion]]]:
+        """Analyse the latest validated results and prepare the next iteration."""
+        if self._config is None or self._rotator is None or self._result is None:
+            return None
+
+        prev_iteration = self._result.iterations[-1] if self._result.iterations else None
+        self._current_iteration += 1
+
+        if (
+            prev_iteration is not None
+            and prev_iteration.validation_gate_passed
+            and self._config.stop_on_first_profitable
+            and targets_met(latest_summary, self._config)
+        ):
+            from pathlib import Path
+
+            iteration = LoopIteration(
+                iteration_number=self._current_iteration,
+                params_before=copy.deepcopy(self._current_params),
+                params_after=copy.deepcopy(self._current_params),
+                changes_summary=[],
+                summary=latest_summary,
+                is_improvement=True,
+                status="success",
+                sandbox_path=Path("."),
+                validation_gate_reached=prev_iteration.validation_gate_reached or "in_sample",
+                validation_gate_passed=True,
+            )
+            self._record_iteration(iteration)
+            self._result.target_reached = True
+            self._result.stop_reason = "All profitability targets met"
+            self._running = False
+            _log.info("Loop: targets met at iteration %d", self._current_iteration)
+            return None
+
+        if self._config.iteration_mode == "hyperopt":
+            from pathlib import Path
+
+            iteration = LoopIteration(
+                iteration_number=self._current_iteration,
+                params_before=copy.deepcopy(self._current_params),
+                params_after=copy.deepcopy(self._current_params),
+                changes_summary=["[hyperopt mode - awaiting hyperopt result]"],
+                sandbox_path=Path("."),
+            )
+            self._emit_status(
+                f"Iteration {self._current_iteration}/{self._config.max_iterations} - "
+                "running hyperopt..."
+            )
+            return iteration, []
+
+        diagnosis_input = diagnosis_input or DiagnosisInput(in_sample=latest_summary)
+        bundle = ResultsDiagnosisService.diagnose(diagnosis_input)
+        issues = bundle.issues
+        structural = bundle.structural
+
+        _log.debug(
+            "Loop iter %d: %d issue(s) and %d structural pattern(s) diagnosed",
+            self._current_iteration,
+            len(issues),
+            len(structural),
+        )
+
+        suggestions = self._rotator.generate_suggestions(
+            issues,
+            self._current_params,
+            prev_iteration,
+            structural,
+        )
+        if not suggestions:
+            self._result.stop_reason = "No more actionable suggestions to try"
+            self._running = False
+            _log.info("Loop: no more suggestions at iteration %d", self._current_iteration)
+            return None
+
+        candidate_params = copy.deepcopy(self._current_params)
+        actionable_suggestions: List[ParameterSuggestion] = []
+        for suggestion in suggestions:
+            if candidate_params.get(suggestion.parameter) == suggestion.proposed_value:
+                _log.debug(
+                    "Loop iter %d: skipping no-op suggestion for %s",
+                    self._current_iteration,
+                    suggestion.parameter,
+                )
+                continue
+            candidate_params[suggestion.parameter] = copy.deepcopy(suggestion.proposed_value)
+            actionable_suggestions.append(suggestion)
+
+        ai_changes: dict = {}
+        if self._config.ai_advisor_enabled and self._ai_advisor is not None:
+            try:
+                self._emit_status("Waiting for AI Advisor...")
+                prompt = self._ai_advisor.build_prompt(
+                    self._config.strategy,
+                    self._current_params,
+                    latest_summary,
+                    bundle.issues + bundle.structural,
+                )
+                ai_suggestion = self._ai_advisor.request_suggestion(prompt)
+                if ai_suggestion:
+                    ai_changes = {
+                        key: value
+                        for key, value in ai_suggestion.items()
+                        if candidate_params.get(key) != value
+                    }
+                    for key, value in ai_changes.items():
+                        candidate_params[key] = copy.deepcopy(value)
+                    if ai_changes:
+                        _log.info(
+                            "Loop iter %d: AI Advisor suggested %d changed param(s)",
+                            self._current_iteration,
+                            len(ai_changes),
+                        )
+            except Exception as exc:
+                _log.warning("Loop iter %d: AI Advisor failed: %s", self._current_iteration, exc)
+
+        changes_summary = [
+            f"{param}: {self._current_params.get(param)} -> {new_value}"
+            for param, new_value in candidate_params.items()
+            if self._current_params.get(param) != new_value
+        ]
+
+        if not changes_summary:
+            self._result.stop_reason = "No actionable suggestions changed parameters"
+            self._running = False
+            _log.info("Loop: no-op candidate avoided at iteration %d", self._current_iteration)
+            return None
+
+        if self._rotator.already_tried(candidate_params):
+            if actionable_suggestions:
+                fallback = actionable_suggestions[0]
+                fallback_params = copy.deepcopy(self._current_params)
+                fallback_params[fallback.parameter] = copy.deepcopy(fallback.proposed_value)
+                fallback_changes = [
+                    f"{param}: {self._current_params.get(param)} -> {new_value}"
+                    for param, new_value in fallback_params.items()
+                    if self._current_params.get(param) != new_value
+                ]
+                if fallback_changes and not self._rotator.already_tried(fallback_params):
+                    candidate_params = fallback_params
+                    actionable_suggestions = [fallback]
+                    changes_summary = fallback_changes
+
+            if self._rotator.already_tried(candidate_params):
+                self._result.stop_reason = "All reachable parameter combinations exhausted"
+                self._running = False
+                _log.info("Loop: duplicate candidate exhausted at iteration %d", self._current_iteration)
+                return None
+
+        self._rotator.mark_tried(candidate_params)
+
+        from pathlib import Path
+
+        iteration = LoopIteration(
+            iteration_number=self._current_iteration,
+            params_before=copy.deepcopy(self._current_params),
+            params_after=candidate_params,
+            changes_summary=changes_summary,
+            sandbox_path=Path("."),
+            ai_suggested=bool(ai_changes),
+            ai_suggestion_reason=(
+                "AI Advisor changed: " + ", ".join(sorted(ai_changes.keys()))
+                if ai_changes else None
+            ),
+            diagnosed_structural=[sd.failure_pattern for sd in structural],
+        )
+
+        self._emit_status(
+            f"Iteration {self._current_iteration}/{self._config.max_iterations} - "
+            f"applying {len(actionable_suggestions)} suggestion(s): "
+            + ", ".join(changes_summary)
+        )
+
+        return iteration, actionable_suggestions
+
+    def record_iteration_result(
+        self,
+        iteration: LoopIteration,
+        summary: BacktestSummary,
+        score_input: Optional[RobustScoreInput] = None,
+    ) -> bool:
+        """Record the backtest result for a fully-evaluated iteration."""
+        iteration.summary = summary
+
+        if summary.total_trades == 0:
+            iteration.status = "zero_trades"
+            iteration.is_improvement = False
+            self._record_iteration(iteration)
+            _log.info("Loop iter %d: zero trades - not eligible for best", iteration.iteration_number)
+            return False
+
+        if self._config and summary.total_trades < self._config.target_min_trades:
+            iteration.below_min_trades = True
+
+        if score_input is None:
+            score_input = RobustScoreInput(in_sample=summary)
+        robust_score = compute_score(score_input)
+        iteration.score = robust_score
+
+        is_improvement = (
+            iteration.validation_gate_passed
+            and iteration.status == "success"
+            and not iteration.below_min_trades
+            and robust_score.total > self._best_score
+        )
+        iteration.is_improvement = is_improvement
+
+        if is_improvement:
+            self._best_score = robust_score.total
+            self._current_params = copy.deepcopy(iteration.params_after)
+            self._result.best_iteration = iteration
+            _log.info(
+                "Loop iter %d: improvement! score=%.4f profit=%.2f%%",
+                iteration.iteration_number,
+                robust_score.total,
+                summary.total_profit,
+            )
+        else:
+            _log.info(
+                "Loop iter %d: no improvement. score=%.4f (best=%.4f)",
+                iteration.iteration_number,
+                robust_score.total,
+                self._best_score,
+            )
+
+        self._record_iteration(iteration)
+        return is_improvement
+
+    def finalize(self, stop_reason: str = "") -> LoopResult:
+        """Finalize the loop and choose the best validated successful iteration."""
+        self._running = False
+        if stop_reason and not self._result.stop_reason:
+            self._result.stop_reason = stop_reason
+
+        eligible = self._eligible_best_iterations()
+        self._result.best_iteration = (
+            max(eligible, key=lambda iteration: iteration.score.total)
+            if eligible else None
+        )
+
+        _log.info(
+            "Loop finalized: %d iterations, best_score=%.4f, reason=%s",
+            len(self._result.iterations),
+            self._best_score,
+            self._result.stop_reason,
+        )
+        return self._result
+
+    def _run_oos_gate(
+        self,
+        config: LoopConfig,
+        sandbox_dir,
+        run_backtest_fn: Callable,
+        in_sample_summary: Optional[BacktestSummary] = None,
+    ) -> GateResult:
+        """Run the out-of-sample validation gate."""
+        in_sample_timerange = self.compute_in_sample_timerange(config)
+        oos_timerange = self.compute_oos_timerange(config)
+        if not in_sample_timerange or not oos_timerange:
+            return GateResult(
+                gate_name="out_of_sample",
+                passed=False,
+                failure_reason="No valid date range configured for OOS gate",
+            )
+
+        try:
+            reference_summary = in_sample_summary
+            if reference_summary is None:
+                reference_summary = run_backtest_fn(in_sample_timerange, sandbox_dir)
+            if reference_summary is None:
+                return GateResult(
+                    gate_name="out_of_sample",
+                    passed=False,
+                    failure_reason="In-sample backtest failed during OOS gate",
+                )
+
+            oos_summary = run_backtest_fn(oos_timerange, sandbox_dir)
+            return self.build_oos_gate_result(reference_summary, oos_summary)
+        except Exception as exc:
+            _log.warning("OOS gate error: %s", exc)
+            return GateResult(
+                gate_name="out_of_sample",
+                passed=False,
+                failure_reason=f"OOS gate error: {exc}",
+            )
+
+    def _run_walk_forward_gate(
+        self,
+        config: LoopConfig,
+        sandbox_dir,
+        run_backtest_fn: Callable,
+    ) -> GateResult:
+        """Run the walk-forward validation gate."""
+        timeranges = self.compute_walk_forward_timeranges(config)
+        if not timeranges:
+            return GateResult(
+                gate_name="walk_forward",
+                passed=False,
+                failure_reason="No valid date range configured for walk-forward gate",
+            )
+
+        try:
+            fold_summaries: List[BacktestSummary] = []
+            for fold_index, timerange in enumerate(timeranges, start=1):
+                summary = run_backtest_fn(timerange, sandbox_dir)
+                if summary is not None:
+                    fold_summaries.append(summary)
+                else:
+                    _log.warning(
+                        "Walk-forward fold %d/%d failed",
+                        fold_index,
+                        len(timeranges),
+                    )
+            return self.build_walk_forward_gate_result(config, fold_summaries)
+        except Exception as exc:
+            _log.warning("Walk-forward gate error: %s", exc)
+            return GateResult(
+                gate_name="walk_forward",
+                passed=False,
+                failure_reason=f"Walk-forward gate error: {exc}",
+            )
+
+    def _run_stress_gate(
+        self,
+        config: LoopConfig,
+        sandbox_dir,
+        run_backtest_fn: Callable,
+        in_sample_timerange: str,
+    ) -> GateResult:
+        """Run the stress-test validation gate."""
+        try:
+            stress_summary = run_backtest_fn(
+                in_sample_timerange,
+                sandbox_dir,
+                fee_multiplier=config.stress_fee_multiplier,
+                slippage_pct=config.stress_slippage_pct,
+            )
+            return self.build_stress_gate_result(config, stress_summary)
+        except Exception as exc:
+            _log.warning("Stress gate error: %s", exc)
+            return GateResult(
+                gate_name="stress_test",
+                passed=False,
+                failure_reason=f"Stress gate error: {exc}",
+            )
+
+    def _run_consistency_gate(
+        self,
+        config: LoopConfig,
+        fold_summaries: List[BacktestSummary],
+    ) -> GateResult:
+        """Run the consistency validation gate."""
+        return self.build_consistency_gate_result(config, fold_summaries)
+
+    def run_gate_sequence(
+        self,
+        iteration: LoopIteration,
+        in_sample_summary,
+        config: LoopConfig,
+        sandbox_dir,
+        run_backtest_fn: Optional[Callable] = None,
+    ) -> bool:
+        """Run the full validation ladder with interleaved hard filters."""
+        gate1 = self.build_in_sample_gate_result(in_sample_summary)
+        iteration.gate_results.append(gate1)
+        iteration.validation_gate_reached = "in_sample"
+
+        gate1_failures = self.evaluate_gate1_hard_filters(gate1, config)
+        if gate1_failures:
+            self._mark_hard_filter_rejection(iteration, "in_sample", gate1_failures)
+            return False
+
+        if run_backtest_fn is None:
+            iteration.status = "success"
+            iteration.validation_gate_passed = True
+            return True
+
+        gate2 = self._run_oos_gate(
+            config,
+            sandbox_dir,
+            run_backtest_fn,
+            in_sample_summary=in_sample_summary,
+        )
+        iteration.gate_results.append(gate2)
+        iteration.validation_gate_reached = "out_of_sample"
+        if not gate2.passed:
+            self._mark_gate_failure(iteration, gate2)
+            return False
+
+        gate2_failures = self.evaluate_post_gate_hard_filters(gate2, config)
+        if gate2_failures:
+            self._mark_hard_filter_rejection(iteration, "out_of_sample", gate2_failures)
+            return False
+
+        if config.validation_mode == "quick":
+            iteration.status = "success"
+            iteration.validation_gate_passed = True
+            return True
+
+        gate3 = self._run_walk_forward_gate(config, sandbox_dir, run_backtest_fn)
+        iteration.gate_results.append(gate3)
+        iteration.validation_gate_reached = "walk_forward"
+        if not gate3.passed:
+            self._mark_gate_failure(iteration, gate3)
+            return False
+
+        gate3_failures = self.evaluate_post_gate_hard_filters(gate3, config)
+        if gate3_failures:
+            self._mark_hard_filter_rejection(iteration, "walk_forward", gate3_failures)
+            return False
+
+        def _stress_run(timerange, sdir, fee_multiplier=1.0, slippage_pct=0.0):
+            return run_backtest_fn(
+                timerange,
+                sdir,
+                fee_multiplier=fee_multiplier,
+                slippage_pct=slippage_pct,
+            )
+
+        gate4 = self._run_stress_gate(
+            config,
+            sandbox_dir,
+            _stress_run,
+            self.compute_in_sample_timerange(config),
+        )
+        iteration.gate_results.append(gate4)
+        iteration.validation_gate_reached = "stress_test"
+        if not gate4.passed:
+            self._mark_gate_failure(iteration, gate4)
+            return False
+
+        gate5 = self._run_consistency_gate(config, gate3.fold_summaries or [])
+        iteration.gate_results.append(gate5)
+        iteration.validation_gate_reached = "consistency"
+        if not gate5.passed:
+            self._mark_gate_failure(iteration, gate5)
+            return False
+
+        iteration.status = "success"
+        iteration.validation_gate_passed = True
+        return True

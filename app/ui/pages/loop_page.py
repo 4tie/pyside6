@@ -7,6 +7,7 @@ AI advisor, transparent iteration history, and accept/discard/rollback controls.
 from __future__ import annotations
 
 import copy
+import json
 import time
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -26,7 +27,11 @@ from app.core.models.loop_models import LoopConfig, LoopIteration, LoopResult
 from app.core.services.ai_advisor_service import AIAdvisorService
 from app.core.services.backtest_service import BacktestService
 from app.core.services.improve_service import ImproveService
-from app.core.services.loop_service import LoopService
+from app.core.services.loop_service import (
+    LoopService,
+    build_diagnosis_input,
+    build_score_input,
+)
 from app.core.services.process_service import ProcessService
 from app.core.utils.app_logger import get_logger
 from app.ui.widgets.iteration_history_row import IterationHistoryRow
@@ -1291,3 +1296,1045 @@ class LoopPage(QWidget):
         super().showEvent(event)
         self._update_stat_cards()
         self._update_state_machine()
+
+    def _ensure_loop_runtime_state(self) -> None:
+        """Initialize runtime-only attributes used by the async ladder flow."""
+        if not hasattr(self, "_syncing_date_fields"):
+            self._syncing_date_fields = False
+        if not hasattr(self, "_current_gate_name"):
+            self._current_gate_name = ""
+        if not hasattr(self, "_current_gate_timerange"):
+            self._current_gate_timerange = ""
+        if not hasattr(self, "_current_gate_export_dir"):
+            self._current_gate_export_dir = None
+        if not hasattr(self, "_gate_run_started_at"):
+            self._gate_run_started_at = 0.0
+        if not hasattr(self, "_current_fold_timeranges"):
+            self._current_fold_timeranges = []
+        if not hasattr(self, "_current_fold_index"):
+            self._current_fold_index = 0
+        if not hasattr(self, "_iteration_in_sample_results"):
+            self._iteration_in_sample_results = None
+        if not hasattr(self, "_iteration_oos_results"):
+            self._iteration_oos_results = None
+        if not hasattr(self, "_iteration_fold_results"):
+            self._iteration_fold_results = []
+        if not hasattr(self, "_iteration_stress_results"):
+            self._iteration_stress_results = None
+        if not hasattr(self, "_latest_diagnosis_input"):
+            self._latest_diagnosis_input = None
+
+    @staticmethod
+    def _parse_timerange_text(timerange: str) -> Optional[Tuple[str, str]]:
+        """Return (date_from, date_to) when timerange is complete, else None."""
+        if not timerange or "-" not in timerange:
+            return None
+        parts = timerange.split("-", 1)
+        if len(parts) != 2:
+            return None
+        date_from = parts[0].strip()
+        date_to = parts[1].strip()
+        if not date_from or not date_to:
+            return None
+        return date_from, date_to
+
+    @staticmethod
+    def _is_valid_date_value(value: str) -> bool:
+        """Return True when value matches YYYYMMDD."""
+        try:
+            datetime.strptime(value, "%Y%m%d")
+            return True
+        except ValueError:
+            return False
+
+    def _sync_timerange_from_dates(self) -> None:
+        """Keep the legacy timerange field synchronized with the date inputs."""
+        self._ensure_loop_runtime_state()
+        if self._syncing_date_fields:
+            return
+
+        date_from = self._date_from_edit.text().strip()
+        date_to = self._date_to_edit.text().strip()
+
+        self._syncing_date_fields = True
+        try:
+            if date_from and date_to:
+                self._timerange_edit.setText(f"{date_from}-{date_to}")
+            else:
+                self._timerange_edit.setText("")
+        finally:
+            self._syncing_date_fields = False
+
+    def _sync_dates_from_timerange(self) -> None:
+        """Keep explicit date fields synchronized from the timerange field."""
+        self._ensure_loop_runtime_state()
+        if self._syncing_date_fields:
+            return
+
+        parsed = self._parse_timerange_text(self._timerange_edit.text().strip())
+        if parsed is None:
+            return
+
+        date_from, date_to = parsed
+        self._syncing_date_fields = True
+        try:
+            self._date_from_edit.setText(date_from)
+            self._date_to_edit.setText(date_to)
+        finally:
+            self._syncing_date_fields = False
+
+    def _build_config_group(self) -> QGroupBox:
+        """Build the Strategy Lab configuration form."""
+        self._ensure_loop_runtime_state()
+
+        group = QGroupBox("Loop Configuration")
+        lay = QGridLayout()
+        lay.setContentsMargins(12, 10, 12, 12)
+        lay.setHorizontalSpacing(12)
+        lay.setVerticalSpacing(8)
+
+        lay.addWidget(_lbl("Strategy:"), 0, 0)
+        self._strategy_combo = QComboBox()
+        self._strategy_combo.setMinimumWidth(200)
+        lay.addWidget(self._strategy_combo, 0, 1)
+        lay.addWidget(_lbl("Max Iterations:"), 0, 2)
+        self._max_iter_spin = QSpinBox()
+        self._max_iter_spin.setRange(1, 100)
+        self._max_iter_spin.setValue(10)
+        lay.addWidget(self._max_iter_spin, 0, 3)
+
+        lay.addWidget(_lbl("Target Profit (%):"), 1, 0)
+        self._target_profit_spin = QDoubleSpinBox()
+        self._target_profit_spin.setRange(-100.0, 10000.0)
+        self._target_profit_spin.setValue(5.0)
+        self._target_profit_spin.setSingleStep(0.5)
+        lay.addWidget(self._target_profit_spin, 1, 1)
+        lay.addWidget(_lbl("Target Win Rate (%):"), 1, 2)
+        self._target_wr_spin = QDoubleSpinBox()
+        self._target_wr_spin.setRange(0.0, 100.0)
+        self._target_wr_spin.setValue(55.0)
+        lay.addWidget(self._target_wr_spin, 1, 3)
+
+        lay.addWidget(_lbl("Max Drawdown (%):"), 2, 0)
+        self._target_dd_spin = QDoubleSpinBox()
+        self._target_dd_spin.setRange(0.0, 100.0)
+        self._target_dd_spin.setValue(20.0)
+        lay.addWidget(self._target_dd_spin, 2, 1)
+        lay.addWidget(_lbl("Min Trades:"), 2, 2)
+        self._target_trades_spin = QSpinBox()
+        self._target_trades_spin.setRange(1, 10000)
+        self._target_trades_spin.setValue(30)
+        lay.addWidget(self._target_trades_spin, 2, 3)
+
+        self._stop_on_target_chk = QCheckBox("Stop as soon as all targets are met")
+        self._stop_on_target_chk.setChecked(True)
+        lay.addWidget(self._stop_on_target_chk, 3, 0, 1, 4)
+
+        lay.addWidget(_lbl("Date Presets:"), 4, 0)
+        timerange_widget = QWidget()
+        timerange_widget.setStyleSheet("background:transparent;")
+        tr_lay = QHBoxLayout(timerange_widget)
+        tr_lay.setContentsMargins(0, 0, 0, 0)
+        tr_lay.setSpacing(4)
+        for preset in _TIMERANGE_PRESETS:
+            pb = QPushButton(preset)
+            pb.setFixedWidth(42)
+            pb.setStyleSheet(f"""
+                QPushButton {{
+                    background:{_C_ELEVATED}; color:{_C_TEXT_DIM};
+                    border:1px solid {_C_BORDER}; border-radius:3px;
+                    padding:2px 4px; font-size:10px;
+                }}
+                QPushButton:hover {{ border-color:{_C_GREEN}; color:{_C_TEXT}; }}
+            """)
+            pb.clicked.connect(lambda checked, p=preset: self._on_timerange_preset(p))
+            tr_lay.addWidget(pb)
+        tr_lay.addStretch()
+        lay.addWidget(timerange_widget, 4, 1, 1, 3)
+
+        lay.addWidget(_lbl("Start Date:"), 5, 0)
+        self._date_from_edit = QLineEdit()
+        self._date_from_edit.setPlaceholderText("YYYYMMDD")
+        self._date_from_edit.textChanged.connect(self._sync_timerange_from_dates)
+        lay.addWidget(self._date_from_edit, 5, 1)
+        lay.addWidget(_lbl("End Date:"), 5, 2)
+        self._date_to_edit = QLineEdit()
+        self._date_to_edit.setPlaceholderText("YYYYMMDD")
+        self._date_to_edit.textChanged.connect(self._sync_timerange_from_dates)
+        lay.addWidget(self._date_to_edit, 5, 3)
+
+        lay.addWidget(_lbl("Timerange:"), 6, 0)
+        self._timerange_edit = QLineEdit()
+        self._timerange_edit.setPlaceholderText("YYYYMMDD-YYYYMMDD")
+        self._timerange_edit.textChanged.connect(self._sync_dates_from_timerange)
+        lay.addWidget(self._timerange_edit, 6, 1, 1, 3)
+
+        lay.addWidget(_lbl("Pairs:"), 7, 0)
+        self._pairs_btn = QPushButton("Select Pairs (0)")
+        self._pairs_btn.setStyleSheet(f"""
+            QPushButton {{
+                background:{_C_ELEVATED}; color:{_C_TEXT};
+                border:1px solid {_C_BORDER}; border-radius:4px;
+                padding:4px 10px; font-size:11px;
+            }}
+            QPushButton:hover {{ border-color:{_C_GREEN}; }}
+        """)
+        self._pairs_btn.clicked.connect(self._on_select_pairs)
+        self._selected_pairs = []
+        lay.addWidget(self._pairs_btn, 7, 1, 1, 3)
+
+        lay.addWidget(_lbl("OOS Split (%):"), 8, 0)
+        self._oos_split_spin = QDoubleSpinBox()
+        self._oos_split_spin.setRange(5.0, 50.0)
+        self._oos_split_spin.setValue(20.0)
+        lay.addWidget(self._oos_split_spin, 8, 1)
+        lay.addWidget(_lbl("Walk-Forward Folds:"), 8, 2)
+        self._wf_folds_spin = QSpinBox()
+        self._wf_folds_spin.setRange(2, 10)
+        self._wf_folds_spin.setValue(5)
+        lay.addWidget(self._wf_folds_spin, 8, 3)
+
+        lay.addWidget(_lbl("Stress Fee Mult:"), 9, 0)
+        self._stress_fee_spin = QDoubleSpinBox()
+        self._stress_fee_spin.setRange(1.0, 5.0)
+        self._stress_fee_spin.setSingleStep(0.1)
+        self._stress_fee_spin.setValue(2.0)
+        lay.addWidget(self._stress_fee_spin, 9, 1)
+        lay.addWidget(_lbl("Stress Slippage (%):"), 9, 2)
+        self._stress_slippage_spin = QDoubleSpinBox()
+        self._stress_slippage_spin.setRange(0.0, 2.0)
+        self._stress_slippage_spin.setSingleStep(0.01)
+        self._stress_slippage_spin.setValue(0.1)
+        lay.addWidget(self._stress_slippage_spin, 9, 3)
+
+        lay.addWidget(_lbl("Stress Profit Target (%):"), 10, 0)
+        self._stress_profit_spin = QDoubleSpinBox()
+        self._stress_profit_spin.setRange(0.0, 100.0)
+        self._stress_profit_spin.setValue(50.0)
+        lay.addWidget(self._stress_profit_spin, 10, 1)
+        lay.addWidget(_lbl("Consistency Threshold (%):"), 10, 2)
+        self._consistency_spin = QDoubleSpinBox()
+        self._consistency_spin.setRange(0.0, 100.0)
+        self._consistency_spin.setValue(30.0)
+        lay.addWidget(self._consistency_spin, 10, 3)
+
+        lay.addWidget(_lbl("Validation Mode:"), 11, 0)
+        self._validation_mode_combo = QComboBox()
+        self._validation_mode_combo.addItems(["Full", "Quick"])
+        self._validation_mode_combo.currentIndexChanged.connect(self._on_validation_mode_changed)
+        lay.addWidget(self._validation_mode_combo, 11, 1)
+        self._quick_mode_warning = QLabel(
+            "Quick mode runs Gate 1 + OOS only. Walk-forward, stress, and consistency are skipped."
+        )
+        self._quick_mode_warning.setStyleSheet(f"color:{_C_AMBER};font-size:10px;")
+        self._quick_mode_warning.setVisible(False)
+        lay.addWidget(self._quick_mode_warning, 11, 2, 1, 2)
+
+        lay.addWidget(_lbl("Iteration Mode:"), 12, 0)
+        self._iteration_mode_combo = QComboBox()
+        self._iteration_mode_combo.addItems(["Rule-Based Mutations", "Hyperopt-Guided"])
+        self._iteration_mode_combo.currentIndexChanged.connect(self._on_iteration_mode_changed)
+        lay.addWidget(self._iteration_mode_combo, 12, 1, 1, 3)
+
+        self._hyperopt_block_lbl = QLabel(
+            "Hyperopt-guided runtime is not implemented in this pass. Use rule-based mode to run Strategy Lab."
+        )
+        self._hyperopt_block_lbl.setStyleSheet(f"color:{_C_AMBER};font-size:10px;")
+        self._hyperopt_block_lbl.setVisible(False)
+        lay.addWidget(self._hyperopt_block_lbl, 13, 0, 1, 4)
+
+        self._hyperopt_widget = QWidget()
+        self._hyperopt_widget.setStyleSheet("background:transparent;")
+        ho_lay = QGridLayout(self._hyperopt_widget)
+        ho_lay.setContentsMargins(0, 0, 0, 0)
+        ho_lay.setSpacing(8)
+
+        ho_lay.addWidget(_lbl("Epochs:"), 0, 0)
+        self._hyperopt_epochs_spin = QSpinBox()
+        self._hyperopt_epochs_spin.setRange(50, 2000)
+        self._hyperopt_epochs_spin.setValue(200)
+        ho_lay.addWidget(self._hyperopt_epochs_spin, 0, 1)
+
+        ho_lay.addWidget(_lbl("Loss Function:"), 0, 2)
+        self._hyperopt_loss_combo = QComboBox()
+        self._hyperopt_loss_combo.addItems(_HYPEROPT_LOSSES)
+        ho_lay.addWidget(self._hyperopt_loss_combo, 0, 3)
+
+        ho_lay.addWidget(_lbl("Spaces:"), 1, 0)
+        spaces_widget = QWidget()
+        spaces_widget.setStyleSheet("background:transparent;")
+        spaces_lay = QHBoxLayout(spaces_widget)
+        spaces_lay.setContentsMargins(0, 0, 0, 0)
+        spaces_lay.setSpacing(4)
+        self._hyperopt_space_checks = {}
+        for space in _HYPEROPT_SPACES:
+            chk = QCheckBox(space)
+            chk.setChecked(True)
+            spaces_lay.addWidget(chk)
+            self._hyperopt_space_checks[space] = chk
+        spaces_lay.addStretch()
+        ho_lay.addWidget(spaces_widget, 1, 1, 1, 3)
+
+        self._hyperopt_widget.setVisible(False)
+        lay.addWidget(self._hyperopt_widget, 14, 0, 1, 4)
+
+        lay.addWidget(_lbl("AI Advisor:"), 15, 0)
+        self._ai_advisor_chk = QCheckBox("Enable AI Advisor")
+        self._ai_advisor_chk.setChecked(False)
+        lay.addWidget(self._ai_advisor_chk, 15, 1, 1, 3)
+
+        group.setLayout(lay)
+        return group
+
+    def _build_config_panel(self) -> QGroupBox:
+        """Compatibility wrapper used by `_init_ui`."""
+        return self._build_config_group()
+
+    def _update_state_machine(self) -> None:
+        """Update enabled/disabled widget state based on config and runtime."""
+        settings = self._settings_state.settings_service.load_settings()
+        ok = bool(settings.user_data_path)
+        is_running = self._loop_service.is_running
+        strategy = self._strategy_combo.currentText().strip()
+        has_strategy = bool(strategy) and not strategy.startswith("(")
+        has_result = (
+            self._loop_result is not None
+            and self._loop_result.best_iteration is not None
+        )
+        hyperopt_selected = self._iteration_mode_combo.currentIndex() == 1
+
+        config_widgets = [
+            self._strategy_combo, self._max_iter_spin, self._target_profit_spin,
+            self._target_wr_spin, self._target_dd_spin, self._target_trades_spin,
+            self._stop_on_target_chk, self._date_from_edit, self._date_to_edit,
+            self._timerange_edit, self._oos_split_spin, self._wf_folds_spin,
+            self._stress_fee_spin, self._stress_slippage_spin, self._stress_profit_spin,
+            self._consistency_spin, self._validation_mode_combo,
+            self._iteration_mode_combo, self._pairs_btn, self._ai_advisor_chk,
+            self._hyperopt_epochs_spin, self._hyperopt_loss_combo,
+        ]
+        for widget in config_widgets:
+            widget.setEnabled(ok and not is_running)
+        for chk in self._hyperopt_space_checks.values():
+            chk.setEnabled(ok and not is_running)
+
+        self._hyperopt_block_lbl.setVisible(hyperopt_selected)
+
+        self._start_btn.setVisible(not is_running)
+        self._start_btn.setEnabled(ok and has_strategy and not is_running and not hyperopt_selected)
+        self._start_btn.setToolTip(
+            "Hyperopt-guided runtime is not implemented in this pass."
+            if hyperopt_selected else ""
+        )
+        self._stop_btn.setVisible(is_running)
+        self._stop_btn.setEnabled(is_running)
+
+        self._apply_best_btn.setEnabled(has_result and not is_running)
+        self._discard_btn.setEnabled(has_result and not is_running)
+        self._rollback_btn.setEnabled(len(self._session_history) > 0 and not is_running)
+
+    def _restore_preferences(self) -> None:
+        """Restore saved StrategyLabPreferences from AppSettings."""
+        self._ensure_loop_runtime_state()
+        try:
+            settings = self._settings_state.settings_service.load_settings()
+            prefs = settings.strategy_lab
+
+            if prefs.strategy:
+                idx = self._strategy_combo.findText(prefs.strategy)
+                if idx >= 0:
+                    self._strategy_combo.setCurrentIndex(idx)
+
+            self._max_iter_spin.setValue(prefs.max_iterations)
+            self._target_profit_spin.setValue(prefs.target_profit_pct)
+            self._target_wr_spin.setValue(prefs.target_win_rate)
+            self._target_dd_spin.setValue(prefs.target_max_drawdown)
+            self._target_trades_spin.setValue(prefs.target_min_trades)
+            self._stop_on_target_chk.setChecked(prefs.stop_on_first_profitable)
+
+            date_from = prefs.date_from
+            date_to = prefs.date_to
+            if (not date_from or not date_to) and prefs.timerange:
+                parsed = self._parse_timerange_text(prefs.timerange)
+                if parsed is not None:
+                    date_from, date_to = parsed
+
+            self._syncing_date_fields = True
+            try:
+                self._date_from_edit.setText(date_from or "")
+                self._date_to_edit.setText(date_to or "")
+                if date_from and date_to:
+                    self._timerange_edit.setText(f"{date_from}-{date_to}")
+                else:
+                    self._timerange_edit.setText(prefs.timerange)
+            finally:
+                self._syncing_date_fields = False
+
+            self._oos_split_spin.setValue(prefs.oos_split_pct)
+            self._wf_folds_spin.setValue(prefs.walk_forward_folds)
+            self._stress_fee_spin.setValue(prefs.stress_fee_multiplier)
+            self._stress_slippage_spin.setValue(prefs.stress_slippage_pct)
+            self._stress_profit_spin.setValue(prefs.stress_profit_target_pct)
+            self._consistency_spin.setValue(prefs.consistency_threshold_pct)
+            self._validation_mode_combo.setCurrentIndex(0 if prefs.validation_mode == "full" else 1)
+            self._iteration_mode_combo.setCurrentIndex(0 if prefs.iteration_mode == "rule_based" else 1)
+            self._hyperopt_epochs_spin.setValue(prefs.hyperopt_epochs)
+            loss_idx = self._hyperopt_loss_combo.findText(prefs.hyperopt_loss_function)
+            if loss_idx >= 0:
+                self._hyperopt_loss_combo.setCurrentIndex(loss_idx)
+            for space, chk in self._hyperopt_space_checks.items():
+                chk.setChecked(space in prefs.hyperopt_spaces if prefs.hyperopt_spaces else True)
+            self._ai_advisor_chk.setChecked(prefs.ai_advisor_enabled)
+            if prefs.pairs:
+                self._selected_pairs = [p.strip() for p in prefs.pairs.split(",") if p.strip()]
+                self._pairs_btn.setText(f"Select Pairs ({len(self._selected_pairs)})")
+        except Exception as exc:
+            _log.warning("Failed to restore StrategyLabPreferences: %s", exc)
+        self._on_iteration_mode_changed(self._iteration_mode_combo.currentIndex())
+
+    def _save_preferences(self) -> None:
+        """Persist current UI values to AppSettings.strategy_lab."""
+        self._ensure_loop_runtime_state()
+        try:
+            settings = self._settings_state.settings_service.load_settings()
+            prefs = settings.strategy_lab
+            prefs.strategy = self._strategy_combo.currentText()
+            prefs.max_iterations = self._max_iter_spin.value()
+            prefs.target_profit_pct = self._target_profit_spin.value()
+            prefs.target_win_rate = self._target_wr_spin.value()
+            prefs.target_max_drawdown = self._target_dd_spin.value()
+            prefs.target_min_trades = self._target_trades_spin.value()
+            prefs.stop_on_first_profitable = self._stop_on_target_chk.isChecked()
+            prefs.date_from = self._date_from_edit.text().strip()
+            prefs.date_to = self._date_to_edit.text().strip()
+            prefs.timerange = self._timerange_edit.text().strip()
+            prefs.oos_split_pct = self._oos_split_spin.value()
+            prefs.walk_forward_folds = self._wf_folds_spin.value()
+            prefs.stress_fee_multiplier = self._stress_fee_spin.value()
+            prefs.stress_slippage_pct = self._stress_slippage_spin.value()
+            prefs.stress_profit_target_pct = self._stress_profit_spin.value()
+            prefs.consistency_threshold_pct = self._consistency_spin.value()
+            prefs.validation_mode = "full" if self._validation_mode_combo.currentIndex() == 0 else "quick"
+            prefs.iteration_mode = "rule_based" if self._iteration_mode_combo.currentIndex() == 0 else "hyperopt"
+            prefs.hyperopt_epochs = self._hyperopt_epochs_spin.value()
+            prefs.hyperopt_loss_function = self._hyperopt_loss_combo.currentText()
+            prefs.hyperopt_spaces = [
+                space for space, chk in self._hyperopt_space_checks.items() if chk.isChecked()
+            ]
+            prefs.ai_advisor_enabled = self._ai_advisor_chk.isChecked()
+            prefs.pairs = ",".join(self._selected_pairs)
+            self._settings_state.settings_service.save_settings(settings)
+        except Exception as exc:
+            _log.warning("Failed to save StrategyLabPreferences: %s", exc)
+
+    def _on_timerange_preset(self, preset: str) -> None:
+        """Apply a preset to the explicit date fields and timerange field."""
+        self._ensure_loop_runtime_state()
+        days = int(preset.replace("d", ""))
+        date_to = datetime.now()
+        date_from = date_to - timedelta(days=days)
+
+        self._syncing_date_fields = True
+        try:
+            self._date_from_edit.setText(date_from.strftime("%Y%m%d"))
+            self._date_to_edit.setText(date_to.strftime("%Y%m%d"))
+            self._timerange_edit.setText(
+                f"{date_from.strftime('%Y%m%d')}-{date_to.strftime('%Y%m%d')}"
+            )
+        finally:
+            self._syncing_date_fields = False
+
+    def _on_iteration_mode_changed(self, index: int) -> None:
+        """Toggle hyperopt controls and disable runtime launch for that mode."""
+        self._hyperopt_widget.setVisible(index == 1)
+        self._hyperopt_block_lbl.setVisible(index == 1)
+        self._update_state_machine()
+
+    def _reset_stat_cards(self) -> None:
+        """Reset all stat cards to empty placeholders."""
+        self._stat_iter.set_value("0")
+        self._stat_profit.set_value("-")
+        self._stat_wr.set_value("-")
+        self._stat_dd.set_value("-")
+        self._stat_sharpe.set_value("-")
+        self._stat_score.set_value("-")
+
+    def _update_stat_cards(self) -> None:
+        """Update live stat cards from the current loop result."""
+        result = self._loop_service.current_result
+        if result is None:
+            self._reset_stat_cards()
+            return
+
+        self._stat_iter.set_value(str(len(result.iterations)))
+
+        best = result.best_iteration
+        if best is None or best.summary is None:
+            self._stat_profit.set_value("-")
+            self._stat_wr.set_value("-")
+            self._stat_dd.set_value("-")
+            self._stat_sharpe.set_value("-")
+            self._stat_score.set_value("-")
+            return
+
+        s = best.summary
+        profit_color = _C_GREEN if s.total_profit >= 0 else _C_RED
+        self._stat_profit.set_value(f"{s.total_profit:+.1f}%", profit_color)
+        self._stat_wr.set_value(f"{s.win_rate:.0f}%")
+        dd_color = _C_RED if s.max_drawdown > 20 else _C_TEXT
+        self._stat_dd.set_value(f"{s.max_drawdown:.1f}%", dd_color)
+        self._stat_sharpe.set_value(f"{s.sharpe_ratio:.2f}" if s.sharpe_ratio is not None else "-")
+        self._stat_score.set_value(f"{best.score.total:.3f}" if best.score else "-")
+
+    def _build_loop_config(self, strategy: str) -> LoopConfig:
+        """Build a LoopConfig from the current UI state."""
+        return LoopConfig(
+            strategy=strategy,
+            max_iterations=self._max_iter_spin.value(),
+            target_profit_pct=self._target_profit_spin.value(),
+            target_win_rate=self._target_wr_spin.value(),
+            target_max_drawdown=self._target_dd_spin.value(),
+            target_min_trades=self._target_trades_spin.value(),
+            stop_on_first_profitable=self._stop_on_target_chk.isChecked(),
+            date_from=self._date_from_edit.text().strip(),
+            date_to=self._date_to_edit.text().strip(),
+            oos_split_pct=self._oos_split_spin.value(),
+            walk_forward_folds=self._wf_folds_spin.value(),
+            stress_fee_multiplier=self._stress_fee_spin.value(),
+            stress_slippage_pct=self._stress_slippage_spin.value(),
+            stress_profit_target_pct=self._stress_profit_spin.value(),
+            consistency_threshold_pct=self._consistency_spin.value(),
+            validation_mode=("full" if self._validation_mode_combo.currentIndex() == 0 else "quick"),
+            iteration_mode=("rule_based" if self._iteration_mode_combo.currentIndex() == 0 else "hyperopt"),
+            hyperopt_epochs=self._hyperopt_epochs_spin.value(),
+            hyperopt_spaces=[
+                space for space, chk in self._hyperopt_space_checks.items() if chk.isChecked()
+            ],
+            hyperopt_loss_function=self._hyperopt_loss_combo.currentText(),
+            pairs=list(self._selected_pairs),
+            ai_advisor_enabled=self._ai_advisor_chk.isChecked(),
+        )
+
+    def _validate_loop_inputs(self, strategy: str) -> Optional[str]:
+        """Return an error message if the Strategy Lab config is not runnable."""
+        if not strategy or strategy.startswith("("):
+            return "Please select a strategy first."
+
+        if self._iteration_mode_combo.currentIndex() == 1:
+            return (
+                "Hyperopt-guided Strategy Lab runtime is not implemented in this pass. "
+                "Switch Iteration Mode back to Rule-Based Mutations."
+            )
+
+        date_from = self._date_from_edit.text().strip()
+        date_to = self._date_to_edit.text().strip()
+        if not date_from or not date_to:
+            return "Strategy Lab requires both Start Date and End Date."
+        if not self._is_valid_date_value(date_from) or not self._is_valid_date_value(date_to):
+            return "Dates must use YYYYMMDD format."
+
+        if datetime.strptime(date_from, "%Y%m%d") >= datetime.strptime(date_to, "%Y%m%d"):
+            return "Start Date must be earlier than End Date."
+
+        settings = self._settings_state.settings_service.load_settings()
+        strategy_py = Path(settings.user_data_path) / "strategies" / f"{strategy}.py"
+        if not strategy_py.exists():
+            return f"Strategy file not found: {strategy_py}"
+
+        return None
+
+    def _clear_history_ui(self) -> None:
+        """Remove all iteration rows and reset visible loop state."""
+        while self._history_vlay.count() > 0:
+            item = self._history_vlay.takeAt(0)
+            if item.widget():
+                item.widget().deleteLater()
+        self._empty_history_lbl = QLabel("No iterations yet - start the loop to begin.")
+        self._empty_history_lbl.setStyleSheet(
+            f"color:{_C_TEXT_DIM};font-size:12px;font-style:italic;padding:16px;"
+        )
+        self._empty_history_lbl.setAlignment(Qt.AlignCenter)
+        self._history_vlay.addWidget(self._empty_history_lbl)
+        self._history_vlay.addStretch()
+        self._reset_stat_cards()
+        self._progress_bar.setValue(0)
+
+    def _reset_iteration_runtime(self) -> None:
+        """Clear per-iteration transient state."""
+        self._ensure_loop_runtime_state()
+        self._current_gate_name = ""
+        self._current_gate_timerange = ""
+        self._current_gate_export_dir = None
+        self._gate_run_started_at = 0.0
+        self._current_fold_timeranges = []
+        self._current_fold_index = 0
+        self._iteration_in_sample_results = None
+        self._iteration_oos_results = None
+        self._iteration_fold_results = []
+        self._iteration_stress_results = None
+
+    def _current_diagnosis_seed(
+        self,
+        config: LoopConfig,
+    ) -> Tuple[BacktestSummary, Optional[object]]:
+        """Return the latest usable diagnosis seed for the next iteration."""
+        self._ensure_loop_runtime_state()
+        if self._latest_diagnosis_input is not None:
+            return self._latest_diagnosis_input.in_sample, self._latest_diagnosis_input
+
+        dummy = BacktestSummary(
+            strategy=config.strategy,
+            timeframe="5m",
+            total_trades=50,
+            wins=25,
+            losses=20,
+            draws=5,
+            win_rate=50.0,
+            avg_profit=0.0,
+            total_profit=0.0,
+            total_profit_abs=0.0,
+            sharpe_ratio=0.0,
+            sortino_ratio=None,
+            calmar_ratio=None,
+            max_drawdown=20.0,
+            max_drawdown_abs=0.0,
+            trade_duration_avg=60,
+        )
+        return dummy, None
+
+    def _refresh_latest_diagnosis_input(self) -> None:
+        """Persist the latest multi-gate diagnosis input for the next iteration."""
+        self._ensure_loop_runtime_state()
+        if self._iteration_in_sample_results is None:
+            return
+        self._latest_diagnosis_input = build_diagnosis_input(
+            self._iteration_in_sample_results,
+            self._iteration_oos_results,
+            self._iteration_fold_results or None,
+        )
+
+    def _build_gate_export_dir(self, gate_name: str) -> Path:
+        """Create a per-gate export directory under `_loop` results."""
+        settings = self._settings_state.settings_service.load_settings()
+        config = self._loop_service._config
+        iteration = self._current_iteration
+        suffix = gate_name
+        if gate_name == "walk_forward":
+            suffix = f"{gate_name}_{self._current_fold_index + 1}"
+        ts = time.strftime("%Y%m%d_%H%M%S")
+        export_dir = (
+            Path(settings.user_data_path) / "backtest_results" / "_loop"
+            / f"{config.strategy}_{ts}_iter{iteration.iteration_number}_{suffix}"
+        )
+        export_dir.mkdir(parents=True, exist_ok=True)
+        return export_dir
+
+    def _compute_stress_fee_ratio(self, config_path: Path, config: LoopConfig) -> float:
+        """Approximate stress by combining configured fee and slippage into `--fee`."""
+        base_fee = 0.001
+        try:
+            payload = json.loads(config_path.read_text(encoding="utf-8"))
+            raw_fee = payload.get("fee")
+            if raw_fee is None and isinstance(payload.get("exchange"), dict):
+                raw_fee = payload["exchange"].get("fee")
+            if isinstance(raw_fee, (int, float)) and raw_fee >= 0:
+                base_fee = float(raw_fee)
+        except Exception as exc:
+            _log.warning("Falling back to default base fee for stress gate: %s", exc)
+
+        stress_fee = base_fee * config.stress_fee_multiplier
+        stress_fee += config.stress_slippage_pct / 100.0
+        return round(stress_fee, 6)
+
+    def _start_gate_backtest(
+        self,
+        gate_name: str,
+        timerange: str,
+        phase_label: str,
+    ) -> None:
+        """Launch one gate backtest subprocess and update the indicator/status."""
+        self._ensure_loop_runtime_state()
+        config = self._loop_service._config
+        iteration = self._current_iteration
+        if config is None or iteration is None or self._sandbox_dir is None:
+            raise RuntimeError("Cannot start gate without an active iteration sandbox")
+
+        settings = self._settings_state.settings_service.load_settings()
+        self._current_gate_name = gate_name
+        self._current_gate_timerange = timerange
+        self._current_gate_export_dir = self._build_gate_export_dir(gate_name)
+
+        from app.core.freqtrade.resolvers.config_resolver import resolve_config_file
+        from app.core.freqtrade.runners.backtest_runner import build_backtest_command
+
+        extra_flags = [
+            "--strategy-path", str(self._sandbox_dir),
+            "--backtest-directory", str(self._current_gate_export_dir),
+        ]
+        if gate_name == "stress_test":
+            config_path = resolve_config_file(Path(settings.user_data_path), strategy_name=config.strategy)
+            extra_flags.extend([
+                "--fee",
+                str(self._compute_stress_fee_ratio(config_path, config)),
+            ])
+
+        cmd = build_backtest_command(
+            settings=settings,
+            strategy_name=config.strategy,
+            timeframe="5m",
+            timerange=timerange,
+            pairs=config.pairs if config.pairs else None,
+            extra_flags=extra_flags,
+        )
+
+        self._gate_indicator.set_running(gate_name)
+        self._set_status(phase_label)
+        self._gate_run_started_at = time.time()
+        self._process_service.execute_command(
+            cmd.as_list(),
+            on_output=self._terminal.append_output,
+            on_error=self._terminal.append_error,
+            on_finished=self._on_gate_backtest_finished,
+            working_directory=cmd.cwd,
+        )
+
+    def _parse_current_gate_results(self) -> BacktestResults:
+        """Parse the most recent gate artifact from the current export dir."""
+        if self._current_gate_export_dir is None:
+            raise FileNotFoundError("No gate export directory recorded for parsing")
+        return self._improve_service.parse_candidate_run(
+            self._current_gate_export_dir,
+            self._gate_run_started_at,
+        )
+
+    def _finish_iteration(self, iteration: LoopIteration) -> None:
+        """Refresh UI after one iteration reaches a terminal state."""
+        self._loop_result = self._loop_service.current_result
+        self._add_history_row(iteration)
+        self._update_stat_cards()
+        config = self._loop_service._config
+        if config is not None:
+            self._progress_bar.setValue(
+                int(iteration.iteration_number / max(config.max_iterations, 1) * 100)
+            )
+        self._reset_iteration_runtime()
+        self._current_iteration = None
+        QTimer.singleShot(100, self._run_next_iteration)
+
+    def _finalize_successful_iteration(self, last_gate_name: str) -> None:
+        """Score and record a fully validated iteration, then continue."""
+        if self._current_iteration is None or self._iteration_in_sample_results is None:
+            self._finalize_loop()
+            return
+
+        iteration = self._current_iteration
+        iteration.status = "success"
+        iteration.validation_gate_reached = last_gate_name
+        iteration.validation_gate_passed = True
+        self._refresh_latest_diagnosis_input()
+
+        self._loop_service.record_iteration_result(
+            iteration,
+            self._iteration_in_sample_results.summary,
+            score_input=build_score_input(
+                self._iteration_in_sample_results,
+                self._iteration_fold_results or None,
+                self._iteration_stress_results,
+            ),
+        )
+        self._finish_iteration(iteration)
+
+    def _on_start(self) -> None:
+        """Validate config and kick off the first ladder iteration."""
+        self._ensure_loop_runtime_state()
+        strategy = self._strategy_combo.currentText().strip()
+        error = self._validate_loop_inputs(strategy)
+        if error:
+            QMessageBox.warning(self, "Strategy Lab", error)
+            return
+
+        self._save_preferences()
+        settings = self._settings_state.settings_service.load_settings()
+
+        try:
+            self._initial_params = self._improve_service.load_baseline_params(
+                Path(settings.user_data_path) / "backtest_results" / "_loop_seed",
+                strategy,
+            )
+        except Exception as exc:
+            QMessageBox.critical(self, "Strategy Lab", f"Failed to load baseline params: {exc}")
+            return
+
+        config = self._build_loop_config(strategy)
+
+        self._clear_history_ui()
+        self._loop_result = None
+        self._best_group.setVisible(False)
+        self._gate_indicator.reset()
+        self._latest_diagnosis_input = None
+        self._reset_iteration_runtime()
+        if hasattr(self._terminal, "clear_output"):
+            self._terminal.clear_output()
+
+        if config.ai_advisor_enabled and self._ai_advisor is not None:
+            self._loop_service.set_ai_advisor(self._ai_advisor)
+        else:
+            self._loop_service.set_ai_advisor(None)
+
+        self._loop_service.set_callbacks(
+            on_iteration_complete=self._on_iteration_complete,
+            on_loop_complete=self._on_loop_complete_cb,
+            on_status=self._on_status_update,
+        )
+
+        self._loop_service.start(config, self._initial_params)
+        self._run_started_at = time.time()
+        self._update_state_machine()
+        self._set_status(f"Preparing iteration 1/{config.max_iterations}")
+        QTimer.singleShot(50, self._run_next_iteration)
+
+    def _on_stop(self) -> None:
+        """Stop the loop and terminate the active process if one is running."""
+        self._loop_service.stop()
+        self._process_service.stop_process()
+        self._set_status("Stopped by user")
+        self._update_state_machine()
+
+    def _run_next_iteration(self) -> None:
+        """Prepare the next candidate and start Gate 1."""
+        self._ensure_loop_runtime_state()
+        if not self._loop_service.should_continue():
+            self._finalize_loop()
+            return
+
+        config = self._loop_service._config
+        if config is None:
+            self._finalize_loop()
+            return
+
+        latest_summary, diagnosis_input = self._current_diagnosis_seed(config)
+        result = self._loop_service.prepare_next_iteration(
+            latest_summary,
+            diagnosis_input=diagnosis_input,
+        )
+        if result is None:
+            self._finalize_loop()
+            return
+
+        iteration, suggestions = result
+        self._current_iteration = iteration
+        self._gate_indicator.reset()
+        self._reset_iteration_runtime()
+        self._current_iteration = iteration
+
+        try:
+            self._sandbox_dir = self._improve_service.prepare_sandbox(
+                config.strategy,
+                iteration.params_after,
+            )
+            iteration.sandbox_path = self._sandbox_dir
+
+            gate1_timerange = self._loop_service.compute_in_sample_timerange(config)
+            if not gate1_timerange:
+                raise ValueError("Strategy Lab requires a valid in-sample timerange")
+
+            n = iteration.iteration_number
+            m = max(config.max_iterations, 1)
+            self._progress_bar.setValue(int(max(0, (n - 1) / m * 100)))
+            self._start_gate_backtest(
+                "in_sample",
+                gate1_timerange,
+                f"Gate 1/5 In-Sample - iteration {n}/{m}",
+            )
+        except Exception as exc:
+            _log.error("Failed to start iteration: %s", exc)
+            self._loop_service.record_iteration_error(iteration, str(exc))
+            self._gate_indicator.set_failed("in_sample", str(exc))
+            self._finish_iteration(iteration)
+
+    def _on_gate_backtest_finished(self, exit_code: int) -> None:
+        """Handle completion of the currently running gate subprocess."""
+        self._ensure_loop_runtime_state()
+        iteration = self._current_iteration
+        config = self._loop_service._config
+        gate_name = self._current_gate_name
+
+        if iteration is None or config is None or not gate_name:
+            self._finalize_loop()
+            return
+
+        if exit_code != 0:
+            message = f"{gate_name} backtest exited with code {exit_code}"
+            self._loop_service.record_iteration_error(iteration, message)
+            self._gate_indicator.set_failed(gate_name, message)
+            self._finish_iteration(iteration)
+            return
+
+        try:
+            results = self._parse_current_gate_results()
+        except Exception as exc:
+            message = f"{gate_name} parse error: {exc}"
+            self._loop_service.record_iteration_error(iteration, message)
+            self._gate_indicator.set_failed(gate_name, message)
+            self._finish_iteration(iteration)
+            return
+
+        if gate_name == "in_sample":
+            self._iteration_in_sample_results = results
+            gate1 = self._loop_service.build_in_sample_gate_result(results.summary)
+            iteration.gate_results.append(gate1)
+            iteration.validation_gate_reached = "in_sample"
+            self._gate_indicator.set_passed("in_sample")
+            self._refresh_latest_diagnosis_input()
+
+            failures = self._loop_service.evaluate_gate1_hard_filters(gate1, config)
+            if failures:
+                reason = ", ".join(f.failure_reason if hasattr(f, "failure_reason") else f.reason for f in failures)
+                self._gate_indicator.set_failed("in_sample", reason)
+                self._set_status("Rejected by hard filters after Gate 1")
+                self._loop_service.record_hard_filter_rejection(iteration, "in_sample", failures)
+                self._finish_iteration(iteration)
+                return
+
+            self._start_gate_backtest(
+                "out_of_sample",
+                self._loop_service.compute_oos_timerange(config),
+                f"Gate 2/5 OOS - iteration {iteration.iteration_number}/{config.max_iterations}",
+            )
+            return
+
+        if gate_name == "out_of_sample":
+            self._iteration_oos_results = results
+            gate2 = self._loop_service.build_oos_gate_result(
+                self._iteration_in_sample_results.summary,
+                results.summary,
+            )
+            iteration.gate_results.append(gate2)
+            iteration.validation_gate_reached = "out_of_sample"
+            self._refresh_latest_diagnosis_input()
+
+            if not gate2.passed:
+                self._gate_indicator.set_failed("out_of_sample", gate2.failure_reason or "")
+                self._set_status(gate2.failure_reason or "Gate 2 failed")
+                self._loop_service.record_gate_failure(iteration, gate2)
+                self._finish_iteration(iteration)
+                return
+
+            self._gate_indicator.set_passed("out_of_sample")
+            failures = self._loop_service.evaluate_post_gate_hard_filters(gate2, config)
+            if failures:
+                reason = ", ".join(f.reason for f in failures)
+                self._gate_indicator.set_failed("out_of_sample", reason)
+                self._set_status("Rejected by hard filters after Gate 2")
+                self._loop_service.record_hard_filter_rejection(iteration, "out_of_sample", failures)
+                self._finish_iteration(iteration)
+                return
+
+            if config.validation_mode == "quick":
+                self._finalize_successful_iteration("out_of_sample")
+                return
+
+            self._current_fold_timeranges = self._loop_service.compute_walk_forward_timeranges(config)
+            if not self._current_fold_timeranges:
+                gate3 = self._loop_service.build_walk_forward_gate_result(config, [])
+                iteration.gate_results.append(gate3)
+                self._gate_indicator.set_failed("walk_forward", gate3.failure_reason or "")
+                self._loop_service.record_gate_failure(iteration, gate3)
+                self._finish_iteration(iteration)
+                return
+
+            self._current_fold_index = 0
+            self._start_gate_backtest(
+                "walk_forward",
+                self._current_fold_timeranges[self._current_fold_index],
+                (
+                    f"Gate 3/5 Walk-Forward fold 1/{len(self._current_fold_timeranges)} - "
+                    f"iteration {iteration.iteration_number}/{config.max_iterations}"
+                ),
+            )
+            return
+
+        if gate_name == "walk_forward":
+            self._iteration_fold_results.append(results)
+            self._current_fold_index += 1
+            total_folds = len(self._current_fold_timeranges)
+
+            if self._current_fold_index < total_folds:
+                self._start_gate_backtest(
+                    "walk_forward",
+                    self._current_fold_timeranges[self._current_fold_index],
+                    (
+                        f"Gate 3/5 Walk-Forward fold {self._current_fold_index + 1}/{total_folds} - "
+                        f"iteration {iteration.iteration_number}/{config.max_iterations}"
+                    ),
+                )
+                return
+
+            fold_summaries = [item.summary for item in self._iteration_fold_results]
+            gate3 = self._loop_service.build_walk_forward_gate_result(config, fold_summaries)
+            iteration.gate_results.append(gate3)
+            iteration.validation_gate_reached = "walk_forward"
+            self._refresh_latest_diagnosis_input()
+
+            if not gate3.passed:
+                self._gate_indicator.set_failed("walk_forward", gate3.failure_reason or "")
+                self._set_status(gate3.failure_reason or "Gate 3 failed")
+                self._loop_service.record_gate_failure(iteration, gate3)
+                self._finish_iteration(iteration)
+                return
+
+            self._gate_indicator.set_passed("walk_forward")
+            failures = self._loop_service.evaluate_post_gate_hard_filters(gate3, config)
+            if failures:
+                reason = ", ".join(f.reason for f in failures)
+                self._gate_indicator.set_failed("walk_forward", reason)
+                self._set_status("Rejected by hard filters after Gate 3")
+                self._loop_service.record_hard_filter_rejection(iteration, "walk_forward", failures)
+                self._finish_iteration(iteration)
+                return
+
+            self._start_gate_backtest(
+                "stress_test",
+                self._loop_service.compute_in_sample_timerange(config),
+                f"Gate 4/5 Stress - iteration {iteration.iteration_number}/{config.max_iterations}",
+            )
+            return
+
+        if gate_name == "stress_test":
+            self._iteration_stress_results = results
+            gate4 = self._loop_service.build_stress_gate_result(config, results.summary)
+            iteration.gate_results.append(gate4)
+            iteration.validation_gate_reached = "stress_test"
+
+            if not gate4.passed:
+                self._gate_indicator.set_failed("stress_test", gate4.failure_reason or "")
+                self._set_status(gate4.failure_reason or "Gate 4 failed")
+                self._loop_service.record_gate_failure(iteration, gate4)
+                self._finish_iteration(iteration)
+                return
+
+            self._gate_indicator.set_passed("stress_test")
+            self._gate_indicator.set_running("consistency")
+            gate5 = self._loop_service.build_consistency_gate_result(
+                config,
+                [item.summary for item in self._iteration_fold_results],
+            )
+            iteration.gate_results.append(gate5)
+            iteration.validation_gate_reached = "consistency"
+            if not gate5.passed:
+                self._gate_indicator.set_failed("consistency", gate5.failure_reason or "")
+                self._set_status(gate5.failure_reason or "Gate 5 failed")
+                self._loop_service.record_gate_failure(iteration, gate5)
+                self._finish_iteration(iteration)
+                return
+
+            self._gate_indicator.set_passed("consistency")
+            self._finalize_successful_iteration("consistency")
+            return
+
+        self._loop_service.record_iteration_error(iteration, f"Unknown gate '{gate_name}'")
+        self._finish_iteration(iteration)
+
+    def _on_backtest_finished(self, exit_code: int) -> None:
+        """Backward-compatible alias for the new gate callback."""
+        self._on_gate_backtest_finished(exit_code)

@@ -68,6 +68,8 @@ class StrategyLabPreferences(BaseModel):
     target_max_drawdown: float = Field(20.0, description="Target max drawdown (%)")
     target_min_trades: int = Field(30, description="Minimum trades required")
     stop_on_first_profitable: bool = Field(True, description="Stop as soon as all targets are met")
+    date_from: str = Field("", description="Start date for Strategy Lab backtests (YYYYMMDD)")
+    date_to: str = Field("", description="End date for Strategy Lab backtests (YYYYMMDD)")
     timerange: str = Field("", description="Date range for backtests (YYYYMMDD-YYYYMMDD)")
     pairs: str = Field("", description="Comma-separated pairs for backtests")
     oos_split_pct: float = Field(20.0, description="Percentage of date range held out for OOS gate")

@@ -256,6 +256,33 @@ class TestLoopServiceStateMachine:
         assert iteration.is_improvement is False
         assert service.current_result.best_iteration is None
 
+    def test_record_iteration_result_hard_filter_rejected_not_best(self) -> None:
+        service = _make_service()
+        config = _make_config()
+        service.start(config, {"stoploss": -0.10})
+
+        iteration = _make_iteration(validation_gate_passed=True, status="hard_filter_rejected")
+        summary = _make_summary(total_profit=50.0)
+
+        is_improvement = service.record_iteration_result(iteration, summary)
+
+        assert is_improvement is False
+        assert service.current_result.best_iteration is None
+
+    def test_finalize_excludes_gate_failed_iterations_from_best(self) -> None:
+        service = _make_service()
+        config = _make_config()
+        service.start(config, {"stoploss": -0.10})
+
+        good_iteration = _make_iteration(iteration_number=1, validation_gate_passed=True, status="success")
+        failed_iteration = _make_iteration(iteration_number=2, validation_gate_passed=True, status="gate_failed")
+
+        service.record_iteration_result(good_iteration, _make_summary(total_profit=10.0))
+        service.record_iteration_result(failed_iteration, _make_summary(total_profit=60.0))
+
+        result = service.finalize()
+        assert result.best_iteration is good_iteration
+
     def test_record_iteration_error(self) -> None:
         """record_iteration_error() sets status=error and error_message."""
         service = _make_service()
