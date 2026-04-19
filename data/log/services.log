@@ -21631,3 +21631,832 @@ Freqtrade Version:	freqtrade 2026.3
 2026-04-19 15:45:50.528 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
 2026-04-19 15:45:51.526 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
 2026-04-19 15:45:52.536 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:46:26.458 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:46:26.580 | INFO     | freqtrade_gui.services.ai_service | AIService initialised
+2026-04-19 15:46:26.621 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:46:26.623 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:46:26.624 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:46:26.710 | INFO     | freqtrade_gui.services.backtest | Index rebuild: imported=0 skipped=17
+2026-04-19 15:46:26.762 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:46:26.763 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:46:26.764 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:46:26.789 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:46:26.791 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:46:26.792 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:46:26.813 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:46:28.454 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: get_app_status
+2026-04-19 15:46:28.454 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: read_recent_logs
+2026-04-19 15:46:28.454 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: get_last_error
+2026-04-19 15:46:28.454 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: list_recent_events
+2026-04-19 15:46:28.454 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: get_latest_backtest_result
+2026-04-19 15:46:28.454 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: load_run_history
+2026-04-19 15:46:28.454 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: compare_runs
+2026-04-19 15:46:28.454 | DEBUG    | freqtrade_gui.services.backtest_tools | Backtest tools registered: get_latest_backtest_result, load_run_history, compare_runs
+2026-04-19 15:46:28.454 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: list_strategies
+2026-04-19 15:46:28.454 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: read_strategy_code
+2026-04-19 15:46:28.455 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: read_strategy_params
+2026-04-19 15:46:28.455 | DEBUG    | freqtrade_gui.services.strategy_tools | Strategy tools registered: list_strategies, read_strategy_code, read_strategy_params
+2026-04-19 15:46:28.455 | DEBUG    | freqtrade_gui.services.ai_service | ToolRegistry built with 10 tools
+2026-04-19 15:46:28.455 | INFO     | freqtrade_gui.services.ai_service | ConversationRuntime created: provider=openrouter model= tools=True
+2026-04-19 15:46:28.456 | DEBUG    | freqtrade_gui.services.ai_service | BacktestJournalAdapter connected to BacktestService
+2026-04-19 15:46:28.456 | DEBUG    | freqtrade_gui.services.ai_service | BacktestPage registered with AIService
+2026-04-19 15:46:28.475 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:46:28.479 | DEBUG    | freqtrade_gui.services.openrouter_provider | health_check() GET https://openrouter.ai/api/v1/models
+2026-04-19 15:46:28.494 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:46:28.698 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:46:29.698 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:46:30.698 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:46:31.697 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:46:32.698 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:46:33.707 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:46:34.697 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:46:35.699 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:46:36.699 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:46:37.702 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:46:38.697 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:46:39.698 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:46:40.702 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:46:41.698 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:46:42.698 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:46:43.702 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:46:44.711 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:46:45.697 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:46:46.697 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:46:47.700 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:46:48.711 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:46:49.707 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:46:50.702 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:46:51.700 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:46:52.700 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:46:53.699 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:46:54.705 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:46:55.701 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:46:56.710 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:46:57.710 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:46:58.710 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:46:59.703 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:47:00.713 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:47:01.714 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:47:02.722 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:47:03.714 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:47:04.725 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:47:05.717 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 15:47:06.714 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:08.333 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:08.449 | INFO     | freqtrade_gui.services.ai_service | AIService initialised
+2026-04-19 16:24:08.492 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:08.493 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:08.494 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:08.577 | INFO     | freqtrade_gui.services.backtest | Index rebuild: imported=0 skipped=17
+2026-04-19 16:24:08.626 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:08.628 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:08.629 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:08.652 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:08.654 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:08.655 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:08.676 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:10.303 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: get_app_status
+2026-04-19 16:24:10.304 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: read_recent_logs
+2026-04-19 16:24:10.304 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: get_last_error
+2026-04-19 16:24:10.304 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: list_recent_events
+2026-04-19 16:24:10.304 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: get_latest_backtest_result
+2026-04-19 16:24:10.305 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: load_run_history
+2026-04-19 16:24:10.305 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: compare_runs
+2026-04-19 16:24:10.305 | DEBUG    | freqtrade_gui.services.backtest_tools | Backtest tools registered: get_latest_backtest_result, load_run_history, compare_runs
+2026-04-19 16:24:10.305 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: list_strategies
+2026-04-19 16:24:10.305 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: read_strategy_code
+2026-04-19 16:24:10.305 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: read_strategy_params
+2026-04-19 16:24:10.305 | DEBUG    | freqtrade_gui.services.strategy_tools | Strategy tools registered: list_strategies, read_strategy_code, read_strategy_params
+2026-04-19 16:24:10.305 | DEBUG    | freqtrade_gui.services.ai_service | ToolRegistry built with 10 tools
+2026-04-19 16:24:10.305 | INFO     | freqtrade_gui.services.ai_service | ConversationRuntime created: provider=openrouter model= tools=True
+2026-04-19 16:24:10.305 | DEBUG    | freqtrade_gui.services.ai_service | BacktestJournalAdapter connected to BacktestService
+2026-04-19 16:24:10.306 | DEBUG    | freqtrade_gui.services.ai_service | BacktestPage registered with AIService
+2026-04-19 16:24:10.326 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:10.329 | DEBUG    | freqtrade_gui.services.openrouter_provider | health_check() GET https://openrouter.ai/api/v1/models
+2026-04-19 16:24:10.344 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:10.572 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:11.581 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:12.573 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:13.583 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:14.580 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:15.586 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:16.584 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:17.578 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:18.575 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:19.588 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:20.574 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:21.572 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:22.572 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:23.584 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:24.585 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:25.578 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:26.586 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:27.572 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:28.578 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:29.517 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:29.574 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:30.573 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:31.581 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:31.757 | INFO     | freqtrade_gui.backtest         | Loading run | id=run_2026-04-19_08-13-08_e6d605 | strategy=MultiMeee | profit=-18.9663%
+2026-04-19 16:24:31.758 | INFO     | freqtrade_gui.backtest         | Run loaded | strategy=MultiMeee | trades=477
+2026-04-19 16:24:32.575 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:33.576 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:34.580 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:35.576 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:36.586 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:37.581 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:38.586 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:39.572 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:40.572 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:41.583 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:42.597 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:43.588 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:44.588 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:45.594 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:46.587 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:47.594 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:48.590 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:49.590 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:50.590 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:51.588 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:52.588 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:53.588 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:54.588 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:55.588 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:56.588 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:57.589 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:58.591 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:24:59.613 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:00.605 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:01.606 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:02.612 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:03.618 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:04.611 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:05.605 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:06.615 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:07.605 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:08.605 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:09.611 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:10.607 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:11.607 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:12.613 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:13.609 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:14.609 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:15.614 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:16.603 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:17.612 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:18.620 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:19.627 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:20.628 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:21.618 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:22.631 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:23.625 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:24.620 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:25.631 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:26.622 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:27.619 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:28.484 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:28.484 | WARNING  | freqtrade_gui.services.improve | params.json not found in T:\ae\pyside6\user_data\backtest_results\_loop_seed — returning empty params
+2026-04-19 16:25:28.484 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:28.486 | INFO     | freqtrade_gui.services.improve | Loaded baseline params from live strategy JSON for 'MultiMeee': 5 keys
+2026-04-19 16:25:28.487 | INFO     | freqtrade_gui.services.loop    | LoopService.start: strategy=MultiMeee, max_iter=10
+2026-04-19 16:25:28.487 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:28.490 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:28.490 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:28.492 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:28.632 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:29.628 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:30.621 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:31.628 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:32.635 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:33.640 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:34.640 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:35.635 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:36.378 | INFO     | freqtrade_gui.services.loop    | Loop started with existing baseline; score=0.4149
+2026-04-19 16:25:36.378 | INFO     | freqtrade_gui.services.loop    | LoopService.start: strategy=MultiMeee, max_iter=10
+2026-04-19 16:25:36.380 | DEBUG    | freqtrade_gui.services.results_diagnosis | Diagnosed 6 issue(s) and 2 structural pattern(s) for strategy 'MultiMeee'
+2026-04-19 16:25:36.380 | DEBUG    | freqtrade_gui.services.loop    | Loop iter 1: 6 issue(s) and 2 structural pattern(s) diagnosed
+2026-04-19 16:25:36.380 | DEBUG    | freqtrade_gui.services.rule_suggestion | stoploss_too_wide: -0.245 -> -0.225
+2026-04-19 16:25:36.380 | DEBUG    | freqtrade_gui.services.rule_suggestion | weak_win_rate: minimal_roi smallest key adjusted
+2026-04-19 16:25:36.380 | DEBUG    | freqtrade_gui.services.rule_suggestion | poor_pair_concentration: advisory suggestion
+2026-04-19 16:25:36.380 | DEBUG    | freqtrade_gui.services.rule_suggestion | negative_profit: -0.245 -> -0.215
+2026-04-19 16:25:36.380 | DEBUG    | freqtrade_gui.services.rule_suggestion | profit_factor_low: advisory suggestion
+2026-04-19 16:25:36.380 | DEBUG    | freqtrade_gui.services.rule_suggestion | expectancy_negative: advisory suggestion
+2026-04-19 16:25:36.380 | DEBUG    | freqtrade_gui.services.rule_suggestion | entries_too_loose_in_chop: buy_params adjusted based on choppy market evidence
+2026-04-19 16:25:36.381 | WARNING  | freqtrade_gui.services.rule_suggestion | Unrecognised structural pattern 'micro_loss_noise' — no suggestion generated
+2026-04-19 16:25:36.384 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:36.385 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:36.385 | INFO     | freqtrade_gui.services.improve | Sandbox prepared at T:\ae\pyside6\user_data\strategies\_improve_sandbox\MultiMeee_1776605136384
+2026-04-19 16:25:36.387 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:36.387 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:36.387 | INFO     | freqtrade_gui.services.improve | Candidate command built; export_dir=T:\ae\pyside6\user_data\backtest_results\_improve\MultiMeee_20260419_162536
+2026-04-19 16:25:36.388 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:36.642 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:37.636 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:38.635 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:39.645 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:40.638 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:41.641 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:42.649 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:42.933 | INFO     | freqtrade_gui.services.loop    | Loop iter 1: no improvement. score=0.4145 (best=0.4149)
+2026-04-19 16:25:43.140 | DEBUG    | freqtrade_gui.services.results_diagnosis | Diagnosed 6 issue(s) and 2 structural pattern(s) for strategy 'MultiMeee'
+2026-04-19 16:25:43.140 | DEBUG    | freqtrade_gui.services.loop    | Loop iter 2: 6 issue(s) and 2 structural pattern(s) diagnosed
+2026-04-19 16:25:43.140 | DEBUG    | freqtrade_gui.services.rule_suggestion | stoploss_too_wide: -0.245 -> -0.225
+2026-04-19 16:25:43.140 | DEBUG    | freqtrade_gui.services.rule_suggestion | weak_win_rate: minimal_roi smallest key adjusted
+2026-04-19 16:25:43.140 | DEBUG    | freqtrade_gui.services.rule_suggestion | poor_pair_concentration: advisory suggestion
+2026-04-19 16:25:43.140 | DEBUG    | freqtrade_gui.services.rule_suggestion | negative_profit: -0.245 -> -0.215
+2026-04-19 16:25:43.141 | DEBUG    | freqtrade_gui.services.rule_suggestion | profit_factor_low: advisory suggestion
+2026-04-19 16:25:43.141 | DEBUG    | freqtrade_gui.services.rule_suggestion | expectancy_negative: advisory suggestion
+2026-04-19 16:25:43.141 | DEBUG    | freqtrade_gui.services.rule_suggestion | entries_too_loose_in_chop: buy_params adjusted based on choppy market evidence
+2026-04-19 16:25:43.141 | WARNING  | freqtrade_gui.services.rule_suggestion | Unrecognised structural pattern 'micro_loss_noise' — no suggestion generated
+2026-04-19 16:25:43.146 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:43.147 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:43.147 | INFO     | freqtrade_gui.services.improve | Sandbox prepared at T:\ae\pyside6\user_data\strategies\_improve_sandbox\MultiMeee_1776605143146
+2026-04-19 16:25:43.149 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:43.151 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:43.152 | INFO     | freqtrade_gui.services.improve | Candidate command built; export_dir=T:\ae\pyside6\user_data\backtest_results\_improve\MultiMeee_20260419_162543
+2026-04-19 16:25:43.153 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:43.644 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:44.638 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:45.649 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:46.650 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:47.644 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:48.639 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:49.637 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:50.355 | INFO     | freqtrade_gui.services.loop    | Loop iter 2: no improvement. score=0.4200 (best=0.4149)
+2026-04-19 16:25:50.567 | DEBUG    | freqtrade_gui.services.results_diagnosis | Diagnosed 5 issue(s) and 2 structural pattern(s) for strategy 'MultiMeee'
+2026-04-19 16:25:50.567 | DEBUG    | freqtrade_gui.services.loop    | Loop iter 3: 5 issue(s) and 2 structural pattern(s) diagnosed
+2026-04-19 16:25:50.567 | DEBUG    | freqtrade_gui.services.rule_suggestion | weak_win_rate: minimal_roi smallest key adjusted
+2026-04-19 16:25:50.567 | DEBUG    | freqtrade_gui.services.rule_suggestion | poor_pair_concentration: advisory suggestion
+2026-04-19 16:25:50.567 | DEBUG    | freqtrade_gui.services.rule_suggestion | negative_profit: -0.245 -> -0.215
+2026-04-19 16:25:50.567 | DEBUG    | freqtrade_gui.services.rule_suggestion | profit_factor_low: advisory suggestion
+2026-04-19 16:25:50.567 | DEBUG    | freqtrade_gui.services.rule_suggestion | expectancy_negative: advisory suggestion
+2026-04-19 16:25:50.567 | DEBUG    | freqtrade_gui.services.rule_suggestion | entries_too_loose_in_chop: buy_params adjusted based on choppy market evidence
+2026-04-19 16:25:50.567 | WARNING  | freqtrade_gui.services.rule_suggestion | Unrecognised structural pattern 'micro_loss_noise' — no suggestion generated
+2026-04-19 16:25:50.570 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:50.571 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:50.571 | INFO     | freqtrade_gui.services.improve | Sandbox prepared at T:\ae\pyside6\user_data\strategies\_improve_sandbox\MultiMeee_1776605150570
+2026-04-19 16:25:50.571 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:50.571 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:50.573 | INFO     | freqtrade_gui.services.improve | Candidate command built; export_dir=T:\ae\pyside6\user_data\backtest_results\_improve\MultiMeee_20260419_162550
+2026-04-19 16:25:50.575 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:50.646 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:51.639 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:52.646 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:53.636 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:54.635 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:55.634 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:56.636 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:57.271 | INFO     | freqtrade_gui.services.loop    | Loop iter 3: no improvement. score=0.4215 (best=0.4149)
+2026-04-19 16:25:57.479 | DEBUG    | freqtrade_gui.services.results_diagnosis | Diagnosed 5 issue(s) and 2 structural pattern(s) for strategy 'MultiMeee'
+2026-04-19 16:25:57.479 | DEBUG    | freqtrade_gui.services.loop    | Loop iter 4: 5 issue(s) and 2 structural pattern(s) diagnosed
+2026-04-19 16:25:57.479 | DEBUG    | freqtrade_gui.services.rule_suggestion | weak_win_rate: minimal_roi smallest key adjusted
+2026-04-19 16:25:57.479 | DEBUG    | freqtrade_gui.services.rule_suggestion | poor_pair_concentration: advisory suggestion
+2026-04-19 16:25:57.479 | DEBUG    | freqtrade_gui.services.rule_suggestion | negative_profit: -0.245 -> -0.215
+2026-04-19 16:25:57.479 | DEBUG    | freqtrade_gui.services.rule_suggestion | profit_factor_low: advisory suggestion
+2026-04-19 16:25:57.479 | DEBUG    | freqtrade_gui.services.rule_suggestion | expectancy_negative: advisory suggestion
+2026-04-19 16:25:57.479 | DEBUG    | freqtrade_gui.services.rule_suggestion | entries_too_loose_in_chop: buy_params adjusted based on choppy market evidence
+2026-04-19 16:25:57.480 | WARNING  | freqtrade_gui.services.rule_suggestion | Unrecognised structural pattern 'micro_loss_noise' — no suggestion generated
+2026-04-19 16:25:57.480 | DEBUG    | freqtrade_gui.services.loop    | Skipping exhausted param 'stoploss' (step=5)
+2026-04-19 16:25:57.482 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:57.484 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:57.484 | INFO     | freqtrade_gui.services.improve | Sandbox prepared at T:\ae\pyside6\user_data\strategies\_improve_sandbox\MultiMeee_1776605157482
+2026-04-19 16:25:57.485 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:57.485 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:57.485 | INFO     | freqtrade_gui.services.improve | Candidate command built; export_dir=T:\ae\pyside6\user_data\backtest_results\_improve\MultiMeee_20260419_162557
+2026-04-19 16:25:57.488 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:57.635 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:58.636 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:25:59.634 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:00.647 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:01.634 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:02.639 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:03.648 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:03.776 | INFO     | freqtrade_gui.services.loop    | Loop iter 4: no improvement. score=0.4215 (best=0.4149)
+2026-04-19 16:26:03.994 | DEBUG    | freqtrade_gui.services.results_diagnosis | Diagnosed 5 issue(s) and 2 structural pattern(s) for strategy 'MultiMeee'
+2026-04-19 16:26:03.994 | DEBUG    | freqtrade_gui.services.loop    | Loop iter 5: 5 issue(s) and 2 structural pattern(s) diagnosed
+2026-04-19 16:26:03.994 | DEBUG    | freqtrade_gui.services.rule_suggestion | weak_win_rate: minimal_roi smallest key adjusted
+2026-04-19 16:26:03.994 | DEBUG    | freqtrade_gui.services.rule_suggestion | poor_pair_concentration: advisory suggestion
+2026-04-19 16:26:03.994 | DEBUG    | freqtrade_gui.services.rule_suggestion | negative_profit: -0.245 -> -0.215
+2026-04-19 16:26:03.994 | DEBUG    | freqtrade_gui.services.rule_suggestion | profit_factor_low: advisory suggestion
+2026-04-19 16:26:03.994 | DEBUG    | freqtrade_gui.services.rule_suggestion | expectancy_negative: advisory suggestion
+2026-04-19 16:26:03.994 | DEBUG    | freqtrade_gui.services.rule_suggestion | entries_too_loose_in_chop: buy_params adjusted based on choppy market evidence
+2026-04-19 16:26:03.994 | WARNING  | freqtrade_gui.services.rule_suggestion | Unrecognised structural pattern 'micro_loss_noise' — no suggestion generated
+2026-04-19 16:26:03.994 | DEBUG    | freqtrade_gui.services.loop    | Skipping exhausted param 'stoploss' (step=5)
+2026-04-19 16:26:03.997 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:03.999 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:03.999 | INFO     | freqtrade_gui.services.improve | Sandbox prepared at T:\ae\pyside6\user_data\strategies\_improve_sandbox\MultiMeee_1776605163997
+2026-04-19 16:26:03.999 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:04.001 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:04.002 | INFO     | freqtrade_gui.services.improve | Candidate command built; export_dir=T:\ae\pyside6\user_data\backtest_results\_improve\MultiMeee_20260419_162604
+2026-04-19 16:26:04.004 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:04.647 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:05.638 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:06.646 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:07.637 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:08.645 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:09.639 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:10.263 | INFO     | freqtrade_gui.services.loop    | Loop iter 5: no improvement. score=0.4222 (best=0.4149)
+2026-04-19 16:26:10.475 | DEBUG    | freqtrade_gui.services.results_diagnosis | Diagnosed 5 issue(s) and 2 structural pattern(s) for strategy 'MultiMeee'
+2026-04-19 16:26:10.475 | DEBUG    | freqtrade_gui.services.loop    | Loop iter 6: 5 issue(s) and 2 structural pattern(s) diagnosed
+2026-04-19 16:26:10.475 | DEBUG    | freqtrade_gui.services.rule_suggestion | weak_win_rate: minimal_roi smallest key adjusted
+2026-04-19 16:26:10.475 | DEBUG    | freqtrade_gui.services.rule_suggestion | poor_pair_concentration: advisory suggestion
+2026-04-19 16:26:10.476 | DEBUG    | freqtrade_gui.services.rule_suggestion | negative_profit: -0.245 -> -0.215
+2026-04-19 16:26:10.476 | DEBUG    | freqtrade_gui.services.rule_suggestion | profit_factor_low: advisory suggestion
+2026-04-19 16:26:10.476 | DEBUG    | freqtrade_gui.services.rule_suggestion | expectancy_negative: advisory suggestion
+2026-04-19 16:26:10.476 | DEBUG    | freqtrade_gui.services.rule_suggestion | entries_too_loose_in_chop: buy_params adjusted based on choppy market evidence
+2026-04-19 16:26:10.476 | WARNING  | freqtrade_gui.services.rule_suggestion | Unrecognised structural pattern 'micro_loss_noise' — no suggestion generated
+2026-04-19 16:26:10.476 | DEBUG    | freqtrade_gui.services.loop    | Skipping exhausted param 'minimal_roi' (step=5)
+2026-04-19 16:26:10.476 | DEBUG    | freqtrade_gui.services.loop    | Skipping exhausted param 'stoploss' (step=5)
+2026-04-19 16:26:10.476 | INFO     | freqtrade_gui.services.loop    | Loop: no more suggestions at iteration 6
+2026-04-19 16:26:10.476 | INFO     | freqtrade_gui.services.loop    | Loop finalized: 5 iterations, best_score=0.4149, reason=No more actionable suggestions to try
+2026-04-19 16:26:10.477 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:10.636 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:11.637 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:12.637 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:13.648 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:14.642 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:15.634 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:16.643 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:17.639 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:18.646 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:19.634 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:20.636 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:21.645 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:22.635 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:23.648 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:24.635 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:25.636 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:26.643 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:27.635 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:28.647 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:29.638 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:30.637 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:31.646 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:32.645 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:33.636 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:34.642 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:35.635 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:36.647 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:37.635 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:38.639 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:39.646 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:40.635 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:41.647 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:42.641 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:43.649 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:44.645 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:45.636 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:46.643 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:47.637 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:48.638 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:49.647 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:50.641 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:51.643 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:52.641 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:53.636 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:54.644 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:55.639 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:56.645 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:57.642 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:58.647 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:26:59.642 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:00.645 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:01.641 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:02.650 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:03.642 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:04.636 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:05.650 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:06.651 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:07.636 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:08.641 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:09.635 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:10.643 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:11.648 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:12.643 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:13.637 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:14.639 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:15.635 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:16.642 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:17.635 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:18.641 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:19.634 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:20.635 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:20.901 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:20.901 | WARNING  | freqtrade_gui.services.improve | params.json not found in T:\ae\pyside6\user_data\backtest_results\_loop_seed — returning empty params
+2026-04-19 16:27:20.901 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:20.901 | INFO     | freqtrade_gui.services.improve | Loaded baseline params from live strategy JSON for 'MultiMeee': 5 keys
+2026-04-19 16:27:20.907 | INFO     | freqtrade_gui.services.loop    | LoopService.start: strategy=MultiMeee, max_iter=10
+2026-04-19 16:27:20.907 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:20.911 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:20.911 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:20.911 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:21.645 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:22.649 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:23.635 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:24.641 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:25.648 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:26.639 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:27.646 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:28.638 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:28.889 | INFO     | freqtrade_gui.services.loop    | Loop started with existing baseline; score=0.4149
+2026-04-19 16:27:28.889 | INFO     | freqtrade_gui.services.loop    | LoopService.start: strategy=MultiMeee, max_iter=10
+2026-04-19 16:27:28.891 | DEBUG    | freqtrade_gui.services.results_diagnosis | Diagnosed 6 issue(s) and 2 structural pattern(s) for strategy 'MultiMeee'
+2026-04-19 16:27:28.891 | DEBUG    | freqtrade_gui.services.loop    | Loop iter 1: 6 issue(s) and 2 structural pattern(s) diagnosed
+2026-04-19 16:27:28.891 | DEBUG    | freqtrade_gui.services.rule_suggestion | stoploss_too_wide: -0.245 -> -0.225
+2026-04-19 16:27:28.891 | DEBUG    | freqtrade_gui.services.rule_suggestion | weak_win_rate: minimal_roi smallest key adjusted
+2026-04-19 16:27:28.891 | DEBUG    | freqtrade_gui.services.rule_suggestion | poor_pair_concentration: advisory suggestion
+2026-04-19 16:27:28.891 | DEBUG    | freqtrade_gui.services.rule_suggestion | negative_profit: -0.245 -> -0.215
+2026-04-19 16:27:28.891 | DEBUG    | freqtrade_gui.services.rule_suggestion | profit_factor_low: advisory suggestion
+2026-04-19 16:27:28.891 | DEBUG    | freqtrade_gui.services.rule_suggestion | expectancy_negative: advisory suggestion
+2026-04-19 16:27:28.891 | DEBUG    | freqtrade_gui.services.rule_suggestion | entries_too_loose_in_chop: buy_params adjusted based on choppy market evidence
+2026-04-19 16:27:28.891 | WARNING  | freqtrade_gui.services.rule_suggestion | Unrecognised structural pattern 'micro_loss_noise' — no suggestion generated
+2026-04-19 16:27:28.894 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:28.895 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:28.896 | INFO     | freqtrade_gui.services.improve | Sandbox prepared at T:\ae\pyside6\user_data\strategies\_improve_sandbox\MultiMeee_1776605248894
+2026-04-19 16:27:28.896 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:28.898 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:28.899 | INFO     | freqtrade_gui.services.improve | Candidate command built; export_dir=T:\ae\pyside6\user_data\backtest_results\_improve\MultiMeee_20260419_162728
+2026-04-19 16:27:28.901 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:29.645 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:30.635 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:31.649 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:32.640 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:33.638 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:34.644 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:35.568 | INFO     | freqtrade_gui.services.loop    | Loop iter 1: no improvement. score=0.4145 (best=0.4149)
+2026-04-19 16:27:35.645 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:35.768 | DEBUG    | freqtrade_gui.services.results_diagnosis | Diagnosed 6 issue(s) and 2 structural pattern(s) for strategy 'MultiMeee'
+2026-04-19 16:27:35.768 | DEBUG    | freqtrade_gui.services.loop    | Loop iter 2: 6 issue(s) and 2 structural pattern(s) diagnosed
+2026-04-19 16:27:35.768 | DEBUG    | freqtrade_gui.services.rule_suggestion | stoploss_too_wide: -0.245 -> -0.225
+2026-04-19 16:27:35.768 | DEBUG    | freqtrade_gui.services.rule_suggestion | weak_win_rate: minimal_roi smallest key adjusted
+2026-04-19 16:27:35.768 | DEBUG    | freqtrade_gui.services.rule_suggestion | poor_pair_concentration: advisory suggestion
+2026-04-19 16:27:35.768 | DEBUG    | freqtrade_gui.services.rule_suggestion | negative_profit: -0.245 -> -0.215
+2026-04-19 16:27:35.768 | DEBUG    | freqtrade_gui.services.rule_suggestion | profit_factor_low: advisory suggestion
+2026-04-19 16:27:35.768 | DEBUG    | freqtrade_gui.services.rule_suggestion | expectancy_negative: advisory suggestion
+2026-04-19 16:27:35.768 | DEBUG    | freqtrade_gui.services.rule_suggestion | entries_too_loose_in_chop: buy_params adjusted based on choppy market evidence
+2026-04-19 16:27:35.768 | WARNING  | freqtrade_gui.services.rule_suggestion | Unrecognised structural pattern 'micro_loss_noise' — no suggestion generated
+2026-04-19 16:27:35.771 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:35.772 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:35.772 | INFO     | freqtrade_gui.services.improve | Sandbox prepared at T:\ae\pyside6\user_data\strategies\_improve_sandbox\MultiMeee_1776605255771
+2026-04-19 16:27:35.772 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:35.774 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:35.775 | INFO     | freqtrade_gui.services.improve | Candidate command built; export_dir=T:\ae\pyside6\user_data\backtest_results\_improve\MultiMeee_20260419_162735
+2026-04-19 16:27:35.777 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:36.635 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:37.635 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:38.635 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:39.641 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:40.641 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:41.636 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:42.175 | INFO     | freqtrade_gui.services.loop    | Loop iter 2: no improvement. score=0.4200 (best=0.4149)
+2026-04-19 16:27:42.368 | DEBUG    | freqtrade_gui.services.results_diagnosis | Diagnosed 5 issue(s) and 2 structural pattern(s) for strategy 'MultiMeee'
+2026-04-19 16:27:42.368 | DEBUG    | freqtrade_gui.services.loop    | Loop iter 3: 5 issue(s) and 2 structural pattern(s) diagnosed
+2026-04-19 16:27:42.368 | DEBUG    | freqtrade_gui.services.rule_suggestion | weak_win_rate: minimal_roi smallest key adjusted
+2026-04-19 16:27:42.368 | DEBUG    | freqtrade_gui.services.rule_suggestion | poor_pair_concentration: advisory suggestion
+2026-04-19 16:27:42.368 | DEBUG    | freqtrade_gui.services.rule_suggestion | negative_profit: -0.245 -> -0.215
+2026-04-19 16:27:42.368 | DEBUG    | freqtrade_gui.services.rule_suggestion | profit_factor_low: advisory suggestion
+2026-04-19 16:27:42.368 | DEBUG    | freqtrade_gui.services.rule_suggestion | expectancy_negative: advisory suggestion
+2026-04-19 16:27:42.368 | DEBUG    | freqtrade_gui.services.rule_suggestion | entries_too_loose_in_chop: buy_params adjusted based on choppy market evidence
+2026-04-19 16:27:42.368 | WARNING  | freqtrade_gui.services.rule_suggestion | Unrecognised structural pattern 'micro_loss_noise' — no suggestion generated
+2026-04-19 16:27:42.371 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:42.371 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:42.371 | INFO     | freqtrade_gui.services.improve | Sandbox prepared at T:\ae\pyside6\user_data\strategies\_improve_sandbox\MultiMeee_1776605262371
+2026-04-19 16:27:42.373 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:42.374 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:42.374 | INFO     | freqtrade_gui.services.improve | Candidate command built; export_dir=T:\ae\pyside6\user_data\backtest_results\_improve\MultiMeee_20260419_162742
+2026-04-19 16:27:42.376 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:42.635 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:43.647 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:44.648 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:45.637 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:46.635 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:47.635 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:48.649 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:49.377 | INFO     | freqtrade_gui.services.loop    | Loop iter 3: no improvement. score=0.4215 (best=0.4149)
+2026-04-19 16:27:49.575 | DEBUG    | freqtrade_gui.services.results_diagnosis | Diagnosed 5 issue(s) and 2 structural pattern(s) for strategy 'MultiMeee'
+2026-04-19 16:27:49.575 | DEBUG    | freqtrade_gui.services.loop    | Loop iter 4: 5 issue(s) and 2 structural pattern(s) diagnosed
+2026-04-19 16:27:49.575 | DEBUG    | freqtrade_gui.services.rule_suggestion | weak_win_rate: minimal_roi smallest key adjusted
+2026-04-19 16:27:49.576 | DEBUG    | freqtrade_gui.services.rule_suggestion | poor_pair_concentration: advisory suggestion
+2026-04-19 16:27:49.576 | DEBUG    | freqtrade_gui.services.rule_suggestion | negative_profit: -0.245 -> -0.215
+2026-04-19 16:27:49.576 | DEBUG    | freqtrade_gui.services.rule_suggestion | profit_factor_low: advisory suggestion
+2026-04-19 16:27:49.576 | DEBUG    | freqtrade_gui.services.rule_suggestion | expectancy_negative: advisory suggestion
+2026-04-19 16:27:49.576 | DEBUG    | freqtrade_gui.services.rule_suggestion | entries_too_loose_in_chop: buy_params adjusted based on choppy market evidence
+2026-04-19 16:27:49.576 | WARNING  | freqtrade_gui.services.rule_suggestion | Unrecognised structural pattern 'micro_loss_noise' — no suggestion generated
+2026-04-19 16:27:49.576 | DEBUG    | freqtrade_gui.services.loop    | Skipping exhausted param 'stoploss' (step=5)
+2026-04-19 16:27:49.578 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:49.579 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:49.581 | INFO     | freqtrade_gui.services.improve | Sandbox prepared at T:\ae\pyside6\user_data\strategies\_improve_sandbox\MultiMeee_1776605269578
+2026-04-19 16:27:49.581 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:49.582 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:49.582 | INFO     | freqtrade_gui.services.improve | Candidate command built; export_dir=T:\ae\pyside6\user_data\backtest_results\_improve\MultiMeee_20260419_162749
+2026-04-19 16:27:49.584 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:49.639 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:50.645 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:51.636 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:52.640 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:53.640 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:54.635 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:55.635 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:56.095 | INFO     | freqtrade_gui.services.loop    | Loop iter 4: no improvement. score=0.4215 (best=0.4149)
+2026-04-19 16:27:56.291 | DEBUG    | freqtrade_gui.services.results_diagnosis | Diagnosed 5 issue(s) and 2 structural pattern(s) for strategy 'MultiMeee'
+2026-04-19 16:27:56.291 | DEBUG    | freqtrade_gui.services.loop    | Loop iter 5: 5 issue(s) and 2 structural pattern(s) diagnosed
+2026-04-19 16:27:56.291 | DEBUG    | freqtrade_gui.services.rule_suggestion | weak_win_rate: minimal_roi smallest key adjusted
+2026-04-19 16:27:56.291 | DEBUG    | freqtrade_gui.services.rule_suggestion | poor_pair_concentration: advisory suggestion
+2026-04-19 16:27:56.291 | DEBUG    | freqtrade_gui.services.rule_suggestion | negative_profit: -0.245 -> -0.215
+2026-04-19 16:27:56.291 | DEBUG    | freqtrade_gui.services.rule_suggestion | profit_factor_low: advisory suggestion
+2026-04-19 16:27:56.291 | DEBUG    | freqtrade_gui.services.rule_suggestion | expectancy_negative: advisory suggestion
+2026-04-19 16:27:56.291 | DEBUG    | freqtrade_gui.services.rule_suggestion | entries_too_loose_in_chop: buy_params adjusted based on choppy market evidence
+2026-04-19 16:27:56.291 | WARNING  | freqtrade_gui.services.rule_suggestion | Unrecognised structural pattern 'micro_loss_noise' — no suggestion generated
+2026-04-19 16:27:56.291 | DEBUG    | freqtrade_gui.services.loop    | Skipping exhausted param 'stoploss' (step=5)
+2026-04-19 16:27:56.293 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:56.295 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:56.295 | INFO     | freqtrade_gui.services.improve | Sandbox prepared at T:\ae\pyside6\user_data\strategies\_improve_sandbox\MultiMeee_1776605276293
+2026-04-19 16:27:56.297 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:56.297 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:56.298 | INFO     | freqtrade_gui.services.improve | Candidate command built; export_dir=T:\ae\pyside6\user_data\backtest_results\_improve\MultiMeee_20260419_162756
+2026-04-19 16:27:56.300 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:56.645 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:57.640 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:58.636 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:27:59.635 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:28:00.634 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:28:01.635 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:28:02.643 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:28:02.778 | INFO     | freqtrade_gui.services.loop    | Loop iter 5: no improvement. score=0.4222 (best=0.4149)
+2026-04-19 16:28:02.981 | DEBUG    | freqtrade_gui.services.results_diagnosis | Diagnosed 5 issue(s) and 2 structural pattern(s) for strategy 'MultiMeee'
+2026-04-19 16:28:02.981 | DEBUG    | freqtrade_gui.services.loop    | Loop iter 6: 5 issue(s) and 2 structural pattern(s) diagnosed
+2026-04-19 16:28:02.981 | DEBUG    | freqtrade_gui.services.rule_suggestion | weak_win_rate: minimal_roi smallest key adjusted
+2026-04-19 16:28:02.981 | DEBUG    | freqtrade_gui.services.rule_suggestion | poor_pair_concentration: advisory suggestion
+2026-04-19 16:28:02.981 | DEBUG    | freqtrade_gui.services.rule_suggestion | negative_profit: -0.245 -> -0.215
+2026-04-19 16:28:02.981 | DEBUG    | freqtrade_gui.services.rule_suggestion | profit_factor_low: advisory suggestion
+2026-04-19 16:28:02.981 | DEBUG    | freqtrade_gui.services.rule_suggestion | expectancy_negative: advisory suggestion
+2026-04-19 16:28:02.981 | DEBUG    | freqtrade_gui.services.rule_suggestion | entries_too_loose_in_chop: buy_params adjusted based on choppy market evidence
+2026-04-19 16:28:02.981 | WARNING  | freqtrade_gui.services.rule_suggestion | Unrecognised structural pattern 'micro_loss_noise' — no suggestion generated
+2026-04-19 16:28:02.981 | DEBUG    | freqtrade_gui.services.loop    | Skipping exhausted param 'minimal_roi' (step=5)
+2026-04-19 16:28:02.981 | DEBUG    | freqtrade_gui.services.loop    | Skipping exhausted param 'stoploss' (step=5)
+2026-04-19 16:28:02.981 | INFO     | freqtrade_gui.services.loop    | Loop: no more suggestions at iteration 6
+2026-04-19 16:28:02.981 | INFO     | freqtrade_gui.services.loop    | Loop finalized: 5 iterations, best_score=0.4149, reason=No more actionable suggestions to try
+2026-04-19 16:28:02.983 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:28:03.635 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:28:04.641 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:28:05.634 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:28:06.648 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:28:07.638 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:28:08.635 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:28:09.635 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:28:10.642 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:28:11.648 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:28:12.648 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:28:13.638 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:28:14.646 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:28:15.637 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:28:16.647 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:28:17.636 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:28:18.635 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:28:19.648 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:28:20.636 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:28:21.640 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:28:22.638 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:28:23.644 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:33:37.288 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:33:37.413 | INFO     | freqtrade_gui.services.ai_service | AIService initialised
+2026-04-19 16:35:19.525 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:19.640 | INFO     | freqtrade_gui.services.ai_service | AIService initialised
+2026-04-19 16:35:19.681 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:19.683 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:19.684 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:19.771 | INFO     | freqtrade_gui.services.backtest | Index rebuild: imported=0 skipped=17
+2026-04-19 16:35:19.826 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:19.828 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:19.829 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:19.855 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:19.857 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:19.857 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:19.883 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:21.565 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: get_app_status
+2026-04-19 16:35:21.565 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: read_recent_logs
+2026-04-19 16:35:21.565 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: get_last_error
+2026-04-19 16:35:21.565 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: list_recent_events
+2026-04-19 16:35:21.565 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: get_latest_backtest_result
+2026-04-19 16:35:21.565 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: load_run_history
+2026-04-19 16:35:21.565 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: compare_runs
+2026-04-19 16:35:21.565 | DEBUG    | freqtrade_gui.services.backtest_tools | Backtest tools registered: get_latest_backtest_result, load_run_history, compare_runs
+2026-04-19 16:35:21.565 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: list_strategies
+2026-04-19 16:35:21.565 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: read_strategy_code
+2026-04-19 16:35:21.565 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: read_strategy_params
+2026-04-19 16:35:21.565 | DEBUG    | freqtrade_gui.services.strategy_tools | Strategy tools registered: list_strategies, read_strategy_code, read_strategy_params
+2026-04-19 16:35:21.565 | DEBUG    | freqtrade_gui.services.ai_service | ToolRegistry built with 10 tools
+2026-04-19 16:35:21.567 | INFO     | freqtrade_gui.services.ai_service | ConversationRuntime created: provider=openrouter model= tools=True
+2026-04-19 16:35:21.567 | DEBUG    | freqtrade_gui.services.ai_service | BacktestJournalAdapter connected to BacktestService
+2026-04-19 16:35:21.567 | DEBUG    | freqtrade_gui.services.ai_service | BacktestPage registered with AIService
+2026-04-19 16:35:21.587 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:21.591 | DEBUG    | freqtrade_gui.services.openrouter_provider | health_check() GET https://openrouter.ai/api/v1/models
+2026-04-19 16:35:21.607 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:21.772 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:22.760 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:23.760 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:24.760 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:25.765 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:26.760 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:27.761 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:28.760 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:29.767 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:30.764 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:31.759 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:32.774 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:33.761 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:34.765 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:35.775 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:36.775 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:37.759 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:38.760 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:39.764 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:40.772 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:41.772 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:42.773 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:43.777 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:44.789 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:45.784 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:46.784 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:47.777 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:48.786 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:49.792 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:50.775 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:51.775 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:52.780 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:53.785 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:54.796 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:55.805 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:56.796 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:57.801 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:58.792 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:35:59.791 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:00.791 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:01.793 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:02.795 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:03.793 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:04.791 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:05.804 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:06.800 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:07.794 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:08.801 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:09.793 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:10.791 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:11.791 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:12.805 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:13.791 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:14.791 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:15.792 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:16.791 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:17.796 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:18.792 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:19.796 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:20.791 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:21.791 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:22.793 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:23.795 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:24.791 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:25.791 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:26.791 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:27.804 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:28.791 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:29.791 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:30.804 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:31.798 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:32.801 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:33.793 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:34.795 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:35.795 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:36.801 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:37.800 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:38.806 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:39.820 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:40.817 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:41.810 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:42.820 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:43.813 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:44.821 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:45.808 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:46.809 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:47.809 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:48.815 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:49.817 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:50.820 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:51.819 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:52.820 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:53.809 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:54.818 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:55.810 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:56.814 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:57.818 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:58.812 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:36:59.817 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:00.819 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:01.809 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:02.814 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:03.810 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:04.818 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:05.810 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:06.809 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:07.811 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:08.817 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:09.818 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:10.820 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:11.807 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:12.811 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:13.815 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:14.821 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:15.816 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:16.810 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:17.812 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:18.815 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:19.815 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:20.818 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:21.811 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:22.830 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:23.831 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:24.832 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:25.825 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:26.828 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:27.837 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:28.825 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:29.831 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:30.822 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:31.825 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:32.830 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:33.834 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:34.837 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:35.825 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:36.831 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:37.831 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:38.834 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:39.838 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:40.840 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:41.845 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:42.856 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:43.858 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:44.865 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:45.864 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:46.867 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:47.858 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:48.857 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:49.864 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:50.854 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:51.858 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:52.860 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:53.862 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:54.861 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:55.866 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:56.858 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:57.863 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:58.858 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:37:59.867 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:38:03.794 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:38:03.911 | INFO     | freqtrade_gui.services.ai_service | AIService initialised
+2026-04-19 16:38:03.953 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:38:03.954 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:38:03.955 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:38:04.042 | INFO     | freqtrade_gui.services.backtest | Index rebuild: imported=0 skipped=17
+2026-04-19 16:38:04.093 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:38:04.094 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:38:04.096 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:38:04.121 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:38:04.121 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:38:04.123 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:38:04.146 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:38:05.815 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: get_app_status
+2026-04-19 16:38:05.815 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: read_recent_logs
+2026-04-19 16:38:05.815 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: get_last_error
+2026-04-19 16:38:05.815 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: list_recent_events
+2026-04-19 16:38:05.815 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: get_latest_backtest_result
+2026-04-19 16:38:05.815 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: load_run_history
+2026-04-19 16:38:05.815 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: compare_runs
+2026-04-19 16:38:05.815 | DEBUG    | freqtrade_gui.services.backtest_tools | Backtest tools registered: get_latest_backtest_result, load_run_history, compare_runs
+2026-04-19 16:38:05.815 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: list_strategies
+2026-04-19 16:38:05.815 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: read_strategy_code
+2026-04-19 16:38:05.815 | DEBUG    | freqtrade_gui.services.tool_registry | Registering tool: read_strategy_params
+2026-04-19 16:38:05.815 | DEBUG    | freqtrade_gui.services.strategy_tools | Strategy tools registered: list_strategies, read_strategy_code, read_strategy_params
+2026-04-19 16:38:05.815 | DEBUG    | freqtrade_gui.services.ai_service | ToolRegistry built with 10 tools
+2026-04-19 16:38:05.815 | INFO     | freqtrade_gui.services.ai_service | ConversationRuntime created: provider=openrouter model= tools=True
+2026-04-19 16:38:05.815 | DEBUG    | freqtrade_gui.services.ai_service | BacktestJournalAdapter connected to BacktestService
+2026-04-19 16:38:05.817 | DEBUG    | freqtrade_gui.services.ai_service | BacktestPage registered with AIService
+2026-04-19 16:38:05.835 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:38:05.840 | DEBUG    | freqtrade_gui.services.openrouter_provider | health_check() GET https://openrouter.ai/api/v1/models
+2026-04-19 16:38:05.856 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:38:06.055 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:38:07.048 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:38:08.055 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:38:09.042 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:38:10.051 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:38:11.045 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:38:12.048 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:38:13.045 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:38:14.054 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:38:15.056 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:38:16.047 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:38:17.055 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:38:18.045 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:38:19.050 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:38:20.041 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json
+2026-04-19 16:38:21.055 | DEBUG    | freqtrade_gui.settings         | Settings loaded from C:\Users\M4tie\.freqtrade_gui\settings.json

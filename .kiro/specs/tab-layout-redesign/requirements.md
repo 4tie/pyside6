@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This feature redesigns the tab layouts across the Freqtrade GUI desktop application to fix content overflow and clipping issues. Currently, pages like Optimize and Strategy Config suffer from controls being cut off or requiring unexpected scrolling. The redesign ensures all controls are visible and accessible within each tab, splits dense content into logical sub-sections where needed, and moves the live terminal output behind a collapsible toggle so it does not dominate the available space by default.
+This feature redesigns the tab layouts across the Freqtrade GUI desktop application to fix content overflow and clipping issues. Currently, pages like Optimize and Strategy Config suffer from controls being cut off or requiring unexpected scrolling. The redesign ensures all controls are visible and accessible within each tab, and splits dense content into logical sub-sections where needed. The terminal output remains always visible as before.
 
 ## Glossary
 

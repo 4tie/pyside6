@@ -30,7 +30,7 @@ from app.core.backtests.results_index import IndexStore
 from app.core.services.settings_service import SettingsService
 from app.core.services.process_service import ProcessService
 from app.core.utils.app_logger import get_logger
-from app.ui.widgets.collapsible_terminal import CollapsibleTerminal
+from app.ui.widgets.terminal_widget import TerminalWidget
 from app.ui.widgets.backtest_results_widget import BacktestResultsWidget
 from app.ui.dialogs.pairs_selector_dialog import PairsSelectorDialog
 
@@ -216,13 +216,13 @@ class BacktestPage(QWidget):
         run_picker_layout.addWidget(self.load_run_btn)
         output_layout.addLayout(run_picker_layout)
 
-        self.collapsible_terminal = CollapsibleTerminal()
-        output_layout.addWidget(self.collapsible_terminal)
-
         self.output_tabs = QTabWidget()
 
         self.results_widget = BacktestResultsWidget()
         self.output_tabs.addTab(self.results_widget, "Results")
+
+        self.terminal = TerminalWidget()
+        self.output_tabs.addTab(self.terminal, "Terminal")
 
         output_layout.addWidget(self.output_tabs)
 
@@ -236,11 +236,6 @@ class BacktestPage(QWidget):
 
         main_layout.addLayout(h_layout)
         self.setLayout(main_layout)
-
-    @property
-    def terminal(self):
-        """Alias to the inner TerminalWidget of the collapsible terminal."""
-        return self.collapsible_terminal.terminal
 
     def _connect_signals(self):
         """Connect settings signals for live command preview updates."""
@@ -337,7 +332,7 @@ class BacktestPage(QWidget):
             _log.info("Run loaded | strategy=%s | trades=%d",
                       results.summary.strategy, len(results.trades))
             self.results_widget.display_results(results, export_dir=str(run_dir))
-            self.output_tabs.setCurrentIndex(1)
+            self.output_tabs.setCurrentIndex(0)  # Results tab
         except (FileNotFoundError, ValueError) as e:
             _log.error("Failed to load run %s: %s", run_meta.get("run_id"), e)
             QMessageBox.critical(self, "Load Failed", str(e))
@@ -421,8 +416,7 @@ class BacktestPage(QWidget):
         self._preview_timer.stop()
         self.terminal.append_output("[Process started]\n\n")
         self._run_started_at = time.time()
-
-        self.collapsible_terminal.show_terminal()
+        self.output_tabs.setCurrentIndex(1)  # switch to Terminal tab
 
         try:
             self.process_service.execute_command(
@@ -500,7 +494,7 @@ class BacktestPage(QWidget):
                 self.results_widget.display_results(results, export_dir=str(run_dir))
                 self.terminal.append_output("✓ Results loaded successfully!\n")
                 self._refresh_run_picker()
-                self.output_tabs.setCurrentIndex(1)
+                self.output_tabs.setCurrentIndex(0)  # switch to Results tab
 
         except Exception as e:
             _log.error("Failed to load results from %s: %s", zip_path.name, e)

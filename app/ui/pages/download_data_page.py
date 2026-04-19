@@ -22,7 +22,7 @@ from app.core.services.process_service import ProcessService
 from app.core.services.settings_service import SettingsService
 from app.ui.dialogs.pairs_selector_dialog import PairsSelectorDialog
 from app.ui.widgets.data_status_widget import DataStatusWidget
-from app.ui.widgets.collapsible_terminal import CollapsibleTerminal
+from app.ui.widgets.terminal_widget import TerminalWidget
 
 
 class DownloadDataPage(QWidget):
@@ -129,13 +129,13 @@ class DownloadDataPage(QWidget):
         output_layout = QVBoxLayout()
         output_layout.setContentsMargins(SPACING["sm"], SPACING["sm"], SPACING["sm"], SPACING["sm"])
 
-        self.collapsible_terminal = CollapsibleTerminal()
-        output_layout.addWidget(self.collapsible_terminal)
-
         self.output_tabs = QTabWidget()
 
         self.status_widget = DataStatusWidget()
         self.output_tabs.addTab(self.status_widget, "Data Status")
+
+        self.terminal = TerminalWidget()
+        self.output_tabs.addTab(self.terminal, "Terminal")
 
         output_layout.addWidget(self.output_tabs)
 
@@ -148,10 +148,6 @@ class DownloadDataPage(QWidget):
 
         main_layout.addLayout(h_layout)
         self.setLayout(main_layout)
-
-    @property
-    def terminal(self):
-        return self.collapsible_terminal.terminal
 
     def _connect_signals(self):
         """Connect signals for live command preview updates."""
@@ -232,9 +228,9 @@ class DownloadDataPage(QWidget):
         self.run_button.setEnabled(False)
         self.stop_button.setEnabled(True)
         self.terminal.append_output("[Download started]\n\n")
+        self.output_tabs.setCurrentIndex(1)  # switch to Terminal tab
 
         try:
-            self.collapsible_terminal.show_terminal()
             self.process_service.execute_command(
                 command=cmd.as_list(),
                 on_output=self.terminal.append_output,
@@ -288,7 +284,7 @@ class DownloadDataPage(QWidget):
         self.terminal.append_output(f"\n[Download finished] exit_code={exit_code}\n")
         if exit_code == 0:
             self.status_widget.refresh()
-            self.output_tabs.setCurrentIndex(0)
+            self.output_tabs.setCurrentIndex(0)  # switch to Data Status tab
 
     def _load_preferences(self):
         """Load saved preferences from settings."""

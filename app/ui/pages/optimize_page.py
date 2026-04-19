@@ -27,7 +27,7 @@ from app.core.services.process_service import ProcessService
 from app.core.services.settings_service import SettingsService
 from app.core.utils.app_logger import get_logger
 from app.ui.dialogs.pairs_selector_dialog import PairsSelectorDialog
-from app.ui.widgets.collapsible_terminal import CollapsibleTerminal
+from app.ui.widgets.terminal_widget import TerminalWidget
 
 _log = get_logger("optimize")
 
@@ -238,8 +238,8 @@ class OptimizePage(QWidget):
 
         output_layout = QVBoxLayout()
         output_layout.setContentsMargins(SPACING["sm"], SPACING["sm"], SPACING["sm"], SPACING["sm"])
-        self.collapsible_terminal = CollapsibleTerminal()
-        output_layout.addWidget(self.collapsible_terminal)
+        self.terminal = TerminalWidget()
+        output_layout.addWidget(self.terminal)
 
         output_widget = QWidget()
         output_widget.setLayout(output_layout)
@@ -248,11 +248,6 @@ class OptimizePage(QWidget):
         h_layout.addWidget(params_scroll, 1)
         h_layout.addWidget(output_widget, 2)
         root.addLayout(h_layout)
-
-    @property
-    def terminal(self):
-        """Alias to the inner TerminalWidget of the collapsible terminal."""
-        return self.collapsible_terminal.terminal
 
     def _connect_signals(self):
         self.settings_state.settings_changed.connect(self._on_settings_changed)
@@ -394,7 +389,6 @@ class OptimizePage(QWidget):
             pass
 
         try:
-            self.collapsible_terminal.show_terminal()
             self.process_service.execute_command(
                 command=cmd.as_list(),
                 on_output=self.terminal.append_output,
