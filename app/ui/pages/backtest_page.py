@@ -148,14 +148,20 @@ class BacktestPage(QWidget):
         self.dry_run_wallet.setMinimum(0)
         self.dry_run_wallet.setMaximum(999999)
         self.dry_run_wallet.setValue(80.0)
-        self.dry_run_wallet.setToolTip("Dry run starting wallet balance")
+        self.dry_run_wallet.setToolTip(
+            "Saved as a preference only. The strategy's own parameters control "
+            "the wallet size during backtesting."
+        )
         advanced_layout.addRow("Dry Run Wallet:", self.dry_run_wallet)
 
         self.max_open_trades = QSpinBox()
         self.max_open_trades.setMinimum(1)
         self.max_open_trades.setMaximum(999)
         self.max_open_trades.setValue(2)
-        self.max_open_trades.setToolTip("Maximum number of open trades")
+        self.max_open_trades.setToolTip(
+            "Used when opening the Pairs Selector dialog. "
+            "The strategy's own parameters control max open trades during backtesting."
+        )
         advanced_layout.addRow("Max Open Trades:", self.max_open_trades)
 
         advanced_group.setLayout(advanced_layout)
@@ -238,8 +244,6 @@ class BacktestPage(QWidget):
         self.strategy_combo.currentTextChanged.connect(self._refresh_run_picker)
         self.timeframe_input.textChanged.connect(self._update_command_preview)
         self.timerange_input.textChanged.connect(self._update_command_preview)
-        self.dry_run_wallet.valueChanged.connect(self._update_command_preview)
-        self.max_open_trades.valueChanged.connect(self._update_command_preview)
         self.settings_state.settings_changed.connect(self._update_command_preview)
 
 
@@ -340,10 +344,6 @@ class BacktestPage(QWidget):
             timeframe = self.timeframe_input.text().strip()
             timerange = self.timerange_input.text().strip() or None
             pairs = self.selected_pairs
-            dry_run_wallet = (
-                self.dry_run_wallet.value() if self.dry_run_wallet.value() > 0 else None
-            )
-            max_open_trades = self.max_open_trades.value()
 
             if not strategy or not timeframe:
                 self.terminal.set_command("[Configure strategy and timeframe]")
@@ -354,8 +354,6 @@ class BacktestPage(QWidget):
                 timeframe=timeframe,
                 timerange=timerange,
                 pairs=pairs if pairs else [],
-                max_open_trades=max_open_trades,
-                dry_run_wallet=dry_run_wallet,
             )
 
             self.terminal.set_command_list(cmd.as_list())
@@ -386,18 +384,11 @@ class BacktestPage(QWidget):
 
         # Build command
         try:
-            dry_run_wallet = (
-                self.dry_run_wallet.value() if self.dry_run_wallet.value() > 0 else None
-            )
-            max_open_trades = self.max_open_trades.value()
-
             cmd = self.backtest_service.build_command(
                 strategy_name=strategy,
                 timeframe=timeframe,
                 timerange=timerange,
                 pairs=pairs,
-                max_open_trades=max_open_trades,
-                dry_run_wallet=dry_run_wallet,
             )
 
             self.last_export_path = None
