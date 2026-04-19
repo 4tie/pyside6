@@ -243,13 +243,23 @@ class SuggestionRotator:
 
     Tracks which parameter values have already been tried and generates
     progressively different suggestions to avoid repeating the same config.
+    When structured suggestions are exhausted, falls back to random
+    perturbations so the loop can keep exploring without stopping early.
 
     Args:
         base_params: The initial strategy parameters before any loop changes.
     """
 
-    # How many times to try tightening/loosening each parameter before giving up
-    _MAX_STEPS_PER_PARAM = 5
+    # How many times to try tightening/loosening each parameter before giving up.
+    # Set high so the rotator doesn't exhaust its budget before the loop's
+    # max_iterations is reached.
+    _MAX_STEPS_PER_PARAM = 20
+
+    # Random perturbation parameters used when structured suggestions run dry
+    _RANDOM_STOPLOSS_RANGE = (-0.30, -0.01)
+    _RANDOM_MOT_RANGE = (1, 20)
+    _RANDOM_ROI_DELTA_RANGE = (-0.02, 0.02)
+    _RANDOM_PARAM_SCALE = 0.10  # ±10% of current value for buy/sell params
 
     def __init__(self, base_params: dict) -> None:
         self._base_params = copy.deepcopy(base_params)
@@ -338,7 +348,8 @@ class SuggestionRotator:
                     actionable.append(ss)
 
         if not actionable:
-            return []
+            # No structured suggestions — go straight to random perturbations
+            return self._random_perturbations(current_params)
 
         varied: List[ParameterSuggestion] = []
 
@@ -364,7 +375,153 @@ class SuggestionRotator:
                 varied.append(varied_suggestion)
                 self.increment_step(param)
 
+        # If structured suggestions produced nothing, fall back to random perturbations
+        # so the loop keeps exploring rather than stopping prematurely.
+        if not varied:
+            varied = self._random_perturbations(current_params)
+
         return varied
+
+    def _random_perturbations(self, current_params: dict) -> List[ParameterSuggestion]:
+        """Generate random parameter perturbations as a fallback when structured
+        suggestions are exhausted.
+
+        Picks one or two parameters from the current param set and nudges them
+        by a small random amount so the loop can keep exploring without stopping.
+        Uses a seeded approach based on the number of tried configs to ensure
+        deterministic variation across calls.
+
+        Args:
+            current_params: Current strategy parameters.
+
+        Returns:
+            List of 1–2 ParameterSuggestion objects, or empty list if no
+            perturbable parameters exist.
+        """
+        import random as _random
+
+        # Seed from the number of tried configs for reproducible-but-varied exploration
+        rng = _random.Random(len(self._tried_configs))
+        suggestions: List[ParameterSuggestion] = []
+
+        # Build a list of perturbable parameters in priority order
+        candidates: List[str] = []
+        if "stoploss" in current_params:
+            candidates.append("stoploss")
+        if "minimal_roi" in current_params and current_params["minimal_roi"]:
+            candidates.append("minimal_roi")
+        if "max_open_trades" in current_params:
+            candidates.append("max_open_trades")
+        if "buy_params" in current_params and current_params["buy_params"]:
+            candidates.append("buy_params")
+        if "sell_params" in current_params and current_params["sell_params"]:
+            candidates.append("sell_params")
+
+        if not candidates:
+            _log.warning("_random_perturbations: no perturbable parameters found")
+            return []
+
+        # Shuffle and pick up to 2 to avoid always mutating the same param
+        rng.shuffle(candidates)
+        for param in candidates[:2]:
+            suggestion = self._random_perturb_param(param, current_params, rng)
+            if suggestion is not None:
+                suggestions.append(suggestion)
+
+        if suggestions:
+            _log.info(
+                "_random_perturbations: generated %d fallback suggestion(s): %s",
+                len(suggestions),
+                [s.parameter for s in suggestions],
+            )
+        return suggestions
+
+    def _random_perturb_param(
+        self,
+        param: str,
+        current_params: dict,
+        rng,
+    ) -> Optional[ParameterSuggestion]:
+        """Randomly perturb a single parameter.
+
+        Args:
+            param: Parameter name to perturb.
+            current_params: Current strategy parameters.
+            rng: Random instance for reproducibility.
+
+        Returns:
+            A ParameterSuggestion, or None if no valid perturbation is possible.
+        """
+        if param == "stoploss":
+            current = current_params.get("stoploss", -0.10)
+            lo, hi = self._RANDOM_STOPLOSS_RANGE
+            # Pick a random value in the valid range, biased toward current ±0.05
+            delta = rng.uniform(-0.05, 0.05)
+            proposed = round(max(lo, min(hi, current + delta)), 4)
+            if proposed == current:
+                return None
+            return ParameterSuggestion(
+                parameter="stoploss",
+                proposed_value=proposed,
+                reason=f"Random exploration: stoploss {current} → {proposed}",
+                expected_effect="Exploring stoploss parameter space",
+            )
+
+        elif param == "minimal_roi":
+            minimal_roi: dict = current_params.get("minimal_roi", {})
+            if not minimal_roi:
+                return None
+            lo, hi = self._RANDOM_ROI_DELTA_RANGE
+            delta = rng.uniform(lo, hi)
+            proposed_roi = {k: round(v + delta, 6) for k, v in minimal_roi.items()}
+            if proposed_roi == minimal_roi:
+                return None
+            direction = "up" if delta > 0 else "down"
+            return ParameterSuggestion(
+                parameter="minimal_roi",
+                proposed_value=proposed_roi,
+                reason=f"Random exploration: ROI targets shifted {direction} by {abs(delta):.4f}",
+                expected_effect="Exploring ROI parameter space",
+            )
+
+        elif param == "max_open_trades":
+            current = current_params.get("max_open_trades", 3)
+            lo, hi = self._RANDOM_MOT_RANGE
+            delta = rng.choice([-1, 1])
+            proposed = max(lo, min(hi, current + delta))
+            if proposed == current:
+                return None
+            return ParameterSuggestion(
+                parameter="max_open_trades",
+                proposed_value=proposed,
+                reason=f"Random exploration: max_open_trades {current} → {proposed}",
+                expected_effect="Exploring trade concurrency parameter space",
+            )
+
+        elif param in ("buy_params", "sell_params"):
+            group: dict = current_params.get(param, {})
+            if not group:
+                return None
+            numeric_keys = [k for k, v in group.items() if isinstance(v, (int, float)) and not isinstance(v, bool)]
+            if not numeric_keys:
+                return None
+            target_key = rng.choice(numeric_keys)
+            current_val = group[target_key]
+            scale = self._RANDOM_PARAM_SCALE
+            delta = current_val * rng.uniform(-scale, scale) if current_val != 0 else rng.uniform(-0.01, 0.01)
+            proposed_val = round(current_val + delta, 6) if isinstance(current_val, float) else int(round(current_val + delta))
+            if proposed_val == current_val:
+                return None
+            proposed_group = dict(group)
+            proposed_group[target_key] = proposed_val
+            return ParameterSuggestion(
+                parameter=param,
+                proposed_value=proposed_group,
+                reason=f"Random exploration: {param}.{target_key} {current_val} → {proposed_val}",
+                expected_effect=f"Exploring {param} parameter space",
+            )
+
+        return None
 
     def _suggestions_from_structural(
         self,
@@ -888,8 +1045,13 @@ class LoopService:
 
         self._current_iteration += 1
 
-        # Check targets
-        if self._config.stop_on_first_profitable and targets_met(latest_summary, self._config):
+        # Check targets — skip on iteration 1 since we're using a seed summary,
+        # not a real backtest result.
+        if (
+            self._current_iteration > 1
+            and self._config.stop_on_first_profitable
+            and targets_met(latest_summary, self._config)
+        ):
             from pathlib import Path
             iteration = LoopIteration(
                 iteration_number=self._current_iteration,

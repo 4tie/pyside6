@@ -1012,19 +1012,22 @@ class LoopPage(QWidget):
             self._finalize_loop()
             return
 
-        # For the first iteration, use a dummy summary to kick off diagnosis
+        # For the first iteration, use a neutral summary to kick off diagnosis.
+        # Using a catastrophic dummy (0 trades, 100% drawdown) causes the diagnosis
+        # engine to fire every possible issue at once, burning through the rotator's
+        # suggestion budget in the first iteration. A neutral baseline avoids this.
         if not self._loop_service._result.iterations:
             from app.core.backtests.results_models import BacktestSummary
             dummy = BacktestSummary(
                 strategy=config.strategy,
                 timeframe="5m",
-                total_trades=0,
-                wins=0, losses=0, draws=0,
-                win_rate=0.0, avg_profit=0.0,
+                total_trades=50,
+                wins=25, losses=20, draws=5,
+                win_rate=50.0, avg_profit=0.0,
                 total_profit=0.0, total_profit_abs=0.0,
-                sharpe_ratio=None, sortino_ratio=None, calmar_ratio=None,
-                max_drawdown=100.0, max_drawdown_abs=0.0,
-                trade_duration_avg=0,
+                sharpe_ratio=0.0, sortino_ratio=None, calmar_ratio=None,
+                max_drawdown=20.0, max_drawdown_abs=0.0,
+                trade_duration_avg=60,
             )
             result = self._loop_service.prepare_next_iteration(dummy)
         else:
