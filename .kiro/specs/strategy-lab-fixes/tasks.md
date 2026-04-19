@@ -1,0 +1,206 @@
+# Implementation Plan
+
+## Bug Condition Exploration Tests (BEFORE Fix)
+
+- [x] 1. Write bug condition exploration test
+  - **Property 1: Bug Condition** - Five Bugs Across Loop Workflow
+  - **CRITICAL**: This test MUST FAIL on unfixed code - failure confirms the bugs exist
+  - **DO NOT attempt to fix the test or the code when it fails**
+  - **NOTE**: This test encodes the expected behavior - it will validate the fix when it passes after implementation
+  - **GOAL**: Surface counterexamples that demonstrate all five bugs exist
+  - **Scoped PBT Approach**: Test concrete failing cases for each bug to ensure reproducibility
+  - Test Bug 1: First iteration uses fabricated seed instead of real baseline backtest
+  - Test Bug 2: All gate backtests use hardcoded "5m" timeframe regardless of strategy/config
+  - Test Bug 3: Filters 3, 6, 7 pass by default even when thresholds are exceeded
+  - Test Bug 4: Duplicate method definitions exist (earlier definitions are dead code)
+  - Test Bug 5: In-sample and OOS timeranges both include `oos_start` date (boundary overlap)
+  - Run test on UNFIXED code
+  - **EXPECTED OUTCOME**: Test FAILS (this is correct - it proves the bugs exist)
+  - Document counterexamples found to understand root causes
+  - Mark task complete when test is written, run, and failures are documented
+  - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7_
+
+## Preservation Property Tests (BEFORE Fix)
+
+- [x] 2. Write preservation property tests (BEFORE implementing fix)
+  - **Property 2: Preservation** - Non-Buggy Behavior Unchanged
+  - **IMPORTANT**: Follow observation-first methodology
+  - Observe behavior on UNFIXED code for non-buggy inputs
+  - Test Preservation 1: Subsequent iterations (after first) use cached diagnosis input
+  - Test Preservation 2: All gates within one iteration use same timeframe
+  - Test Preservation 3: Filters 1, 2, 4, 5 enforce thresholds exactly as implemented
+  - Test Preservation 4: Filters 8, 9 enforce thresholds after Gates 2 and 3
+  - Test Preservation 5: Quick validation mode skips walk-forward and stress gates
+  - Test Preservation 6: Walk-forward fold count matches `config.walk_forward_folds`
+  - Write property-based tests capturing observed behavior patterns from Preservation Requirements
+  - Property-based testing generates many test cases for stronger guarantees
+  - Run tests on UNFIXED code
+  - **EXPECTED OUTCOME**: Tests PASS (this confirms baseline behavior to preserve)
+  - Mark task complete when tests are written, run, and passing on unfixed code
+  - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7_
+
+## Implementation
+
+- [-] 3. Fix all five bugs following 7-phase implementation order
+
+  - [x] 3.1 Phase 1: Foundation - Add `timeframe` field to `LoopConfig`
+    - Open `app/core/models/loop_models.py`
+    - Locate the `LoopConfig` dataclass (around line 95)
+    - Add `timeframe: str = "5m"` field after the `strategy: str` field
+    - Default value "5m" preserves backward compatibility
+    - This field will be populated from strategy detection or UI selection
+    - _Bug_Condition: LoopConfig has no timeframe field, causing hardcoded "5m" in all gate launches_
+    - _Expected_Behavior: LoopConfig carries timeframe from strategy detection or user selection_
+    - _Preservation: Existing LoopConfig serialization continues to work with default value_
+    - _Requirements: 1.2, 2.2, 3.2_
+
+  - [x] 3.2 Phase 2: Timeframe Wiring - Populate and propagate timeframe in LoopPage
+    - Open `app/ui/pages/loop_page.py`
+    - Locate `_build_loop_config()` method (around line 800)
+    - Import `StrategyResolver` from `app.core.freqtrade.resolvers.strategy_resolver`
+    - Detect strategy timeframe using `StrategyResolver.detect_strategy_timeframe(strategy_py)`
+    - Add `timeframe=detected_timeframe` to `LoopConfig` constructor
+    - Fallback to "5m" if detection fails
+    - Replace all `timeframe="5m"` hardcoded values with `timeframe=config.timeframe`:
+      - Line 1028: dummy seed creation
+      - Line 1083: `build_backtest_command` call
+      - Line 1887: `_current_diagnosis_seed` method
+      - Line 1984: `_start_gate_backtest` method
+    - _Bug_Condition: Hardcoded "5m" passed to all gate backtests regardless of strategy timeframe_
+    - _Expected_Behavior: All gates use timeframe from LoopConfig.timeframe_
+    - _Preservation: Strategies with "5m" timeframe see no observable change_
+    - _Requirements: 1.2, 2.2, 3.2_
+
+  - [x] 3.3 Phase 3: Baseline Backtest - Add real baseline execution on first iteration
+    - Open `app/ui/pages/loop_page.py`
+    - Locate `_run_next_iteration()` method (around line 1009 or 2103)
+    - Replace fabricated dummy seed logic with real backtest execution
+    - Check if `self._loop_service._result.iterations` is empty (first iteration)
+    - If first iteration: call `_start_baseline_backtest()` instead of `prepare_next_iteration(dummy)`
+    - Add new method `_start_baseline_backtest()`:
+      - Compute in-sample timerange using `self._loop_service.compute_in_sample_timerange(config)`
+      - Launch backtest over in-sample timerange using `_start_gate_backtest("baseline", timerange, "Running baseline backtest...")`
+      - Set flag to indicate baseline backtest is running
+    - Add new callback `_on_baseline_backtest_finished()`:
+      - Parse backtest results using `_parse_current_gate_results()`
+      - Extract `BacktestSummary` from results
+      - Call `self._loop_service.prepare_next_iteration(real_summary, self._initial_params)`
+      - Continue with normal iteration flow
+    - Wire `_on_baseline_backtest_finished` to be called when baseline gate completes
+    - _Bug_Condition: First iteration uses fabricated BacktestSummary instead of real baseline_
+    - _Expected_Behavior: First iteration runs real baseline backtest and uses actual results as seed_
+    - _Preservation: Subsequent iterations continue to use cached diagnosis input_
+    - _Requirements: 1.1, 2.1, 3.1_
+
+  - [x] 3.4 Phase 4: Timerange Fix - Fix boundary overlap in LoopService
+    - Open `app/core/services/loop_service.py`
+    - Locate `compute_in_sample_timerange()` method (around line 1942)
+    - Import `timedelta` from `datetime` if not already imported
+    - Change return statement from:
+      - `f"{date_from.strftime('%Y%m%d')}-{oos_start.strftime('%Y%m%d')}"`
+    - To:
+      - `f"{date_from.strftime('%Y%m%d')}-{(oos_start - timedelta(days=1)).strftime('%Y%m%d')}"`
+    - This makes the in-sample upper bound exclusive (ends day before oos_start)
+    - Verify `compute_oos_timerange()` still returns `f"{oos_start.strftime('%Y%m%d')}-{date_to.strftime('%Y%m%d')}"` (unchanged)
+    - _Bug_Condition: In-sample and OOS ranges both include oos_start date_
+    - _Expected_Behavior: In-sample ends day before oos_start, OOS starts on oos_start (non-overlapping)_
+    - _Preservation: Walk-forward fold count and boundaries unchanged_
+    - _Requirements: 1.7, 2.7, 3.6_
+
+  - [x] 3.5 Phase 5: Filter Implementation - Implement filters 3/6/7 in HardFilterService
+    - Open `app/core/services/hard_filter_service.py`
+    - Locate `evaluate_post_gate1()` method signature (around line 28)
+    - Import `BacktestTrade` from `app.core.backtests.results_models`
+    - Add parameter `trades: Optional[List[BacktestTrade]] = None` after `config: LoopConfig`
+    - Implement Filter 3: profit_concentration (around line 85):
+      - Replace placeholder logic with real computation
+      - If `trades` is None or empty, skip filter (pass by default)
+      - Sort trades by `profit_abs` descending
+      - Sum top 3 trades' `profit_abs`, divide by total profit_abs across all trades
+      - Fail if ratio > `config.profit_concentration_threshold`
+      - Create `HardFilterFailure` with filter_name="profit_concentration", reason, evidence
+    - Implement Filter 6: pair_dominance (around line 100):
+      - Replace comment-only implementation with real computation
+      - If `trades` is None or empty, skip filter (pass by default)
+      - Group trades by `pair`, sum `profit_abs` per pair
+      - Find max pair profit share (max_pair_profit / total_profit)
+      - Fail if share > `config.pair_dominance_threshold`
+      - Create `HardFilterFailure` with filter_name="pair_dominance", reason, evidence
+    - Implement Filter 7: time_dominance (around line 110):
+      - Replace comment-only implementation with real computation
+      - If `trades` is None or empty, skip filter (pass by default)
+      - Parse `close_date` from trades, bucket by hour-of-day (0-23)
+      - Sum `profit_abs` per hour bucket
+      - Find max hour profit share (max_hour_profit / total_profit)
+      - Fail if share > `config.time_dominance_threshold`
+      - Create `HardFilterFailure` with filter_name="time_dominance", reason, evidence
+    - _Bug_Condition: Filters 3, 6, 7 pass by default without enforcing thresholds_
+    - _Expected_Behavior: Filters 3, 6, 7 compute actual metrics and fail when thresholds exceeded_
+    - _Preservation: Filters 1, 2, 4, 5, 8, 9 unchanged_
+    - _Requirements: 1.3, 1.4, 1.5, 2.3, 2.4, 2.5, 3.3, 3.4_
+
+  - [x] 3.6 Phase 6: Filter Data Flow - Wire trades into filter evaluation
+    - Open `app/ui/pages/loop_page.py`
+    - Search for call to `HardFilterService.evaluate_post_gate1()`
+    - Locate the call site (likely in gate result processing logic)
+    - Add `trades=self._iteration_in_sample_results.trades` parameter to the call
+    - Ensure `self._iteration_in_sample_results` is a `BacktestResults` object (not just `BacktestSummary`)
+    - Verify `BacktestResults` has a `trades` field of type `List[BacktestTrade]`
+    - _Bug_Condition: Filter evaluation receives no per-trade data_
+    - _Expected_Behavior: Filter evaluation receives trades list for computing actual metrics_
+    - _Preservation: Filter evaluation logic for filters 1, 2, 4, 5, 8, 9 unchanged_
+    - _Requirements: 2.3, 2.4, 2.5, 3.3, 3.4_
+
+  - [-] 3.7 Phase 7: Code Cleanup - Delete duplicate methods
+    - Open `app/ui/pages/loop_page.py`
+    - Search for duplicate method definitions:
+      - `_on_start` (lines 858, 2047) - DELETE line 858 version, KEEP line 2047 version
+      - `_on_stop` (lines 949, 2096) - DELETE line 949 version, KEEP line 2096 version
+      - `_run_next_iteration` (lines 1009, 2103) - DELETE line 1009 version, KEEP line 2103 version
+      - `_on_backtest_finished` (lines 1109, 2338) - DELETE line 1109 version, KEEP line 2338 version
+    - Verify no references to deleted methods exist
+    - Open `app/core/services/loop_service.py`
+    - Search for duplicate `_suggestions_from_structural` method:
+      - Lines 590, 961 - DELETE line 590 version, KEEP line 961 version (has full structural pattern mapping)
+    - Verify no references to deleted method exist
+    - Run linter to ensure no syntax errors
+    - _Bug_Condition: Duplicate method definitions create maintenance risk and dead code_
+    - _Expected_Behavior: Only one canonical implementation per method exists_
+    - _Preservation: All functionality unchanged, only dead code removed_
+    - _Requirements: 1.6, 2.6_
+
+  - [~] 3.8 Verify bug condition exploration test now passes
+    - **Property 1: Expected Behavior** - All Five Bugs Fixed
+    - **IMPORTANT**: Re-run the SAME test from task 1 - do NOT write a new test
+    - The test from task 1 encodes the expected behavior
+    - When this test passes, it confirms the expected behavior is satisfied
+    - Run bug condition exploration test from step 1
+    - **EXPECTED OUTCOME**: Test PASSES (confirms all bugs are fixed)
+    - Verify Bug 1 fix: First iteration runs real baseline backtest
+    - Verify Bug 2 fix: All gates use correct timeframe from LoopConfig
+    - Verify Bug 3 fix: Filters 3, 6, 7 enforce thresholds correctly
+    - Verify Bug 4 fix: Only one method definition exists per method
+    - Verify Bug 5 fix: In-sample and OOS timeranges do not overlap
+    - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7_
+
+  - [~] 3.9 Verify preservation tests still pass
+    - **Property 2: Preservation** - Non-Buggy Behavior Unchanged
+    - **IMPORTANT**: Re-run the SAME tests from task 2 - do NOT write new tests
+    - Run preservation property tests from step 2
+    - **EXPECTED OUTCOME**: Tests PASS (confirms no regressions)
+    - Confirm all preservation tests still pass after fix:
+      - Subsequent iterations use cached diagnosis input
+      - All gates use same timeframe consistently
+      - Filters 1, 2, 4, 5 enforce thresholds exactly as before
+      - Filters 8, 9 enforce thresholds after Gates 2 and 3
+      - Quick mode skips walk-forward and stress gates
+      - Walk-forward fold count matches config
+    - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7_
+
+- [~] 4. Checkpoint - Ensure all tests pass
+  - Run all bug condition exploration tests - verify they pass
+  - Run all preservation property tests - verify they pass
+  - Run any existing unit tests for affected modules
+  - Run integration tests if available
+  - Verify no regressions in loop execution workflow
+  - Ensure all tests pass, ask the user if questions arise

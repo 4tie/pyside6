@@ -23,6 +23,7 @@ from PySide6.QtWidgets import (
 
 from app.app_state.settings_state import SettingsState
 from app.core.backtests.results_models import BacktestResults, BacktestSummary
+from app.core.freqtrade.resolvers.strategy_resolver import detect_strategy_timeframe
 from app.core.models.loop_models import LoopConfig, LoopIteration, LoopResult
 from app.core.services.ai_advisor_service import AIAdvisorService
 from app.core.services.backtest_service import BacktestService
@@ -1025,7 +1026,7 @@ class LoopPage(QWidget):
             from app.core.backtests.results_models import BacktestSummary
             dummy = BacktestSummary(
                 strategy=config.strategy,
-                timeframe="5m",
+                timeframe=config.timeframe,
                 total_trades=50,
                 wins=25, losses=20, draws=5,
                 win_rate=50.0, avg_profit=0.0,
@@ -1080,7 +1081,7 @@ class LoopPage(QWidget):
             cmd = build_backtest_command(
                 settings=settings,
                 strategy_name=config.strategy,
-                timeframe="5m",
+                timeframe=config.timeframe,
                 timerange=timerange,
                 pairs=config.pairs if config.pairs else None,
                 extra_flags=extra_flags,
@@ -1788,8 +1789,16 @@ class LoopPage(QWidget):
 
     def _build_loop_config(self, strategy: str) -> LoopConfig:
         """Build a LoopConfig from the current UI state."""
+        # Detect strategy timeframe
+        settings = self._settings_state.settings_service.load_settings()
+        strategy_py = Path(settings.user_data_path) / "strategies" / f"{strategy}.py"
+        detected_timeframe = "5m"  # fallback default
+        if strategy_py.exists():
+            detected_timeframe = detect_strategy_timeframe(strategy_py)
+        
         return LoopConfig(
             strategy=strategy,
+            timeframe=detected_timeframe,
             max_iterations=self._max_iter_spin.value(),
             target_profit_pct=self._target_profit_spin.value(),
             target_win_rate=self._target_wr_spin.value(),
@@ -1884,7 +1893,7 @@ class LoopPage(QWidget):
 
         dummy = BacktestSummary(
             strategy=config.strategy,
-            timeframe="5m",
+            timeframe=config.timeframe,
             total_trades=50,
             wins=25,
             losses=20,
@@ -1981,7 +1990,7 @@ class LoopPage(QWidget):
         cmd = build_backtest_command(
             settings=settings,
             strategy_name=config.strategy,
-            timeframe="5m",
+            timeframe=config.timeframe,
             timerange=timerange,
             pairs=config.pairs if config.pairs else None,
             extra_flags=extra_flags,
@@ -2112,6 +2121,22 @@ class LoopPage(QWidget):
             self._finalize_loop()
             return
 
+        # Check if this is the first iteration (no previous iterations exist)
+        is_first_iteration = (
+            self._loop_service._result is not None
+            and len(self._loop_service._result.iterations) == 0
+        )
+
+        # If first iteration, run real baseline backtest instead of using dummy seed
+        if is_first_iteration:
+            try:
+                self._start_baseline_backtest()
+            except Exception as exc:
+                _log.error("Failed to start baseline backtest: %s", exc)
+                self._set_status(f"Baseline backtest failed: {exc}")
+                self._finalize_loop()
+            return
+
         latest_summary, diagnosis_input = self._current_diagnosis_seed(config)
         result = self._loop_service.prepare_next_iteration(
             latest_summary,
@@ -2152,6 +2177,119 @@ class LoopPage(QWidget):
             self._gate_indicator.set_failed("in_sample", str(exc))
             self._finish_iteration(iteration)
 
+    def _start_baseline_backtest(self) -> None:
+        """Launch a real baseline backtest for the first iteration seed."""
+        self._ensure_loop_runtime_state()
+        config = self._loop_service._config
+        if config is None:
+            raise RuntimeError("Cannot start baseline backtest without config")
+
+        settings = self._settings_state.settings_service.load_settings()
+
+        # Compute in-sample timerange for baseline
+        baseline_timerange = self._loop_service.compute_in_sample_timerange(config)
+        if not baseline_timerange:
+            raise ValueError("Strategy Lab requires a valid in-sample timerange for baseline")
+
+        # Create export directory for baseline results
+        self._current_gate_name = "baseline"
+        self._current_gate_timerange = baseline_timerange
+        self._current_gate_export_dir = self._build_gate_export_dir("baseline")
+
+        from app.core.freqtrade.runners.backtest_runner import build_backtest_command
+
+        # Build backtest command for baseline (no sandbox, use original strategy)
+        extra_flags = [
+            "--backtest-directory", str(self._current_gate_export_dir),
+        ]
+
+        cmd = build_backtest_command(
+            settings=settings,
+            strategy_name=config.strategy,
+            timeframe=config.timeframe,
+            timerange=baseline_timerange,
+            pairs=config.pairs if config.pairs else None,
+            extra_flags=extra_flags,
+        )
+
+        self._gate_indicator.set_running("in_sample")
+        self._set_status("Running baseline backtest...")
+        self._gate_run_started_at = time.time()
+        self._process_service.execute_command(
+            cmd.as_list(),
+            on_output=self._terminal.append_output,
+            on_error=self._terminal.append_error,
+            on_finished=self._on_baseline_backtest_finished,
+            working_directory=cmd.cwd,
+        )
+
+    def _on_baseline_backtest_finished(self, exit_code: int) -> None:
+        """Handle completion of the baseline backtest subprocess."""
+        self._ensure_loop_runtime_state()
+        config = self._loop_service._config
+
+        if config is None:
+            self._finalize_loop()
+            return
+
+        if exit_code != 0:
+            message = f"Baseline backtest exited with code {exit_code}"
+            _log.error(message)
+            self._gate_indicator.set_failed("in_sample", message)
+            self._set_status(message)
+            self._finalize_loop()
+            return
+
+        try:
+            results = self._parse_current_gate_results()
+            baseline_summary = results.summary
+        except Exception as exc:
+            message = f"Baseline parse error: {exc}"
+            _log.error(message)
+            self._gate_indicator.set_failed("in_sample", message)
+            self._set_status(message)
+            self._finalize_loop()
+            return
+
+        # Now prepare the first iteration using the real baseline summary
+        result = self._loop_service.prepare_next_iteration(
+            baseline_summary,
+            diagnosis_input=None,
+        )
+        if result is None:
+            self._finalize_loop()
+            return
+
+        iteration, suggestions = result
+        self._current_iteration = iteration
+        self._gate_indicator.reset()
+        self._reset_iteration_runtime()
+
+        try:
+            self._sandbox_dir = self._improve_service.prepare_sandbox(
+                config.strategy,
+                iteration.params_after,
+            )
+            iteration.sandbox_path = self._sandbox_dir
+
+            gate1_timerange = self._loop_service.compute_in_sample_timerange(config)
+            if not gate1_timerange:
+                raise ValueError("Strategy Lab requires a valid in-sample timerange")
+
+            n = iteration.iteration_number
+            m = max(config.max_iterations, 1)
+            self._progress_bar.setValue(int(max(0, (n - 1) / m * 100)))
+            self._start_gate_backtest(
+                "in_sample",
+                gate1_timerange,
+                f"Gate 1/5 In-Sample - iteration {n}/{m}",
+            )
+        except Exception as exc:
+            _log.error("Failed to start iteration after baseline: %s", exc)
+            self._loop_service.record_iteration_error(iteration, str(exc))
+            self._gate_indicator.set_failed("in_sample", str(exc))
+            self._finish_iteration(iteration)
+
     def _on_gate_backtest_finished(self, exit_code: int) -> None:
         """Handle completion of the currently running gate subprocess."""
         self._ensure_loop_runtime_state()
@@ -2187,7 +2325,9 @@ class LoopPage(QWidget):
             self._gate_indicator.set_passed("in_sample")
             self._refresh_latest_diagnosis_input()
 
-            failures = self._loop_service.evaluate_gate1_hard_filters(gate1, config)
+            failures = self._loop_service.evaluate_gate1_hard_filters(
+                gate1, config, self._iteration_in_sample_results.trades
+            )
             if failures:
                 reason = ", ".join(f.failure_reason if hasattr(f, "failure_reason") else f.reason for f in failures)
                 self._gate_indicator.set_failed("in_sample", reason)

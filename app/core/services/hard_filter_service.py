@@ -9,8 +9,10 @@ Evaluates nine hard filters at three interleaved points in the validation ladder
 from __future__ import annotations
 
 import statistics
-from typing import List
+from datetime import datetime
+from typing import Dict, List, Optional
 
+from app.core.backtests.results_models import BacktestTrade
 from app.core.models.loop_models import GateResult, HardFilterFailure, LoopConfig
 from app.core.utils.app_logger import get_logger
 
@@ -27,6 +29,7 @@ class HardFilterService:
     def evaluate_post_gate1(
         gate1_result: GateResult,
         config: LoopConfig,
+        trades: Optional[List[BacktestTrade]] = None,
     ) -> List[HardFilterFailure]:
         """Evaluate hard filters 1–7 using the Gate 1 (in-sample) BacktestSummary.
 
@@ -82,26 +85,27 @@ class HardFilterService:
             ))
 
         # Filter 3: profit_concentration (top 3 trades)
-        # We approximate using total_profit and trade count — if we had per-trade
-        # data we would compute it exactly. Here we use a conservative heuristic:
-        # if total_trades >= 3, we cannot determine concentration without per-trade
-        # data, so we skip this filter (pass by default). The filter is only
-        # meaningful when per-trade data is available via pair_profit_distribution.
-        # NOTE: Full implementation requires per-trade profit data which is not
-        # currently stored in BacktestSummary. This filter is a placeholder that
-        # passes unless the summary has very few trades (≤ 3) with high profit.
-        if metrics.total_trades > 0 and metrics.total_trades <= 3:
-            # With 3 or fewer trades, top-3 IS all trades — concentration = 1.0
-            if 1.0 > config.profit_concentration_threshold:
-                failures.append(HardFilterFailure(
-                    filter_name="profit_concentration",
-                    reason=(
-                        f"Only {metrics.total_trades} trade(s) — top-3 concentration "
-                        f"is 100%, exceeds threshold "
-                        f"{config.profit_concentration_threshold * 100:.0f}%"
-                    ),
-                    evidence=f"{metrics.total_trades} trades",
-                ))
+        # Compute actual top-3 trade profit share using per-trade data
+        if trades and len(trades) > 0:
+            total_profit_abs = sum(abs(t.profit_abs) for t in trades)
+            
+            if total_profit_abs > 0:
+                # Sort trades by absolute profit descending
+                sorted_trades = sorted(trades, key=lambda t: abs(t.profit_abs), reverse=True)
+                
+                # Sum top 3 trades' absolute profit
+                top_3_profit = sum(abs(t.profit_abs) for t in sorted_trades[:3])
+                concentration_ratio = top_3_profit / total_profit_abs
+                
+                if concentration_ratio > config.profit_concentration_threshold:
+                    failures.append(HardFilterFailure(
+                        filter_name="profit_concentration",
+                        reason=(
+                            f"Top-3 profit share {concentration_ratio * 100:.1f}% exceeds "
+                            f"threshold {config.profit_concentration_threshold * 100:.0f}%"
+                        ),
+                        evidence=f"{concentration_ratio:.4f}",
+                    ))
 
         # Filter 4: profit_factor_floor
         if metrics.profit_factor < config.profit_factor_floor:
@@ -126,14 +130,71 @@ class HardFilterService:
             ))
 
         # Filter 6: pair_dominance
-        # Without per-pair profit data in BacktestSummary, we cannot compute this
-        # directly. This filter passes by default unless pair_profit_distribution
-        # is available (it is not in BacktestSummary). Placeholder implementation.
-        # In a full implementation, pair_profit_distribution would be passed in.
+        # Compute single-pair profit share using per-pair profit data
+        if trades and len(trades) > 0:
+            total_profit_abs = sum(abs(t.profit_abs) for t in trades)
+            
+            if total_profit_abs > 0:
+                # Group trades by pair and sum profit_abs per pair
+                pair_profits: Dict[str, float] = {}
+                for t in trades:
+                    pair_profits[t.pair] = pair_profits.get(t.pair, 0.0) + abs(t.profit_abs)
+                
+                # Find max pair profit share
+                max_pair_profit = max(pair_profits.values())
+                max_pair_share = max_pair_profit / total_profit_abs
+                
+                if max_pair_share > config.pair_dominance_threshold:
+                    # Find which pair(s) have the max profit
+                    dominant_pairs = [p for p, profit in pair_profits.items() if profit == max_pair_profit]
+                    failures.append(HardFilterFailure(
+                        filter_name="pair_dominance",
+                        reason=(
+                            f"Single-pair profit share {max_pair_share * 100:.1f}% "
+                            f"(pair: {dominant_pairs[0]}) exceeds threshold "
+                            f"{config.pair_dominance_threshold * 100:.0f}%"
+                        ),
+                        evidence=f"{max_pair_share:.4f}",
+                    ))
 
         # Filter 7: time_dominance
-        # Similarly, without per-period profit data, this filter passes by default.
-        # Placeholder implementation.
+        # Compute single-period profit share using per-period profit data
+        if trades and len(trades) > 0:
+            total_profit_abs = sum(abs(t.profit_abs) for t in trades)
+            
+            if total_profit_abs > 0:
+                # Parse close_date from trades and bucket by hour-of-day (0-23)
+                hour_profits: Dict[int, float] = {}
+                for t in trades:
+                    if t.close_date:
+                        try:
+                            # Parse close_date - try common formats
+                            # Freqtrade typically uses ISO format: "2024-01-15 14:30:00"
+                            close_dt = datetime.fromisoformat(t.close_date.replace('Z', '+00:00'))
+                            hour = close_dt.hour
+                            hour_profits[hour] = hour_profits.get(hour, 0.0) + abs(t.profit_abs)
+                        except (ValueError, AttributeError):
+                            # Skip trades with unparseable dates
+                            _log.warning("Could not parse close_date: %s", t.close_date)
+                            continue
+                
+                if hour_profits:
+                    # Find max hour profit share
+                    max_hour_profit = max(hour_profits.values())
+                    max_hour_share = max_hour_profit / total_profit_abs
+                    
+                    if max_hour_share > config.time_dominance_threshold:
+                        # Find which hour(s) have the max profit
+                        dominant_hours = [h for h, profit in hour_profits.items() if profit == max_hour_profit]
+                        failures.append(HardFilterFailure(
+                            filter_name="time_dominance",
+                            reason=(
+                                f"Single-hour profit share {max_hour_share * 100:.1f}% "
+                                f"(hour: {dominant_hours[0]:02d}:00) exceeds threshold "
+                                f"{config.time_dominance_threshold * 100:.0f}%"
+                            ),
+                            evidence=f"{max_hour_share:.4f}",
+                        ))
 
         if failures:
             _log.info(

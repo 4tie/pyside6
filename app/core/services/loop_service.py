@@ -12,7 +12,7 @@ import math
 import statistics
 from typing import Callable, Dict, List, Optional, Tuple
 
-from app.core.backtests.results_models import BacktestResults, BacktestSummary
+from app.core.backtests.results_models import BacktestResults, BacktestSummary, BacktestTrade
 from app.core.models.diagnosis_models import DiagnosisInput
 from app.core.models.improve_models import DiagnosedIssue, ParameterSuggestion
 from app.core.models.loop_models import (
@@ -1956,7 +1956,7 @@ class LoopService:
         if oos_days >= total_days:
             oos_days = total_days - 1
         oos_start = date_to - timedelta(days=oos_days)
-        return f"{date_from.strftime('%Y%m%d')}-{oos_start.strftime('%Y%m%d')}"
+        return f"{date_from.strftime('%Y%m%d')}-{(oos_start - timedelta(days=1)).strftime('%Y%m%d')}"
 
     def compute_oos_timerange(self, config: LoopConfig) -> str:
         """Return the held-out out-of-sample timerange."""
@@ -2127,9 +2127,10 @@ class LoopService:
         self,
         gate1_result: GateResult,
         config: LoopConfig,
+        trades: Optional[List[BacktestTrade]] = None,
     ) -> List[HardFilterFailure]:
         """Evaluate post-Gate1 hard filters."""
-        return HardFilterService.evaluate_post_gate1(gate1_result, config)
+        return HardFilterService.evaluate_post_gate1(gate1_result, config, trades)
 
     def evaluate_post_gate_hard_filters(
         self,

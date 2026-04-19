@@ -106,6 +106,7 @@ class LoopConfig:
 
     Attributes:
         strategy: Strategy class name to optimize.
+        timeframe: Timeframe for backtests (e.g. "5m", "1h").
         max_iterations: Maximum number of backtest iterations to run.
         target_profit_pct: Stop when total profit exceeds this value (%).
         target_win_rate: Stop when win rate exceeds this value (%).
@@ -131,6 +132,7 @@ class LoopConfig:
     """
 
     strategy: str
+    timeframe: str = "5m"
     max_iterations: int = 10
     target_profit_pct: float = 5.0
     target_win_rate: float = 55.0

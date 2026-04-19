@@ -12866,3 +12866,6 @@
 2026-04-19 18:49:43.808 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
 2026-04-19 18:49:43.809 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
 2026-04-19 18:49:44.765 | INFO     | freqtrade_gui.startup          | Application exiting — code=0
+2026-04-19 22:43:00.196 | DEBUG    | freqtrade_gui.resolvers.strategy | Detected timeframe '1h' from tmpmi4ym712.py
+2026-04-19 22:43:00.201 | DEBUG    | freqtrade_gui.resolvers.strategy | Detected timeframe '15m' from tmpl9e9jelp.py
+2026-04-19 22:43:00.207 | DEBUG    | freqtrade_gui.resolvers.strategy | No timeframe found in tmpknz70s0d.py, defaulting to '5m'

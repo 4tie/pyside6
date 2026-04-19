@@ -12,7 +12,7 @@
     },
     "filesystem": {
       "command": "npx",
-      "disabled": true,
+      "disabled": false,
       "timeout": 60000,
       "args": [
         "-y",
@@ -22,7 +22,7 @@
     },
     "git": {
       "command": "uvx",
-      "disabled": false,
+      "disabled": true,
       "timeout": 60000,
       "args": [
         "mcp-server-git"
@@ -40,7 +40,7 @@
     },
     "taskflow": {
       "command": "npx",
-      "disabled": true,
+      "disabled": false,
       "timeout": 60000,
       "args": [
         "-y",

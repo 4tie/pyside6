@@ -86,6 +86,16 @@ class TestStrategyLabPreferences:
 class TestLoopConfigExtendedFields:
     """Tests for new LoopConfig fields."""
 
+    def test_default_timeframe(self):
+        """LoopConfig must default timeframe to '5m' for backward compatibility."""
+        config = LoopConfig(strategy="MyStrategy")
+        assert config.timeframe == "5m"
+
+    def test_custom_timeframe(self):
+        """LoopConfig must accept custom timeframe values."""
+        config = LoopConfig(strategy="MyStrategy", timeframe="1h")
+        assert config.timeframe == "1h"
+
     def test_default_extended_fields(self):
         config = LoopConfig(strategy="MyStrategy")
         assert config.iteration_mode == "rule_based"

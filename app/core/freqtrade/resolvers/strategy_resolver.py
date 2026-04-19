@@ -1,9 +1,43 @@
 from pathlib import Path
-from typing import List
+from typing import List, Optional
+import re
 
 from app.core.utils.app_logger import get_logger
 
 _log = get_logger("resolvers.strategy")
+
+
+def detect_strategy_timeframe(strategy_path: Path) -> str:
+    """Detect the timeframe from a strategy file.
+
+    Args:
+        strategy_path: Path to the strategy .py file.
+
+    Returns:
+        Detected timeframe string (e.g. "5m", "1h"), defaults to "5m" if not found.
+    """
+    try:
+        content = strategy_path.read_text(encoding="utf-8")
+        
+        # Look for timeframe = "..." or timeframe: str = "..."
+        # Common patterns in freqtrade strategies
+        patterns = [
+            r'timeframe\s*=\s*["\'](\w+)["\']',  # timeframe = "5m"
+            r'timeframe\s*:\s*str\s*=\s*["\'](\w+)["\']',  # timeframe: str = "5m"
+        ]
+        
+        for pattern in patterns:
+            match = re.search(pattern, content)
+            if match:
+                timeframe = match.group(1)
+                _log.debug("Detected timeframe '%s' from %s", timeframe, strategy_path.name)
+                return timeframe
+        
+        _log.debug("No timeframe found in %s, defaulting to '5m'", strategy_path.name)
+        return "5m"
+    except Exception as exc:
+        _log.warning("Failed to detect timeframe from %s: %s", strategy_path, exc)
+        return "5m"
 
 
 def resolve_strategy_file(user_data: Path, strategy_name: str) -> Path:
