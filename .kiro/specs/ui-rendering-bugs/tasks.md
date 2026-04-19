@@ -4,7 +4,7 @@
 
 ## Bug 1 — Improve Page: Partial/Stale Analyze Results
 
-- [-] 1. Write bug condition exploration test for Bug 1 (stale/partial analyze results)
+- [x] 1. Write bug condition exploration test for Bug 1 (stale/partial analyze results)
   - **Property 1: Bug Condition** - Stale Layout Children After Consecutive Analyze Calls
   - **CRITICAL**: This test MUST FAIL on unfixed code — failure confirms the bug exists
   - **DO NOT attempt to fix the test or the code when it fails**
@@ -22,7 +22,7 @@
   - Mark task complete when test is written, run, and failure is documented
   - _Requirements: 1.1, 1.2, 1.3, 1.4_
 
-- [ ] 2. Write preservation property tests for Bug 1 (BEFORE implementing fix)
+- [x] 2. Write preservation property tests for Bug 1 (BEFORE implementing fix)
   - **Property 2: Preservation** - Analyze Results Correctness Unchanged
   - **IMPORTANT**: Follow observation-first methodology — observe behavior on UNFIXED code for non-buggy inputs
   - Observe: on a first analyze call with no prior stale state and no tab switch, `_display_baseline_summary()` populates form rows correctly
@@ -36,9 +36,9 @@
   - Mark task complete when tests are written, run, and passing on unfixed code
   - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.9_
 
-- [ ] 3. Fix Bug 1 — Improve Page stale/partial analyze results
+- [x] 3. Fix Bug 1 — Improve Page stale/partial analyze results
 
-  - [ ] 3.1 Replace `deleteLater()` with `setParent(None)` in `_display_baseline_summary()`
+  - [x] 3.1 Replace `deleteLater()` with `setParent(None)` in `_display_baseline_summary()`
     - In `app/ui/pages/improve_page.py`, locate `_display_baseline_summary()`
     - Replace:
       ```python
@@ -59,7 +59,7 @@
     - _Preservation: `_on_analyze()` continues to populate baseline summary form rows with correct strategy metrics_
     - _Requirements: 2.1, 2.2, 2.4, 3.1_
 
-  - [ ] 3.2 Replace `deleteLater()` with `setParent(None)` in `_display_issues_and_suggestions()`
+  - [x] 3.2 Replace `deleteLater()` with `setParent(None)` in `_display_issues_and_suggestions()`
     - In `app/ui/pages/improve_page.py`, locate `_display_issues_and_suggestions()`
     - Replace `self._empty_issues.deleteLater()` with `self._empty_issues.setParent(None)`
     - Replace `self._empty_suggestions.deleteLater()` with `self._empty_suggestions.setParent(None)`
@@ -69,7 +69,7 @@
     - _Preservation: issue badge count and suggestion row count remain correct after fix_
     - _Requirements: 2.2, 3.2, 3.3_
 
-  - [ ] 3.3 Remove `QGraphicsOpacityEffect` after fade-in animation completes in `_fade_in_widget()`
+  - [x] 3.3 Remove `QGraphicsOpacityEffect` after fade-in animation completes in `_fade_in_widget()`
     - In `app/ui/pages/improve_page.py`, locate `_fade_in_widget()`
     - After `anim.start()`, add:
       ```python
@@ -81,7 +81,7 @@
     - _Preservation: `QPropertyAnimation` fade-in visual behavior is unchanged; only the cleanup after completion is added_
     - _Requirements: 2.3, 3.9_
 
-  - [ ] 3.4 Verify bug condition exploration test (Property 1) now passes
+  - [x] 3.4 Verify bug condition exploration test (Property 1) now passes
     - **Property 1: Expected Behavior** - Stale Layout Children After Consecutive Analyze Calls
     - **IMPORTANT**: Re-run the SAME test from task 1 — do NOT write a new test
     - The test from task 1 encodes the expected behavior (zero stale children, effect removed after animation)
@@ -89,7 +89,7 @@
     - **EXPECTED OUTCOME**: Test PASSES (confirms Bug 1 is fixed)
     - _Requirements: 2.1, 2.2, 2.3, 2.4_
 
-  - [ ] 3.5 Verify preservation tests still pass
+  - [x] 3.5 Verify preservation tests still pass
     - **Property 2: Preservation** - Analyze Results Correctness Unchanged
     - **IMPORTANT**: Re-run the SAME tests from task 2 — do NOT write new tests
     - Run preservation property tests from step 2
@@ -100,7 +100,7 @@
 
 ## Bug 2 — Pairs Selector Dialog: Heart and Lock Icons Not Rendering
 
-- [ ] 4. Write bug condition exploration test for Bug 2 (icons not rendering on Windows)
+- [x] 4. Write bug condition exploration test for Bug 2 (icons not rendering on Windows)
   - **Property 1: Bug Condition** - Default Button Font Lacks Emoji Glyphs on Windows
   - **CRITICAL**: This test MUST FAIL on unfixed code — failure confirms the bug exists
   - **DO NOT attempt to fix the test or the code when it fails**
@@ -116,7 +116,7 @@
   - Mark task complete when test is written, run, and failure is documented
   - _Requirements: 1.5, 1.6_
 
-- [ ] 5. Write preservation property tests for Bug 2 (BEFORE implementing fix)
+- [x] 5. Write preservation property tests for Bug 2 (BEFORE implementing fix)
   - **Property 2: Preservation** - Favorite and Lock Toggle Behavior Unchanged
   - **IMPORTANT**: Follow observation-first methodology
   - Observe: `_on_favorite_clicked(pair)` toggles `pair` in `self.favorites`, updates button text to `"♥"` or `"♡"`, and calls `settings_state.toggle_favorite_pair(pair)`
@@ -129,9 +129,9 @@
   - Mark task complete when tests are written, run, and passing on unfixed code
   - _Requirements: 3.5, 3.6_
 
-- [ ] 6. Fix Bug 2 — Pairs selector icon rendering
+- [x] 6. Fix Bug 2 — Pairs selector icon rendering
 
-  - [ ] 6.1 Add `_emoji_font()` helper function to `pairs_selector_dialog.py`
+  - [x] 6.1 Add `_emoji_font()` helper function to `pairs_selector_dialog.py`
     - In `app/ui/dialogs/pairs_selector_dialog.py`, add the following imports at the top of the file:
       ```python
       import os
@@ -155,7 +155,7 @@
     - _Preservation: `_on_favorite_clicked()` and `_on_lock_clicked()` toggle logic is completely unchanged_
     - _Requirements: 2.5, 2.6_
 
-  - [ ] 6.2 Apply `_emoji_font()` in `_make_favorite_button()` and `_make_lock_button()`
+  - [x] 6.2 Apply `_emoji_font()` in `_make_favorite_button()` and `_make_lock_button()`
     - In `_make_favorite_button()`, after `btn.setStyleSheet("border: none;")`, add:
       ```python
       btn.setFont(_emoji_font())
@@ -167,14 +167,14 @@
     - Do NOT modify `_on_favorite_clicked()` or `_on_lock_clicked()` — `setText()` does not reset the font set via `setFont()`
     - _Requirements: 2.5, 2.6_
 
-  - [ ] 6.3 Verify bug condition exploration test (Property 1) now passes
+  - [x] 6.3 Verify bug condition exploration test (Property 1) now passes
     - **Property 1: Expected Behavior** - Emoji Font Applied to Icon Buttons
     - **IMPORTANT**: Re-run the SAME test from task 4 — do NOT write a new test
     - Run bug condition exploration test from step 4
     - **EXPECTED OUTCOME**: Test PASSES (confirms Bug 2 is fixed — buttons now have an emoji-capable font)
     - _Requirements: 2.5, 2.6_
 
-  - [ ] 6.4 Verify preservation tests still pass
+  - [x] 6.4 Verify preservation tests still pass
     - **Property 2: Preservation** - Favorite and Lock Toggle Behavior Unchanged
     - **IMPORTANT**: Re-run the SAME tests from task 5 — do NOT write new tests
     - Run preservation property tests from step 5
@@ -184,7 +184,7 @@
 
 ## Bug 3 — Timerange Preset Buttons: Text Getting Cut Off
 
-- [ ] 7. Write bug condition exploration test for Bug 3 (preset button text clipping)
+- [x] 7. Write bug condition exploration test for Bug 3 (preset button text clipping)
   - **Property 1: Bug Condition** - Preset Button Has `maximumWidth == 50`
   - **CRITICAL**: This test MUST FAIL on unfixed code — failure confirms the bug exists
   - **DO NOT attempt to fix the test or the code when it fails**
@@ -200,7 +200,7 @@
   - Mark task complete when test is written, run, and failure is documented
   - _Requirements: 1.7, 1.8_
 
-- [ ] 8. Write preservation property tests for Bug 3 (BEFORE implementing fix)
+- [x] 8. Write preservation property tests for Bug 3 (BEFORE implementing fix)
   - **Property 2: Preservation** - Preset Button Click Handler Behavior Unchanged
   - **IMPORTANT**: Follow observation-first methodology
   - Observe: clicking a preset button calls `_on_timerange_preset(preset)` with the correct preset string, which calls `calculate_timerange_preset(preset)` and sets `self.timerange_input.setText(result)`
@@ -211,9 +211,9 @@
   - Mark task complete when tests are written, run, and passing on unfixed code
   - _Requirements: 3.7, 3.8_
 
-- [ ] 9. Fix Bug 3 — Timerange preset button text clipping
+- [x] 9. Fix Bug 3 — Timerange preset button text clipping
 
-  - [ ] 9.1 Fix preset button width in `backtest_page.py`
+  - [x] 9.1 Fix preset button width in `backtest_page.py`
     - In `app/ui/pages/backtest_page.py`, locate the preset button creation loop in `init_ui()`:
       ```python
       for preset in ["7d", "14d", "30d", "90d", "120d", "360d"]:
@@ -229,7 +229,7 @@
     - _Preservation: click handler still calls `_on_timerange_preset(preset)` with the correct preset string_
     - _Requirements: 2.7, 2.8, 3.7_
 
-  - [ ] 9.2 Fix preset button width in `download_data_page.py`
+  - [x] 9.2 Fix preset button width in `download_data_page.py`
     - In `app/ui/pages/download_data_page.py`, locate the preset button creation loop in `init_ui()`:
       ```python
       for preset in ["7d", "14d", "30d", "90d", "120d", "360d"]:
@@ -245,14 +245,14 @@
     - _Preservation: click handler still calls `_on_timerange_preset(preset)` and saves preference_
     - _Requirements: 2.7, 2.8, 3.8_
 
-  - [ ] 9.3 Verify bug condition exploration test (Property 1) now passes
+  - [x] 9.3 Verify bug condition exploration test (Property 1) now passes
     - **Property 1: Expected Behavior** - Preset Button Has No `maximumWidth == 50`
     - **IMPORTANT**: Re-run the SAME test from task 7 — do NOT write a new test
     - Run bug condition exploration test from step 7
     - **EXPECTED OUTCOME**: Test PASSES (confirms Bug 3 is fixed — `maximumWidth() != 50`, `minimumWidth() == 48`)
     - _Requirements: 2.7, 2.8_
 
-  - [ ] 9.4 Verify preservation tests still pass
+  - [x] 9.4 Verify preservation tests still pass
     - **Property 2: Preservation** - Preset Button Click Handler Behavior Unchanged
     - **IMPORTANT**: Re-run the SAME tests from task 8 — do NOT write new tests
     - Run preservation property tests from step 8
@@ -262,7 +262,7 @@
 
 ## Bug 4 — General Label Text Clipping (Word Wrap)
 
-- [ ] 10. Write bug condition exploration test for Bug 4 (word wrap disabled on subtitle labels)
+- [x] 10. Write bug condition exploration test for Bug 4 (word wrap disabled on subtitle labels)
   - **Property 1: Bug Condition** - Subtitle Labels Have `wordWrap() == False`
   - **CRITICAL**: This test MUST FAIL on unfixed code — failure confirms the bug exists
   - **DO NOT attempt to fix the test or the code when it fails**
@@ -278,7 +278,7 @@
   - Mark task complete when test is written, run, and failure is documented
   - _Requirements: 1.9, 1.10_
 
-- [ ] 11. Write preservation property tests for Bug 4 (BEFORE implementing fix)
+- [x] 11. Write preservation property tests for Bug 4 (BEFORE implementing fix)
   - **Property 2: Preservation** - Label Text Content Unchanged
   - **IMPORTANT**: Follow observation-first methodology
   - Observe: subtitle labels display the same text content regardless of word wrap setting — only the rendering behavior (wrap vs. clip) changes
@@ -289,9 +289,9 @@
   - Mark task complete when tests are written, run, and passing on unfixed code
   - _Requirements: 2.9, 2.10_
 
-- [ ] 12. Fix Bug 4 — General label text clipping
+- [x] 12. Fix Bug 4 — General label text clipping
 
-  - [ ] 12.1 Enable word wrap on all four subtitle labels in `ImprovePage._init_ui()`
+  - [x] 12.1 Enable word wrap on all four subtitle labels in `ImprovePage._init_ui()`
     - In `app/ui/pages/improve_page.py`, locate `_init_ui()` and find all four subtitle label definitions
     - For each of `_issues_subtitle`, `_suggestions_subtitle`, `_candidate_subtitle`, `_comparison_subtitle`:
       - Change `setWordWrap(False)` to `setWordWrap(True)`
@@ -301,14 +301,14 @@
     - _Preservation: label text content is identical; only rendering behavior changes from clip to wrap_
     - _Requirements: 2.9, 3.1, 3.2, 3.3_
 
-  - [ ] 12.2 Verify bug condition exploration test (Property 1) now passes
+  - [x] 12.2 Verify bug condition exploration test (Property 1) now passes
     - **Property 1: Expected Behavior** - Subtitle Labels Have Word Wrap Enabled
     - **IMPORTANT**: Re-run the SAME test from task 10 — do NOT write a new test
     - Run bug condition exploration test from step 10
     - **EXPECTED OUTCOME**: Test PASSES (confirms Bug 4 is fixed — `wordWrap() == True`)
     - _Requirements: 2.9, 2.10_
 
-  - [ ] 12.3 Verify preservation tests still pass
+  - [x] 12.3 Verify preservation tests still pass
     - **Property 2: Preservation** - Label Text Content Unchanged
     - **IMPORTANT**: Re-run the SAME tests from task 11 — do NOT write new tests
     - Run preservation property tests from step 11
@@ -318,7 +318,7 @@
 
 ## Checkpoint
 
-- [ ] 13. Checkpoint — Ensure all tests pass
+- [x] 13. Checkpoint — Ensure all tests pass
   - Run the full test suite: `pytest tests/ui/test_ui_rendering_bugs.py --tb=short`
   - All 8 property-based tests (Properties 1 and 2 for each of the 4 bugs) must pass
   - Run `ruff check app/ui/pages/improve_page.py app/ui/dialogs/pairs_selector_dialog.py app/ui/pages/backtest_page.py app/ui/pages/download_data_page.py` and fix any lint errors

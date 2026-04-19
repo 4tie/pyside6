@@ -64,7 +64,7 @@ class DownloadDataPage(QWidget):
         presets_layout.addWidget(QLabel("Timerange Presets:"))
         for preset in ["7d", "14d", "30d", "90d", "120d", "360d"]:
             btn = QPushButton(preset)
-            btn.setMaximumWidth(50)
+            btn.setMinimumWidth(48)
             btn.clicked.connect(lambda checked, p=preset: self._on_timerange_preset(p))
             presets_layout.addWidget(btn)
         presets_layout.addStretch()

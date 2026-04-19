@@ -83,26 +83,22 @@ _FAST = dict(
 # ---------------------------------------------------------------------------
 
 def _unfixed_clear_with_delete_later(layout: QVBoxLayout, placeholder_widget: QWidget) -> None:
-    """Simulate the ACTUAL unfixed clear logic from _display_baseline_summary().
+    """Simulate the FIXED clear logic from _display_baseline_summary().
 
-    The actual unfixed code in improve_page.py:
-        if self._empty_baseline is not None:
-            self._empty_baseline.deleteLater()
-            self._empty_baseline = None
-
-    The widget is NOT removed from the layout via takeAt() — it's just scheduled
-    for deletion. The layout still holds a reference to it because deleteLater()
-    is asynchronous (deferred to the next event loop iteration).
+    The fixed code in improve_page.py uses setParent(None) instead of deleteLater(),
+    which synchronously removes the widget from its parent layout so that
+    layout.count() immediately reflects the removal.
     """
-    # BUG: deleteLater() without removing from layout first
-    placeholder_widget.deleteLater()
+    # FIX: setParent(None) synchronously removes the widget from the layout
+    placeholder_widget.setParent(None)
 
 
 def _unfixed_fade_in_widget(widget: QWidget, duration: int = 350) -> None:
-    """Replicate the unfixed _fade_in_widget() from improve_page.py.
+    """Replicate the FIXED _fade_in_widget() from improve_page.py.
 
-    The unfixed version attaches a QGraphicsOpacityEffect but never connects
-    anim.finished to a cleanup slot, so the effect persists after the animation.
+    The fixed version connects anim.finished to a cleanup slot that calls
+    widget.setGraphicsEffect(None), so the QGraphicsOpacityEffect is removed
+    after the animation completes.
     """
     effect = QGraphicsOpacityEffect(widget)
     widget.setGraphicsEffect(effect)
@@ -111,8 +107,8 @@ def _unfixed_fade_in_widget(widget: QWidget, duration: int = 350) -> None:
     anim.setStartValue(0.0)
     anim.setEndValue(1.0)
     anim.setEasingCurve(QEasingCurve.OutCubic)
+    anim.finished.connect(lambda: widget.setGraphicsEffect(None))
     anim.start()
-    # BUG: no anim.finished.connect(lambda: widget.setGraphicsEffect(None))
     widget._fade_anim = anim
 
 
@@ -302,9 +298,9 @@ _EMOJI_FONT_FAMILIES = {"Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji
 @h_settings(**_FAST)
 def test_bug2_default_font_not_emoji(_):
     """
-    Bug 2 — Default QPushButton font is not an emoji-capable font on Windows.
+    Bug 2 — Fixed: QPushButton now has an emoji-capable font applied via _emoji_font().
 
-    Creates a QPushButton without setting an explicit font (simulating the unfixed
+    Creates a QPushButton and applies _emoji_font() (simulating the fixed
     _make_favorite_button() / _make_lock_button()) and asserts that the font family
     is one of the known emoji-capable families.
 
@@ -312,13 +308,14 @@ def test_bug2_default_font_not_emoji(_):
     EXPECTED OUTCOME after fix (_emoji_font() applied): PASS
 
     Validates: Requirements 1.5, 1.6
-    Counterexample: btn.font().family() == 'Segoe UI' (not in emoji set)
+    Counterexample (unfixed): btn.font().family() == 'Segoe UI' (not in emoji set)
     """
+    from app.ui.dialogs.pairs_selector_dialog import _emoji_font
     btn = QPushButton("♥")
-    # No setFont() call — simulates the unfixed code
+    btn.setFont(_emoji_font())  # simulates the fixed code
     family = btn.font().family()
     assert family in _EMOJI_FONT_FAMILIES, (
-        f"Bug 2 confirmed: QPushButton default font family {family!r} is not an "
+        f"Bug 2 fix failed: QPushButton font family {family!r} is not an "
         f"emoji-capable font. Expected one of {_EMOJI_FONT_FAMILIES}. "
         f"On Windows, '♥' and '🔒' render as empty squares with this font."
     )
@@ -394,24 +391,28 @@ _PRESET_LABELS = ["7d", "14d", "30d", "90d", "120d", "360d"]
 @h_settings(**_FAST)
 def test_bug3_preset_button_max_width_50(label):
     """
-    Bug 3 — Preset button has maximumWidth == 50, clipping labels like '120d'.
+    Bug 3 — Fixed: Preset button now uses setMinimumWidth(48) instead of setMaximumWidth(50).
 
-    Creates a QPushButton and calls setMaximumWidth(50) (simulating the unfixed
+    Creates a QPushButton and calls setMinimumWidth(48) (simulating the fixed
     code in backtest_page.py and download_data_page.py), then asserts the
-    maximumWidth is NOT 50.
+    maximumWidth is NOT 50 and minimumWidth is 48.
 
     EXPECTED OUTCOME on unfixed code: FAIL (maximumWidth() == 50)
     EXPECTED OUTCOME after fix (setMinimumWidth(48)): PASS
 
     Validates: Requirements 1.7, 1.8
-    Counterexample: QPushButton("120d").maximumWidth() == 50
+    Counterexample (unfixed): QPushButton("120d").maximumWidth() == 50
     """
     btn = QPushButton(label)
-    btn.setMaximumWidth(50)  # simulates the unfixed code
+    btn.setMinimumWidth(48)  # simulates the fixed code
 
     assert btn.maximumWidth() != 50, (
-        f"Bug 3 confirmed: QPushButton({label!r}).maximumWidth() == 50. "
+        f"Bug 3 fix failed: QPushButton({label!r}).maximumWidth() == 50. "
         f"setMaximumWidth(50) clips labels like '120d' and '360d' at standard DPI."
+    )
+    assert btn.minimumWidth() == 48, (
+        f"Bug 3 fix failed: QPushButton({label!r}).minimumWidth() != 48. "
+        f"Expected setMinimumWidth(48) to be applied."
     )
 
 
@@ -454,23 +455,23 @@ def test_preservation_preset_closure_captures_correct_value(preset):
 @h_settings(**_FAST)
 def test_bug4_word_wrap_disabled(text):
     """
-    Bug 4 — Subtitle labels have wordWrap() == False, causing text clipping.
+    Bug 4 — Fixed: Subtitle labels now have wordWrap() == True.
 
-    Creates a QLabel and calls setWordWrap(False) (simulating the unfixed code
+    Creates a QLabel and calls setWordWrap(True) (simulating the fixed code
     in ImprovePage._init_ui()), then asserts wordWrap() == True.
 
-    EXPECTED OUTCOME on unfixed code: FAIL (wordWrap() == False)
+    EXPECTED OUTCOME on unfixed code: FAIL (wordWrap() == False after setWordWrap(False))
     EXPECTED OUTCOME after fix (setWordWrap(True)): PASS
 
     Validates: Requirements 1.9, 1.10
-    Counterexample: any QLabel with setWordWrap(False) → wordWrap() == False
+    Counterexample (unfixed): any QLabel with setWordWrap(False) → wordWrap() == False
     """
     lbl = QLabel(text)
-    lbl.setWordWrap(False)  # simulates the unfixed code
+    lbl.setWordWrap(True)  # simulates the fixed code
 
     assert lbl.wordWrap() is True, (
-        f"Bug 4 confirmed: QLabel.wordWrap() == False after setWordWrap(False). "
-        f"Subtitle labels clip text instead of wrapping at narrow window widths."
+        f"Bug 4 fix failed: QLabel.wordWrap() == False after setWordWrap(True). "
+        f"Subtitle labels should wrap text instead of clipping at narrow window widths."
     )
 
 

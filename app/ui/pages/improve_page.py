@@ -275,6 +275,7 @@ def _fade_in_widget(widget: QWidget, duration: int = 350) -> None:
     anim.setStartValue(0.0)
     anim.setEndValue(1.0)
     anim.setEasingCurve(QEasingCurve.OutCubic)
+    anim.finished.connect(lambda: widget.setGraphicsEffect(None))
     anim.start()
     # Keep reference alive
     widget._fade_anim = anim
@@ -863,7 +864,7 @@ class ImprovePage(QWidget):
         _issues_subtitle.setStyleSheet(
             f"color: {_C_TEXT_DIM}; font-size: 11px; padding-left: 10px;"
         )
-        _issues_subtitle.setWordWrap(False)
+        _issues_subtitle.setWordWrap(True)
         self._issues_layout.addWidget(_issues_subtitle)
         self._empty_issues = EmptyStatePanel(
             "🔍",
@@ -887,7 +888,7 @@ class ImprovePage(QWidget):
         _suggestions_subtitle.setStyleSheet(
             f"color: {_C_TEXT_DIM}; font-size: 11px; padding-left: 10px;"
         )
-        _suggestions_subtitle.setWordWrap(False)
+        _suggestions_subtitle.setWordWrap(True)
         self._suggestions_layout.addWidget(_suggestions_subtitle)
         self._empty_suggestions = EmptyStatePanel(
             "💡",
@@ -909,7 +910,7 @@ class ImprovePage(QWidget):
         _candidate_subtitle.setStyleSheet(
             f"color: {_C_TEXT_DIM}; font-size: 11px; padding-left: 10px;"
         )
-        _candidate_subtitle.setWordWrap(False)
+        _candidate_subtitle.setWordWrap(True)
         self._candidate_layout.addWidget(_candidate_subtitle)
         self._empty_candidate = EmptyStatePanel(
             "⚙️",
@@ -932,7 +933,7 @@ class ImprovePage(QWidget):
         _comparison_subtitle.setStyleSheet(
             f"color: {_C_TEXT_DIM}; font-size: 11px; padding-left: 10px;"
         )
-        _comparison_subtitle.setWordWrap(False)
+        _comparison_subtitle.setWordWrap(True)
         self._comparison_layout.addWidget(_comparison_subtitle)
         self._empty_comparison = EmptyStatePanel(
             "⚖️",
@@ -1105,9 +1106,12 @@ class ImprovePage(QWidget):
 
     def _display_baseline_summary(self, summary: BacktestSummary) -> None:
         """Clear and repopulate the baseline summary form and metric cards."""
-        # Remove empty state panel if present
+        # Hide cards widget at the start so layout is clean during repopulation
+        self._cards_widget.setVisible(False)
+
+        # Remove empty state panel synchronously (setParent(None) avoids deleteLater() race)
         if self._empty_baseline is not None:
-            self._empty_baseline.deleteLater()
+            self._empty_baseline.setParent(None)
             self._empty_baseline = None
 
         while self._baseline_form.rowCount() > 0:
@@ -1203,7 +1207,7 @@ class ImprovePage(QWidget):
         while self._issues_layout.count() > 1:
             item = self._issues_layout.takeAt(1)
             if item.widget():
-                item.widget().deleteLater()
+                item.widget().setParent(None)
 
         # Remove empty state panel reference (already cleared above)
         self._empty_issues = None
@@ -1234,7 +1238,7 @@ class ImprovePage(QWidget):
         while self._suggestions_layout.count() > 1:
             item = self._suggestions_layout.takeAt(1)
             if item.widget():
-                item.widget().deleteLater()
+                item.widget().setParent(None)
 
         self._empty_suggestions = None
 

@@ -1,13 +1,27 @@
+import os
 import random
+import sys
 from typing import List
 
 from PySide6.QtCore import Qt
+from PySide6.QtGui import QFont
 from PySide6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QLabel, QCheckBox, QLineEdit, QPushButton,
     QScrollArea, QWidget
 )
 
 from app.app_state.settings_state import SettingsState
+
+
+def _emoji_font() -> QFont:
+    """Return a QFont with an emoji-capable family for the current platform."""
+    if os.name == "nt":
+        family = "Segoe UI Emoji"
+    elif sys.platform == "darwin":
+        family = "Apple Color Emoji"
+    else:
+        family = "Noto Color Emoji"
+    return QFont(family, 14)
 
 # Comprehensive Binance USDT spot pairs list
 BINANCE_USDT_PAIRS: List[str] = [
@@ -210,6 +224,7 @@ class PairsSelectorDialog(QDialog):
         btn.setFlat(True)
         btn.setFixedWidth(28)
         btn.setStyleSheet("border: none;")
+        btn.setFont(_emoji_font())
         btn.setText("🔒" if pair in self.locked_pairs else "🔓")
         btn.clicked.connect(lambda checked, p=pair: self._on_lock_clicked(p))
         return btn
@@ -231,6 +246,7 @@ class PairsSelectorDialog(QDialog):
         btn.setFlat(True)
         btn.setFixedWidth(28)
         btn.setStyleSheet("border: none;")
+        btn.setFont(_emoji_font())
         btn.setText("♥" if pair in self.favorites else "♡")
         btn.clicked.connect(lambda checked, p=pair: self._on_favorite_clicked(p))
         return btn
