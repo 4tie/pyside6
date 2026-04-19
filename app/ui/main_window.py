@@ -27,7 +27,7 @@ class MainWindow(QMainWindow):
     def __init__(self, settings_state: SettingsState = None):
         super().__init__()
         self.setWindowTitle("Freqtrade GUI")
-        self.setMinimumSize(1200, 800)
+        self.setMinimumSize(800, 600)
         self.showMaximized()
 
         # Initialize state first so theme_mode is available

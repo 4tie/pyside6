@@ -5,6 +5,7 @@ from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton,
     QFileDialog, QGroupBox, QCheckBox, QMessageBox, QSpinBox, QComboBox,
     QColorDialog, QFormLayout, QListWidget, QListWidgetItem, QInputDialog,
+    QScrollArea,
 )
 from PySide6.QtGui import QColor, QFont
 
@@ -243,8 +244,18 @@ class SettingsPage(QWidget):
         button_layout.addStretch()
         layout.addLayout(button_layout)
 
-        layout.addStretch()
-        self.setLayout(layout)
+        content_widget = QWidget()
+        content_widget.setLayout(layout)
+
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        scroll.setWidget(content_widget)
+
+        page_layout = QVBoxLayout()
+        page_layout.setContentsMargins(0, 0, 0, 0)
+        page_layout.addWidget(scroll)
+        self.setLayout(page_layout)
 
     def _connect_signals(self):
         """Connect UI signals."""

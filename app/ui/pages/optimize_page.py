@@ -27,7 +27,7 @@ from app.core.services.process_service import ProcessService
 from app.core.services.settings_service import SettingsService
 from app.core.utils.app_logger import get_logger
 from app.ui.dialogs.pairs_selector_dialog import PairsSelectorDialog
-from app.ui.widgets.terminal_widget import TerminalWidget
+from app.ui.widgets.collapsible_terminal import CollapsibleTerminal
 
 _log = get_logger("optimize")
 
@@ -62,6 +62,10 @@ class OptimizePage(QWidget):
         params_layout.setContentsMargins(SPACING["md"], SPACING["md"], SPACING["md"], SPACING["md"])
         params_layout.setSpacing(SPACING["sm"])
 
+        # ── Run Configuration group ────────────────────────────────────
+        run_config_group = QGroupBox("Run Configuration")
+        run_config_layout = QVBoxLayout(run_config_group)
+
         strategy_layout = QHBoxLayout()
         strategy_layout.addWidget(QLabel("Strategy:"))
         self.strategy_combo = QComboBox()
@@ -71,7 +75,7 @@ class OptimizePage(QWidget):
         refresh_btn = QPushButton("Refresh")
         refresh_btn.clicked.connect(self._refresh_strategies)
         strategy_layout.addWidget(refresh_btn)
-        params_layout.addLayout(strategy_layout)
+        run_config_layout.addLayout(strategy_layout)
 
         timeframe_layout = QHBoxLayout()
         timeframe_layout.addWidget(QLabel("Timeframe:"))
@@ -79,7 +83,7 @@ class OptimizePage(QWidget):
         self.timeframe_input.setPlaceholderText("5m, 1h, 4h, 1d, etc.")
         self.timeframe_input.setText("5m")
         timeframe_layout.addWidget(self.timeframe_input)
-        params_layout.addLayout(timeframe_layout)
+        run_config_layout.addLayout(timeframe_layout)
 
         presets_layout = QHBoxLayout()
         presets_layout.addWidget(QLabel("Timerange Presets:"))
@@ -89,7 +93,7 @@ class OptimizePage(QWidget):
             btn.clicked.connect(lambda checked, p=preset: self._on_timerange_preset(p))
             presets_layout.addWidget(btn)
         presets_layout.addStretch()
-        params_layout.addLayout(presets_layout)
+        run_config_layout.addLayout(presets_layout)
 
         timerange_group = QGroupBox("Custom Timerange (Optional)")
         timerange_layout = QHBoxLayout()
@@ -98,21 +102,27 @@ class OptimizePage(QWidget):
         self.timerange_input.setPlaceholderText("e.g., 20240101-20241231")
         timerange_layout.addWidget(self.timerange_input)
         timerange_group.setLayout(timerange_layout)
-        params_layout.addWidget(timerange_group)
+        run_config_layout.addWidget(timerange_group)
 
-        pairs_layout = QVBoxLayout()
+        params_layout.addWidget(run_config_group)
+
+        # ── Pairs group ────────────────────────────────────────────────
+        pairs_group = QGroupBox("Pairs")
+        pairs_group_layout = QVBoxLayout(pairs_group)
+
         pairs_button_layout = QHBoxLayout()
         pairs_button_layout.addWidget(QLabel("Pairs:"))
         self.pairs_button = QPushButton("Select Pairs... (0)")
         self.pairs_button.clicked.connect(self._on_select_pairs)
         pairs_button_layout.addWidget(self.pairs_button)
         pairs_button_layout.addStretch()
-        pairs_layout.addLayout(pairs_button_layout)
+        pairs_group_layout.addLayout(pairs_button_layout)
 
         self.pairs_display_label = QLabel("Selected: None")
         self.pairs_display_label.setObjectName("hint_label")
-        pairs_layout.addWidget(self.pairs_display_label)
-        params_layout.addLayout(pairs_layout)
+        pairs_group_layout.addWidget(self.pairs_display_label)
+
+        params_layout.addWidget(pairs_group)
 
         advanced_group = QGroupBox("Hyperopt Options")
         advanced_form = QFormLayout()
@@ -228,8 +238,8 @@ class OptimizePage(QWidget):
 
         output_layout = QVBoxLayout()
         output_layout.setContentsMargins(SPACING["sm"], SPACING["sm"], SPACING["sm"], SPACING["sm"])
-        self.terminal = TerminalWidget()
-        output_layout.addWidget(self.terminal)
+        self.collapsible_terminal = CollapsibleTerminal()
+        output_layout.addWidget(self.collapsible_terminal)
 
         output_widget = QWidget()
         output_widget.setLayout(output_layout)
@@ -238,6 +248,11 @@ class OptimizePage(QWidget):
         h_layout.addWidget(params_scroll, 1)
         h_layout.addWidget(output_widget, 2)
         root.addLayout(h_layout)
+
+    @property
+    def terminal(self):
+        """Alias to the inner TerminalWidget of the collapsible terminal."""
+        return self.collapsible_terminal.terminal
 
     def _connect_signals(self):
         self.settings_state.settings_changed.connect(self._on_settings_changed)
@@ -379,6 +394,7 @@ class OptimizePage(QWidget):
             pass
 
         try:
+            self.collapsible_terminal.show_terminal()
             self.process_service.execute_command(
                 command=cmd.as_list(),
                 on_output=self.terminal.append_output,

@@ -30,7 +30,7 @@ from app.core.backtests.results_index import IndexStore
 from app.core.services.settings_service import SettingsService
 from app.core.services.process_service import ProcessService
 from app.core.utils.app_logger import get_logger
-from app.ui.widgets.terminal_widget import TerminalWidget
+from app.ui.widgets.collapsible_terminal import CollapsibleTerminal
 from app.ui.widgets.backtest_results_widget import BacktestResultsWidget
 from app.ui.dialogs.pairs_selector_dialog import PairsSelectorDialog
 
@@ -216,10 +216,10 @@ class BacktestPage(QWidget):
         run_picker_layout.addWidget(self.load_run_btn)
         output_layout.addLayout(run_picker_layout)
 
-        self.output_tabs = QTabWidget()
+        self.collapsible_terminal = CollapsibleTerminal()
+        output_layout.addWidget(self.collapsible_terminal)
 
-        self.terminal = TerminalWidget()
-        self.output_tabs.addTab(self.terminal, "Terminal Output")
+        self.output_tabs = QTabWidget()
 
         self.results_widget = BacktestResultsWidget()
         self.output_tabs.addTab(self.results_widget, "Results")
@@ -236,6 +236,11 @@ class BacktestPage(QWidget):
 
         main_layout.addLayout(h_layout)
         self.setLayout(main_layout)
+
+    @property
+    def terminal(self):
+        """Alias to the inner TerminalWidget of the collapsible terminal."""
+        return self.collapsible_terminal.terminal
 
     def _connect_signals(self):
         """Connect settings signals for live command preview updates."""
@@ -416,6 +421,8 @@ class BacktestPage(QWidget):
         self._preview_timer.stop()
         self.terminal.append_output("[Process started]\n\n")
         self._run_started_at = time.time()
+
+        self.collapsible_terminal.show_terminal()
 
         try:
             self.process_service.execute_command(

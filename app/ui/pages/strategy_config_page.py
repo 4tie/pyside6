@@ -65,6 +65,7 @@ class StrategyConfigPage(QWidget):
         left_scroll = QScrollArea()
         left_scroll.setWidgetResizable(True)
         left_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        left_scroll.setMinimumWidth(320)
         left_content = QWidget()
         self._left_layout = QVBoxLayout(left_content)
         self._left_layout.setAlignment(Qt.AlignTop)
@@ -144,7 +145,13 @@ class StrategyConfigPage(QWidget):
 
         right_widget = QWidget()
         right_widget.setLayout(right_panel)
-        main.addWidget(right_widget, 1)
+
+        right_scroll = QScrollArea()
+        right_scroll.setWidgetResizable(True)
+        right_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        right_scroll.setMinimumWidth(320)
+        right_scroll.setWidget(right_widget)
+        main.addWidget(right_scroll, 1)
 
         root.addLayout(main)
 

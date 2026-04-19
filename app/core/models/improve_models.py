@@ -78,6 +78,9 @@ class SessionRound:
         params_before: Strategy parameters before this round's acceptance.
         params_after: Strategy parameters after this round's acceptance.
         summary: BacktestSummary from the accepted candidate run.
+        baseline_summary_before: BacktestSummary of the baseline *before* this
+            round was accepted. Used by rollback to restore the correct pre-round
+            metrics without re-reading from disk.
         timestamp: UTC datetime when the round was accepted.
     """
 
@@ -86,3 +89,4 @@ class SessionRound:
     params_after: dict
     summary: Any  # BacktestSummary — typed as Any to avoid circular import
     timestamp: datetime
+    baseline_summary_before: Any = None  # BacktestSummary — None for legacy rounds

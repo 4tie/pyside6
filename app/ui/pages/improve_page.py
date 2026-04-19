@@ -1772,12 +1772,16 @@ class ImprovePage(QWidget):
         params_before = copy.deepcopy(self._baseline_params)
         params_after = copy.deepcopy(self._candidate_config)
         candidate_summary = self._candidate_run.summary
+        baseline_summary_before = (
+            self._baseline_run.summary if self._baseline_run is not None else None
+        )
         round_number = len(self._session_history) + 1
         session_round = SessionRound(
             round_number=round_number,
             params_before=params_before,
             params_after=params_after,
             summary=candidate_summary,
+            baseline_summary_before=baseline_summary_before,
             timestamp=datetime.now(timezone.utc),
         )
         self._session_history.append(session_round)
@@ -1842,9 +1846,12 @@ class ImprovePage(QWidget):
             return
 
         # Restore session baseline to params_before — no disk read (task 9)
+        # Use baseline_summary_before if available (captures pre-round metrics);
+        # fall back to last_round.summary for legacy rounds that predate this field.
+        restored_summary = last_round.baseline_summary_before or last_round.summary
         self._session_baseline = SessionBaseline(
             params=last_round.params_before,
-            summary=last_round.summary,  # keep the summary from that round for reference
+            summary=restored_summary,
         )
 
         # Also keep _baseline_history in sync for backward compat
@@ -1852,9 +1859,9 @@ class ImprovePage(QWidget):
             self._baseline_history.pop()
 
         self._baseline_params = copy.deepcopy(last_round.params_before)
-        # Restore _baseline_run.summary from the popped round (task 3.3)
+        # Restore _baseline_run.summary to the pre-round baseline metrics
         if self._baseline_run is not None:
-            self._baseline_run.summary = last_round.summary
+            self._baseline_run.summary = restored_summary
         self._candidate_run = None
         self._candidate_config = copy.deepcopy(self._baseline_params)
 
