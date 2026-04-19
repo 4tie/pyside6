@@ -314,6 +314,29 @@ class SuggestionRotator:
         base_suggestions = RuleSuggestionService.suggest(issues, current_params, structural)
         actionable = [s for s in base_suggestions if not s.is_advisory]
 
+        # Inject trailing-stop proposal when high-drawdown structural pattern is present
+        # and trailing_stop is currently disabled
+        if structural:
+            high_drawdown_patterns = {"losers_lasting_too_long", "drawdown_after_volatility"}
+            has_drawdown_pattern = any(
+                getattr(sd, "failure_pattern", "") in high_drawdown_patterns
+                for sd in structural
+            )
+            if has_drawdown_pattern and not current_params.get("trailing_stop", False):
+                actionable.append(ParameterSuggestion(
+                    parameter="trailing_stop",
+                    proposed_value=True,
+                    reason="High-drawdown structural pattern detected — proposing trailing stop",
+                    expected_effect="Trailing stop protects profits and limits drawdown",
+                ))
+
+            # Map remaining structural patterns to parameter mutations
+            structural_suggestions = self._suggestions_from_structural(structural, current_params)
+            for ss in structural_suggestions:
+                # Avoid duplicates with existing actionable suggestions
+                if not any(a.parameter == ss.parameter for a in actionable):
+                    actionable.append(ss)
+
         if not actionable:
             return []
 
@@ -342,6 +365,167 @@ class SuggestionRotator:
                 self.increment_step(param)
 
         return varied
+
+    def _suggestions_from_structural(
+        self,
+        structural: List,
+        current_params: dict,
+    ) -> List[ParameterSuggestion]:
+        """Map all ten structural failure patterns to parameter mutation suggestions.
+
+        Args:
+            structural: List of StructuralDiagnosis objects.
+            current_params: Current strategy parameters.
+
+        Returns:
+            List of ParameterSuggestion objects derived from structural patterns.
+        """
+        suggestions: List[ParameterSuggestion] = []
+
+        for sd in structural:
+            pattern = getattr(sd, "failure_pattern", "")
+            mutation_dir = getattr(sd, "mutation_direction", "")
+
+            if pattern == "exits_cutting_winners_early":
+                # Widen minimal_roi targets
+                minimal_roi = current_params.get("minimal_roi", {})
+                if minimal_roi:
+                    proposed_roi = {k: round(v + 0.005, 6) for k, v in minimal_roi.items()}
+                    suggestions.append(ParameterSuggestion(
+                        parameter="minimal_roi",
+                        proposed_value=proposed_roi,
+                        reason=f"Structural: {pattern} — widening ROI targets",
+                        expected_effect="Allow winners to run further before exiting",
+                    ))
+
+            elif pattern == "filter_stack_too_strict":
+                # Relax most-restrictive buy_params threshold
+                buy_params = current_params.get("buy_params", {})
+                if buy_params:
+                    # Find the numeric key with the most extreme (highest) value
+                    numeric_keys = {k: v for k, v in buy_params.items() if isinstance(v, (int, float))}
+                    if numeric_keys:
+                        target_key = max(numeric_keys, key=lambda k: abs(numeric_keys[k]))
+                        current_val = numeric_keys[target_key]
+                        proposed_val = round(current_val * 0.9, 6) if current_val != 0 else -0.01
+                        proposed_group = dict(buy_params)
+                        proposed_group[target_key] = proposed_val
+                        suggestions.append(ParameterSuggestion(
+                            parameter="buy_params",
+                            proposed_value=proposed_group,
+                            reason=f"Structural: {pattern} — relaxing buy_params.{target_key}",
+                            expected_effect="Increase signal frequency by relaxing entry threshold",
+                        ))
+
+            elif pattern == "losers_lasting_too_long":
+                # Tighten stoploss
+                current_sl = current_params.get("stoploss", -0.10)
+                proposed_sl = round(max(-0.30, current_sl + 0.02), 4)
+                if proposed_sl != current_sl:
+                    suggestions.append(ParameterSuggestion(
+                        parameter="stoploss",
+                        proposed_value=proposed_sl,
+                        reason=f"Structural: {pattern} — tightening stoploss",
+                        expected_effect="Cut losing trades sooner",
+                    ))
+
+            elif pattern == "entries_too_loose_in_chop":
+                # Tighten buy_params — increase the most restrictive threshold
+                buy_params = current_params.get("buy_params", {})
+                if buy_params:
+                    numeric_keys = {k: v for k, v in buy_params.items() if isinstance(v, (int, float))}
+                    if numeric_keys:
+                        target_key = min(numeric_keys, key=lambda k: abs(numeric_keys[k]))
+                        current_val = numeric_keys[target_key]
+                        proposed_val = round(current_val * 1.1, 6) if current_val != 0 else 0.01
+                        proposed_group = dict(buy_params)
+                        proposed_group[target_key] = proposed_val
+                        suggestions.append(ParameterSuggestion(
+                            parameter="buy_params",
+                            proposed_value=proposed_group,
+                            reason=f"Structural: {pattern} — tightening buy_params.{target_key}",
+                            expected_effect="Reduce entries in choppy conditions",
+                        ))
+
+            elif pattern == "entries_too_late_in_trend":
+                # Relax sell_params to allow earlier exits
+                sell_params = current_params.get("sell_params", {})
+                if sell_params:
+                    numeric_keys = {k: v for k, v in sell_params.items() if isinstance(v, (int, float))}
+                    if numeric_keys:
+                        target_key = list(numeric_keys.keys())[0]
+                        current_val = numeric_keys[target_key]
+                        proposed_val = round(current_val * 0.95, 6) if current_val != 0 else -0.01
+                        proposed_group = dict(sell_params)
+                        proposed_group[target_key] = proposed_val
+                        suggestions.append(ParameterSuggestion(
+                            parameter="sell_params",
+                            proposed_value=proposed_group,
+                            reason=f"Structural: {pattern} — adjusting sell_params.{target_key}",
+                            expected_effect="Improve entry timing relative to trend",
+                        ))
+
+            elif pattern == "single_regime_dependency":
+                # Reduce max_open_trades to limit exposure
+                current_mot = current_params.get("max_open_trades", 3)
+                proposed_mot = max(1, current_mot - 1)
+                if proposed_mot != current_mot:
+                    suggestions.append(ParameterSuggestion(
+                        parameter="max_open_trades",
+                        proposed_value=proposed_mot,
+                        reason=f"Structural: {pattern} — reducing max_open_trades",
+                        expected_effect="Reduce regime-specific concentration risk",
+                    ))
+
+            elif pattern == "micro_loss_noise":
+                # Tighten stoploss to cut micro-losses faster
+                current_sl = current_params.get("stoploss", -0.10)
+                proposed_sl = round(max(-0.30, current_sl + 0.01), 4)
+                if proposed_sl != current_sl:
+                    suggestions.append(ParameterSuggestion(
+                        parameter="stoploss",
+                        proposed_value=proposed_sl,
+                        reason=f"Structural: {pattern} — tightening stoploss for noise reduction",
+                        expected_effect="Cut micro-loss trades faster",
+                    ))
+
+            elif pattern == "high_winrate_bad_payoff":
+                # Widen ROI targets to improve payoff ratio
+                minimal_roi = current_params.get("minimal_roi", {})
+                if minimal_roi:
+                    proposed_roi = {k: round(v + 0.01, 6) for k, v in minimal_roi.items()}
+                    suggestions.append(ParameterSuggestion(
+                        parameter="minimal_roi",
+                        proposed_value=proposed_roi,
+                        reason=f"Structural: {pattern} — widening ROI for better payoff",
+                        expected_effect="Improve risk/reward ratio by letting winners run",
+                    ))
+
+            elif pattern == "outlier_trade_dependency":
+                # Reduce max_open_trades to limit outlier exposure
+                current_mot = current_params.get("max_open_trades", 3)
+                proposed_mot = max(1, current_mot - 1)
+                if proposed_mot != current_mot:
+                    suggestions.append(ParameterSuggestion(
+                        parameter="max_open_trades",
+                        proposed_value=proposed_mot,
+                        reason=f"Structural: {pattern} — reducing max_open_trades",
+                        expected_effect="Reduce dependency on outlier trades",
+                    ))
+
+            elif pattern == "drawdown_after_volatility":
+                # Tighten stoploss during volatile periods
+                current_sl = current_params.get("stoploss", -0.10)
+                proposed_sl = round(max(-0.30, current_sl + 0.015), 4)
+                if proposed_sl != current_sl:
+                    suggestions.append(ParameterSuggestion(
+                        parameter="stoploss",
+                        proposed_value=proposed_sl,
+                        reason=f"Structural: {pattern} — tightening stoploss for volatility",
+                        expected_effect="Reduce drawdown during high-volatility periods",
+                    ))
+
+        return suggestions
 
     def _vary_suggestion(
         self,
@@ -426,10 +610,132 @@ class SuggestionRotator:
                 expected_effect="Adjusted take-profit thresholds",
             )
 
+        elif param == "trailing_stop":
+            # Propose enabling trailing_stop with a conservative positive value
+            current_trailing = current_params.get("trailing_stop", False)
+            if current_trailing:
+                # Already enabled — nothing to do
+                return None
+            return ParameterSuggestion(
+                parameter="trailing_stop",
+                proposed_value=True,
+                reason=(
+                    f"Enabling trailing_stop (step {step + 1}) — "
+                    "high-drawdown pattern detected"
+                ),
+                expected_effect="Trailing stop protects profits and limits drawdown",
+            )
+
+        elif param in ("buy_params", "sell_params"):
+            # Delegate to the buy/sell param variation helper
+            return self._vary_buy_sell_param(suggestion, current_params, step, reverse)
+
         # Unknown parameter — return the base suggestion as-is on step 0 only
         if step == 0:
             return suggestion
         return None
+
+    def _vary_buy_sell_param(
+        self,
+        suggestion: ParameterSuggestion,
+        current_params: dict,
+        step: int,
+        reverse: bool,
+    ) -> Optional[ParameterSuggestion]:
+        """Apply step-based variation to a buy_params or sell_params suggestion.
+
+        For numeric values, applies a step-scaled delta respecting the observed
+        range from the strategy JSON. For boolean values, proposes a toggle.
+        Clamps all proposed values to the valid observed range.
+
+        Args:
+            suggestion: Base suggestion targeting buy_params or sell_params.
+            current_params: Current strategy parameters.
+            step: How many times this parameter group has been adjusted.
+            reverse: If True, try the opposite direction.
+
+        Returns:
+            A modified ParameterSuggestion, or None if no valid variation exists.
+        """
+        param = suggestion.parameter  # "buy_params" or "sell_params"
+        current_group: dict = current_params.get(param, {})
+        if not current_group:
+            return None
+
+        proposed_group = dict(current_group)
+        multiplier = 1.0 + step * 0.3  # gentler scaling for indicator params
+        changed_keys = []
+
+        # Use proposed_value from the base suggestion if it's a dict with a target key
+        target_key: Optional[str] = None
+        if isinstance(suggestion.proposed_value, dict):
+            # The suggestion may specify which sub-key to mutate
+            for k in suggestion.proposed_value:
+                if k in current_group:
+                    target_key = k
+                    break
+
+        # If no specific key, pick the first numeric or boolean key
+        if target_key is None:
+            for k, v in current_group.items():
+                if isinstance(v, (int, float, bool)):
+                    target_key = k
+                    break
+
+        if target_key is None:
+            return None
+
+        current_val = current_group[target_key]
+
+        if isinstance(current_val, bool):
+            # Boolean toggle
+            proposed_group[target_key] = not current_val
+            changed_keys.append(f"{target_key}: {current_val} → {proposed_group[target_key]}")
+        elif isinstance(current_val, (int, float)):
+            # Numeric delta — use 5% of the current value as base step
+            base_delta = abs(current_val) * 0.05 if current_val != 0 else 0.01
+            delta = base_delta * multiplier * (-1 if reverse else 1)
+
+            # Determine observed range from all values in the group for this key type
+            all_vals = [v for v in current_group.values() if isinstance(v, type(current_val))]
+            lo = min(all_vals) * 0.5 if all_vals else current_val * 0.5
+            hi = max(all_vals) * 2.0 if all_vals else current_val * 2.0
+            # Ensure lo < hi
+            if lo >= hi:
+                lo, hi = hi * 0.5, hi * 1.5
+
+            proposed_val = current_val + delta
+            # Clamp to observed range
+            if proposed_val < lo or proposed_val > hi:
+                _log.warning(
+                    "_vary_buy_sell_param: clamping %s.%s from %.4f to [%.4f, %.4f]",
+                    param, target_key, proposed_val, lo, hi,
+                )
+                proposed_val = max(lo, min(hi, proposed_val))
+
+            if isinstance(current_val, int):
+                proposed_val = int(round(proposed_val))
+            else:
+                proposed_val = round(proposed_val, 6)
+
+            if proposed_val == current_val:
+                return None
+
+            proposed_group[target_key] = proposed_val
+            changed_keys.append(f"{target_key}: {current_val} → {proposed_val}")
+        else:
+            return None
+
+        direction = "Reversed" if reverse else "Adjusted"
+        return ParameterSuggestion(
+            parameter=param,
+            proposed_value=proposed_group,
+            reason=(
+                f"{direction} {param}.{target_key} (step {step + 1}, "
+                f"multiplier {multiplier:.1f}x): {', '.join(changed_keys)}"
+            ),
+            expected_effect=f"Adjusted indicator parameter {target_key}",
+        )
 
 
 class LoopService:
@@ -452,6 +758,7 @@ class LoopService:
         self._current_iteration: int = 0
         self._best_score: float = float("-inf")
         self._running: bool = False
+        self._ai_advisor = None  # Set via set_ai_advisor()
 
         # Callbacks set by the UI layer
         self._on_iteration_complete: Optional[Callable[[LoopIteration], None]] = None
@@ -471,6 +778,14 @@ class LoopService:
     def current_result(self) -> Optional[LoopResult]:
         """The in-progress or completed LoopResult, or None if not started."""
         return self._result
+
+    def set_ai_advisor(self, ai_advisor) -> None:
+        """Register an AIAdvisorService instance for AI-assisted suggestions.
+
+        Args:
+            ai_advisor: AIAdvisorService instance, or None to disable.
+        """
+        self._ai_advisor = ai_advisor
 
     def set_callbacks(
         self,
@@ -553,9 +868,13 @@ class LoopService:
     ) -> Optional[Tuple[LoopIteration, List[ParameterSuggestion]]]:
         """Analyse the latest results and prepare the next iteration.
 
-        Runs diagnosis and suggestion rotation to produce the candidate params
-        for the next backtest. Returns None if no actionable suggestions remain
-        or the loop should stop.
+        For rule_based mode: runs diagnosis and suggestion rotation to produce
+        the candidate params for the next backtest.
+        For hyperopt mode: returns a sentinel iteration with empty suggestions;
+        the UI layer is responsible for running hyperopt and calling
+        record_hyperopt_candidate() with the result.
+
+        Returns None if no actionable suggestions remain or the loop should stop.
 
         Args:
             latest_summary: BacktestSummary from the most recent backtest.
@@ -591,7 +910,23 @@ class LoopService:
             _log.info("Loop: targets met at iteration %d", self._current_iteration)
             return None
 
-        # Diagnose using the new DiagnosisInput/DiagnosisBundle API
+        # Hyperopt mode — return a sentinel iteration; UI runs hyperopt subprocess
+        if self._config.iteration_mode == "hyperopt":
+            from pathlib import Path
+            iteration = LoopIteration(
+                iteration_number=self._current_iteration,
+                params_before=copy.deepcopy(self._current_params),
+                params_after=copy.deepcopy(self._current_params),
+                changes_summary=["[hyperopt mode — awaiting hyperopt result]"],
+                sandbox_path=Path("."),
+            )
+            self._emit_status(
+                f"Iteration {self._current_iteration}/{self._config.max_iterations} — "
+                "running hyperopt..."
+            )
+            return iteration, []
+
+        # Rule-based mode — diagnose and generate suggestions
         from app.core.models.diagnosis_models import DiagnosisInput
         diagnosis_input = DiagnosisInput(in_sample=latest_summary)
         bundle = ResultsDiagnosisService.diagnose(diagnosis_input)
@@ -637,6 +972,33 @@ class LoopService:
 
         self._rotator.mark_tried(candidate_params)
 
+        # AI Advisor — merge as additional candidate mutation if enabled
+        if (
+            self._config.ai_advisor_enabled
+            and self._ai_advisor is not None
+        ):
+            try:
+                self._emit_status("Waiting for AI Advisor...")
+                from app.core.models.diagnosis_models import DiagnosisInput as _DI
+                _bundle = ResultsDiagnosisService.diagnose(_DI(in_sample=latest_summary))
+                prompt = self._ai_advisor.build_prompt(
+                    self._config.strategy,
+                    self._current_params,
+                    latest_summary,
+                    _bundle.issues + _bundle.structural,
+                )
+                ai_suggestion = self._ai_advisor.request_suggestion(prompt)
+                if ai_suggestion:
+                    for k, v in ai_suggestion.items():
+                        candidate_params[k] = v
+                    # Mark the iteration as AI-suggested (set on iteration below)
+                    _log.info(
+                        "Loop iter %d: AI Advisor suggested %d param(s)",
+                        self._current_iteration, len(ai_suggestion),
+                    )
+            except Exception as exc:
+                _log.warning("Loop iter %d: AI Advisor failed: %s", self._current_iteration, exc)
+
         # Build changes_summary list
         changes_summary = []
         for param, new_val in candidate_params.items():
@@ -660,6 +1022,56 @@ class LoopService:
         )
 
         return iteration, suggestions
+
+    def record_hyperopt_candidate(
+        self,
+        iteration: LoopIteration,
+        hyperopt_results_dir,
+        exit_code: int,
+    ) -> Optional[dict]:
+        """Process a completed hyperopt run and extract the best candidate params.
+
+        Called by the UI layer after the hyperopt subprocess completes.
+
+        Args:
+            iteration: The iteration object to update.
+            hyperopt_results_dir: Directory containing the .fthypt file.
+            exit_code: Exit code from the hyperopt subprocess.
+
+        Returns:
+            Best params dict if successful, None on error.
+        """
+        if exit_code != 0:
+            iteration.status = "error"
+            iteration.error_message = f"Hyperopt exited with code {exit_code}"
+            self._record_iteration(iteration)
+            _log.warning(
+                "Loop iter %d: hyperopt non-zero exit code %d",
+                iteration.iteration_number, exit_code,
+            )
+            return None
+
+        try:
+            best_params = self._parse_hyperopt_result(hyperopt_results_dir)
+        except (FileNotFoundError, ValueError) as exc:
+            iteration.status = "error"
+            iteration.error_message = str(exc)
+            self._record_iteration(iteration)
+            _log.warning("Loop iter %d: hyperopt parse error: %s", iteration.iteration_number, exc)
+            return None
+
+        # Update iteration with hyperopt candidate params
+        iteration.params_after = {**copy.deepcopy(self._current_params), **best_params}
+        iteration.changes_summary = [
+            f"{k}: {self._current_params.get(k)} → {v}"
+            for k, v in best_params.items()
+            if self._current_params.get(k) != v
+        ]
+        _log.info(
+            "Loop iter %d: hyperopt candidate extracted, %d param(s) changed",
+            iteration.iteration_number, len(iteration.changes_summary),
+        )
+        return iteration.params_after
 
     def record_iteration_result(
         self,
@@ -775,6 +1187,488 @@ class LoopService:
     # ------------------------------------------------------------------
     # Private helpers
     # ------------------------------------------------------------------
+
+    # ------------------------------------------------------------------
+    # Private helpers
+    # ------------------------------------------------------------------
+
+    def _run_oos_gate(
+        self,
+        config: LoopConfig,
+        sandbox_dir,
+        run_backtest_fn: Callable,
+    ) -> GateResult:
+        """Run the out-of-sample validation gate (Gate 2).
+
+        Computes the OOS date range from config.oos_split_pct and the full
+        timerange, then runs a backtest on the held-out range. Rejects the
+        candidate if OOS profit < 50% of in-sample profit.
+
+        Args:
+            config: Loop configuration with oos_split_pct and date range.
+            sandbox_dir: Path to the sandbox directory for this iteration.
+            run_backtest_fn: Callable(timerange: str, sandbox_dir) -> BacktestSummary.
+                Returns None on failure.
+
+        Returns:
+            GateResult with passed=True if OOS profit >= 50% of in-sample profit.
+        """
+        if not config.date_from or not config.date_to:
+            return GateResult(
+                gate_name="out_of_sample",
+                passed=False,
+                failure_reason="No date range configured for OOS gate",
+            )
+
+        try:
+            from datetime import datetime, timedelta
+            fmt = "%Y%m%d"
+            date_from = datetime.strptime(config.date_from, fmt)
+            date_to = datetime.strptime(config.date_to, fmt)
+            total_days = (date_to - date_from).days
+            if total_days <= 0:
+                return GateResult(
+                    gate_name="out_of_sample",
+                    passed=False,
+                    failure_reason="Invalid date range for OOS gate",
+                )
+
+            oos_days = max(1, int(total_days * config.oos_split_pct / 100.0))
+            oos_start = date_to - timedelta(days=oos_days)
+            oos_timerange = f"{oos_start.strftime(fmt)}-{date_to.strftime(fmt)}"
+            in_sample_timerange = f"{date_from.strftime(fmt)}-{oos_start.strftime(fmt)}"
+
+            # Run in-sample backtest to get reference profit
+            in_sample_summary = run_backtest_fn(in_sample_timerange, sandbox_dir)
+            if in_sample_summary is None:
+                return GateResult(
+                    gate_name="out_of_sample",
+                    passed=False,
+                    failure_reason="In-sample backtest failed during OOS gate",
+                )
+
+            # Run OOS backtest
+            oos_summary = run_backtest_fn(oos_timerange, sandbox_dir)
+            if oos_summary is None:
+                return GateResult(
+                    gate_name="out_of_sample",
+                    passed=False,
+                    failure_reason="OOS backtest failed",
+                )
+
+            threshold = in_sample_summary.total_profit * 0.5
+            passed = oos_summary.total_profit >= threshold
+            reason = None if passed else (
+                f"OOS profit {oos_summary.total_profit:.2f}% < 50% of "
+                f"in-sample profit {in_sample_summary.total_profit:.2f}%"
+            )
+            return GateResult(
+                gate_name="out_of_sample",
+                passed=passed,
+                metrics=oos_summary,
+                failure_reason=reason,
+            )
+        except Exception as exc:
+            _log.warning("OOS gate error: %s", exc)
+            return GateResult(
+                gate_name="out_of_sample",
+                passed=False,
+                failure_reason=f"OOS gate error: {exc}",
+            )
+
+    def _run_walk_forward_gate(
+        self,
+        config: LoopConfig,
+        sandbox_dir,
+        run_backtest_fn: Callable,
+    ) -> GateResult:
+        """Run the walk-forward validation gate (Gate 3).
+
+        Splits the full date range into config.walk_forward_folds equal folds,
+        runs a backtest for each fold, and rejects if fewer than 60% are profitable.
+
+        Args:
+            config: Loop configuration with walk_forward_folds and date range.
+            sandbox_dir: Path to the sandbox directory.
+            run_backtest_fn: Callable(timerange: str, sandbox_dir) -> BacktestSummary.
+
+        Returns:
+            GateResult with fold_summaries populated.
+        """
+        if not config.date_from or not config.date_to:
+            return GateResult(
+                gate_name="walk_forward",
+                passed=False,
+                failure_reason="No date range configured for walk-forward gate",
+            )
+
+        try:
+            from datetime import datetime, timedelta
+            fmt = "%Y%m%d"
+            date_from = datetime.strptime(config.date_from, fmt)
+            date_to = datetime.strptime(config.date_to, fmt)
+            total_days = (date_to - date_from).days
+            if total_days <= 0:
+                return GateResult(
+                    gate_name="walk_forward",
+                    passed=False,
+                    failure_reason="Invalid date range for walk-forward gate",
+                )
+
+            k = max(2, config.walk_forward_folds)
+            fold_days = total_days // k
+            if fold_days < 1:
+                return GateResult(
+                    gate_name="walk_forward",
+                    passed=False,
+                    failure_reason=f"Date range too short for {k} folds",
+                )
+
+            fold_summaries = []
+            for i in range(k):
+                fold_start = date_from + timedelta(days=i * fold_days)
+                fold_end = date_from + timedelta(days=(i + 1) * fold_days)
+                if i == k - 1:
+                    fold_end = date_to  # last fold absorbs remainder
+                fold_timerange = f"{fold_start.strftime(fmt)}-{fold_end.strftime(fmt)}"
+                summary = run_backtest_fn(fold_timerange, sandbox_dir)
+                if summary is not None:
+                    fold_summaries.append(summary)
+                else:
+                    _log.warning("Walk-forward fold %d/%d failed", i + 1, k)
+
+            if not fold_summaries:
+                return GateResult(
+                    gate_name="walk_forward",
+                    passed=False,
+                    failure_reason="All walk-forward folds failed",
+                )
+
+            profitable_folds = sum(1 for fs in fold_summaries if fs.total_profit > 0)
+            pct_profitable = profitable_folds / len(fold_summaries)
+            passed = pct_profitable >= 0.60
+            reason = None if passed else (
+                f"Only {profitable_folds}/{len(fold_summaries)} folds profitable "
+                f"({pct_profitable * 100:.0f}% < 60%)"
+            )
+            return GateResult(
+                gate_name="walk_forward",
+                passed=passed,
+                fold_summaries=fold_summaries,
+                failure_reason=reason,
+            )
+        except Exception as exc:
+            _log.warning("Walk-forward gate error: %s", exc)
+            return GateResult(
+                gate_name="walk_forward",
+                passed=False,
+                failure_reason=f"Walk-forward gate error: {exc}",
+            )
+
+    def _run_stress_gate(
+        self,
+        config: LoopConfig,
+        sandbox_dir,
+        run_backtest_fn: Callable,
+        in_sample_timerange: str,
+    ) -> GateResult:
+        """Run the stress-test gate (Gate 4).
+
+        Re-runs the in-sample backtest with elevated fees and slippage.
+        Rejects if stress profit < config.stress_profit_target_pct% of main target.
+
+        Args:
+            config: Loop configuration with stress parameters.
+            sandbox_dir: Path to the sandbox directory.
+            run_backtest_fn: Callable(timerange, sandbox_dir, fee_multiplier, slippage) -> BacktestSummary.
+            in_sample_timerange: The in-sample date range string.
+
+        Returns:
+            GateResult for the stress gate.
+        """
+        try:
+            stress_summary = run_backtest_fn(
+                in_sample_timerange,
+                sandbox_dir,
+                fee_multiplier=config.stress_fee_multiplier,
+                slippage_pct=config.stress_slippage_pct,
+            )
+            if stress_summary is None:
+                return GateResult(
+                    gate_name="stress_test",
+                    passed=False,
+                    failure_reason="Stress backtest failed",
+                )
+
+            threshold = config.target_profit_pct * config.stress_profit_target_pct / 100.0
+            passed = stress_summary.total_profit >= threshold
+            reason = None if passed else (
+                f"Stress profit {stress_summary.total_profit:.2f}% < "
+                f"{config.stress_profit_target_pct:.0f}% of target "
+                f"({threshold:.2f}%)"
+            )
+            return GateResult(
+                gate_name="stress_test",
+                passed=passed,
+                metrics=stress_summary,
+                failure_reason=reason,
+            )
+        except Exception as exc:
+            _log.warning("Stress gate error: %s", exc)
+            return GateResult(
+                gate_name="stress_test",
+                passed=False,
+                failure_reason=f"Stress gate error: {exc}",
+            )
+
+    def _run_consistency_gate(
+        self,
+        config: LoopConfig,
+        fold_summaries: List,
+    ) -> GateResult:
+        """Run the consistency check gate (Gate 5).
+
+        Computes the coefficient of variation of per-fold profits from the
+        walk-forward gate. Rejects if CV exceeds config.consistency_threshold_pct.
+
+        Args:
+            config: Loop configuration with consistency_threshold_pct.
+            fold_summaries: Per-fold BacktestSummary objects from Gate 3.
+
+        Returns:
+            GateResult for the consistency gate.
+        """
+        if not fold_summaries or len(fold_summaries) < 2:
+            return GateResult(
+                gate_name="consistency",
+                passed=True,  # Not enough data to reject
+                failure_reason=None,
+            )
+
+        try:
+            fold_profits = [fs.total_profit for fs in fold_summaries]
+            mean_profit = statistics.mean(fold_profits)
+            std_profit = statistics.stdev(fold_profits)
+            cv = (std_profit / abs(mean_profit) * 100.0) if mean_profit != 0 else float("inf")
+
+            passed = cv <= config.consistency_threshold_pct
+            reason = None if passed else (
+                f"Profit CV {cv:.1f}% exceeds threshold {config.consistency_threshold_pct:.0f}%"
+            )
+            return GateResult(
+                gate_name="consistency",
+                passed=passed,
+                failure_reason=reason,
+            )
+        except Exception as exc:
+            _log.warning("Consistency gate error: %s", exc)
+            return GateResult(
+                gate_name="consistency",
+                passed=False,
+                failure_reason=f"Consistency gate error: {exc}",
+            )
+
+    def run_gate_sequence(
+        self,
+        iteration: LoopIteration,
+        in_sample_summary,
+        config: LoopConfig,
+        sandbox_dir,
+        run_backtest_fn: Optional[Callable] = None,
+    ) -> bool:
+        """Run the full gate sequence for a candidate iteration.
+
+        Gates run in order: Gate 1 (in-sample, already done) → Gate 2 (OOS) →
+        Gate 3 (walk-forward) → Gate 4 (stress) → Gate 5 (consistency).
+        Stops on first failure. Quick mode skips Gates 3–5.
+
+        Args:
+            iteration: LoopIteration to populate with gate results.
+            in_sample_summary: BacktestSummary from Gate 1 (already run).
+            config: Loop configuration.
+            sandbox_dir: Path to the sandbox directory.
+            run_backtest_fn: Optional callable for running additional backtests.
+                Signature: (timerange, sandbox_dir, fee_multiplier=1.0, slippage_pct=0.0)
+                -> Optional[BacktestSummary].
+
+        Returns:
+            True if all configured gates passed.
+        """
+        # Gate 1 — in-sample (already completed)
+        gate1 = GateResult(
+            gate_name="in_sample",
+            passed=True,
+            metrics=in_sample_summary,
+        )
+        iteration.gate_results.append(gate1)
+        iteration.validation_gate_reached = "in_sample"
+
+        if run_backtest_fn is None:
+            # No backtest runner available — mark as passed with only Gate 1
+            iteration.validation_gate_passed = True
+            return True
+
+        # Compute in-sample timerange for stress gate
+        in_sample_timerange = ""
+        if config.date_from and config.date_to:
+            from datetime import datetime, timedelta
+            fmt = "%Y%m%d"
+            try:
+                date_from = datetime.strptime(config.date_from, fmt)
+                date_to = datetime.strptime(config.date_to, fmt)
+                oos_days = max(1, int((date_to - date_from).days * config.oos_split_pct / 100.0))
+                oos_start = date_to - timedelta(days=oos_days)
+                in_sample_timerange = f"{date_from.strftime(fmt)}-{oos_start.strftime(fmt)}"
+            except ValueError:
+                in_sample_timerange = f"{config.date_from}-{config.date_to}"
+
+        # Gate 2 — OOS
+        gate2 = self._run_oos_gate(config, sandbox_dir, run_backtest_fn)
+        iteration.gate_results.append(gate2)
+        iteration.validation_gate_reached = "out_of_sample"
+        if not gate2.passed:
+            iteration.validation_gate_passed = False
+            return False
+
+        if config.validation_mode == "quick":
+            iteration.validation_gate_passed = True
+            return True
+
+        # Gate 3 — walk-forward
+        gate3 = self._run_walk_forward_gate(config, sandbox_dir, run_backtest_fn)
+        iteration.gate_results.append(gate3)
+        iteration.validation_gate_reached = "walk_forward"
+        if not gate3.passed:
+            iteration.validation_gate_passed = False
+            return False
+
+        # Gate 4 — stress
+        def _stress_run(timerange, sdir, fee_multiplier=1.0, slippage_pct=0.0):
+            return run_backtest_fn(timerange, sdir, fee_multiplier=fee_multiplier, slippage_pct=slippage_pct)
+
+        gate4 = self._run_stress_gate(config, sandbox_dir, _stress_run, in_sample_timerange)
+        iteration.gate_results.append(gate4)
+        iteration.validation_gate_reached = "stress_test"
+        if not gate4.passed:
+            iteration.validation_gate_passed = False
+            return False
+
+        # Gate 5 — consistency
+        fold_summaries = gate3.fold_summaries or []
+        gate5 = self._run_consistency_gate(config, fold_summaries)
+        iteration.gate_results.append(gate5)
+        iteration.validation_gate_reached = "consistency"
+        if not gate5.passed:
+            iteration.validation_gate_passed = False
+            return False
+
+        iteration.validation_gate_passed = True
+        return True
+
+    def _build_hyperopt_command(
+        self,
+        config: LoopConfig,
+        sandbox_dir,
+        settings,
+        timeframe: str = "5m",
+    ):
+        """Build a freqtrade hyperopt command for the current loop config.
+
+        Args:
+            config: Loop configuration with hyperopt_spaces, hyperopt_epochs,
+                hyperopt_loss_function, and pairs.
+            sandbox_dir: Path to the sandbox directory containing the strategy.
+            settings: AppSettings instance.
+            timeframe: Candle timeframe to use.
+
+        Returns:
+            OptimizeRunCommand ready for ProcessService.
+        """
+        from app.core.freqtrade.runners.optimize_runner import build_optimize_command
+
+        timerange = None
+        if config.date_from and config.date_to:
+            timerange = f"{config.date_from}-{config.date_to}"
+
+        extra_flags = [
+            "--strategy-path", str(sandbox_dir),
+        ]
+
+        return build_optimize_command(
+            settings=settings,
+            strategy_name=config.strategy,
+            timeframe=timeframe,
+            epochs=config.hyperopt_epochs,
+            timerange=timerange,
+            pairs=config.pairs if config.pairs else None,
+            spaces=config.hyperopt_spaces if config.hyperopt_spaces else None,
+            hyperopt_loss=config.hyperopt_loss_function or None,
+            extra_flags=extra_flags,
+        )
+
+    def _parse_hyperopt_result(self, hyperopt_results_dir) -> dict:
+        """Parse the best parameter set from a freqtrade hyperopt results file.
+
+        Locates the ``.fthypt`` file written by freqtrade in hyperopt_results_dir
+        and extracts the best parameter set from the JSON-lines file.
+
+        Args:
+            hyperopt_results_dir: Path to the directory containing ``.fthypt`` files.
+
+        Returns:
+            Dict of best parameters from the hyperopt run.
+
+        Raises:
+            FileNotFoundError: If no ``.fthypt`` file is found.
+            ValueError: If the file cannot be parsed.
+        """
+        import json as _json
+        from pathlib import Path as _Path
+
+        results_dir = _Path(hyperopt_results_dir)
+        fthypt_files = list(results_dir.glob("*.fthypt"))
+        if not fthypt_files:
+            raise FileNotFoundError(
+                f"No .fthypt file found in hyperopt results dir: {results_dir}"
+            )
+
+        # Use the most recently modified file
+        fthypt_path = max(fthypt_files, key=lambda p: p.stat().st_mtime)
+
+        best_params: Optional[dict] = None
+        best_loss: Optional[float] = None
+
+        try:
+            lines = fthypt_path.read_text(encoding="utf-8").splitlines()
+            for line in lines:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    entry = _json.loads(line)
+                except _json.JSONDecodeError:
+                    continue
+                # Each line is a hyperopt result; find the one with the best (lowest) loss
+                loss = entry.get("loss")
+                params = entry.get("params_dict") or entry.get("params") or {}
+                if loss is not None and params:
+                    if best_loss is None or loss < best_loss:
+                        best_loss = loss
+                        best_params = params
+        except OSError as exc:
+            raise ValueError(f"Failed to read .fthypt file {fthypt_path}: {exc}") from exc
+
+        if best_params is None:
+            raise ValueError(
+                f"No valid parameter entries found in .fthypt file: {fthypt_path}"
+            )
+
+        _log.info(
+            "_parse_hyperopt_result: best_loss=%.4f, params=%s",
+            best_loss or 0.0,
+            list(best_params.keys()),
+        )
+        return best_params
 
     def _record_iteration(self, iteration: LoopIteration) -> None:
         """Append iteration to result and fire the callback."""

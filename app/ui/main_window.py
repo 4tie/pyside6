@@ -65,7 +65,7 @@ class MainWindow(QMainWindow):
         self.improve_page = ImprovePage(self.settings_state)
         self.tabs.addTab(self.improve_page, "Improve")
 
-        self.loop_page = LoopPage(self.settings_state)
+        self.loop_page = LoopPage(self.settings_state, ai_service=self.ai_service)
         self.tabs.addTab(self.loop_page, "Strategy Lab")
 
         self.optimize_page = OptimizePage(self.settings_state)
@@ -93,6 +93,9 @@ class MainWindow(QMainWindow):
 
         # Give AIService a reference to the live BacktestPage
         self.ai_service.set_backtest_page(self.backtest_page)
+
+        # Wire loop_completed signal to refresh StrategyConfigPage
+        self.loop_page.loop_completed.connect(self._on_loop_completed)
 
         # View menu
         view_menu = self.menuBar().addMenu("View")
@@ -174,6 +177,14 @@ class MainWindow(QMainWindow):
         # Re-apply stylesheet if theme_mode changed
         _mode = ThemeMode.DARK if settings.theme_mode != "light" else ThemeMode.LIGHT
         QApplication.instance().setStyleSheet(build_stylesheet(_mode))
+
+    def _on_loop_completed(self, result) -> None:
+        """Refresh StrategyConfigPage when the Strategy Lab loop completes."""
+        try:
+            if hasattr(self.strategy_config_page, "refresh"):
+                self.strategy_config_page.refresh()
+        except Exception as exc:
+            _log.warning("Failed to refresh StrategyConfigPage after loop: %s", exc)
 
     def _create_terminal_tab(self) -> QWidget:
         """Create terminal tab with quick action buttons."""

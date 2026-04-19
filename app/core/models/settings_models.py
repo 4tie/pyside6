@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field, field_validator, model_validator
-from typing import Optional, Any
+from typing import List, Optional, Any
 from pathlib import Path
 
 
@@ -56,6 +56,37 @@ class OptimizePreferences(BaseModel):
     epochs: int = Field(100, description="Hyperopt epochs")
     spaces: str = Field("all", description="Hyperopt spaces")
     hyperopt_loss: str = Field("SharpeHyperOptLoss", description="Hyperopt loss class")
+
+
+class StrategyLabPreferences(BaseModel):
+    """Strategy Lab (loop) user preferences."""
+
+    strategy: str = Field("", description="Last used strategy")
+    max_iterations: int = Field(10, description="Maximum number of backtest iterations")
+    target_profit_pct: float = Field(5.0, description="Target total profit (%)")
+    target_win_rate: float = Field(55.0, description="Target win rate (%)")
+    target_max_drawdown: float = Field(20.0, description="Target max drawdown (%)")
+    target_min_trades: int = Field(30, description="Minimum trades required")
+    stop_on_first_profitable: bool = Field(True, description="Stop as soon as all targets are met")
+    timerange: str = Field("", description="Date range for backtests (YYYYMMDD-YYYYMMDD)")
+    pairs: str = Field("", description="Comma-separated pairs for backtests")
+    oos_split_pct: float = Field(20.0, description="Percentage of date range held out for OOS gate")
+    walk_forward_folds: int = Field(5, description="Number of folds for walk-forward validation")
+    stress_fee_multiplier: float = Field(2.0, description="Fee multiplier for stress-test gate")
+    stress_slippage_pct: float = Field(0.1, description="Per-trade slippage for stress-test gate (%)")
+    stress_profit_target_pct: float = Field(50.0, description="Min profit required in stress gate as % of main target")
+    consistency_threshold_pct: float = Field(30.0, description="Max allowed CV of per-fold profit (%)")
+    validation_mode: str = Field("full", description="Validation mode: 'full' or 'quick'")
+    iteration_mode: str = Field("rule_based", description="Iteration mode: 'rule_based' or 'hyperopt'")
+    hyperopt_epochs: int = Field(200, description="Hyperopt epochs per iteration (50–2000)")
+    hyperopt_spaces: List[str] = Field(
+        default_factory=list,
+        description="Hyperopt spaces to search (buy, sell, roi, stoploss, trailing)",
+    )
+    hyperopt_loss_function: str = Field(
+        "SharpeHyperOptLoss", description="Hyperopt loss function class name"
+    )
+    ai_advisor_enabled: bool = Field(False, description="Enable AI Advisor suggestion layer")
 
 
 class AISettings(BaseModel):
@@ -136,6 +167,9 @@ class AppSettings(BaseModel):
     )
     ai: AISettings = Field(
         default_factory=AISettings, description="AI panel configuration"
+    )
+    strategy_lab: StrategyLabPreferences = Field(
+        default_factory=StrategyLabPreferences, description="Strategy Lab loop preferences"
     )
     favorite_pairs: list[str] = Field(
         default_factory=list,

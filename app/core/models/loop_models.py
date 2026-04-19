@@ -151,6 +151,13 @@ class LoopConfig:
     pair_dominance_threshold: float = 0.60
     time_dominance_threshold: float = 0.40
     validation_variance_ceiling: float = 1.0
+    # Extended fields for full parameter surface and new modes
+    iteration_mode: str = "rule_based"
+    hyperopt_epochs: int = 200
+    hyperopt_spaces: List[str] = field(default_factory=list)
+    hyperopt_loss_function: str = "SharpeHyperOptLoss"
+    pairs: List[str] = field(default_factory=list)
+    ai_advisor_enabled: bool = False
 
 
 # ---------------------------------------------------------------------------
@@ -194,6 +201,11 @@ class LoopIteration:
     validation_gate_passed: bool = False
     gate_results: List[GateResult] = field(default_factory=list)
     hard_filter_failures: List[HardFilterFailure] = field(default_factory=list)
+    # AI advisor fields
+    ai_suggested: bool = False
+    ai_suggestion_reason: Optional[str] = None
+    # Structural diagnosis patterns that triggered changes
+    diagnosed_structural: List = field(default_factory=list)
 
     @property
     def succeeded(self) -> bool:

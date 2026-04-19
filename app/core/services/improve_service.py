@@ -91,7 +91,10 @@ class ImproveService:
 
         Args:
             strategy_name: Strategy class name (must exist as a ``.py`` file).
-            candidate_config: Candidate parameter dict to write as JSON.
+            candidate_config: Candidate parameter dict to write as JSON. May contain
+                all parameter groups: stoploss, max_open_trades, minimal_roi,
+                buy_params, sell_params, trailing_stop, trailing_stop_positive,
+                trailing_stop_positive_offset, trailing_only_offset_is_reached.
 
         Returns:
             Path to the created sandbox directory.
@@ -313,6 +316,18 @@ class ImproveService:
         if "sell_params" in flat_params and flat_params["sell_params"]:
             ft_params["sell"] = flat_params["sell_params"]
 
+        # Trailing stop parameters
+        if "trailing_stop" in flat_params and flat_params["trailing_stop"] is not None:
+            trailing_block = ft_params.get("trailing", {})
+            trailing_block["trailing_stop"] = flat_params["trailing_stop"]
+            if "trailing_stop_positive" in flat_params and flat_params["trailing_stop_positive"] is not None:
+                trailing_block["trailing_stop_positive"] = flat_params["trailing_stop_positive"]
+            if "trailing_stop_positive_offset" in flat_params and flat_params["trailing_stop_positive_offset"] is not None:
+                trailing_block["trailing_stop_positive_offset"] = flat_params["trailing_stop_positive_offset"]
+            if "trailing_only_offset_is_reached" in flat_params and flat_params["trailing_only_offset_is_reached"] is not None:
+                trailing_block["trailing_only_offset_is_reached"] = flat_params["trailing_only_offset_is_reached"]
+            ft_params["trailing"] = trailing_block
+
         base["params"] = ft_params
         base["strategy_name"] = strategy_name
         base["ft_stratparam_v"] = 1
@@ -450,3 +465,47 @@ class ImproveService:
         tmp_path.write_text(json.dumps(self._build_freqtrade_params_file(strategy_name, baseline_params), indent=2), encoding="utf-8")
         os.replace(tmp_path, final_path)
         _log.info("Rollback complete; restored %s", final_path)
+
+    def cleanup_stale_sandboxes(self) -> None:
+        """Delete sandbox directories older than 24 hours from the improve sandbox root.
+
+        Scans ``{user_data}/strategies/_improve_sandbox/`` for subdirectories.
+        Skips directories less than 5 minutes old (to avoid deleting sandboxes
+        from a concurrently running loop instance). Logs a WARNING on OSError
+        and continues without surfacing the error to the caller.
+        """
+        import time as _time
+
+        settings = self.settings_service.load_settings()
+        if not settings.user_data_path:
+            return
+
+        sandbox_root = Path(settings.user_data_path) / "strategies" / "_improve_sandbox"
+        if not sandbox_root.exists():
+            return
+
+        now = _time.time()
+        stale_threshold = 24 * 3600  # 24 hours in seconds
+        young_threshold = 5 * 60     # 5 minutes in seconds
+
+        for entry in sandbox_root.iterdir():
+            if not entry.is_dir():
+                continue
+            try:
+                age = now - entry.stat().st_mtime
+                if age < young_threshold:
+                    _log.debug(
+                        "cleanup_stale_sandboxes: skipping young sandbox %s (age=%.0fs)",
+                        entry.name, age,
+                    )
+                    continue
+                if age >= stale_threshold:
+                    shutil.rmtree(entry)
+                    _log.info(
+                        "cleanup_stale_sandboxes: deleted stale sandbox %s (age=%.0fh)",
+                        entry.name, age / 3600,
+                    )
+            except OSError as exc:
+                _log.warning(
+                    "cleanup_stale_sandboxes: failed to remove %s: %s", entry, exc
+                )
