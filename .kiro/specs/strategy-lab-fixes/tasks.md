@@ -41,7 +41,7 @@
 
 ## Implementation
 
-- [-] 3. Fix all five bugs following 7-phase implementation order
+- [x] 3. Fix all five bugs following 7-phase implementation order
 
   - [x] 3.1 Phase 1: Foundation - Add `timeframe` field to `LoopConfig`
     - Open `app/core/models/loop_models.py`
@@ -151,7 +151,7 @@
     - _Preservation: Filter evaluation logic for filters 1, 2, 4, 5, 8, 9 unchanged_
     - _Requirements: 2.3, 2.4, 2.5, 3.3, 3.4_
 
-  - [-] 3.7 Phase 7: Code Cleanup - Delete duplicate methods
+  - [x] 3.7 Phase 7: Code Cleanup - Delete duplicate methods
     - Open `app/ui/pages/loop_page.py`
     - Search for duplicate method definitions:
       - `_on_start` (lines 858, 2047) - DELETE line 858 version, KEEP line 2047 version
@@ -169,7 +169,7 @@
     - _Preservation: All functionality unchanged, only dead code removed_
     - _Requirements: 1.6, 2.6_
 
-  - [~] 3.8 Verify bug condition exploration test now passes
+  - [x] 3.8 Verify bug condition exploration test now passes
     - **Property 1: Expected Behavior** - All Five Bugs Fixed
     - **IMPORTANT**: Re-run the SAME test from task 1 - do NOT write a new test
     - The test from task 1 encodes the expected behavior
@@ -183,7 +183,7 @@
     - Verify Bug 5 fix: In-sample and OOS timeranges do not overlap
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7_
 
-  - [~] 3.9 Verify preservation tests still pass
+  - [x] 3.9 Verify preservation tests still pass
     - **Property 2: Preservation** - Non-Buggy Behavior Unchanged
     - **IMPORTANT**: Re-run the SAME tests from task 2 - do NOT write new tests
     - Run preservation property tests from step 2
@@ -197,7 +197,7 @@
       - Walk-forward fold count matches config
     - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7_
 
-- [~] 4. Checkpoint - Ensure all tests pass
+- [x] 4. Checkpoint - Ensure all tests pass
   - Run all bug condition exploration tests - verify they pass
   - Run all preservation property tests - verify they pass
   - Run any existing unit tests for affected modules
