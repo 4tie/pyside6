@@ -58,11 +58,21 @@ def _make_settings_state(user_data_path: str = "/some/valid/path"):
 def _make_page(qapp, user_data_path: str = "/some/valid/path"):
     """Create an ImprovePage with a mocked SettingsState."""
     state = _make_settings_state(user_data_path=user_data_path)
+    # check_prerequisites does real filesystem checks; mock it so tests are
+    # deterministic: return [] (all OK) when a non-empty path is given,
+    # return a failure list when path is empty/None.
+    def _fake_check_prerequisites(settings):
+        udp = getattr(settings, "user_data_path", "") or ""
+        if not str(udp).strip():
+            return ["user_data_path is not configured"]
+        return []
+
     with (
         patch("app.ui.pages.improve_page.ImproveService") as mock_improve,
         patch("app.ui.pages.improve_page.BacktestService"),
         patch("app.ui.pages.improve_page.ResultsDiagnosisService"),
         patch("app.ui.pages.improve_page.RuleSuggestionService"),
+        patch("app.ui.pages.improve_page.check_prerequisites", side_effect=_fake_check_prerequisites),
     ):
         mock_improve.return_value.get_available_strategies.return_value = []
         mock_improve.return_value.get_strategy_runs.return_value = []

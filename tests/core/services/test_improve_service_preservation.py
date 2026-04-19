@@ -284,7 +284,9 @@ def test_existing_diagnosis_rules_unchanged(summary: BacktestSummary):
 
     This MUST PASS on unfixed code — diagnosis rules are not broken.
     """
-    issues = ResultsDiagnosisService.diagnose(summary)
+    issues = ResultsDiagnosisService.diagnose(
+        __import__("app.core.models.diagnosis_models", fromlist=["DiagnosisInput"]).DiagnosisInput(in_sample=summary)
+    ).issues
     issue_ids = {issue.issue_id for issue in issues}
 
     # stoploss_too_wide: max_drawdown > 20.0

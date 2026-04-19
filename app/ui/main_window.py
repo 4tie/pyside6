@@ -10,6 +10,7 @@ from app.core.ai.ai_service import AIService
 from app.ui.pages.backtest_page import BacktestPage
 from app.ui.pages.download_data_page import DownloadDataPage
 from app.ui.pages.improve_page import ImprovePage
+from app.ui.pages.loop_page import LoopPage
 from app.ui.pages.optimize_page import OptimizePage
 from app.ui.pages.strategy_config_page import StrategyConfigPage
 from app.ui.widgets.terminal_widget import TerminalWidget
@@ -63,6 +64,9 @@ class MainWindow(QMainWindow):
 
         self.improve_page = ImprovePage(self.settings_state)
         self.tabs.addTab(self.improve_page, "Improve")
+
+        self.loop_page = LoopPage(self.settings_state)
+        self.tabs.addTab(self.loop_page, "Strategy Lab")
 
         self.optimize_page = OptimizePage(self.settings_state)
         self.tabs.addTab(self.optimize_page, "Optimize")
@@ -148,6 +152,7 @@ class MainWindow(QMainWindow):
             self.terminal_widget,
             self.backtest_page.terminal,
             self.improve_page.terminal,
+            self.loop_page.terminal,
             self.optimize_page.terminal,
             self.download_data_page.terminal,
         ]

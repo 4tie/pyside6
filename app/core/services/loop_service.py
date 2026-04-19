@@ -8,11 +8,21 @@ ProcessService; this service manages state transitions and suggestion rotation.
 from __future__ import annotations
 
 import copy
+import math
+import statistics
 from typing import Callable, Dict, List, Optional, Tuple
 
-from app.core.backtests.results_models import BacktestResults, BacktestSummary
+from app.core.backtests.results_models import BacktestSummary
 from app.core.models.improve_models import DiagnosedIssue, ParameterSuggestion
-from app.core.models.loop_models import LoopConfig, LoopIteration, LoopResult
+from app.core.models.loop_models import (
+    GateResult,
+    HardFilterFailure,
+    LoopConfig,
+    LoopIteration,
+    LoopResult,
+    RobustScore,
+    RobustScoreInput,
+)
 from app.core.services.improve_service import ImproveService
 from app.core.services.results_diagnosis_service import ResultsDiagnosisService
 from app.core.services.rule_suggestion_service import RuleSuggestionService
@@ -21,35 +31,197 @@ from app.core.utils.app_logger import get_logger
 _log = get_logger("services.loop")
 
 # ---------------------------------------------------------------------------
-# Scoring weights — used to rank iterations
+# Fixed reference ranges for norm() — set once, never change during a session.
+# These guarantee RobustScore.total values are directly comparable across all
+# iterations regardless of computation order.
 # ---------------------------------------------------------------------------
-_W_PROFIT = 0.40
-_W_WIN_RATE = 0.25
-_W_DRAWDOWN = 0.20   # inverted: lower drawdown → higher score
-_W_SHARPE = 0.15
+_NORM_NET_PROFIT_MIN: float = -100.0
+_NORM_NET_PROFIT_MAX: float = 200.0
+_NORM_EXPECTANCY_MIN: float = -1.0
+_NORM_EXPECTANCY_MAX: float = 5.0
+_NORM_PROFIT_FACTOR_MIN: float = 0.0
+_NORM_PROFIT_FACTOR_MAX: float = 3.0
+_NORM_MAX_DRAWDOWN_MIN: float = 0.0
+_NORM_MAX_DRAWDOWN_MAX: float = 100.0
 
 
-def compute_score(summary: BacktestSummary) -> float:
-    """Compute a composite profitability score for a backtest summary.
-
-    Higher is better. Profit and win rate contribute positively; drawdown
-    contributes negatively (inverted). Sharpe ratio adds a quality bonus.
+def _norm(value: float, lo: float, hi: float) -> float:
+    """Linearly normalize value to [0, 1] using fixed reference range [lo, hi].
 
     Args:
-        summary: Aggregate statistics from a completed backtest run.
+        value: Raw metric value.
+        lo: Lower bound of the reference range.
+        hi: Upper bound of the reference range.
 
     Returns:
-        Float composite score. Comparable across iterations of the same strategy.
+        Clamped normalized value in [0, 1].
     """
-    profit_score = summary.total_profit * _W_PROFIT
-    win_score = summary.win_rate * _W_WIN_RATE
-    dd_score = -summary.max_drawdown * _W_DRAWDOWN
-    sharpe_score = (summary.sharpe_ratio or 0.0) * _W_SHARPE * 10  # scale to ~same range
-    return profit_score + win_score + dd_score + sharpe_score
+    if hi == lo:
+        return 0.0
+    return max(0.0, min(1.0, (value - lo) / (hi - lo)))
+
+
+def _is_nan_or_none(v) -> bool:
+    """Return True if v is None or a float NaN."""
+    if v is None:
+        return True
+    try:
+        return math.isnan(float(v))
+    except (TypeError, ValueError):
+        return False
+
+
+def _normalize_summary(summary: BacktestSummary) -> BacktestSummary:
+    """Return a copy of summary with None/NaN fields replaced by neutral values.
+
+    Substitutions applied:
+    - sharpe_ratio  → 0.0
+    - profit_factor → 0.0
+    - win_rate      → 0.0
+    - max_drawdown  → 100.0
+
+    A WARNING is logged for each substitution made.
+
+    Args:
+        summary: BacktestSummary that may contain None or NaN fields.
+
+    Returns:
+        A new BacktestSummary with all four guarded fields guaranteed non-None/NaN.
+    """
+    # Use copy to avoid mutating the original
+    result = copy.copy(summary)
+
+    if _is_nan_or_none(result.sharpe_ratio):
+        _log.warning(
+            "_normalize_summary: sharpe_ratio is None/NaN for strategy '%s' — substituting 0.0",
+            summary.strategy,
+        )
+        result.sharpe_ratio = 0.0
+
+    if _is_nan_or_none(result.profit_factor):
+        _log.warning(
+            "_normalize_summary: profit_factor is None/NaN for strategy '%s' — substituting 0.0",
+            summary.strategy,
+        )
+        result.profit_factor = 0.0
+
+    if _is_nan_or_none(result.win_rate):
+        _log.warning(
+            "_normalize_summary: win_rate is None/NaN for strategy '%s' — substituting 0.0",
+            summary.strategy,
+        )
+        result.win_rate = 0.0
+
+    if _is_nan_or_none(result.max_drawdown):
+        _log.warning(
+            "_normalize_summary: max_drawdown is None/NaN for strategy '%s' — substituting 100.0",
+            summary.strategy,
+        )
+        result.max_drawdown = 100.0
+
+    return result
+
+
+def compute_score(input: RobustScoreInput) -> RobustScore:
+    """Compute a multi-dimensional RobustScore for a backtest result bundle.
+
+    Formula:
+        robust_score = profitability_score + consistency_score + stability_score
+                       - fragility_score
+
+    Each component is a normalized value in [0, 1] (fragility is subtracted).
+
+    Args:
+        input: RobustScoreInput bundling in-sample summary, optional fold
+            summaries, optional stress summary, and optional pair profit
+            distribution.
+
+    Returns:
+        RobustScore with total and four component scores.
+    """
+    s = _normalize_summary(input.in_sample)
+
+    # ------------------------------------------------------------------
+    # Profitability component (weight 0.35)
+    # ------------------------------------------------------------------
+    norm_profit = _norm(s.total_profit, _NORM_NET_PROFIT_MIN, _NORM_NET_PROFIT_MAX)
+    norm_expectancy = _norm(s.expectancy, _NORM_EXPECTANCY_MIN, _NORM_EXPECTANCY_MAX)
+    norm_pf = _norm(min(s.profit_factor, 3.0), _NORM_PROFIT_FACTOR_MIN, _NORM_PROFIT_FACTOR_MAX)
+    profitability = 0.35 * (norm_profit + norm_expectancy + norm_pf) / 3.0
+
+    # ------------------------------------------------------------------
+    # Consistency component (weight 0.30)
+    # ------------------------------------------------------------------
+    # equity_r2: placeholder — use 0.5 as neutral when not computable
+    equity_r2 = 0.5
+
+    if input.fold_summaries and len(input.fold_summaries) > 0:
+        profitable_folds = sum(
+            1 for fs in input.fold_summaries if fs.total_profit > 0
+        )
+        pct_profitable_folds = profitable_folds / len(input.fold_summaries)
+        consistency = 0.30 * (pct_profitable_folds + equity_r2) / 2.0
+    else:
+        # Quick mode: use only equity_r2 with full weight
+        consistency = 0.30 * equity_r2
+
+    # ------------------------------------------------------------------
+    # Stability component (weight 0.20)
+    # ------------------------------------------------------------------
+    # pair_dominance_ratio: fraction of profit from the single most dominant pair
+    pair_dominance_ratio = 0.0
+    if input.pair_profit_distribution:
+        pair_dominance_ratio = max(input.pair_profit_distribution.values(), default=0.0)
+        pair_dominance_ratio = max(0.0, min(1.0, pair_dominance_ratio))
+
+    if input.fold_summaries and len(input.fold_summaries) > 1:
+        fold_profits = [fs.total_profit for fs in input.fold_summaries]
+        mean_fp = statistics.mean(fold_profits)
+        std_fp = statistics.stdev(fold_profits)
+        cv_fold_profits = (std_fp / abs(mean_fp)) if mean_fp != 0 else 1.0
+        cv_fold_profits = max(0.0, min(1.0, cv_fold_profits))
+        stability = 0.20 * ((1.0 - cv_fold_profits) + (1.0 - pair_dominance_ratio)) / 2.0
+    else:
+        # Quick mode: use only pair stability with full weight
+        stability = 0.20 * (1.0 - pair_dominance_ratio)
+
+    # ------------------------------------------------------------------
+    # Fragility component (weight 0.15, subtracted)
+    # ------------------------------------------------------------------
+    norm_dd = _norm(s.max_drawdown, _NORM_MAX_DRAWDOWN_MIN, _NORM_MAX_DRAWDOWN_MAX)
+
+    # slippage_sensitivity: ratio of stress-test profit drop to baseline profit
+    slippage_sensitivity = 0.0
+    if input.stress_summary is not None:
+        stress_s = _normalize_summary(input.stress_summary)
+        if s.total_profit != 0:
+            drop = s.total_profit - stress_s.total_profit
+            slippage_sensitivity = max(0.0, min(1.0, drop / abs(s.total_profit)))
+
+    if input.stress_summary is not None:
+        fragility = 0.15 * (norm_dd + slippage_sensitivity + pair_dominance_ratio) / 3.0
+    else:
+        # Quick mode: use only drawdown and pair dependence
+        fragility = 0.15 * (norm_dd + pair_dominance_ratio) / 2.0
+
+    # ------------------------------------------------------------------
+    # Total
+    # ------------------------------------------------------------------
+    total = profitability + consistency + stability - fragility
+
+    return RobustScore(
+        total=total,
+        profitability=profitability,
+        consistency=consistency,
+        stability=stability,
+        fragility=fragility,
+    )
 
 
 def targets_met(summary: BacktestSummary, config: LoopConfig) -> bool:
     """Return True if all profitability targets in config are satisfied.
+
+    All four conditions must be simultaneously satisfied.
 
     Args:
         summary: Backtest summary to evaluate.
@@ -156,7 +328,8 @@ class SuggestionRotator:
             # Determine if the previous iteration's change for this param was beneficial
             prev_was_worse = False
             if prev_iteration is not None and not prev_iteration.is_improvement:
-                if param in prev_iteration.changes:
+                # Check if this param was changed in the previous iteration
+                if prev_iteration.params_before.get(param) != prev_iteration.params_after.get(param):
                     prev_was_worse = True
 
             varied_suggestion = self._vary_suggestion(
@@ -318,7 +491,7 @@ class LoopService:
         self,
         config: LoopConfig,
         initial_params: dict,
-        initial_results: Optional[BacktestResults] = None,
+        initial_results=None,
     ) -> None:
         """Initialise loop state. Does NOT start the first backtest.
 
@@ -328,9 +501,9 @@ class LoopService:
         Args:
             config: Loop configuration (targets, max iterations, strategy).
             initial_params: Starting strategy parameters.
-            initial_results: Optional pre-existing baseline results. If provided,
-                the first iteration skips the initial backtest and goes straight
-                to diagnosis.
+            initial_results: Optional pre-existing baseline BacktestResults. If
+                provided, the first iteration skips the initial backtest and goes
+                straight to diagnosis.
         """
         self._config = config
         self._current_params = copy.deepcopy(initial_params)
@@ -341,8 +514,9 @@ class LoopService:
         self._running = True
 
         if initial_results is not None:
-            # Seed the best score from the existing baseline
-            self._best_score = compute_score(initial_results.summary)
+            # Seed the best score from the existing baseline (Training Range only)
+            score = compute_score(RobustScoreInput(in_sample=initial_results.summary))
+            self._best_score = score.total
             _log.info(
                 "Loop started with existing baseline; score=%.4f", self._best_score
             )
@@ -373,7 +547,7 @@ class LoopService:
 
     def prepare_next_iteration(
         self,
-        latest_results: BacktestResults,
+        latest_summary: BacktestSummary,
     ) -> Optional[Tuple[LoopIteration, List[ParameterSuggestion]]]:
         """Analyse the latest results and prepare the next iteration.
 
@@ -382,7 +556,7 @@ class LoopService:
         or the loop should stop.
 
         Args:
-            latest_results: BacktestResults from the most recent backtest.
+            latest_summary: BacktestSummary from the most recent backtest.
 
         Returns:
             Tuple of (LoopIteration, suggestions) ready to execute, or None if
@@ -392,21 +566,21 @@ class LoopService:
             return None
 
         self._current_iteration += 1
-        summary = latest_results.summary
 
         # Check targets
-        if self._config.stop_on_first_profitable and targets_met(summary, self._config):
-            score = compute_score(summary)
+        if self._config.stop_on_first_profitable and targets_met(latest_summary, self._config):
+            from pathlib import Path
             iteration = LoopIteration(
-                iteration_num=self._current_iteration,
+                iteration_number=self._current_iteration,
                 params_before=copy.deepcopy(self._current_params),
                 params_after=copy.deepcopy(self._current_params),
-                changes={},
-                issues=[],
-                suggestions_applied=[],
-                results=latest_results,
+                changes_summary=[],
+                summary=latest_summary,
                 is_improvement=True,
-                score=score,
+                status="success",
+                sandbox_path=Path("."),
+                validation_gate_reached="in_sample",
+                validation_gate_passed=True,
             )
             self._record_iteration(iteration)
             self._result.target_reached = True
@@ -415,8 +589,11 @@ class LoopService:
             _log.info("Loop: targets met at iteration %d", self._current_iteration)
             return None
 
-        # Diagnose
-        issues = ResultsDiagnosisService.diagnose(summary)
+        # Diagnose using the new DiagnosisInput/DiagnosisBundle API
+        from app.core.models.diagnosis_models import DiagnosisInput
+        diagnosis_input = DiagnosisInput(in_sample=latest_summary)
+        bundle = ResultsDiagnosisService.diagnose(diagnosis_input)
+        issues = bundle.issues
         _log.debug(
             "Loop iter %d: %d issue(s) diagnosed", self._current_iteration, len(issues)
         )
@@ -456,25 +633,26 @@ class LoopService:
 
         self._rotator.mark_tried(candidate_params)
 
-        # Build changes dict
-        changes = {}
+        # Build changes_summary list
+        changes_summary = []
         for param, new_val in candidate_params.items():
             old_val = self._current_params.get(param)
             if old_val != new_val:
-                changes[param] = (old_val, new_val)
+                changes_summary.append(f"{param}: {old_val} → {new_val}")
 
+        from pathlib import Path
         iteration = LoopIteration(
-            iteration_num=self._current_iteration,
+            iteration_number=self._current_iteration,
             params_before=copy.deepcopy(self._current_params),
             params_after=candidate_params,
-            changes=changes,
-            issues=issues,
-            suggestions_applied=suggestions,
+            changes_summary=changes_summary,
+            sandbox_path=Path("."),
         )
 
         self._emit_status(
             f"Iteration {self._current_iteration}/{self._config.max_iterations} — "
-            f"applying {len(suggestions)} suggestion(s): {iteration.changes_summary}"
+            f"applying {len(suggestions)} suggestion(s): "
+            + ", ".join(changes_summary)
         )
 
         return iteration, suggestions
@@ -482,39 +660,64 @@ class LoopService:
     def record_iteration_result(
         self,
         iteration: LoopIteration,
-        results: BacktestResults,
+        summary: BacktestSummary,
+        score_input: Optional[RobustScoreInput] = None,
     ) -> bool:
         """Record the backtest result for an iteration and update best tracking.
 
         Args:
             iteration: The iteration object (mutated in place with results/score).
-            results: BacktestResults from the candidate backtest.
+            summary: BacktestSummary from the candidate backtest (Gate 1).
+            score_input: Optional full RobustScoreInput for multi-gate scoring.
+                If None, a minimal input using only in_sample is constructed.
 
         Returns:
             True if this iteration improved over the previous best.
         """
-        score = compute_score(results.summary)
-        is_improvement = score > self._best_score
+        iteration.summary = summary
 
-        iteration.results = results
-        iteration.score = score
+        # Guard: zero trades
+        if summary.total_trades == 0:
+            iteration.status = "zero_trades"
+            iteration.is_improvement = False
+            self._record_iteration(iteration)
+            _log.info("Loop iter %d: zero trades — not eligible for best", iteration.iteration_number)
+            return False
+
+        # Guard: below min trades
+        if self._config and summary.total_trades < self._config.target_min_trades:
+            iteration.below_min_trades = True
+
+        # Compute score
+        if score_input is None:
+            score_input = RobustScoreInput(in_sample=summary)
+        robust_score = compute_score(score_input)
+        iteration.score = robust_score
+
+        # Only fully-validated iterations can become best
+        is_improvement = (
+            iteration.validation_gate_passed
+            and not iteration.below_min_trades
+            and robust_score.total > self._best_score
+        )
+
         iteration.is_improvement = is_improvement
 
         if is_improvement:
-            self._best_score = score
+            self._best_score = robust_score.total
             self._current_params = copy.deepcopy(iteration.params_after)
             self._result.best_iteration = iteration
             _log.info(
                 "Loop iter %d: improvement! score=%.4f profit=%.2f%%",
-                iteration.iteration_num,
-                score,
-                results.summary.total_profit,
+                iteration.iteration_number,
+                robust_score.total,
+                summary.total_profit,
             )
         else:
             _log.info(
                 "Loop iter %d: no improvement. score=%.4f (best=%.4f)",
-                iteration.iteration_num,
-                score,
+                iteration.iteration_number,
+                robust_score.total,
                 self._best_score,
             )
 
@@ -528,9 +731,10 @@ class LoopService:
             iteration: The iteration object (mutated in place with error).
             error: Error message describing the failure.
         """
-        iteration.error = error
+        iteration.error_message = error
+        iteration.status = "error"
         self._record_iteration(iteration)
-        _log.warning("Loop iter %d failed: %s", iteration.iteration_num, error)
+        _log.warning("Loop iter %d failed: %s", iteration.iteration_number, error)
 
     def finalize(self, stop_reason: str = "") -> LoopResult:
         """Finalize the loop and return the completed LoopResult.
@@ -546,10 +750,15 @@ class LoopService:
             self._result.stop_reason = stop_reason
 
         if self._result.best_iteration is None and self._result.iterations:
-            # Pick the best from what we have
-            successful = [it for it in self._result.iterations if it.succeeded]
-            if successful:
-                self._result.best_iteration = max(successful, key=lambda it: it.score)
+            # Pick the best from fully-validated iterations only
+            validated = [
+                it for it in self._result.iterations
+                if it.validation_gate_passed and it.score is not None
+            ]
+            if validated:
+                self._result.best_iteration = max(
+                    validated, key=lambda it: it.score.total
+                )
 
         _log.info(
             "Loop finalized: %d iterations, best_score=%.4f, reason=%s",

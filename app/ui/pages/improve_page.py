@@ -6,6 +6,7 @@ progress bar gauges, and animated comparison deltas.
 """
 import copy
 import time
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
@@ -20,12 +21,16 @@ from PySide6.QtGui import QColor, QFont, QPalette
 
 from app.app_state.settings_state import SettingsState
 from app.core.backtests.results_models import BacktestResults, BacktestSummary
-from app.core.models.improve_models import DiagnosedIssue, ParameterSuggestion
+from app.core.models.diagnosis_models import DiagnosisInput
+from app.core.models.improve_models import DiagnosedIssue, ParameterSuggestion, SessionBaseline, SessionRound
 from app.core.services.backtest_service import BacktestService
 from app.core.services.improve_service import ImproveService
 from app.core.services.results_diagnosis_service import ResultsDiagnosisService
 from app.core.services.rule_suggestion_service import RuleSuggestionService
 from app.core.utils.app_logger import get_logger
+from app.ui.widgets.animated_metric_card import AnimatedMetricCard
+from app.ui.widgets.issue_badge import IssueBadge
+from app.ui.widgets.suggestion_row import SuggestionRow
 from app.ui.widgets.terminal_widget import TerminalWidget
 
 _log = get_logger("ui.improve_page")
@@ -51,219 +56,11 @@ _C_TEXT_DIM = "#9d9d9d"       # text_secondary
 
 
 # ---------------------------------------------------------------------------
-# Helper widgets
+# Helper widgets (imported from app.ui.widgets.*)
 # ---------------------------------------------------------------------------
-
-class AnimatedMetricCard(QFrame):
-    """A card widget showing a metric with a color-coded value and animated bar."""
-
-    def __init__(self, label: str, parent=None):
-        super().__init__(parent)
-        self._label = label
-        self._target_pct = 0.0
-        self._anim: Optional[QPropertyAnimation] = None
-        self._build_ui()
-
-    def _build_ui(self) -> None:
-        self.setFrameShape(QFrame.StyledPanel)
-        self.setMinimumWidth(140)
-        self.setMaximumWidth(200)
-        self.setStyleSheet(f"""
-            AnimatedMetricCard {{
-                background: {_C_CARD_BG};
-                border: 1px solid {_C_BORDER};
-                border-radius: 8px;
-            }}
-        """)
-
-        layout = QVBoxLayout(self)
-        layout.setContentsMargins(10, 8, 10, 8)
-        layout.setSpacing(4)
-
-        self._lbl = QLabel(self._label)
-        self._lbl.setStyleSheet(f"color: {_C_TEXT_DIM}; font-size: 10px; font-weight: 600; letter-spacing: 1px;")
-        self._lbl.setAlignment(Qt.AlignCenter)
-        layout.addWidget(self._lbl)
-
-        self._value_lbl = QLabel("—")
-        self._value_lbl.setStyleSheet(f"color: {_C_TEXT}; font-size: 18px; font-weight: bold;")
-        self._value_lbl.setAlignment(Qt.AlignCenter)
-        layout.addWidget(self._value_lbl)
-
-        self._bar = QProgressBar()
-        self._bar.setRange(0, 100)
-        self._bar.setValue(0)
-        self._bar.setTextVisible(False)
-        self._bar.setFixedHeight(5)
-        self._bar.setStyleSheet(f"""
-            QProgressBar {{
-                background: {_C_BORDER};
-                border-radius: 2px;
-                border: none;
-            }}
-            QProgressBar::chunk {{
-                background: {_C_TEAL};
-                border-radius: 2px;
-            }}
-        """)
-        layout.addWidget(self._bar)
-
-        self._sub_lbl = QLabel("")
-        self._sub_lbl.setStyleSheet(f"color: {_C_TEXT_DIM}; font-size: 9px;")
-        self._sub_lbl.setAlignment(Qt.AlignCenter)
-        layout.addWidget(self._sub_lbl)
-
-    def set_value(self, text: str, color: str = _C_TEXT, bar_pct: float = 0.0,
-                  bar_color: str = _C_TEAL, sub_text: str = "") -> None:
-        """Update the card value, bar fill, and optional sub-label with animation."""
-        self._value_lbl.setText(text)
-        self._value_lbl.setStyleSheet(
-            f"color: {color}; font-size: 18px; font-weight: bold;"
-        )
-        self._bar.setStyleSheet(f"""
-            QProgressBar {{
-                background: {_C_BORDER};
-                border-radius: 2px;
-                border: none;
-            }}
-            QProgressBar::chunk {{
-                background: {bar_color};
-                border-radius: 2px;
-            }}
-        """)
-        self._sub_lbl.setText(sub_text)
-
-        # Animate bar from current to target
-        if self._anim:
-            self._anim.stop()
-        self._anim = QPropertyAnimation(self._bar, b"value")
-        self._anim.setDuration(600)
-        self._anim.setStartValue(self._bar.value())
-        self._anim.setEndValue(int(min(max(bar_pct, 0), 100)))
-        self._anim.setEasingCurve(QEasingCurve.OutCubic)
-        self._anim.start()
-
-
-class IssueBadge(QFrame):
-    """A colored badge widget for a single diagnosed issue."""
-
-    SEVERITY_COLORS = {
-        "stoploss_too_wide": (_C_RED, "🔴"),
-        "drawdown_high": (_C_RED, "🔴"),
-        "negative_profit": (_C_RED, "🔴"),
-        "weak_win_rate": (_C_ORANGE, "🟠"),
-        "trades_too_low": (_C_YELLOW, "🟡"),
-        "poor_pair_concentration": (_C_TEAL, "🔵"),
-        "profit_factor_low": (_C_ORANGE, "🟠"),
-        "expectancy_negative": (_C_ORANGE, "🟠"),
-    }
-
-    def __init__(self, issue: DiagnosedIssue, parent=None):
-        super().__init__(parent)
-        color, icon = self.SEVERITY_COLORS.get(issue.issue_id, (_C_TEXT_DIM, "⚪"))
-        self.setStyleSheet(f"""
-            IssueBadge {{
-                background: {color}22;
-                border: 1px solid {color}66;
-                border-left: 3px solid {color};
-                border-radius: 4px;
-            }}
-        """)
-        layout = QHBoxLayout(self)
-        layout.setContentsMargins(8, 6, 8, 6)
-        layout.setSpacing(8)
-
-        icon_lbl = QLabel(icon)
-        icon_lbl.setFixedWidth(18)
-        layout.addWidget(icon_lbl)
-
-        text_lbl = QLabel(issue.description)
-        text_lbl.setWordWrap(True)
-        text_lbl.setStyleSheet(f"color: {_C_TEXT}; font-size: 12px; background: transparent; border: none;")
-        layout.addWidget(text_lbl, 1)
-
-
-class SuggestionRow(QFrame):
-    """A styled row for a single parameter suggestion with Apply button."""
-
-    PARAM_ICONS = {
-        "stoploss": "🛑",
-        "max_open_trades": "📊",
-        "minimal_roi": "🎯",
-        "pairlist": "💱",
-    }
-
-    def __init__(self, suggestion: ParameterSuggestion, on_apply, parent=None):
-        super().__init__(parent)
-        self.setStyleSheet(f"""
-            SuggestionRow {{
-                background: {_C_CARD_BG};
-                border: 1px solid {_C_BORDER};
-                border-radius: 6px;
-            }}
-        """)
-        layout = QHBoxLayout(self)
-        layout.setContentsMargins(10, 8, 10, 8)
-        layout.setSpacing(10)
-
-        icon = self.PARAM_ICONS.get(suggestion.parameter, "⚙️")
-        icon_lbl = QLabel(icon)
-        icon_lbl.setFixedWidth(22)
-        icon_lbl.setStyleSheet("font-size: 14px; background: transparent; border: none;")
-        layout.addWidget(icon_lbl)
-
-        text_col = QVBoxLayout()
-        text_col.setSpacing(2)
-
-        value_text = "Advisory" if suggestion.is_advisory else str(suggestion.proposed_value)
-        param_color = _C_YELLOW if suggestion.is_advisory else _C_GREEN_LIGHT
-        header = QLabel(f"<b style='color:{param_color}'>{suggestion.parameter}</b>: {value_text}")
-        header.setStyleSheet(f"color: {_C_TEXT}; font-size: 12px; background: transparent; border: none;")
-        text_col.addWidget(header)
-
-        detail = QLabel(f"{suggestion.reason} → <i style='color:{_C_TEAL}'>{suggestion.expected_effect}</i>")
-        detail.setWordWrap(True)
-        detail.setStyleSheet(f"color: {_C_TEXT_DIM}; font-size: 11px; background: transparent; border: none;")
-        text_col.addWidget(detail)
-
-        layout.addLayout(text_col, 1)
-
-        if not suggestion.is_advisory:
-            apply_btn = QPushButton("Apply")
-            apply_btn.setFixedWidth(70)
-            apply_btn.setStyleSheet(f"""
-                QPushButton {{
-                    background: {_C_TEAL};
-                    color: white;
-                    border: none;
-                    border-radius: 4px;
-                    padding: 5px 10px;
-                    font-weight: bold;
-                    font-size: 11px;
-                }}
-                QPushButton:hover {{
-                    background: {_C_TEAL_HOVER};
-                }}
-                QPushButton:pressed {{
-                    background: #3aaa84;
-                }}
-            """)
-            apply_btn.clicked.connect(lambda: on_apply(suggestion))
-            layout.addWidget(apply_btn)
-        else:
-            adv_lbl = QLabel("Advisory")
-            adv_lbl.setFixedWidth(70)
-            adv_lbl.setAlignment(Qt.AlignCenter)
-            adv_lbl.setStyleSheet(f"""
-                color: {_C_YELLOW};
-                background: {_C_YELLOW}22;
-                border: 1px solid {_C_YELLOW}66;
-                border-radius: 4px;
-                padding: 4px;
-                font-size: 10px;
-                font-weight: bold;
-            """)
-            layout.addWidget(adv_lbl)
+# AnimatedMetricCard, IssueBadge, SuggestionRow are imported at the top of
+# this file from their respective widget modules. The inline definitions have
+# been removed.
 
 
 def _fade_in_widget(widget: QWidget, duration: int = 350) -> None:
@@ -600,6 +397,61 @@ def simulate_history(ops: List[str]) -> Tuple[List[dict], dict]:
     return history, current
 
 
+def check_prerequisites(settings) -> list:
+    """Return a list of human-readable failure messages for missing prerequisites.
+
+    Returns an empty list when all prerequisites are satisfied.
+
+    Checks:
+      1. user_data_path is set and the directory exists on disk.
+      2. python_executable (or freqtrade_executable when use_module_execution=False)
+         exists on disk and is executable.
+      3. At least one .py strategy file exists under {user_data_path}/strategies/.
+
+    Args:
+        settings: AppSettings instance.
+
+    Returns:
+        List of failure message strings. Empty list means all prerequisites pass.
+    """
+    import os
+    failures = []
+
+    user_data_path = getattr(settings, "user_data_path", "") or ""
+    if not str(user_data_path).strip():
+        failures.append("user_data_path is not configured")
+    else:
+        udp = Path(str(user_data_path))
+        if not udp.exists():
+            failures.append(f"user_data_path directory does not exist: {udp}")
+        else:
+            # Check for at least one strategy file
+            strategies_dir = udp / "strategies"
+            if not strategies_dir.exists() or not any(strategies_dir.glob("*.py")):
+                failures.append(
+                    f"No strategy .py files found under {strategies_dir}"
+                )
+
+    # Check executable
+    use_module = getattr(settings, "use_module_execution", True)
+    if use_module:
+        exe = getattr(settings, "python_executable", "") or ""
+    else:
+        exe = getattr(settings, "freqtrade_executable", "") or ""
+
+    if not str(exe).strip():
+        exe_name = "python_executable" if use_module else "freqtrade_executable"
+        failures.append(f"{exe_name} is not configured")
+    else:
+        exe_path = Path(str(exe))
+        if not exe_path.exists():
+            failures.append(f"Executable not found at {exe_path}")
+        elif not os.access(str(exe_path), os.X_OK):
+            failures.append(f"Executable is not executable: {exe_path}")
+
+    return failures
+
+
 # ---------------------------------------------------------------------------
 # ImprovePage
 # ---------------------------------------------------------------------------
@@ -633,6 +485,13 @@ class ImprovePage(QWidget):
         self._sandbox_dir: Optional[Path] = None
         self._export_dir: Optional[Path] = None
         self._run_started_at: float = 0.0
+
+        # Session tracking (task 9)
+        self._session_baseline: Optional[SessionBaseline] = None
+        self._session_history: List[SessionRound] = []
+
+        # Subprocess running flag (task 10) — disables strategy combo while running
+        self._subprocess_running: bool = False
 
         # Run data parallel to run_combo items
         self._run_data: List[dict] = []
@@ -944,6 +803,28 @@ class ImprovePage(QWidget):
         self.comparison_group.setLayout(self._comparison_layout)
         scroll_layout.addWidget(self.comparison_group)
 
+        # Session History group (task 9) — scrollable panel showing accepted rounds
+        self.session_history_group = QGroupBox("Session History")
+        self._session_history_layout = QVBoxLayout()
+        self._session_history_layout.setSpacing(4)
+        self._session_history_layout.setContentsMargins(10, 8, 10, 8)
+        _session_history_subtitle = QLabel(
+            "Accepted improvement rounds this session. Each entry shows the metrics of the accepted candidate."
+        )
+        _session_history_subtitle.setStyleSheet(
+            f"color: {_C_TEXT_DIM}; font-size: 11px; padding-left: 10px;"
+        )
+        _session_history_subtitle.setWordWrap(True)
+        self._session_history_layout.addWidget(_session_history_subtitle)
+        self._empty_session_history = EmptyStatePanel(
+            "📋",
+            "No rounds accepted yet",
+            "Accept a candidate to start tracking session history.",
+        )
+        self._session_history_layout.addWidget(self._empty_session_history)
+        self.session_history_group.setLayout(self._session_history_layout)
+        scroll_layout.addWidget(self.session_history_group)
+
         scroll_layout.addStretch()
         scroll_area.setWidget(scroll_content)
         main_layout.addWidget(scroll_area, 1)
@@ -996,13 +877,24 @@ class ImprovePage(QWidget):
     # ------------------------------------------------------------------
 
     def _check_config_guard(self) -> None:
-        """Show/hide the no-config banner and enable/disable controls based on user_data_path."""
+        """Show/hide the no-config banner and enable/disable controls based on prerequisites."""
         settings = self._settings_state.settings_service.load_settings()
-        user_data_path = getattr(settings, "user_data_path", "") or ""
-        unconfigured = not str(user_data_path).strip()
+        failures = check_prerequisites(settings)
+        unconfigured = len(failures) > 0
+
+        if unconfigured:
+            failure_text = "\n".join(f"• {f}" for f in failures)
+            self._no_config_banner.setText(
+                f"⚠️ Configuration issues detected:\n{failure_text}"
+            )
+        else:
+            self._no_config_banner.setText("")
 
         self._no_config_banner.setVisible(unconfigured)
-        self.strategy_combo.setEnabled(not unconfigured)
+        # Only enable controls when configured AND no subprocess is running
+        subprocess_running = getattr(self, "_subprocess_running", False)
+        controls_enabled = not unconfigured and not subprocess_running
+        self.strategy_combo.setEnabled(controls_enabled)
         self.run_combo.setEnabled(not unconfigured)
         self.load_latest_btn.setEnabled(not unconfigured)
         self.analyze_btn.setEnabled(not unconfigured)
@@ -1039,6 +931,10 @@ class ImprovePage(QWidget):
         self.run_combo.clear()
         self._run_data = []
 
+        # Clear session history whenever the strategy changes (task 9)
+        self._session_history = []
+        self._session_baseline = None
+
         if strategy and not strategy.startswith("("):
             runs = self._improve_service.get_strategy_runs(strategy)
         else:
@@ -1050,11 +946,40 @@ class ImprovePage(QWidget):
                 self.run_combo.addItem(label)
                 self._run_data.append(run)
             self.analyze_btn.setEnabled(True)
+            # Populate session baseline from the most recent run (task 9)
+            self._load_session_baseline(strategy, runs[0])
         else:
             self.run_combo.addItem("(No saved runs found for this strategy)")
             self.analyze_btn.setEnabled(False)
+            # No runs — session baseline stays None; a fresh baseline backtest would be needed
 
         self.run_combo.blockSignals(False)
+
+    def _load_session_baseline(self, strategy: str, run: dict) -> None:
+        """Load the most recent run as the session baseline (task 9).
+
+        Args:
+            strategy: Strategy class name.
+            run: Run metadata dict from the index (most recent run).
+        """
+        try:
+            settings = self._settings_state.settings_service.load_settings()
+            backtest_results_dir = Path(settings.user_data_path) / "backtest_results"
+            run_dir = backtest_results_dir / run.get("run_dir", "")
+            baseline_results = self._improve_service.load_baseline(run_dir)
+            params = self._improve_service.load_baseline_params(run_dir, strategy)
+            self._session_baseline = SessionBaseline(
+                params=params,
+                summary=baseline_results.summary,
+            )
+            _log.info(
+                "Session baseline loaded for strategy '%s' from run '%s'",
+                strategy,
+                run.get("run_id", ""),
+            )
+        except (FileNotFoundError, ValueError, OSError) as e:
+            _log.warning("Could not load session baseline for '%s': %s", strategy, e)
+            self._session_baseline = None
 
     # ------------------------------------------------------------------
     # Button handlers
@@ -1212,7 +1137,8 @@ class ImprovePage(QWidget):
         # Remove empty state panel reference (already cleared above)
         self._empty_issues = None
 
-        issues = ResultsDiagnosisService.diagnose(summary)
+        bundle = ResultsDiagnosisService.diagnose(DiagnosisInput(in_sample=summary))
+        issues = bundle.issues
 
         if not issues:
             ok_lbl = QLabel("✅  No issues detected — results look healthy")
@@ -1226,14 +1152,28 @@ class ImprovePage(QWidget):
                 # Stagger fade-in
                 QTimer.singleShot(i * 80, lambda w=badge: _fade_in_widget(w, 300))
 
+        # Render structural diagnoses (task 11)
+        structural = bundle.structural
+        if structural:
+            struct_header = QLabel("Structural Patterns:")
+            struct_header.setStyleSheet(
+                f"color: {_C_TEXT_DIM}; font-size: 10px; font-weight: bold; "
+                f"letter-spacing: 1px; padding-top: 6px;"
+            )
+            self._issues_layout.addWidget(struct_header)
+            for i, sd in enumerate(structural):
+                sd_badge = self._make_structural_badge(sd)
+                self._issues_layout.addWidget(sd_badge)
+                QTimer.singleShot((len(issues) + i) * 80, lambda w=sd_badge: _fade_in_widget(w, 300))
+
         self.issues_group.setVisible(True)
 
         # Update group box title with count
-        if issues:
-            self.issues_group.setTitle(f"Detected Issues ({len(issues)})")
+        total_count = len(issues) + len(structural)
+        if total_count > 0:
+            self.issues_group.setTitle(f"Detected Issues ({total_count})")
         else:
             self.issues_group.setTitle("Detected Issues")
-
         # Clear suggestions layout (preserves subtitle label at index 0)
         while self._suggestions_layout.count() > 1:
             item = self._suggestions_layout.takeAt(1)
@@ -1263,6 +1203,108 @@ class ImprovePage(QWidget):
         self.suggestions_group.setVisible(True)
 
         return issues
+
+    @staticmethod
+    def _make_structural_badge(sd) -> QFrame:
+        """Build a colored badge widget for a StructuralDiagnosis.
+
+        Badge color: critical → red, moderate → orange, advisory → yellow.
+
+        Args:
+            sd: StructuralDiagnosis object.
+
+        Returns:
+            A styled QFrame badge widget.
+        """
+        severity_colors = {
+            "critical": (_C_RED, "🔴"),
+            "moderate": (_C_ORANGE, "🟠"),
+            "advisory": (_C_YELLOW, "🟡"),
+        }
+        color, icon = severity_colors.get(sd.severity, (_C_TEXT_DIM, "⚪"))
+
+        frame = QFrame()
+        frame.setStyleSheet(f"""
+            QFrame {{
+                background: {color}22;
+                border: 1px solid {color}66;
+                border-left: 3px solid {color};
+                border-radius: 4px;
+            }}
+        """)
+        layout = QVBoxLayout(frame)
+        layout.setContentsMargins(8, 6, 8, 6)
+        layout.setSpacing(4)
+
+        # Header row: icon + pattern label
+        header_row = QHBoxLayout()
+        icon_lbl = QLabel(icon)
+        icon_lbl.setFixedWidth(18)
+        header_row.addWidget(icon_lbl)
+
+        pattern_lbl = QLabel(f"<b>{sd.failure_pattern}</b>")
+        pattern_lbl.setStyleSheet(
+            f"color: {color}; font-size: 12px; background: transparent; border: none;"
+        )
+        header_row.addWidget(pattern_lbl, 1)
+        layout.addLayout(header_row)
+
+        # Evidence
+        evidence_lbl = QLabel(f"Evidence: {sd.evidence}")
+        evidence_lbl.setWordWrap(True)
+        evidence_lbl.setStyleSheet(
+            f"color: {_C_TEXT}; font-size: 11px; background: transparent; border: none;"
+        )
+        layout.addWidget(evidence_lbl)
+
+        # Root cause
+        cause_lbl = QLabel(f"Root cause: {sd.root_cause}")
+        cause_lbl.setWordWrap(True)
+        cause_lbl.setStyleSheet(
+            f"color: {_C_TEXT_DIM}; font-size: 11px; background: transparent; border: none;"
+        )
+        layout.addWidget(cause_lbl)
+
+        # Mutation direction
+        direction_lbl = QLabel(f"Direction: {sd.mutation_direction}")
+        direction_lbl.setWordWrap(True)
+        direction_lbl.setStyleSheet(
+            f"color: {_C_TEAL}; font-size: 11px; background: transparent; border: none;"
+        )
+        layout.addWidget(direction_lbl)
+
+        # Confidence bar
+        conf_row = QHBoxLayout()
+        conf_label = QLabel("Confidence:")
+        conf_label.setStyleSheet(
+            f"color: {_C_TEXT_DIM}; font-size: 10px; background: transparent; border: none;"
+        )
+        conf_label.setFixedWidth(70)
+        conf_row.addWidget(conf_label)
+
+        conf_bar = QProgressBar()
+        conf_bar.setRange(0, 100)
+        conf_bar.setValue(int(sd.confidence * 100))
+        conf_bar.setTextVisible(True)
+        conf_bar.setFormat(f"{sd.confidence * 100:.0f}%")
+        conf_bar.setFixedHeight(12)
+        conf_bar.setStyleSheet(f"""
+            QProgressBar {{
+                background: {_C_BORDER};
+                border-radius: 6px;
+                border: none;
+                font-size: 9px;
+                color: {_C_TEXT};
+            }}
+            QProgressBar::chunk {{
+                background: {color};
+                border-radius: 6px;
+            }}
+        """)
+        conf_row.addWidget(conf_bar, 1)
+        layout.addLayout(conf_row)
+
+        return frame
 
     def _on_apply_suggestion(self, suggestion: ParameterSuggestion) -> None:
         """Apply a suggestion to the candidate config and update the diff preview."""
@@ -1413,9 +1455,11 @@ class ImprovePage(QWidget):
         self._export_dir = export_dir
         self._run_started_at = time.time()
 
-        # Disable run button, show stop button
+        # Disable run button, show stop button; lock strategy combo (task 10)
         self.run_backtest_btn.setEnabled(False)
         self.stop_btn.setVisible(True)
+        self._subprocess_running = True
+        self.strategy_combo.setEnabled(False)
 
         # Update status message
         msg, color = _build_status_message("candidate_backtest_start")
@@ -1453,11 +1497,16 @@ class ImprovePage(QWidget):
         self._terminal.process_service.stop_process()
         self.run_backtest_btn.setEnabled(True)
         self.stop_btn.setVisible(False)
+        self._subprocess_running = False
+        self._check_config_guard()
 
     def _on_candidate_finished(self, exit_code: int) -> None:
         """Handle candidate backtest process completion."""
         self.run_backtest_btn.setEnabled(True)
         self.stop_btn.setVisible(False)
+        # Re-enable strategy combo when no subprocess is running (task 10)
+        self._subprocess_running = False
+        self._check_config_guard()
 
         self._terminal.append_output(f"\n[Process finished] exit_code={exit_code}\n")
 
@@ -1673,13 +1722,24 @@ class ImprovePage(QWidget):
         rollback_btn.setToolTip(
             "Restore the strategy parameters to the state before the last Accept."
         )
-        rollback_btn.setVisible(len(self._baseline_history) > 0)
+        # Hidden until at least one round is accepted (task 9)
+        rollback_btn.setVisible(len(self._session_history) > 0 or len(self._baseline_history) > 0)
         rollback_btn.clicked.connect(self._on_rollback)
+
+        run_another_btn = QPushButton("🔄 Run Another Round")
+        run_another_btn.setStyleSheet(self._btn_style(_C_TEAL, "white"))
+        run_another_btn.setToolTip(
+            "Use the current accepted parameters as the starting point for the next suggestion cycle."
+        )
+        # Hidden until at least one round is accepted (task 9)
+        run_another_btn.setVisible(len(self._session_history) > 0)
+        run_another_btn.clicked.connect(self._on_run_another_round)
 
         arb_row = QHBoxLayout()
         arb_row.addWidget(accept_btn)
         arb_row.addWidget(reject_btn)
         arb_row.addWidget(rollback_btn)
+        arb_row.addWidget(run_another_btn)
         arb_row.addStretch()
         arb_widget = QWidget()
         arb_widget.setStyleSheet("background: transparent;")
@@ -1708,6 +1768,26 @@ class ImprovePage(QWidget):
             self._improve_service.reject_candidate(self._sandbox_dir)
             self._sandbox_dir = None
 
+        # Build SessionRound and update session tracking (task 9)
+        params_before = copy.deepcopy(self._baseline_params)
+        params_after = copy.deepcopy(self._candidate_config)
+        candidate_summary = self._candidate_run.summary
+        round_number = len(self._session_history) + 1
+        session_round = SessionRound(
+            round_number=round_number,
+            params_before=params_before,
+            params_after=params_after,
+            summary=candidate_summary,
+            timestamp=datetime.now(timezone.utc),
+        )
+        self._session_history.append(session_round)
+
+        # Update session baseline to the accepted candidate values (task 9)
+        self._session_baseline = SessionBaseline(
+            params=params_after,
+            summary=candidate_summary,
+        )
+
         # Update all state atomically before any UI refresh
         self._baseline_history.append(copy.deepcopy(self._baseline_params))
         self._baseline_params = copy.deepcopy(self._candidate_config)
@@ -1717,6 +1797,7 @@ class ImprovePage(QWidget):
 
         # Single UI refresh after all state is updated
         self._update_comparison_view()
+        self._update_session_history_panel()
         msg, color = _build_status_message("accept")
         self.status_label.setText(msg)
         self.status_label.setStyleSheet(f"color: {color}; font-size: 11px; padding: 2px 4px;")
@@ -1741,29 +1822,173 @@ class ImprovePage(QWidget):
         _log.info("Candidate rejected")
 
     def _on_rollback(self) -> None:
-        """Rollback to the previous baseline params."""
-        if not self._baseline_history:
+        """Rollback to the previous baseline params using session history (task 9)."""
+        if not self._session_history:
             return
 
         strategy_name = self.strategy_combo.currentText().strip()
         if not strategy_name or strategy_name.startswith("("):
             return
 
+        # Pop the last session round
+        last_round = self._session_history.pop()
+
         try:
-            self._improve_service.rollback(strategy_name, self._baseline_history[-1])
+            self._improve_service.rollback(strategy_name, last_round.params_before)
         except OSError as e:
+            # Re-push the round since rollback failed
+            self._session_history.append(last_round)
             QMessageBox.critical(self, "Rollback Failed", str(e))
             return
 
-        # Pop snapshot and restore
-        popped = self._baseline_history.pop()
-        self._baseline_params = popped
+        # Restore session baseline to params_before — no disk read (task 9)
+        self._session_baseline = SessionBaseline(
+            params=last_round.params_before,
+            summary=last_round.summary,  # keep the summary from that round for reference
+        )
+
+        # Also keep _baseline_history in sync for backward compat
+        if self._baseline_history:
+            self._baseline_history.pop()
+
+        self._baseline_params = copy.deepcopy(last_round.params_before)
         self._candidate_run = None
         self._candidate_config = copy.deepcopy(self._baseline_params)
 
         self._update_comparison_view()
         self._update_candidate_preview()
+        self._update_session_history_panel()
         msg, color = _build_status_message("rollback")
         self.status_label.setText(msg)
         self.status_label.setStyleSheet(f"color: {color}; font-size: 11px; padding: 2px 4px;")
         _log.info("Rolled back to previous baseline for strategy '%s'", strategy_name)
+
+    def _on_run_another_round(self) -> None:
+        """Start the next suggestion cycle using the current session baseline (task 9).
+
+        Uses ``_session_baseline.params`` as the starting point without re-reading
+        the strategy JSON from disk.
+        """
+        if self._session_baseline is None:
+            _log.warning("_on_run_another_round called but _session_baseline is None")
+            return
+
+        # Use session baseline params as the new starting point — no disk read
+        self._baseline_params = copy.deepcopy(self._session_baseline.params)
+        self._candidate_config = copy.deepcopy(self._session_baseline.params)
+        self._candidate_run = None
+
+        # Re-run diagnosis and suggestions from the current baseline summary
+        if self._baseline_run is not None:
+            self._display_issues_and_suggestions(
+                self._baseline_run.summary, self._baseline_params
+            )
+        self._update_candidate_preview()
+        self._set_workflow_step(3)
+        _log.info("Run Another Round started from session baseline")
+
+    def _update_session_history_panel(self) -> None:
+        """Rebuild the session history panel from ``_session_history`` (task 9).
+
+        Displays a scrollable list of accepted rounds with round number,
+        profit %, win rate, max drawdown, and trade count.
+        """
+        # Clear existing content (preserves subtitle label at index 0)
+        while self._session_history_layout.count() > 1:
+            item = self._session_history_layout.takeAt(1)
+            if item.widget():
+                item.widget().setParent(None)
+
+        # Remove empty state panel reference
+        self._empty_session_history = None
+
+        if not self._session_history:
+            empty = EmptyStatePanel(
+                "📋",
+                "No rounds accepted yet",
+                "Accept a candidate to start tracking session history.",
+            )
+            self._session_history_layout.addWidget(empty)
+            self._empty_session_history = empty
+            self.session_history_group.setTitle("Session History")
+            return
+
+        # Build a table for the session rounds
+        table = QTableWidget(len(self._session_history), 5)
+        table.setHorizontalHeaderLabels([
+            "Round", "Profit %", "Win Rate %", "Max Drawdown %", "Trades",
+        ])
+        table.setEditTriggers(QTableWidget.NoEditTriggers)
+        table.horizontalHeader().setStretchLastSection(True)
+        table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)
+        table.verticalHeader().setVisible(False)
+        table.setAlternatingRowColors(True)
+        table.setStyleSheet(f"""
+            QTableWidget {{
+                background: {_C_CARD_BG};
+                alternate-background-color: {_C_DARK_BG};
+                gridline-color: {_C_BORDER};
+                border: 1px solid {_C_BORDER};
+                border-radius: 6px;
+                color: {_C_TEXT};
+                font-size: 12px;
+            }}
+            QHeaderView::section {{
+                background: {_C_DARK_BG};
+                color: {_C_TEXT_DIM};
+                border: none;
+                border-bottom: 1px solid {_C_BORDER};
+                padding: 6px 8px;
+                font-size: 11px;
+                font-weight: bold;
+                letter-spacing: 1px;
+            }}
+            QTableWidget::item {{
+                padding: 6px 8px;
+            }}
+        """)
+
+        for row_idx, session_round in enumerate(self._session_history):
+            summary = session_round.summary
+
+            # Round number
+            round_item = QTableWidgetItem(f"Round {session_round.round_number}")
+            round_item.setForeground(QColor(_C_TEXT_DIM))
+            table.setItem(row_idx, 0, round_item)
+
+            # Profit %
+            profit = getattr(summary, "total_profit", 0.0) or 0.0
+            profit_color = _C_GREEN_LIGHT if profit >= 0 else _C_RED_LIGHT
+            profit_item = QTableWidgetItem(f"{profit:.2f}%")
+            profit_item.setForeground(QColor(profit_color))
+            table.setItem(row_idx, 1, profit_item)
+
+            # Win rate %
+            win_rate = getattr(summary, "win_rate", 0.0) or 0.0
+            wr_color = _C_GREEN_LIGHT if win_rate >= 50 else _C_RED_LIGHT
+            wr_item = QTableWidgetItem(f"{win_rate:.2f}%")
+            wr_item.setForeground(QColor(wr_color))
+            table.setItem(row_idx, 2, wr_item)
+
+            # Max drawdown %
+            max_dd = getattr(summary, "max_drawdown", 0.0) or 0.0
+            dd_color = (
+                _C_RED_LIGHT if max_dd > 20
+                else (_C_YELLOW if max_dd > 10 else _C_GREEN_LIGHT)
+            )
+            dd_item = QTableWidgetItem(f"{max_dd:.2f}%")
+            dd_item.setForeground(QColor(dd_color))
+            table.setItem(row_idx, 3, dd_item)
+
+            # Trade count
+            trades = getattr(summary, "total_trades", 0) or 0
+            trades_item = QTableWidgetItem(str(trades))
+            trades_item.setForeground(QColor(_C_TEXT))
+            table.setItem(row_idx, 4, trades_item)
+
+        self._session_history_layout.addWidget(table)
+        _fade_in_widget(table)
+
+        self.session_history_group.setTitle(
+            f"Session History ({len(self._session_history)} round(s))"
+        )

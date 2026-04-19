@@ -86,6 +86,9 @@ class ImproveService:
         ``.py`` file into it, and writes the candidate config as
         ``{strategy_name}.json``.
 
+        The directory name uses Unix timestamp in milliseconds (timestamp_ms)
+        to ensure uniqueness and determinism.
+
         Args:
             strategy_name: Strategy class name (must exist as a ``.py`` file).
             candidate_config: Candidate parameter dict to write as JSON.
@@ -104,14 +107,25 @@ class ImproveService:
         if not strategy_py.exists():
             raise FileNotFoundError(f"Strategy file not found: {strategy_py}")
 
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        sandbox_dir = user_data_path / "strategies" / "_improve_sandbox" / f"{strategy_name}_{timestamp}"
+        # Use Unix timestamp in milliseconds for uniqueness (task 12)
+        import time as _time
+        timestamp_ms = int(_time.time() * 1000)
+        sandbox_dir = (
+            user_data_path / "strategies" / "_improve_sandbox"
+            / f"{strategy_name}_{timestamp_ms}"
+        )
         sandbox_dir.mkdir(parents=True, exist_ok=True)
 
         shutil.copy2(strategy_py, sandbox_dir / f"{strategy_name}.py")
 
         config_file = sandbox_dir / f"{strategy_name}.json"
-        config_file.write_text(json.dumps(self._build_freqtrade_params_file(strategy_name, candidate_config), indent=2), encoding="utf-8")
+        config_file.write_text(
+            json.dumps(
+                self._build_freqtrade_params_file(strategy_name, candidate_config),
+                indent=2,
+            ),
+            encoding="utf-8",
+        )
 
         _log.info("Sandbox prepared at %s", sandbox_dir)
         return sandbox_dir
@@ -301,8 +315,38 @@ class ImproveService:
 
         return base
 
+    def resolve_candidate_artifact(self, export_dir: Path) -> Path:
+        """Locate the single .zip file written by Freqtrade into export_dir.
+
+        Args:
+            export_dir: Directory where the candidate backtest wrote its zip.
+
+        Returns:
+            Path to the single .zip file found in export_dir.
+
+        Raises:
+            FileNotFoundError: If zero .zip files are found in export_dir.
+        """
+        zips = list(export_dir.glob("*.zip"))
+        if len(zips) == 1:
+            return zips[0]
+        if len(zips) == 0:
+            raise FileNotFoundError(
+                f"No .zip result file found in export_dir: {export_dir}"
+            )
+        # Multiple zips — return the most recently modified one
+        _log.warning(
+            "resolve_candidate_artifact: expected 1 zip in %s, found %d — "
+            "returning most recent",
+            export_dir,
+            len(zips),
+        )
+        return max(zips, key=lambda p: p.stat().st_mtime)
+
     def resolve_candidate_zip(self, export_dir: Path, started_at: float = 0.0) -> Optional[Path]:
         """Return the single .zip from export_dir, or fall back to mtime scan.
+
+        Deprecated: use resolve_candidate_artifact() instead.
 
         Args:
             export_dir: Directory where the candidate backtest wrote its zip.
@@ -335,11 +379,14 @@ class ImproveService:
     def parse_candidate_run(self, export_dir: Path, started_at: float = 0.0) -> BacktestResults:
         """Parse the candidate backtest zip from export_dir.
 
+        Calls resolve_candidate_artifact(export_dir) internally to locate the
+        zip before parsing. Falls back to the legacy mtime scan when
+        resolve_candidate_artifact raises FileNotFoundError.
+
         Args:
             export_dir: Directory where the candidate backtest wrote its zip.
             started_at: Unix timestamp of when the candidate process started.
-                Passed through to ``resolve_candidate_zip`` for the fallback
-                mtime filter.
+                Used for the legacy fallback mtime filter.
 
         Returns:
             BacktestResults parsed from the zip.
@@ -347,9 +394,15 @@ class ImproveService:
         Raises:
             FileNotFoundError: If no candidate zip is found.
         """
-        zip_path = self.resolve_candidate_zip(export_dir, started_at)
-        if zip_path is None:
-            raise FileNotFoundError("No candidate zip found in export_dir")
+        try:
+            zip_path = self.resolve_candidate_artifact(export_dir)
+        except FileNotFoundError:
+            # Legacy fallback: mtime scan
+            zip_path = self.resolve_candidate_zip(export_dir, started_at)
+            if zip_path is None:
+                raise FileNotFoundError(
+                    f"No candidate zip found in export_dir: {export_dir}"
+                )
         return parse_backtest_zip(str(zip_path))
 
     def accept_candidate(self, strategy_name: str, candidate_config: dict) -> None:

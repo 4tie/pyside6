@@ -12,7 +12,7 @@
     },
     "filesystem": {
       "command": "npx",
-      "disabled": false,
+      "disabled": true,
       "timeout": 60000,
       "args": [
         "-y",
@@ -40,7 +40,7 @@
     },
     "taskflow": {
       "command": "npx",
-      "disabled": false,
+      "disabled": true,
       "timeout": 60000,
       "args": [
         "-y",

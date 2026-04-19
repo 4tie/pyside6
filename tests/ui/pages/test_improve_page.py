@@ -223,3 +223,68 @@ def test_simulate_history_consistent(ops):
     # Just verify the length is non-negative and <= accepts
     assert len(history) >= 0
     assert len(history) <= accepts
+
+
+# ---------------------------------------------------------------------------
+# Property: rollback restores previous state (task 24.2)
+# ---------------------------------------------------------------------------
+
+@given(ops=st.lists(st.sampled_from(["accept", "rollback"]), min_size=1, max_size=30))
+@settings(max_examples=200)
+def test_rollback_restores_previous_state(ops):
+    """Property: rollback restores the params that were current before the last accept.
+
+    For any sequence of accept/rollback operations, after a rollback the
+    current params equal the params that were current before the most recent
+    accepted round.
+
+    **Validates: Requirements 1.3–1.4, 16.4**
+    """
+    import copy
+
+    history, current = simulate_history(ops)
+
+    # Replay manually to verify rollback semantics
+    manual_history: list = []
+    manual_current: dict = {"stoploss": -0.10}
+
+    for op in ops:
+        if op == "accept":
+            manual_history.append(copy.deepcopy(manual_current))
+            manual_current = dict(manual_current)
+            manual_current["stoploss"] = round(manual_current.get("stoploss", -0.10) + 0.01, 10)
+        elif op == "rollback" and manual_history:
+            # Rollback: current should become the last accepted state
+            prev = manual_history.pop()
+            manual_current = prev
+
+    # simulate_history and manual replay must agree
+    assert manual_current == current
+    assert len(manual_history) == len(history)
+
+
+@given(ops=st.lists(st.sampled_from(["accept", "rollback"]), min_size=2, max_size=20))
+@settings(max_examples=200)
+def test_rollback_after_accept_restores_pre_accept_state(ops):
+    """Property: a rollback immediately after an accept restores the pre-accept state.
+
+    **Validates: Requirements 1.3–1.4, 16.4**
+    """
+    import copy
+
+    # Find the first accept followed by a rollback
+    for i in range(len(ops) - 1):
+        if ops[i] == "accept" and ops[i + 1] == "rollback":
+            # Run up to (but not including) the accept
+            prefix_ops = ops[:i]
+            _, state_before_accept = simulate_history(prefix_ops)
+
+            # Run through the accept + rollback
+            full_ops = ops[:i + 2]
+            _, state_after_rollback = simulate_history(full_ops)
+
+            # State after rollback must equal state before accept
+            assert state_after_rollback == state_before_accept
+            return  # one check is sufficient
+
+    # No accept-then-rollback pair found — test is vacuously satisfied
