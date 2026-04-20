@@ -6,12 +6,25 @@ from fastmcp import FastMCP
 
 mcp = FastMCP("ProjectMemory")
 
-_ROOT = Path(__file__).parent.parent
+_ROOT = Path(__file__).parents[2]
 _DOCS = _ROOT / "data" / "docs"
 _RULES = _ROOT / "data" / "rules"
 _MEMORY = _ROOT / "data" / "memory" / "project_facts.json"
 _TOOLS = _ROOT / "data" / "tools"
-_PYTHON = sys.executable
+
+
+def _python() -> str:
+    """Return the venv python from data/settings.json, fallback to sys.executable."""
+    settings_path = _ROOT / "data" / "settings.json"
+    if settings_path.exists():
+        try:
+            s = json.loads(settings_path.read_text(encoding="utf8"))
+            exe = s.get("python_executable")
+            if exe and Path(exe).exists():
+                return exe
+        except Exception:
+            pass
+    return sys.executable
 
 
 # ─────────────────────────────────────────────
@@ -32,7 +45,7 @@ def _save(data: dict) -> None:
 def _run_script(script: str, args: list[str]) -> dict:
     """Run a tool script and return {passed, output}."""
     result = subprocess.run(
-        [_PYTHON, str(_TOOLS / script)] + args,
+        [_python(), str(_TOOLS / script)] + args,
         capture_output=True, text=True, cwd=str(_ROOT),
     )
     return {

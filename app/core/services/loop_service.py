@@ -587,6 +587,216 @@ class SuggestionRotator:
 
         return None
 
+    def _vary_suggestion(
+        self,
+        suggestion: ParameterSuggestion,
+        current_params: dict,
+        step: int,
+        reverse: bool,
+    ) -> Optional[ParameterSuggestion]:
+        """Apply step-based variation to a single suggestion.
+
+        Args:
+            suggestion: Base suggestion from RuleSuggestionService.
+            current_params: Current strategy parameters.
+            step: How many times this parameter has been adjusted.
+            reverse: If True, try the opposite direction from the base suggestion.
+
+        Returns:
+            A modified ParameterSuggestion, or None if no valid variation exists.
+        """
+        param = suggestion.parameter
+        multiplier = 1.0 + step * 0.5  # step 0→1x, step 1→1.5x, step 2→2x, ...
+
+        if param == "stoploss":
+            current = current_params.get("stoploss", -0.10)
+            base_delta = 0.02  # tighten by 0.02 per step
+            if reverse:
+                # Previous tightening made things worse → try loosening instead
+                delta = -base_delta * multiplier
+            else:
+                delta = base_delta * multiplier
+            proposed = round(current + delta, 4)
+            # Keep stoploss in a sane range: -0.30 to -0.01
+            proposed = max(-0.30, min(-0.01, proposed))
+            if proposed == current:
+                return None
+            direction = "Loosening" if delta < 0 else "Tightening"
+            return ParameterSuggestion(
+                parameter="stoploss",
+                proposed_value=proposed,
+                reason=f"{direction} stoploss (step {step + 1}, multiplier {multiplier:.1f}x)",
+                expected_effect="Adjusted per-trade loss exposure",
+            )
+
+        elif param == "max_open_trades":
+            current = current_params.get("max_open_trades", 3)
+            base_delta = 1
+            if reverse:
+                delta = -base_delta
+            else:
+                delta = base_delta
+            proposed = max(1, min(20, current + delta))
+            if proposed == current:
+                return None
+            direction = "Decreasing" if delta < 0 else "Increasing"
+            return ParameterSuggestion(
+                parameter="max_open_trades",
+                proposed_value=proposed,
+                reason=f"{direction} max_open_trades (step {step + 1})",
+                expected_effect="Adjusted concurrent trade exposure",
+            )
+
+        elif param == "minimal_roi":
+            minimal_roi: dict = current_params.get("minimal_roi", {})
+            if not minimal_roi:
+                return None
+            proposed_roi = dict(minimal_roi)
+            # Adjust all ROI values by a step-scaled amount
+            base_delta = 0.005
+            if reverse:
+                delta = base_delta * multiplier  # raise ROI (harder to hit)
+            else:
+                delta = -base_delta * multiplier  # lower ROI (easier to hit)
+            for key in proposed_roi:
+                proposed_roi[key] = round(proposed_roi[key] + delta, 6)
+            if proposed_roi == minimal_roi:
+                return None
+            direction = "Raising" if delta > 0 else "Lowering"
+            return ParameterSuggestion(
+                parameter="minimal_roi",
+                proposed_value=proposed_roi,
+                reason=f"{direction} ROI targets (step {step + 1}, Δ{delta:+.4f})",
+                expected_effect="Adjusted take-profit thresholds",
+            )
+
+        elif param == "trailing_stop":
+            # Propose enabling trailing_stop with a conservative positive value
+            current_trailing = current_params.get("trailing_stop", False)
+            if current_trailing:
+                # Already enabled → nothing to do
+                return None
+            return ParameterSuggestion(
+                parameter="trailing_stop",
+                proposed_value=True,
+                reason=(
+                    f"Enabling trailing_stop (step {step + 1}) — "
+                    "high-drawdown pattern detected"
+                ),
+                expected_effect="Trailing stop protects profits and limits drawdown",
+            )
+
+        elif param in ("buy_params", "sell_params"):
+            # Delegate to the buy/sell param variation helper
+            return self._vary_buy_sell_param(suggestion, current_params, step, reverse)
+
+        # Unknown parameter → return the base suggestion as-is on step 0 only
+        if step == 0:
+            return suggestion
+        return None
+
+    def _vary_buy_sell_param(
+        self,
+        suggestion: ParameterSuggestion,
+        current_params: dict,
+        step: int,
+        reverse: bool,
+    ) -> Optional[ParameterSuggestion]:
+        """Apply step-based variation to a buy_params or sell_params suggestion.
+
+        For numeric values, applies a step-scaled delta respecting the observed
+        range from the strategy JSON. For boolean values, proposes a toggle.
+        Clamps all proposed values to the valid observed range.
+
+        Args:
+            suggestion: Base suggestion targeting buy_params or sell_params.
+            current_params: Current strategy parameters.
+            step: How many times this parameter group has been adjusted.
+            reverse: If True, try the opposite direction.
+
+        Returns:
+            A modified ParameterSuggestion, or None if no valid variation exists.
+        """
+        param = suggestion.parameter  # "buy_params" or "sell_params"
+        current_group: dict = current_params.get(param, {})
+        if not current_group:
+            return None
+
+        proposed_group = dict(current_group)
+        multiplier = 1.0 + step * 0.3  # gentler scaling for indicator params
+        changed_keys = []
+
+        # Use proposed_value from the base suggestion if it's a dict with a target key
+        target_key: Optional[str] = None
+        if isinstance(suggestion.proposed_value, dict):
+            # The suggestion may specify which sub-key to mutate
+            for k in suggestion.proposed_value:
+                if k in current_group:
+                    target_key = k
+                    break
+
+        # If no specific key, pick the first numeric or boolean key
+        if target_key is None:
+            for k, v in current_group.items():
+                if isinstance(v, (int, float, bool)):
+                    target_key = k
+                    break
+
+        if target_key is None:
+            return None
+
+        current_val = current_group[target_key]
+
+        if isinstance(current_val, bool):
+            # Boolean toggle
+            proposed_group[target_key] = not current_val
+            changed_keys.append(f"{target_key}: {current_val} → {proposed_group[target_key]}")
+        elif isinstance(current_val, (int, float)):
+            # Numeric delta — use 5% of the current value as base step
+            base_delta = abs(current_val) * 0.05 if current_val != 0 else 0.01
+            delta = base_delta * multiplier * (-1 if reverse else 1)
+
+            # Determine observed range from all values in the group for this key type
+            all_vals = [v for v in current_group.values() if isinstance(v, type(current_val))]
+            lo = min(all_vals) * 0.5 if all_vals else current_val * 0.5
+            hi = max(all_vals) * 2.0 if all_vals else current_val * 2.0
+            # Ensure lo < hi
+            if lo >= hi:
+                lo, hi = hi * 0.5, hi * 1.5
+
+            proposed_val = current_val + delta
+            # Clamp to observed range
+            if proposed_val < lo or proposed_val > hi:
+                _log.warning(
+                    "_vary_buy_sell_param: clamping %s.%s from %.4f to [%.4f, %.4f]",
+                    param, target_key, proposed_val, lo, hi,
+                )
+                proposed_val = max(lo, min(hi, proposed_val))
+
+            if isinstance(current_val, int):
+                proposed_val = int(round(proposed_val))
+            else:
+                proposed_val = round(proposed_val, 6)
+
+            if proposed_val == current_val:
+                return None
+
+            proposed_group[target_key] = proposed_val
+            changed_keys.append(f"{target_key}: {current_val} → {proposed_val}")
+        else:
+            return None
+
+        direction = "Reversed" if reverse else "Adjusted"
+        return ParameterSuggestion(
+            parameter=param,
+            proposed_value=proposed_group,
+            reason=(
+                f"{direction} {param}.{target_key} (step {step + 1}, "
+                f"multiplier {multiplier:.1f}x): {', '.join(changed_keys)}"
+            ),
+            expected_effect=f"Adjusted indicator parameter {target_key}",
+        )
+
     def _suggestions_from_structural(
         self,
         structural: List,

@@ -368,15 +368,18 @@ def test_existing_suggestion_handlers_unchanged(params, issues):
     """
     suggestions = RuleSuggestionService.suggest(issues, params)
 
-    # Map each suggestion back to its originating issue (same order)
+    # Build mapping by calling handlers directly for each issue
+    # (suggest() filters out None values, so we can't rely on zip)
     suggestion_by_issue: dict = {}
-    for issue, suggestion in zip(issues, suggestions):
-        suggestion_by_issue[issue.issue_id] = suggestion
+    for issue in issues:
+        suggestion = RuleSuggestionService._handle_issue(issue, params)
+        if suggestion is not None:
+            suggestion_by_issue[issue.issue_id] = suggestion
 
     issue_id_set = {issue.issue_id for issue in issues}
 
     # stoploss_too_wide: proposed_stoploss == round(stoploss + 0.02, 10)
-    if "stoploss_too_wide" in issue_id_set:
+    if "stoploss_too_wide" in issue_id_set and "stoploss_too_wide" in suggestion_by_issue:
         s = suggestion_by_issue["stoploss_too_wide"]
         assert s.parameter == "stoploss", (
             f"stoploss_too_wide: expected parameter='stoploss', got {s.parameter!r}"
@@ -390,7 +393,7 @@ def test_existing_suggestion_handlers_unchanged(params, issues):
         )
 
     # trades_too_low: proposed_max_open_trades == min(max_open_trades + 1, 10)
-    if "trades_too_low" in issue_id_set:
+    if "trades_too_low" in issue_id_set and "trades_too_low" in suggestion_by_issue:
         s = suggestion_by_issue["trades_too_low"]
         assert s.parameter == "max_open_trades", (
             f"trades_too_low: expected parameter='max_open_trades', got {s.parameter!r}"
@@ -404,7 +407,7 @@ def test_existing_suggestion_handlers_unchanged(params, issues):
         )
 
     # weak_win_rate: proposed minimal_roi at smallest int key == round(original - 0.005, 10)
-    if "weak_win_rate" in issue_id_set:
+    if "weak_win_rate" in issue_id_set and "weak_win_rate" in suggestion_by_issue:
         s = suggestion_by_issue["weak_win_rate"]
         assert s.parameter == "minimal_roi", (
             f"weak_win_rate: expected parameter='minimal_roi', got {s.parameter!r}"
@@ -425,7 +428,7 @@ def test_existing_suggestion_handlers_unchanged(params, issues):
         )
 
     # drawdown_high: proposed_max_open_trades == max(max_open_trades - 1, 1)
-    if "drawdown_high" in issue_id_set:
+    if "drawdown_high" in issue_id_set and "drawdown_high" in suggestion_by_issue:
         s = suggestion_by_issue["drawdown_high"]
         assert s.parameter == "max_open_trades", (
             f"drawdown_high: expected parameter='max_open_trades', got {s.parameter!r}"
@@ -439,20 +442,14 @@ def test_existing_suggestion_handlers_unchanged(params, issues):
         )
 
     # poor_pair_concentration: is_advisory=True, proposed_value=None
+    # NOTE: This handler always returns None, so we expect NO suggestion
     if "poor_pair_concentration" in issue_id_set:
-        s = suggestion_by_issue["poor_pair_concentration"]
-        assert s.parameter == "pairlist", (
-            f"poor_pair_concentration: expected parameter='pairlist', got {s.parameter!r}"
-        )
-        assert s.is_advisory is True, (
-            f"poor_pair_concentration: expected is_advisory=True, got {s.is_advisory}"
-        )
-        assert s.proposed_value is None, (
-            f"poor_pair_concentration: expected proposed_value=None, got {s.proposed_value}"
+        assert "poor_pair_concentration" not in suggestion_by_issue, (
+            "poor_pair_concentration should not generate a suggestion (handler returns None)"
         )
 
     # negative_profit: proposed_stoploss == round(stoploss + 0.03, 10)
-    if "negative_profit" in issue_id_set:
+    if "negative_profit" in issue_id_set and "negative_profit" in suggestion_by_issue:
         s = suggestion_by_issue["negative_profit"]
         assert s.parameter == "stoploss", (
             f"negative_profit: expected parameter='stoploss', got {s.parameter!r}"

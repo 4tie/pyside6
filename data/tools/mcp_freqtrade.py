@@ -6,11 +6,11 @@ from fastmcp import FastMCP
 
 mcp = FastMCP("Freqtrade")
 
-_ROOT = Path(__file__).parent.parent
+_ROOT = Path(__file__).parents[2]
 
 
 def _settings() -> dict:
-    p = Path(__file__).parents[2] / "data" / "settings.json"
+    p = _ROOT / "data" / "settings.json"
     return json.loads(p.read_text(encoding="utf8")) if p.exists() else {}
 
 

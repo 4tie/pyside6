@@ -3687,3 +3687,5 @@
 2026-04-19 18:40:43.711 | INFO     | freqtrade_gui.ui.loop_page     | Loop finalized: No more actionable suggestions to try
 2026-04-19 18:47:34.663 | INFO     | freqtrade_gui.ui.loop_page     | Loop finalized: No more actionable suggestions to try
 2026-04-19 18:48:43.667 | INFO     | freqtrade_gui.ui.loop_page     | Loop finalized: No more actionable suggestions to try
+2026-04-20 10:16:37.357 | DEBUG    | freqtrade_gui.ui.ai_chat_dock  | AIChatDock initialised (ai_service=True)
+2026-04-20 10:16:37.361 | INFO     | freqtrade_gui.ui.main_window   | MainWindow initialised

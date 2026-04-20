@@ -1,28 +1,8 @@
 {
   "mcpServers": {
-    "memory": {
-      "command": "npx",
-      "disabled": false,
-      "timeout": 60000,
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-memory"
-      ],
-      "disabledTools": []
-    },
-    "filesystem": {
-      "command": "npx",
-      "disabled": false,
-      "timeout": 60000,
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-filesystem",
-        "T:\\ae\\pyside6"
-      ]
-    },
     "git": {
       "command": "uvx",
-      "disabled": true,
+      "disabled": false,
       "timeout": 60000,
       "args": [
         "mcp-server-git"
@@ -52,6 +32,33 @@
         "ARCHIVE_FILE_PATH": "T:\\ae\\pyside6\\.ai\\tasks-archive.yaml",
         "ARCHIVE_MODE": "manual"
       },
+      "disabledTools": []
+    },
+    "pyside6": {
+      "command": "python",
+      "disabled": false,
+      "timeout": 60000,
+      "args": [
+        "T:\\ae\\pyside6\\data\\tools\\mcp_pyside6.py"
+      ],
+      "disabledTools": []
+    },
+    "freqtrade": {
+      "command": "python",
+      "disabled": false,
+      "timeout": 60000,
+      "args": [
+        "T:\\ae\\pyside6\\data\\tools\\mcp_freqtrade.py"
+      ],
+      "disabledTools": []
+    },
+    "project-memory": {
+      "command": "python",
+      "disabled": false,
+      "timeout": 60000,
+      "args": [
+        "T:\\ae\\pyside6\\data\\tools\\mcp_project_memory.py"
+      ],
       "disabledTools": []
     }
   }
