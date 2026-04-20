@@ -1,4 +1,4 @@
-﻿"""
+"""
 loop_page.py — Enhanced Strategy Lab UI page.
 
 Full-featured optimization workbench: multi-gate validation, hyperopt mode,
@@ -691,40 +691,6 @@ class LoopPage(QWidget):
         else:
             self._no_config_banner.setVisible(False)
         self._update_state_machine()
-
-    def _update_state_machine(self) -> None:
-        settings = self._settings_state.settings_service.load_settings()
-        ok = bool(settings.user_data_path)
-        is_running = self._loop_service.is_running
-        strategy = self._strategy_combo.currentText().strip()
-        has_strategy = bool(strategy) and not strategy.startswith("(")
-        has_result = (
-            self._loop_result is not None
-            and self._loop_result.best_iteration is not None
-        )
-
-        config_widgets = [
-            self._strategy_combo, self._max_iter_spin, self._target_profit_spin,
-            self._target_wr_spin, self._target_dd_spin, self._target_trades_spin,
-            self._stop_on_target_chk, self._oos_split_spin, self._wf_folds_spin,
-            self._stress_fee_spin, self._stress_slippage_spin, self._stress_profit_spin,
-            self._consistency_spin, self._validation_mode_combo,
-            self._iteration_mode_combo, self._timerange_edit, self._pairs_btn,
-            self._ai_advisor_chk, self._hyperopt_epochs_spin, self._hyperopt_loss_combo,
-        ]
-        for w in config_widgets:
-            w.setEnabled(ok and not is_running)
-        for chk in self._hyperopt_space_checks.values():
-            chk.setEnabled(ok and not is_running)
-
-        self._start_btn.setVisible(not is_running)
-        self._start_btn.setEnabled(ok and has_strategy and not is_running)
-        self._stop_btn.setVisible(is_running)
-        self._stop_btn.setEnabled(is_running)
-
-        self._apply_best_btn.setEnabled(has_result and not is_running)
-        self._discard_btn.setEnabled(has_result and not is_running)
-        self._rollback_btn.setEnabled(len(self._session_history) > 0 and not is_running)
 
     def _refresh_strategies(self) -> None:
         strategies = self._improve_service.get_available_strategies()
@@ -1910,9 +1876,8 @@ class LoopPage(QWidget):
                 timeframe=config.timeframe,
                 timerange=in_sample_timerange,
                 pairs=list(config.pairs) if config.pairs else None,
-                export_dir=str(export_dir),
-                config_file=str(sandbox_dir / "config.json"),
-                strategy_file=str(sandbox_dir / f"{strategy}.py"),
+                # Removed unsupported kwargs: export_dir, config_file, strategy_file
+                # These are attributes of the returned BacktestRunCommand, not parameters
             )
         except Exception as exc:
             _log.error("Failed to build baseline backtest command: %s", exc)
@@ -1932,13 +1897,13 @@ class LoopPage(QWidget):
         _log.info("Executing baseline backtest command: %s", " ".join(cmd.as_list()))
         self._process_service.execute_command(
             cmd.as_list(),
-            cwd=str(cmd.cwd) if cmd.cwd else None,
-            on_stdout=self._on_process_stdout,
-            on_stderr=self._on_process_stderr,
+            working_directory=str(cmd.cwd) if cmd.cwd else None,  # Fixed: cwd -> working_directory
+            on_output=self._on_process_stdout,  # Fixed: on_stdout -> on_output
+            on_error=self._on_process_stderr,   # Fixed: on_stderr -> on_error
             on_finished=self._on_baseline_backtest_finished,
         )
 
-    def _on_baseline_backtest_finished(self, exit_code: int, exit_status: str) -> None:
+    def _on_baseline_backtest_finished(self, exit_code: int) -> None:  # Fixed: removed exit_status parameter
         """Handle baseline backtest completion.
         
         Parses the baseline backtest results, stores them in _latest_diagnosis_input,
@@ -1946,8 +1911,10 @@ class LoopPage(QWidget):
         
         Args:
             exit_code: Process exit code
-            exit_status: Process exit status string
         """
+        # Derive exit status from exit code if needed
+        exit_status = "success" if exit_code == 0 else "failed"
+        
         if exit_code != 0:
             _log.error("Baseline backtest failed with exit code: %d", exit_code)
             self._set_status(f"Baseline backtest failed: {exit_status}")
