@@ -21,7 +21,6 @@ from PySide6.QtWidgets import (
 
 from app.app_state.settings_state import SettingsState
 from app.core.backtests.results_index import IndexStore
-from app.core.backtests.results_store import RunStore
 from app.core.utils.app_logger import get_logger
 from app.ui_v2.widgets.metric_card import MetricCard
 

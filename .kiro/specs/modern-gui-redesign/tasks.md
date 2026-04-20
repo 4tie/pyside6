@@ -165,7 +165,7 @@ All code is Python 3.9+ with PySide6. Follow project conventions: `_log = get_lo
   - Splitter state persisted under key `splitter/strategy`
   - _Requirements: 6.1, 6.2, 6.3, 6.5, 6.6, 8.6_
 
-- [-] 11. Implement `SettingsPage`
+- [x] 11. Implement `SettingsPage`
   - Create `app/ui_v2/pages/settings_page.py`
   - `QWidget` with `__init__(self, settings_state: SettingsState, parent=None)`
   - Category sidebar (`QListWidget`) + `QStackedWidget` for category panels: Paths, Execution, Terminal, AI, Appearance, About
@@ -174,12 +174,12 @@ All code is Python 3.9+ with PySide6. Follow project conventions: `_log = get_lo
   - Real-time validation with inline error labels per field
   - _Requirements: 12.1, 12.2, 12.3, 1.2_
 
-  - [~] 11.1 Write property test for settings round-trip
+  - [x] 11.1 Write property test for settings round-trip
     - Save settings via `SettingsPage` form fields, load via `SettingsService.load_settings()`, assert loaded model equals saved model
     - **Property P3: Settings Round-Trip — settings saved via new UI must produce identical `AppSettings` JSON**
     - **Validates: Requirements 12.3, 1.2**
 
-- [~] 12. Implement `ModernMainWindow`
+- [x] 12. Implement `ModernMainWindow`
   - Create `app/ui_v2/main_window.py`
   - `QMainWindow` subclass; constructor: `__init__(self, settings_state: SettingsState, parent=None)`
   - Layout: `HeaderBar` at top (set as central widget header via `QVBoxLayout` wrapper), `NavSidebar` + `QStackedWidget` in `QHBoxLayout` as central widget body, `AppStatusBar` replacing default status bar
@@ -194,23 +194,23 @@ All code is Python 3.9+ with PySide6. Follow project conventions: `_log = get_lo
   - Trigger `OnboardingWizard` when `settings_state.settings.venv_path` is empty
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.8, 2.4, 8.1, 8.2, 11.2, 18.4, 18.5, 20.1_
 
-  - [~] 12.1 Write property test for signal continuity
+  - [x] 12.1 Write property test for signal continuity
     - Enumerate all `Signal` connections made in `MainWindow.__init__` (existing); assert each is also connected in `ModernMainWindow.__init__`
     - **Property P2: Signal Continuity — every signal connected in `MainWindow` must also be connected in `ModernMainWindow`**
     - **Validates: Requirements 1.8, 2.4**
 
-- [~] 13. Add `--ui-v2` flag to `main.py`
+- [x] 13. Add `--ui-v2` flag to `main.py`
   - Add `--ui-v2` boolean CLI argument via `argparse` (or `AppSettings.use_v2_ui: bool = False`)
   - When flag is set, import `ModernMainWindow` from `app/ui_v2/main_window` instead of `MainWindow` from `app/ui/main_window`
   - Both paths share the same `SettingsState` instantiation — no duplication
   - _Requirements: 1.7, 16.1_
 
-  - [~] 13.1 Write property test for service immutability
+  - [x] 13.1 Write property test for service immutability
     - After running the full test suite with `--ui-v2` path exercised, assert no file in `app/core/` or `app/app_state/` was modified (check via `git diff --name-only`)
     - **Property P1: Service Immutability — no file outside `app/ui_v2/` and `main.py` is modified**
     - **Validates: Requirements 1.7**
 
-- [~] 14. Checkpoint — Ensure all tests pass
+- [ ] 14. Checkpoint — Ensure all tests pass
   - Run `pytest --tb=short` and confirm zero new failures.
   - Run `ruff check app/ui_v2/` and fix any lint errors.
   - Ensure all tests pass, ask the user if questions arise.

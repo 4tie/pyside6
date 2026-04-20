@@ -8,7 +8,7 @@ Requirements: 6.1, 6.2, 6.3, 6.5, 6.6, 8.6
 """
 import os
 from pathlib import Path
-from typing import List, Optional
+from typing import Optional
 
 from PySide6.QtCore import QSettings, Qt, Signal
 from PySide6.QtWidgets import (

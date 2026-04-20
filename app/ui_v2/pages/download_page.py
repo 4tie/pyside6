@@ -6,7 +6,7 @@ on the left; tabbed output (Data Status + Terminal) on the right.
 Requirements: 13.1, 13.3, 13.4, 8.6
 """
 from datetime import datetime
-from typing import List, Optional
+from typing import List
 
 from PySide6.QtCore import QSettings, Qt
 from PySide6.QtWidgets import (
