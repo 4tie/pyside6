@@ -313,7 +313,7 @@ class LoopPage(QWidget):
         config_vlay.setContentsMargins(0, 0, 0, 0)
         config_vlay.setSpacing(6)
 
-        config_vlay.addWidget(self._build_config_panel())
+        config_vlay.addWidget(self._build_config_group())
         config_scroll.setWidget(config_inner)
         root.addWidget(config_scroll)
 
@@ -1340,10 +1340,6 @@ class LoopPage(QWidget):
         group.setLayout(lay)
         return group
 
-    def _build_config_panel(self) -> QGroupBox:
-        """Compatibility wrapper used by `_init_ui`."""
-        return self._build_config_group()
-
     def _update_state_machine(self) -> None:
         """Update enabled/disabled widget state based on config and runtime."""
         settings = self._settings_state.settings_service.load_settings()
@@ -1639,30 +1635,28 @@ class LoopPage(QWidget):
         self,
         config: LoopConfig,
     ) -> Tuple[BacktestSummary, Optional[object]]:
-        """Return the latest usable diagnosis seed for the next iteration."""
+        """Return the latest usable diagnosis seed for the next iteration.
+        
+        The diagnosis seed is the baseline performance data used to generate
+        suggestions for the next iteration. This must be real backtest data,
+        never fabricated dummy values.
+        
+        Returns:
+            Tuple of (BacktestSummary, Optional diagnosis input object)
+            
+        Raises:
+            RuntimeError: If no baseline diagnosis input is available.
+        """
         self._ensure_loop_runtime_state()
         if self._latest_diagnosis_input is not None:
             return self._latest_diagnosis_input.in_sample, self._latest_diagnosis_input
 
-        dummy = BacktestSummary(
-            strategy=config.strategy,
-            timeframe=config.timeframe,
-            total_trades=50,
-            wins=25,
-            losses=20,
-            draws=5,
-            win_rate=50.0,
-            avg_profit=0.0,
-            total_profit=0.0,
-            total_profit_abs=0.0,
-            sharpe_ratio=0.0,
-            sortino_ratio=None,
-            calmar_ratio=None,
-            max_drawdown=20.0,
-            max_drawdown_abs=0.0,
-            trade_duration_avg=60,
+        # No baseline exists - this should not happen if _on_start() is working correctly
+        raise RuntimeError(
+            "No baseline diagnosis input available. "
+            "A baseline backtest must be run before starting iterations. "
+            "This should have been triggered automatically by _on_start()."
         )
-        return dummy, None
 
     def _refresh_latest_diagnosis_input(self) -> None:
         """Persist the latest multi-gate diagnosis input for the next iteration."""
@@ -1829,11 +1823,26 @@ class LoopPage(QWidget):
 
         config = self._build_loop_config(strategy)
 
+        # Check if we're already running baseline to prevent circular calls
+        if hasattr(self, '_baseline_in_progress') and self._baseline_in_progress:
+            _log.warning("Baseline already in progress, skipping duplicate start")
+            return
+
+        # Check if baseline is needed (no previous diagnosis input)
+        needs_baseline = self._latest_diagnosis_input is None
+        if needs_baseline:
+            _log.info("No previous diagnosis input - running baseline backtest")
+            self._baseline_in_progress = True
+            self._run_baseline_backtest(config, strategy, settings)
+            return  # Exit early, baseline completion will trigger loop start
+
+        # Clear baseline flag if we're starting the loop
+        self._baseline_in_progress = False
+
         self._clear_history_ui()
         self._loop_result = None
         self._best_group.setVisible(False)
         self._gate_indicator.reset()
-        self._latest_diagnosis_input = None
         self._reset_iteration_runtime()
         if hasattr(self._terminal, "clear_output"):
             self._terminal.clear_output()
@@ -1855,6 +1864,155 @@ class LoopPage(QWidget):
         self._set_status(f"Preparing iteration 1/{config.max_iterations}")
         QTimer.singleShot(50, self._run_next_iteration)
 
+    def _run_baseline_backtest(
+        self, config: LoopConfig, strategy: str, settings: AppSettings
+    ) -> None:
+        """Run a baseline backtest on the in-sample timerange before the first iteration.
+        
+        This establishes a real performance baseline for the strategy before any
+        parameter modifications are made. The baseline results are stored in
+        _latest_diagnosis_input and used as the seed for the first iteration.
+        
+        Args:
+            config: Loop configuration
+            strategy: Strategy name
+            settings: Application settings
+        """
+        _log.info("Starting baseline backtest for strategy: %s", strategy)
+        
+        # Prepare sandbox directory for baseline
+        try:
+            sandbox_dir = self._improve_service.prepare_sandbox(settings, strategy)
+            self._sandbox_dir = sandbox_dir
+        except Exception as exc:
+            _log.error("Failed to prepare sandbox for baseline: %s", exc)
+            QMessageBox.critical(
+                self, "Strategy Lab", f"Failed to prepare sandbox for baseline: {exc}"
+            )
+            self._baseline_in_progress = False
+            self._update_state_machine()
+            return
+        
+        # Compute in-sample timerange for baseline
+        in_sample_timerange = self._loop_service.compute_in_sample_timerange(config)
+        _log.info("Baseline timerange: %s", in_sample_timerange)
+        
+        # Build backtest command for baseline
+        from app.core.freqtrade.runners.backtest_runner import build_backtest_command
+        
+        export_dir = sandbox_dir / "baseline_export"
+        export_dir.mkdir(parents=True, exist_ok=True)
+        
+        try:
+            cmd = build_backtest_command(
+                settings=settings,
+                strategy_name=strategy,
+                timeframe=config.timeframe,
+                timerange=in_sample_timerange,
+                pairs=list(config.pairs) if config.pairs else None,
+                export_dir=str(export_dir),
+                config_file=str(sandbox_dir / "config.json"),
+                strategy_file=str(sandbox_dir / f"{strategy}.py"),
+            )
+        except Exception as exc:
+            _log.error("Failed to build baseline backtest command: %s", exc)
+            QMessageBox.critical(
+                self, "Strategy Lab", f"Failed to build baseline backtest command: {exc}"
+            )
+            self._baseline_in_progress = False
+            self._update_state_machine()
+            return
+        
+        # Update UI
+        self._set_status("Running baseline backtest...")
+        self._progress_bar.setValue(0)
+        self._update_state_machine()
+        
+        # Execute baseline backtest
+        _log.info("Executing baseline backtest command: %s", " ".join(cmd.as_list()))
+        self._process_service.execute_command(
+            cmd.as_list(),
+            cwd=str(cmd.cwd) if cmd.cwd else None,
+            on_stdout=self._on_process_stdout,
+            on_stderr=self._on_process_stderr,
+            on_finished=self._on_baseline_backtest_finished,
+        )
+
+    def _on_baseline_backtest_finished(self, exit_code: int, exit_status: str) -> None:
+        """Handle baseline backtest completion.
+        
+        Parses the baseline backtest results, stores them in _latest_diagnosis_input,
+        and starts the loop with the real baseline data.
+        
+        Args:
+            exit_code: Process exit code
+            exit_status: Process exit status string
+        """
+        if exit_code != 0:
+            _log.error("Baseline backtest failed with exit code: %d", exit_code)
+            self._set_status(f"Baseline backtest failed: {exit_status}")
+            self._baseline_in_progress = False
+            self._update_state_machine()
+            QMessageBox.critical(
+                self,
+                "Strategy Lab",
+                f"Baseline backtest failed with exit code {exit_code}.\n\n"
+                f"Check the terminal output for details.",
+            )
+            return
+        
+        _log.info("Baseline backtest completed successfully")
+        
+        # Parse baseline results
+        export_dir = self._sandbox_dir / "baseline_export"
+        try:
+            results = self._improve_service.parse_backtest_results(export_dir)
+            
+            if not results or not results.summary:
+                raise ValueError("No baseline results found in export directory")
+            
+            _log.info(
+                "Baseline results: %d trades, %.2f%% win rate, %.2f%% profit",
+                results.summary.total_trades,
+                results.summary.win_rate,
+                results.summary.total_profit,
+            )
+            
+            # Create DiagnosisInput from baseline results
+            from app.core.models.diagnosis_models import DiagnosisInput
+            
+            self._latest_diagnosis_input = DiagnosisInput(
+                in_sample=results.summary,
+                oos_summary=None,
+                fold_summaries=None,
+                trade_profit_contributions=None,
+                drawdown_periods=None,
+                atr_spike_periods=None,
+            )
+            
+            # Update UI
+            self._set_status("Baseline backtest completed - starting loop")
+            _log.info("Baseline established, restarting loop with real data")
+            
+            # Clear baseline flag and restart loop
+            self._baseline_in_progress = False
+            
+            # Restart the loop with real baseline
+            # Use QTimer to avoid deep recursion
+            QTimer.singleShot(100, self._on_start)
+            
+        except Exception as exc:
+            _log.error("Failed to parse baseline results: %s", exc, exc_info=True)
+            self._set_status(f"Failed to parse baseline results: {exc}")
+            self._baseline_in_progress = False
+            self._update_state_machine()
+            QMessageBox.critical(
+                self,
+                "Strategy Lab",
+                f"Failed to parse baseline results: {exc}\n\n"
+                f"The baseline backtest may have completed but results could not be read.",
+            )
+
     def _on_stop(self) -> None:
         """Stop the loop and terminate the active process if one is running."""
         self._loop_service.stop()
@@ -1874,22 +2032,7 @@ class LoopPage(QWidget):
             self._finalize_loop()
             return
 
-        # Check if this is the first iteration (no previous iterations exist)
-        is_first_iteration = (
-            self._loop_service._result is not None
-            and len(self._loop_service._result.iterations) == 0
-        )
-
-        # If first iteration, run real baseline backtest instead of using dummy seed
-        if is_first_iteration:
-            try:
-                self._start_baseline_backtest()
-            except Exception as exc:
-                _log.error("Failed to start baseline backtest: %s", exc)
-                self._set_status(f"Baseline backtest failed: {exc}")
-                self._finalize_loop()
-            return
-
+        # Get the diagnosis seed (baseline must exist at this point)
         latest_summary, diagnosis_input = self._current_diagnosis_seed(config)
         result = self._loop_service.prepare_next_iteration(
             latest_summary,
@@ -1926,119 +2069,6 @@ class LoopPage(QWidget):
             )
         except Exception as exc:
             _log.error("Failed to start iteration: %s", exc)
-            self._loop_service.record_iteration_error(iteration, str(exc))
-            self._gate_indicator.set_failed("in_sample", str(exc))
-            self._finish_iteration(iteration)
-
-    def _start_baseline_backtest(self) -> None:
-        """Launch a real baseline backtest for the first iteration seed."""
-        self._ensure_loop_runtime_state()
-        config = self._loop_service._config
-        if config is None:
-            raise RuntimeError("Cannot start baseline backtest without config")
-
-        settings = self._settings_state.settings_service.load_settings()
-
-        # Compute in-sample timerange for baseline
-        baseline_timerange = self._loop_service.compute_in_sample_timerange(config)
-        if not baseline_timerange:
-            raise ValueError("Strategy Lab requires a valid in-sample timerange for baseline")
-
-        # Create export directory for baseline results
-        self._current_gate_name = "baseline"
-        self._current_gate_timerange = baseline_timerange
-        self._current_gate_export_dir = self._build_gate_export_dir("baseline")
-
-        from app.core.freqtrade.runners.backtest_runner import build_backtest_command
-
-        # Build backtest command for baseline (no sandbox, use original strategy)
-        extra_flags = [
-            "--backtest-directory", str(self._current_gate_export_dir),
-        ]
-
-        cmd = build_backtest_command(
-            settings=settings,
-            strategy_name=config.strategy,
-            timeframe=config.timeframe,
-            timerange=baseline_timerange,
-            pairs=config.pairs if config.pairs else None,
-            extra_flags=extra_flags,
-        )
-
-        self._gate_indicator.set_running("in_sample")
-        self._set_status("Running baseline backtest...")
-        self._gate_run_started_at = time.time()
-        self._process_service.execute_command(
-            cmd.as_list(),
-            on_output=self._terminal.append_output,
-            on_error=self._terminal.append_error,
-            on_finished=self._on_baseline_backtest_finished,
-            working_directory=cmd.cwd,
-        )
-
-    def _on_baseline_backtest_finished(self, exit_code: int) -> None:
-        """Handle completion of the baseline backtest subprocess."""
-        self._ensure_loop_runtime_state()
-        config = self._loop_service._config
-
-        if config is None:
-            self._finalize_loop()
-            return
-
-        if exit_code != 0:
-            message = f"Baseline backtest exited with code {exit_code}"
-            _log.error(message)
-            self._gate_indicator.set_failed("in_sample", message)
-            self._set_status(message)
-            self._finalize_loop()
-            return
-
-        try:
-            results = self._parse_current_gate_results()
-            baseline_summary = results.summary
-        except Exception as exc:
-            message = f"Baseline parse error: {exc}"
-            _log.error(message)
-            self._gate_indicator.set_failed("in_sample", message)
-            self._set_status(message)
-            self._finalize_loop()
-            return
-
-        # Now prepare the first iteration using the real baseline summary
-        result = self._loop_service.prepare_next_iteration(
-            baseline_summary,
-            diagnosis_input=None,
-        )
-        if result is None:
-            self._finalize_loop()
-            return
-
-        iteration, suggestions = result
-        self._current_iteration = iteration
-        self._gate_indicator.reset()
-        self._reset_iteration_runtime()
-
-        try:
-            self._sandbox_dir = self._improve_service.prepare_sandbox(
-                config.strategy,
-                iteration.params_after,
-            )
-            iteration.sandbox_path = self._sandbox_dir
-
-            gate1_timerange = self._loop_service.compute_in_sample_timerange(config)
-            if not gate1_timerange:
-                raise ValueError("Strategy Lab requires a valid in-sample timerange")
-
-            n = iteration.iteration_number
-            m = max(config.max_iterations, 1)
-            self._progress_bar.setValue(int(max(0, (n - 1) / m * 100)))
-            self._start_gate_backtest(
-                "in_sample",
-                gate1_timerange,
-                f"Gate 1/5 In-Sample - iteration {n}/{m}",
-            )
-        except Exception as exc:
-            _log.error("Failed to start iteration after baseline: %s", exc)
             self._loop_service.record_iteration_error(iteration, str(exc))
             self._gate_indicator.set_failed("in_sample", str(exc))
             self._finish_iteration(iteration)

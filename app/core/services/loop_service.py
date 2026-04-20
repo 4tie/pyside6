@@ -720,171 +720,7 @@ class LoopService:
             return False
         return True
 
-    def prepare_next_iteration(
-        self,
-        latest_summary: BacktestSummary,
-    ) -> Optional[Tuple[LoopIteration, List[ParameterSuggestion]]]:
-        """Analyse the latest results and prepare the next iteration.
 
-        For rule_based mode: runs diagnosis and suggestion rotation to produce
-        the candidate params for the next backtest.
-        For hyperopt mode: returns a sentinel iteration with empty suggestions;
-        the UI layer is responsible for running hyperopt and calling
-        record_hyperopt_candidate() with the result.
-
-        Returns None if no actionable suggestions remain or the loop should stop.
-
-        Args:
-            latest_summary: BacktestSummary from the most recent backtest.
-
-        Returns:
-            Tuple of (LoopIteration, suggestions) ready to execute, or None if
-            the loop should terminate.
-        """
-        if self._config is None or self._rotator is None:
-            return None
-
-        self._current_iteration += 1
-
-        # Check targets — skip on iteration 1 since we're using a seed summary,
-        # not a real backtest result.
-        if (
-            self._current_iteration > 1
-            and self._config.stop_on_first_profitable
-            and targets_met(latest_summary, self._config)
-        ):
-            from pathlib import Path
-            iteration = LoopIteration(
-                iteration_number=self._current_iteration,
-                params_before=copy.deepcopy(self._current_params),
-                params_after=copy.deepcopy(self._current_params),
-                changes_summary=[],
-                summary=latest_summary,
-                is_improvement=True,
-                status="success",
-                sandbox_path=Path("."),
-                validation_gate_reached="in_sample",
-                validation_gate_passed=True,
-            )
-            self._record_iteration(iteration)
-            self._result.target_reached = True
-            self._result.stop_reason = "All profitability targets met"
-            self._running = False
-            _log.info("Loop: targets met at iteration %d", self._current_iteration)
-            return None
-
-        # Hyperopt mode — return a sentinel iteration; UI runs hyperopt subprocess
-        if self._config.iteration_mode == "hyperopt":
-            from pathlib import Path
-            iteration = LoopIteration(
-                iteration_number=self._current_iteration,
-                params_before=copy.deepcopy(self._current_params),
-                params_after=copy.deepcopy(self._current_params),
-                changes_summary=["[hyperopt mode — awaiting hyperopt result]"],
-                sandbox_path=Path("."),
-            )
-            self._emit_status(
-                f"Iteration {self._current_iteration}/{self._config.max_iterations} — "
-                "running hyperopt..."
-            )
-            return iteration, []
-
-        # Rule-based mode — diagnose and generate suggestions
-        from app.core.models.diagnosis_models import DiagnosisInput
-        diagnosis_input = DiagnosisInput(in_sample=latest_summary)
-        bundle = ResultsDiagnosisService.diagnose(diagnosis_input)
-        issues = bundle.issues
-        structural = bundle.structural
-        _log.debug(
-            "Loop iter %d: %d issue(s) and %d structural pattern(s) diagnosed",
-            self._current_iteration, len(issues), len(structural),
-        )
-
-        # Get previous iteration for direction hints
-        prev_iteration = self._result.iterations[-1] if self._result.iterations else None
-
-        # Generate varied suggestions (pass structural so those patterns drive changes too)
-        suggestions = self._rotator.generate_suggestions(
-            issues, self._current_params, prev_iteration, structural
-        )
-
-        if not suggestions:
-            self._result.stop_reason = "No more actionable suggestions to try"
-            self._running = False
-            _log.info("Loop: no more suggestions at iteration %d", self._current_iteration)
-            return None
-
-        # Build candidate params
-        candidate_params = copy.deepcopy(self._current_params)
-        for s in suggestions:
-            candidate_params[s.parameter] = s.proposed_value
-
-        # Skip if we've already tried this exact config
-        if self._rotator.already_tried(candidate_params):
-            _log.debug("Loop: skipping already-tried config at iteration %d", self._current_iteration)
-            # Try to find a different combination by skipping one suggestion
-            if len(suggestions) > 1:
-                suggestions = suggestions[:1]
-                candidate_params = copy.deepcopy(self._current_params)
-                for s in suggestions:
-                    candidate_params[s.parameter] = s.proposed_value
-            if self._rotator.already_tried(candidate_params):
-                self._result.stop_reason = "All reachable parameter combinations exhausted"
-                self._running = False
-                return None
-
-        self._rotator.mark_tried(candidate_params)
-
-        # AI Advisor — merge as additional candidate mutation if enabled
-        if (
-            self._config.ai_advisor_enabled
-            and self._ai_advisor is not None
-        ):
-            try:
-                self._emit_status("Waiting for AI Advisor...")
-                from app.core.models.diagnosis_models import DiagnosisInput as _DI
-                _bundle = ResultsDiagnosisService.diagnose(_DI(in_sample=latest_summary))
-                prompt = self._ai_advisor.build_prompt(
-                    self._config.strategy,
-                    self._current_params,
-                    latest_summary,
-                    _bundle.issues + _bundle.structural,
-                )
-                ai_suggestion = self._ai_advisor.request_suggestion(prompt)
-                if ai_suggestion:
-                    for k, v in ai_suggestion.items():
-                        candidate_params[k] = v
-                    # Mark the iteration as AI-suggested (set on iteration below)
-                    _log.info(
-                        "Loop iter %d: AI Advisor suggested %d param(s)",
-                        self._current_iteration, len(ai_suggestion),
-                    )
-            except Exception as exc:
-                _log.warning("Loop iter %d: AI Advisor failed: %s", self._current_iteration, exc)
-
-        # Build changes_summary list
-        changes_summary = []
-        for param, new_val in candidate_params.items():
-            old_val = self._current_params.get(param)
-            if old_val != new_val:
-                changes_summary.append(f"{param}: {old_val} → {new_val}")
-
-        from pathlib import Path
-        iteration = LoopIteration(
-            iteration_number=self._current_iteration,
-            params_before=copy.deepcopy(self._current_params),
-            params_after=candidate_params,
-            changes_summary=changes_summary,
-            sandbox_path=Path("."),
-        )
-
-        self._emit_status(
-            f"Iteration {self._current_iteration}/{self._config.max_iterations} — "
-            f"applying {len(suggestions)} suggestion(s): "
-            + ", ".join(changes_summary)
-        )
-
-        return iteration, suggestions
 
     def record_hyperopt_candidate(
         self,
@@ -936,72 +772,7 @@ class LoopService:
         )
         return iteration.params_after
 
-    def record_iteration_result(
-        self,
-        iteration: LoopIteration,
-        summary: BacktestSummary,
-        score_input: Optional[RobustScoreInput] = None,
-    ) -> bool:
-        """Record the backtest result for an iteration and update best tracking.
 
-        Args:
-            iteration: The iteration object (mutated in place with results/score).
-            summary: BacktestSummary from the candidate backtest (Gate 1).
-            score_input: Optional full RobustScoreInput for multi-gate scoring.
-                If None, a minimal input using only in_sample is constructed.
-
-        Returns:
-            True if this iteration improved over the previous best.
-        """
-        iteration.summary = summary
-
-        # Guard: zero trades
-        if summary.total_trades == 0:
-            iteration.status = "zero_trades"
-            iteration.is_improvement = False
-            self._record_iteration(iteration)
-            _log.info("Loop iter %d: zero trades — not eligible for best", iteration.iteration_number)
-            return False
-
-        # Guard: below min trades
-        if self._config and summary.total_trades < self._config.target_min_trades:
-            iteration.below_min_trades = True
-
-        # Compute score
-        if score_input is None:
-            score_input = RobustScoreInput(in_sample=summary)
-        robust_score = compute_score(score_input)
-        iteration.score = robust_score
-
-        # Only fully-validated iterations can become best
-        is_improvement = (
-            iteration.validation_gate_passed
-            and not iteration.below_min_trades
-            and robust_score.total > self._best_score
-        )
-
-        iteration.is_improvement = is_improvement
-
-        if is_improvement:
-            self._best_score = robust_score.total
-            self._current_params = copy.deepcopy(iteration.params_after)
-            self._result.best_iteration = iteration
-            _log.info(
-                "Loop iter %d: improvement! score=%.4f profit=%.2f%%",
-                iteration.iteration_number,
-                robust_score.total,
-                summary.total_profit,
-            )
-        else:
-            _log.info(
-                "Loop iter %d: no improvement. score=%.4f (best=%.4f)",
-                iteration.iteration_number,
-                robust_score.total,
-                self._best_score,
-            )
-
-        self._record_iteration(iteration)
-        return is_improvement
 
     def record_iteration_error(self, iteration: LoopIteration, error: str) -> None:
         """Record a failed iteration (backtest process error).
@@ -1015,45 +786,7 @@ class LoopService:
         self._record_iteration(iteration)
         _log.warning("Loop iter %d failed: %s", iteration.iteration_number, error)
 
-    def finalize(self, stop_reason: str = "") -> LoopResult:
-        """Finalize the loop and return the completed LoopResult.
 
-        Args:
-            stop_reason: Human-readable reason the loop stopped (if not already set).
-
-        Returns:
-            The completed LoopResult.
-        """
-        self._running = False
-        if stop_reason and not self._result.stop_reason:
-            self._result.stop_reason = stop_reason
-
-        if self._result.best_iteration is None and self._result.iterations:
-            # Pick the best from fully-validated iterations only
-            validated = [
-                it for it in self._result.iterations
-                if it.validation_gate_passed and it.score is not None
-            ]
-            if validated:
-                self._result.best_iteration = max(
-                    validated, key=lambda it: it.score.total
-                )
-
-        _log.info(
-            "Loop finalized: %d iterations, best_score=%.4f, reason=%s",
-            len(self._result.iterations),
-            self._best_score,
-            self._result.stop_reason,
-        )
-        return self._result
-
-    # ------------------------------------------------------------------
-    # Private helpers
-    # ------------------------------------------------------------------
-
-    # ------------------------------------------------------------------
-    # Private helpers
-    # ------------------------------------------------------------------
 
     def _run_oos_gate(
         self,
@@ -1569,7 +1302,12 @@ class LoopService:
         return f"{config.date_from}-{config.date_to}"
 
     def compute_in_sample_timerange(self, config: LoopConfig) -> str:
-        """Return the in-sample timerange used for Gate 1 and stress testing."""
+        """Return the in-sample timerange used for Gate 1 and stress testing.
+        
+        The in-sample range ends one day before the OOS start date, ensuring
+        the boundary day is excluded from in-sample and included in OOS.
+        This creates a clean split with no gap or overlap between the two ranges.
+        """
         parsed = self._parse_config_dates(config)
         if parsed is None:
             return self.compute_full_timerange(config)
@@ -1588,7 +1326,12 @@ class LoopService:
         return f"{date_from.strftime('%Y%m%d')}-{(oos_start - timedelta(days=1)).strftime('%Y%m%d')}"
 
     def compute_oos_timerange(self, config: LoopConfig) -> str:
-        """Return the held-out out-of-sample timerange."""
+        """Return the held-out out-of-sample timerange.
+        
+        The OOS range starts at the OOS start date, which is one day after
+        the in-sample end date. This ensures the boundary day is included in
+        OOS only, creating a clean split with no gap or overlap.
+        """
         parsed = self._parse_config_dates(config)
         if parsed is None:
             return ""
@@ -1828,7 +1571,30 @@ class LoopService:
         latest_summary: BacktestSummary,
         diagnosis_input: Optional[DiagnosisInput] = None,
     ) -> Optional[Tuple[LoopIteration, List[ParameterSuggestion]]]:
-        """Analyse the latest validated results and prepare the next iteration."""
+        """Analyse the latest validated results and prepare the next iteration.
+        
+        This is the CANONICAL method for preparing loop iterations. It handles:
+        - Target checking and early termination
+        - Hyperopt mode sentinel iteration creation
+        - Rule-based diagnosis and suggestion generation
+        - Duplicate configuration detection with fallback logic
+        - AI Advisor integration
+        
+        For rule_based mode: runs diagnosis and suggestion rotation to produce
+        the candidate params for the next backtest.
+        For hyperopt mode: returns a sentinel iteration with empty suggestions;
+        the UI layer is responsible for running hyperopt and calling
+        record_hyperopt_candidate() with the result.
+
+        Args:
+            latest_summary: BacktestSummary from the most recent backtest.
+            diagnosis_input: Optional DiagnosisInput for more comprehensive diagnosis.
+                If None, a minimal input using only in_sample is constructed.
+
+        Returns:
+            Tuple of (LoopIteration, suggestions) ready to execute, or None if
+            the loop should terminate.
+        """
         if self._config is None or self._rotator is None or self._result is None:
             return None
 
@@ -2008,7 +1774,24 @@ class LoopService:
         summary: BacktestSummary,
         score_input: Optional[RobustScoreInput] = None,
     ) -> bool:
-        """Record the backtest result for a fully-evaluated iteration."""
+        """Record the backtest result for a fully-evaluated iteration.
+        
+        This is the CANONICAL method for recording iteration results. It:
+        - Guards against zero trades and below-minimum trades
+        - Computes robust score from multi-gate validation results
+        - Checks if iteration is an improvement (requires validation_gate_passed AND status=="success")
+        - Updates best iteration tracking
+        - Records iteration to result history
+        
+        Args:
+            iteration: The iteration object (mutated in place with results/score).
+            summary: BacktestSummary from the candidate backtest (Gate 1).
+            score_input: Optional full RobustScoreInput for multi-gate scoring.
+                If None, a minimal input using only in_sample is constructed.
+
+        Returns:
+            True if this iteration improved over the previous best.
+        """
         iteration.summary = summary
 
         if summary.total_trades == 0:
@@ -2056,7 +1839,20 @@ class LoopService:
         return is_improvement
 
     def finalize(self, stop_reason: str = "") -> LoopResult:
-        """Finalize the loop and choose the best validated successful iteration."""
+        """Finalize the loop and choose the best validated successful iteration.
+        
+        This is the CANONICAL method for finalizing the loop. It:
+        - Stops the running flag
+        - Sets the stop reason if not already set
+        - Selects the best iteration from eligible candidates using _eligible_best_iterations()
+        - Logs final loop statistics
+        
+        Args:
+            stop_reason: Human-readable reason the loop stopped (if not already set).
+
+        Returns:
+            The completed LoopResult with best_iteration selected.
+        """
         self._running = False
         if stop_reason and not self._result.stop_reason:
             self._result.stop_reason = stop_reason
