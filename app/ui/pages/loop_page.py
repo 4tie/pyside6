@@ -11,14 +11,14 @@ import json
 import time
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import List, Optional, Tuple
 
 from PySide6.QtCore import Qt, QTimer, Signal
 from PySide6.QtWidgets import (
     QCheckBox, QComboBox, QDoubleSpinBox, QFrame, QGridLayout,
-    QGroupBox, QHBoxLayout, QLabel, QListWidget, QListWidgetItem,
-    QMessageBox, QProgressBar, QPushButton, QScrollArea, QSizePolicy,
-    QSpinBox, QSplitter, QTextEdit, QVBoxLayout, QWidget, QLineEdit,
+    QGroupBox, QHBoxLayout, QLabel,
+    QMessageBox, QProgressBar, QPushButton, QScrollArea,
+    QSpinBox, QSplitter, QVBoxLayout, QWidget, QLineEdit,
 )
 
 from app.app_state.settings_state import SettingsState
@@ -356,200 +356,6 @@ class LoopPage(QWidget):
         # Best result panel
         root.addWidget(self._build_best_result_panel())
 
-    def _build_config_panel(self) -> QGroupBox:
-        """Build the main configuration group box."""
-        group = QGroupBox("Loop Configuration")
-        lay = QGridLayout()
-        lay.setContentsMargins(12, 10, 12, 10)
-        lay.setSpacing(8)
-
-        # Row 0: strategy + max iterations
-        lay.addWidget(_lbl("Strategy:"), 0, 0)
-        self._strategy_combo = QComboBox()
-        self._strategy_combo.setMinimumWidth(200)
-        lay.addWidget(self._strategy_combo, 0, 1)
-        lay.addWidget(_lbl("Max Iterations:"), 0, 2)
-        self._max_iter_spin = QSpinBox()
-        self._max_iter_spin.setRange(1, 100)
-        self._max_iter_spin.setValue(10)
-        lay.addWidget(self._max_iter_spin, 0, 3)
-
-        # Row 1: targets
-        lay.addWidget(_lbl("Target Profit (%):"), 1, 0)
-        self._target_profit_spin = QDoubleSpinBox()
-        self._target_profit_spin.setRange(-100.0, 10000.0)
-        self._target_profit_spin.setValue(5.0)
-        self._target_profit_spin.setSingleStep(0.5)
-        lay.addWidget(self._target_profit_spin, 1, 1)
-        lay.addWidget(_lbl("Target Win Rate (%):"), 1, 2)
-        self._target_wr_spin = QDoubleSpinBox()
-        self._target_wr_spin.setRange(0.0, 100.0)
-        self._target_wr_spin.setValue(55.0)
-        lay.addWidget(self._target_wr_spin, 1, 3)
-
-        # Row 2: drawdown + min trades
-        lay.addWidget(_lbl("Max Drawdown (%):"), 2, 0)
-        self._target_dd_spin = QDoubleSpinBox()
-        self._target_dd_spin.setRange(0.0, 100.0)
-        self._target_dd_spin.setValue(20.0)
-        lay.addWidget(self._target_dd_spin, 2, 1)
-        lay.addWidget(_lbl("Min Trades:"), 2, 2)
-        self._target_trades_spin = QSpinBox()
-        self._target_trades_spin.setRange(1, 10000)
-        self._target_trades_spin.setValue(30)
-        lay.addWidget(self._target_trades_spin, 2, 3)
-
-        # Row 3: stop on first profitable
-        self._stop_on_target_chk = QCheckBox("Stop as soon as all targets are met")
-        self._stop_on_target_chk.setChecked(True)
-        lay.addWidget(self._stop_on_target_chk, 3, 0, 1, 4)
-
-        # Row 4: timerange presets + custom timerange
-        lay.addWidget(_lbl("Timerange:"), 4, 0)
-        timerange_widget = QWidget()
-        timerange_widget.setStyleSheet("background:transparent;")
-        tr_lay = QHBoxLayout(timerange_widget)
-        tr_lay.setContentsMargins(0, 0, 0, 0)
-        tr_lay.setSpacing(4)
-        for preset in _TIMERANGE_PRESETS:
-            pb = QPushButton(preset)
-            pb.setFixedWidth(42)
-            pb.setStyleSheet(f"""
-                QPushButton {{
-                    background:{_C_ELEVATED}; color:{_C_TEXT_DIM};
-                    border:1px solid {_C_BORDER}; border-radius:3px;
-                    padding:2px 4px; font-size:10px;
-                }}
-                QPushButton:hover {{ border-color:{_C_GREEN}; color:{_C_TEXT}; }}
-            """)
-            pb.clicked.connect(lambda checked, p=preset: self._on_timerange_preset(p))
-            tr_lay.addWidget(pb)
-        tr_lay.addStretch()
-        lay.addWidget(timerange_widget, 4, 1, 1, 3)
-
-        lay.addWidget(_lbl("Custom:"), 5, 0)
-        self._timerange_edit = QLineEdit()
-        self._timerange_edit.setPlaceholderText("YYYYMMDD-YYYYMMDD")
-        lay.addWidget(self._timerange_edit, 5, 1, 1, 3)
-
-        # Row 6: pairs selector
-        lay.addWidget(_lbl("Pairs:"), 6, 0)
-        self._pairs_btn = QPushButton("Select Pairs (0)")
-        self._pairs_btn.setStyleSheet(f"""
-            QPushButton {{
-                background:{_C_ELEVATED}; color:{_C_TEXT};
-                border:1px solid {_C_BORDER}; border-radius:4px;
-                padding:4px 10px; font-size:11px;
-            }}
-            QPushButton:hover {{ border-color:{_C_GREEN}; }}
-        """)
-        self._pairs_btn.clicked.connect(self._on_select_pairs)
-        self._selected_pairs: List[str] = []
-        lay.addWidget(self._pairs_btn, 6, 1, 1, 3)
-
-        # Row 7: OOS split + walk-forward folds
-        lay.addWidget(_lbl("OOS Split (%):"), 7, 0)
-        self._oos_split_spin = QDoubleSpinBox()
-        self._oos_split_spin.setRange(5.0, 50.0)
-        self._oos_split_spin.setValue(20.0)
-        lay.addWidget(self._oos_split_spin, 7, 1)
-        lay.addWidget(_lbl("Walk-Forward Folds:"), 7, 2)
-        self._wf_folds_spin = QSpinBox()
-        self._wf_folds_spin.setRange(2, 10)
-        self._wf_folds_spin.setValue(5)
-        lay.addWidget(self._wf_folds_spin, 7, 3)
-
-        # Row 8: stress params
-        lay.addWidget(_lbl("Stress Fee Mult:"), 8, 0)
-        self._stress_fee_spin = QDoubleSpinBox()
-        self._stress_fee_spin.setRange(1.0, 5.0)
-        self._stress_fee_spin.setSingleStep(0.1)
-        self._stress_fee_spin.setValue(2.0)
-        lay.addWidget(self._stress_fee_spin, 8, 1)
-        lay.addWidget(_lbl("Stress Slippage (%):"), 8, 2)
-        self._stress_slippage_spin = QDoubleSpinBox()
-        self._stress_slippage_spin.setRange(0.0, 2.0)
-        self._stress_slippage_spin.setSingleStep(0.01)
-        self._stress_slippage_spin.setValue(0.1)
-        lay.addWidget(self._stress_slippage_spin, 8, 3)
-
-        # Row 9: stress profit target + consistency threshold
-        lay.addWidget(_lbl("Stress Profit Target (%):"), 9, 0)
-        self._stress_profit_spin = QDoubleSpinBox()
-        self._stress_profit_spin.setRange(0.0, 100.0)
-        self._stress_profit_spin.setValue(50.0)
-        lay.addWidget(self._stress_profit_spin, 9, 1)
-        lay.addWidget(_lbl("Consistency Threshold (%):"), 9, 2)
-        self._consistency_spin = QDoubleSpinBox()
-        self._consistency_spin.setRange(0.0, 100.0)
-        self._consistency_spin.setValue(30.0)
-        lay.addWidget(self._consistency_spin, 9, 3)
-
-        # Row 10: validation mode
-        lay.addWidget(_lbl("Validation Mode:"), 10, 0)
-        self._validation_mode_combo = QComboBox()
-        self._validation_mode_combo.addItems(["Full", "Quick"])
-        self._validation_mode_combo.currentIndexChanged.connect(self._on_validation_mode_changed)
-        lay.addWidget(self._validation_mode_combo, 10, 1)
-        self._quick_mode_warning = QLabel(
-            "⚠ Quick mode skips walk-forward and stress gates — results may overfit."
-        )
-        self._quick_mode_warning.setStyleSheet(f"color:{_C_AMBER};font-size:10px;")
-        self._quick_mode_warning.setVisible(False)
-        lay.addWidget(self._quick_mode_warning, 10, 2, 1, 2)
-
-        # Row 11: iteration mode
-        lay.addWidget(_lbl("Iteration Mode:"), 11, 0)
-        self._iteration_mode_combo = QComboBox()
-        self._iteration_mode_combo.addItems(["Rule-Based Mutations", "Hyperopt-Guided"])
-        self._iteration_mode_combo.currentIndexChanged.connect(self._on_iteration_mode_changed)
-        lay.addWidget(self._iteration_mode_combo, 11, 1, 1, 3)
-
-        # Row 12: hyperopt sub-fields (hidden by default)
-        self._hyperopt_widget = QWidget()
-        self._hyperopt_widget.setStyleSheet("background:transparent;")
-        ho_lay = QGridLayout(self._hyperopt_widget)
-        ho_lay.setContentsMargins(0, 0, 0, 0)
-        ho_lay.setSpacing(8)
-
-        ho_lay.addWidget(_lbl("Epochs:"), 0, 0)
-        self._hyperopt_epochs_spin = QSpinBox()
-        self._hyperopt_epochs_spin.setRange(50, 2000)
-        self._hyperopt_epochs_spin.setValue(200)
-        ho_lay.addWidget(self._hyperopt_epochs_spin, 0, 1)
-
-        ho_lay.addWidget(_lbl("Loss Function:"), 0, 2)
-        self._hyperopt_loss_combo = QComboBox()
-        self._hyperopt_loss_combo.addItems(_HYPEROPT_LOSSES)
-        ho_lay.addWidget(self._hyperopt_loss_combo, 0, 3)
-
-        ho_lay.addWidget(_lbl("Spaces:"), 1, 0)
-        spaces_widget = QWidget()
-        spaces_widget.setStyleSheet("background:transparent;")
-        spaces_lay = QHBoxLayout(spaces_widget)
-        spaces_lay.setContentsMargins(0, 0, 0, 0)
-        spaces_lay.setSpacing(4)
-        self._hyperopt_space_checks: Dict[str, QCheckBox] = {}
-        for space in _HYPEROPT_SPACES:
-            chk = QCheckBox(space)
-            chk.setChecked(True)
-            spaces_lay.addWidget(chk)
-            self._hyperopt_space_checks[space] = chk
-        spaces_lay.addStretch()
-        ho_lay.addWidget(spaces_widget, 1, 1, 1, 3)
-
-        self._hyperopt_widget.setVisible(False)
-        lay.addWidget(self._hyperopt_widget, 12, 0, 1, 4)
-
-        # Row 13: AI advisor toggle
-        lay.addWidget(_lbl("AI Advisor:"), 13, 0)
-        self._ai_advisor_chk = QCheckBox("Enable AI Advisor")
-        self._ai_advisor_chk.setChecked(False)
-        lay.addWidget(self._ai_advisor_chk, 13, 1, 1, 3)
-
-        group.setLayout(lay)
-        return group
-
     def _build_control_row(self) -> QHBoxLayout:
         row = QHBoxLayout()
         row.setSpacing(8)
@@ -708,96 +514,8 @@ class LoopPage(QWidget):
         self._check_config_guard()
 
     # ------------------------------------------------------------------
-    # Preferences persistence
-    # ------------------------------------------------------------------
-
-    def _restore_preferences(self) -> None:
-        """Restore saved StrategyLabPreferences from AppSettings."""
-        try:
-            settings = self._settings_state.settings_service.load_settings()
-            prefs = settings.strategy_lab
-            if prefs.strategy:
-                idx = self._strategy_combo.findText(prefs.strategy)
-                if idx >= 0:
-                    self._strategy_combo.setCurrentIndex(idx)
-            self._max_iter_spin.setValue(prefs.max_iterations)
-            self._target_profit_spin.setValue(prefs.target_profit_pct)
-            self._target_wr_spin.setValue(prefs.target_win_rate)
-            self._target_dd_spin.setValue(prefs.target_max_drawdown)
-            self._target_trades_spin.setValue(prefs.target_min_trades)
-            self._stop_on_target_chk.setChecked(prefs.stop_on_first_profitable)
-            self._timerange_edit.setText(prefs.timerange)
-            self._oos_split_spin.setValue(prefs.oos_split_pct)
-            self._wf_folds_spin.setValue(prefs.walk_forward_folds)
-            self._stress_fee_spin.setValue(prefs.stress_fee_multiplier)
-            self._stress_slippage_spin.setValue(prefs.stress_slippage_pct)
-            self._stress_profit_spin.setValue(prefs.stress_profit_target_pct)
-            self._consistency_spin.setValue(prefs.consistency_threshold_pct)
-            mode_idx = 0 if prefs.validation_mode == "full" else 1
-            self._validation_mode_combo.setCurrentIndex(mode_idx)
-            iter_idx = 0 if prefs.iteration_mode == "rule_based" else 1
-            self._iteration_mode_combo.setCurrentIndex(iter_idx)
-            self._hyperopt_epochs_spin.setValue(prefs.hyperopt_epochs)
-            loss_idx = self._hyperopt_loss_combo.findText(prefs.hyperopt_loss_function)
-            if loss_idx >= 0:
-                self._hyperopt_loss_combo.setCurrentIndex(loss_idx)
-            for space, chk in self._hyperopt_space_checks.items():
-                chk.setChecked(space in prefs.hyperopt_spaces if prefs.hyperopt_spaces else True)
-            self._ai_advisor_chk.setChecked(prefs.ai_advisor_enabled)
-            if prefs.pairs:
-                self._selected_pairs = [p.strip() for p in prefs.pairs.split(",") if p.strip()]
-                self._pairs_btn.setText(f"Select Pairs ({len(self._selected_pairs)})")
-        except Exception as exc:
-            _log.warning("Failed to restore StrategyLabPreferences: %s", exc)
-
-    def _save_preferences(self) -> None:
-        """Persist current UI values to AppSettings.strategy_lab."""
-        try:
-            settings = self._settings_state.settings_service.load_settings()
-            prefs = settings.strategy_lab
-            prefs.strategy = self._strategy_combo.currentText()
-            prefs.max_iterations = self._max_iter_spin.value()
-            prefs.target_profit_pct = self._target_profit_spin.value()
-            prefs.target_win_rate = self._target_wr_spin.value()
-            prefs.target_max_drawdown = self._target_dd_spin.value()
-            prefs.target_min_trades = self._target_trades_spin.value()
-            prefs.stop_on_first_profitable = self._stop_on_target_chk.isChecked()
-            prefs.timerange = self._timerange_edit.text().strip()
-            prefs.oos_split_pct = self._oos_split_spin.value()
-            prefs.walk_forward_folds = self._wf_folds_spin.value()
-            prefs.stress_fee_multiplier = self._stress_fee_spin.value()
-            prefs.stress_slippage_pct = self._stress_slippage_spin.value()
-            prefs.stress_profit_target_pct = self._stress_profit_spin.value()
-            prefs.consistency_threshold_pct = self._consistency_spin.value()
-            prefs.validation_mode = (
-                "full" if self._validation_mode_combo.currentIndex() == 0 else "quick"
-            )
-            prefs.iteration_mode = (
-                "rule_based" if self._iteration_mode_combo.currentIndex() == 0 else "hyperopt"
-            )
-            prefs.hyperopt_epochs = self._hyperopt_epochs_spin.value()
-            prefs.hyperopt_loss_function = self._hyperopt_loss_combo.currentText()
-            prefs.hyperopt_spaces = [
-                s for s, chk in self._hyperopt_space_checks.items() if chk.isChecked()
-            ]
-            prefs.ai_advisor_enabled = self._ai_advisor_chk.isChecked()
-            prefs.pairs = ",".join(self._selected_pairs)
-            self._settings_state.settings_service.save_settings(settings)
-        except Exception as exc:
-            _log.warning("Failed to save StrategyLabPreferences: %s", exc)
-
-    # ------------------------------------------------------------------
     # UI event handlers
     # ------------------------------------------------------------------
-
-    def _on_timerange_preset(self, preset: str) -> None:
-        """Apply a timerange preset (e.g. '30d') to the timerange field."""
-        days = int(preset.replace("d", ""))
-        date_to = datetime.now()
-        date_from = date_to - timedelta(days=days)
-        self._timerange_edit.setText(
-            f"{date_from.strftime('%Y%m%d')}-{date_to.strftime('%Y%m%d')}"
-        )
 
     def _on_select_pairs(self) -> None:
         """Open the PairsSelectorDialog to choose pairs."""
@@ -818,9 +536,6 @@ class LoopPage(QWidget):
 
     def _on_validation_mode_changed(self, index: int) -> None:
         self._quick_mode_warning.setVisible(index == 1)
-
-    def _on_iteration_mode_changed(self, index: int) -> None:
-        self._hyperopt_widget.setVisible(index == 1)
 
     def _on_apply_best(self) -> None:
         if self._loop_result is None or self._loop_result.best_iteration is None:
@@ -908,20 +623,6 @@ class LoopPage(QWidget):
     def _set_status(self, message: str) -> None:
         self._status_lbl.setText(message)
 
-    def _clear_history_ui(self) -> None:
-        """Remove all iteration rows from the history panel."""
-        while self._history_vlay.count() > 0:
-            item = self._history_vlay.takeAt(0)
-            if item.widget():
-                item.widget().deleteLater()
-        self._empty_history_lbl = QLabel("No iterations yet — start the loop to begin.")
-        self._empty_history_lbl.setStyleSheet(
-            f"color:{_C_TEXT_DIM};font-size:12px;font-style:italic;padding:16px;"
-        )
-        self._empty_history_lbl.setAlignment(Qt.AlignCenter)
-        self._history_vlay.addWidget(self._empty_history_lbl)
-        self._history_vlay.addStretch()
-
     def _add_history_row(self, iteration: LoopIteration) -> None:
         """Add an iteration row to the history panel."""
         # Remove empty label and stretch on first row
@@ -939,28 +640,6 @@ class LoopPage(QWidget):
         QTimer.singleShot(50, lambda: self._history_scroll.verticalScrollBar().setValue(
             self._history_scroll.verticalScrollBar().maximum()
         ))
-
-    def _update_stat_cards(self) -> None:
-        """Update live stat cards from the current loop result."""
-        result = self._loop_service.current_result
-        if result is None:
-            return
-
-        n = len(result.iterations)
-        self._stat_iter.set_value(str(n))
-
-        best = result.best_iteration
-        if best and best.summary:
-            s = best.summary
-            profit_color = _C_GREEN if s.total_profit >= 0 else _C_RED
-            self._stat_profit.set_value(f"{s.total_profit:+.1f}%", profit_color)
-            self._stat_wr.set_value(f"{s.win_rate:.0f}%")
-            dd_color = _C_RED if s.max_drawdown > 20 else _C_TEXT
-            self._stat_dd.set_value(f"{s.max_drawdown:.1f}%", dd_color)
-            sharpe = s.sharpe_ratio
-            self._stat_sharpe.set_value(f"{sharpe:.2f}" if sharpe is not None else "—")
-            if best.score:
-                self._stat_score.set_value(f"{best.score.total:.3f}")
 
     def _update_best_result_panel(self) -> None:
         """Show the best result panel with metrics and delta."""
@@ -1029,6 +708,8 @@ class LoopPage(QWidget):
             self._current_gate_export_dir = None
         if not hasattr(self, "_gate_run_started_at"):
             self._gate_run_started_at = 0.0
+        if not hasattr(self, "_baseline_run_started_at"):
+            self._baseline_run_started_at = 0.0
         if not hasattr(self, "_current_fold_timeranges"):
             self._current_fold_timeranges = []
         if not hasattr(self, "_current_fold_index"):
@@ -1768,6 +1449,7 @@ class LoopPage(QWidget):
 
     def _on_start(self) -> None:
         """Validate config and kick off the first ladder iteration."""
+        self._latest_diagnosis_input = None  # Reset stale state from any prior session
         self._ensure_loop_runtime_state()
         strategy = self._strategy_combo.currentText().strip()
         error = self._validate_loop_inputs(strategy)
@@ -1848,7 +1530,7 @@ class LoopPage(QWidget):
         
         # Prepare sandbox directory for baseline
         try:
-            sandbox_dir = self._improve_service.prepare_sandbox(settings, strategy)
+            sandbox_dir = self._improve_service.prepare_sandbox(strategy, {})
             self._sandbox_dir = sandbox_dir
         except Exception as exc:
             _log.error("Failed to prepare sandbox for baseline: %s", exc)
@@ -1870,14 +1552,17 @@ class LoopPage(QWidget):
         export_dir.mkdir(parents=True, exist_ok=True)
         
         try:
+            extra_flags = [
+                "--strategy-path", str(sandbox_dir),
+                "--backtest-directory", str(export_dir),
+            ]
             cmd = build_backtest_command(
                 settings=settings,
                 strategy_name=strategy,
                 timeframe=config.timeframe,
                 timerange=in_sample_timerange,
                 pairs=list(config.pairs) if config.pairs else None,
-                # Removed unsupported kwargs: export_dir, config_file, strategy_file
-                # These are attributes of the returned BacktestRunCommand, not parameters
+                extra_flags=extra_flags,
             )
         except Exception as exc:
             _log.error("Failed to build baseline backtest command: %s", exc)
@@ -1895,11 +1580,12 @@ class LoopPage(QWidget):
         
         # Execute baseline backtest
         _log.info("Executing baseline backtest command: %s", " ".join(cmd.as_list()))
+        self._baseline_run_started_at = time.time()
         self._process_service.execute_command(
             cmd.as_list(),
             working_directory=str(cmd.cwd) if cmd.cwd else None,  # Fixed: cwd -> working_directory
-            on_output=self._on_process_stdout,  # Fixed: on_stdout -> on_output
-            on_error=self._on_process_stderr,   # Fixed: on_stderr -> on_error
+            on_output=self._terminal.append_output,
+            on_error=self._terminal.append_error,
             on_finished=self._on_baseline_backtest_finished,
         )
 
@@ -1933,7 +1619,7 @@ class LoopPage(QWidget):
         # Parse baseline results
         export_dir = self._sandbox_dir / "baseline_export"
         try:
-            results = self._improve_service.parse_backtest_results(export_dir)
+            results = self._improve_service.parse_candidate_run(export_dir, self._baseline_run_started_at)
             
             if not results or not results.summary:
                 raise ValueError("No baseline results found in export directory")
