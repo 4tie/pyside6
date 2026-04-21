@@ -1453,8 +1453,11 @@ class LoopPage(QWidget):
         # Only reset stale session data on a fresh user-initiated start.
         # When called as a baseline-completion restart (_baseline_in_progress is True),
         # _latest_diagnosis_input has just been populated — do NOT wipe it.
+        # We also clear _baseline_in_progress here so the flag is always False
+        # by the time the rest of this method runs.
         if not getattr(self, '_baseline_in_progress', False):
             self._latest_diagnosis_input = None
+        self._baseline_in_progress = False
         self._ensure_loop_runtime_state()
         strategy = self._strategy_combo.currentText().strip()
         error = self._validate_loop_inputs(strategy)
@@ -1488,9 +1491,6 @@ class LoopPage(QWidget):
             self._baseline_in_progress = True
             self._run_baseline_backtest(config, strategy, settings)
             return  # Exit early, baseline completion will trigger loop start
-
-        # Clear baseline flag if we're starting the loop
-        self._baseline_in_progress = False
 
         self._clear_history_ui()
         self._loop_result = None
@@ -1651,12 +1651,12 @@ class LoopPage(QWidget):
             # Update UI
             self._set_status("Baseline backtest completed - starting loop")
             _log.info("Baseline established, restarting loop with real data")
-            
-            # Clear baseline flag and restart loop
-            self._baseline_in_progress = False
-            
-            # Restart the loop with real baseline
-            # Use QTimer to avoid deep recursion
+
+            # Keep _baseline_in_progress = True until _on_start runs.
+            # _on_start checks this flag to decide whether to wipe
+            # _latest_diagnosis_input; clearing it here (before the timer fires)
+            # would cause the guard to miss and destroy the baseline result.
+            # _on_start clears the flag itself on the restart path.
             QTimer.singleShot(100, self._on_start)
             
         except Exception as exc:

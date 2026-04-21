@@ -3,6 +3,13 @@
 Bug 6: _on_start() unconditionally wiped _latest_diagnosis_input, causing an
        infinite baseline loop when called as a baseline-completion restart.
 
+       Root cause of the original regression: _on_baseline_backtest_finished()
+       cleared _baseline_in_progress BEFORE scheduling the QTimer, so by the
+       time _on_start() ran the flag was already False and the guard missed.
+
+       Fix: _on_baseline_backtest_finished() keeps _baseline_in_progress=True
+       until _on_start() runs; _on_start() clears it itself after the guard.
+
 Bug 7: _update_state_machine() ignored _baseline_in_progress, leaving the Start
        button and config widgets enabled while the baseline subprocess was running.
 
@@ -35,7 +42,7 @@ def qapp():
 
 
 # ---------------------------------------------------------------------------
-# Shared helpers (mirrors the pattern from test_strategy_lab_bugfix_unit.py)
+# Shared helpers
 # ---------------------------------------------------------------------------
 
 def _make_app_settings(tmp_path: Path) -> AppSettings:
@@ -94,17 +101,22 @@ class TestBug6BaselineRestartPreservesInput:
     """Regression test for Bug 6: baseline-completion restart must NOT wipe
     _latest_diagnosis_input when _baseline_in_progress is True.
 
+    The correct call path (after the fix) is:
+      _on_baseline_backtest_finished():
+        1. sets _latest_diagnosis_input = DiagnosisInput(...)
+        2. keeps _baseline_in_progress = True   ← does NOT clear it
+        3. schedules QTimer.singleShot(100, self._on_start)
+
+      _on_start() (100ms later):
+        1. guard: _baseline_in_progress is True → skip reset
+        2. clears _baseline_in_progress = False
+        3. needs_baseline = False (sentinel is not None) → proceeds to loop start
+
     **Validates: Requirements 2.6**
     """
 
     def test_baseline_restart_preserves_latest_diagnosis_input(self, qapp, tmp_path):
         """Assert _latest_diagnosis_input is NOT reset when _baseline_in_progress=True.
-
-        Simulates the call path from _on_baseline_backtest_finished():
-          1. _latest_diagnosis_input is set to the freshly-parsed baseline result
-          2. _baseline_in_progress is True (set before the QTimer fires)
-          3. _on_start() is called (the QTimer callback)
-          4. The guard must preserve _latest_diagnosis_input (not wipe it)
 
         **Validates: Requirements 2.6**
         """
@@ -113,13 +125,15 @@ class TestBug6BaselineRestartPreservesInput:
         page._ensure_loop_runtime_state()
 
         # Simulate the state just before the baseline-completion restart fires:
-        # _baseline_in_progress is True and _latest_diagnosis_input has been set.
+        # _baseline_in_progress is True (not yet cleared) and _latest_diagnosis_input
+        # has been set to the freshly-parsed baseline result.
         sentinel = MagicMock(name="DiagnosisInput_sentinel")
         page._baseline_in_progress = True
         page._latest_diagnosis_input = sentinel
 
-        # Mock out everything after the reset guard to prevent full execution.
-        # We only care that the guard line runs and preserves the value.
+        # Mock out everything after the reset guard to prevent full loop execution.
+        # We need to stop at the point where _loop_service.start() would be called,
+        # because the sentinel MagicMock would cause TypeError in ResultsDiagnosisService.
         with patch.object(page, "_ensure_loop_runtime_state"):
             with patch.object(page, "_validate_loop_inputs", return_value=None):
                 with patch.object(page, "_save_preferences"):
@@ -129,15 +143,26 @@ class TestBug6BaselineRestartPreservesInput:
                         return_value={"stoploss": -0.10},
                     ):
                         with patch.object(page, "_build_loop_config", return_value=_make_loop_config()):
-                            # _baseline_in_progress=True means the guard inside _on_start
-                            # will skip the reset AND the early-return guard will fire,
-                            # so _run_baseline_backtest is never called.
-                            page._on_start()
+                            with patch.object(page, "_clear_history_ui"):
+                                with patch.object(page, "_reset_iteration_runtime"):
+                                    with patch.object(page._loop_service, "start"):
+                                        with patch.object(page._loop_service, "set_callbacks"):
+                                            with patch.object(page, "_run_next_iteration"):
+                                                page._on_start()
 
+        # After _on_start() runs with _baseline_in_progress=True:
+        # - the guard skips the reset
+        # - _baseline_in_progress is cleared to False by _on_start itself
+        # - _latest_diagnosis_input must still be the sentinel
         assert page._latest_diagnosis_input is sentinel, (
-            "_latest_diagnosis_input must NOT be reset to None when _baseline_in_progress=True. "
+            "_latest_diagnosis_input must NOT be reset to None when _baseline_in_progress=True "
+            "at the time _on_start() is called. "
             f"Got: {page._latest_diagnosis_input!r}. "
-            "Bug 6 regression: the unconditional reset wipes the freshly-set baseline result."
+            "Bug 6 regression: the guard must protect the freshly-set baseline result."
+        )
+        # Also verify _baseline_in_progress was cleared by _on_start
+        assert page._baseline_in_progress is False, (
+            "_baseline_in_progress must be False after _on_start() completes."
         )
 
 
@@ -154,10 +179,6 @@ class TestBug6FreshStartResetsInput:
 
     def test_fresh_user_start_resets_latest_diagnosis_input(self, qapp, tmp_path):
         """Assert _latest_diagnosis_input IS reset to None when _baseline_in_progress=False.
-
-        This is the stale-session protection path: when the user clicks Start for
-        a new session, any leftover _latest_diagnosis_input from a prior session
-        must be cleared so the baseline always runs.
 
         **Validates: Requirements 2.5, 3.1**
         """
@@ -233,7 +254,7 @@ class TestBug7UIBusyDuringBaseline:
         )
 
     def test_stop_btn_visible_and_enabled_during_baseline(self, qapp, tmp_path):
-        """Assert _stop_btn.isVisible() and _stop_btn.isEnabled() during baseline.
+        """Assert _stop_btn is not hidden and is enabled during baseline.
 
         **Validates: Requirements 2.7**
         """
@@ -247,8 +268,7 @@ class TestBug7UIBusyDuringBaseline:
         with patch.object(LoopService, "is_running", new_callable=PropertyMock, return_value=False):
             page._update_state_machine()
 
-        # isVisible() requires the widget's parent chain to be shown too.
-        # isHidden() checks only the widget's own visibility flag — use that instead.
+        # isHidden() checks only the widget's own visibility flag (no parent chain needed).
         assert not page._stop_btn.isHidden(), (
             "_stop_btn must not be hidden while _baseline_in_progress=True."
         )
@@ -271,8 +291,6 @@ class TestBug7UIIdleAfterBaselineClears:
     def test_start_btn_enabled_after_baseline_clears(self, qapp, tmp_path):
         """Assert _start_btn.isEnabled() is True when baseline is done and loop is idle.
 
-        Requires valid settings (user_data_path set) and a valid strategy selected.
-
         **Validates: Requirements 2.7**
         """
         settings_state = _make_settings_state(tmp_path)
@@ -287,7 +305,6 @@ class TestBug7UIIdleAfterBaselineClears:
         if idx >= 0:
             page._strategy_combo.setCurrentIndex(idx)
         else:
-            # Fallback: set text directly if findText fails
             page._strategy_combo.setCurrentText("TestStrategy")
 
         from app.core.services.loop_service import LoopService
@@ -296,6 +313,5 @@ class TestBug7UIIdleAfterBaselineClears:
 
         assert page._start_btn.isEnabled(), (
             "_start_btn must be ENABLED when _baseline_in_progress=False, "
-            "is_running=False, and a valid strategy is selected. "
-            "Bug 7 regression: the busy check must not block the idle state."
+            "is_running=False, and a valid strategy is selected."
         )
