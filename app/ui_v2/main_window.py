@@ -25,6 +25,7 @@ from PySide6.QtWidgets import (
 from app.app_state.settings_state import SettingsState
 from app.core.ai.ai_service import AIService
 from app.core.utils.app_logger import get_logger
+from app.ui.pages.loop_page import LoopPage
 from app.ui_v2.panels.ai_panel import AiPanel
 from app.ui_v2.panels.terminal_panel import TerminalPanel
 from app.ui_v2.pages.backtest_page import BacktestPage
@@ -60,6 +61,7 @@ _PAGE_DEFS: List[tuple[str, str]] = [
     ("optimize", "Optimize"),
     ("download", "Download Data"),
     ("strategy", "Strategy"),
+    ("lab", "Strategy Lab"),
     ("settings", "Settings"),
 ]
 
@@ -175,6 +177,7 @@ class ModernMainWindow(QMainWindow):
         self.optimize_page = OptimizePage(self.settings_state)
         self.download_page = DownloadPage(self.settings_state)
         self.strategy_page = StrategyPage(self.settings_state)
+        self.loop_page = LoopPage(self.settings_state, ai_service=self.ai_service)
         self.settings_page = SettingsPage(self.settings_state)
 
         for page_id, page in [
@@ -183,6 +186,7 @@ class ModernMainWindow(QMainWindow):
             ("optimize", self.optimize_page),
             ("download", self.download_page),
             ("strategy", self.strategy_page),
+            ("lab", self.loop_page),
             ("settings", self.settings_page),
         ]:
             self._pages[page_id] = page
@@ -221,6 +225,9 @@ class ModernMainWindow(QMainWindow):
 
         # Backtest loop_completed → strategy_page.refresh
         self.backtest_page.loop_completed.connect(self.strategy_page.refresh)
+
+        # Strategy Lab loop_completed → strategy_page.refresh
+        self.loop_page.loop_completed.connect(self.strategy_page.refresh)
 
         # AI service → backtest service
         backtest_service = getattr(self.backtest_page, "_backtest_service", None)
@@ -272,7 +279,7 @@ class ModernMainWindow(QMainWindow):
 
     def _register_shortcuts(self) -> None:
         """Register all keyboard shortcuts via QShortcut."""
-        # Ctrl+1 – Ctrl+6: navigate to pages in order
+        # Ctrl+1 – Ctrl+7: navigate to pages in order
         page_ids = [pid for pid, _ in _PAGE_DEFS]
         for i, page_id in enumerate(page_ids, start=1):
             shortcut = QShortcut(QKeySequence(f"Ctrl+{i}"), self)
@@ -336,9 +343,15 @@ class ModernMainWindow(QMainWindow):
                 "action": lambda: self._navigate_to("strategy"),
             },
             {
+                "id": "nav_lab",
+                "label": "Go to Strategy Lab",
+                "shortcut": "Ctrl+6",
+                "action": lambda: self._navigate_to("lab"),
+            },
+            {
                 "id": "nav_settings",
                 "label": "Go to Settings",
-                "shortcut": "Ctrl+6",
+                "shortcut": "Ctrl+7",
                 "action": lambda: self._navigate_to("settings"),
             },
             {

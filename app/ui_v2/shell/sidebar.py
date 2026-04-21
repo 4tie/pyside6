@@ -34,6 +34,7 @@ _NAV_ITEMS: List[Tuple[str, str, str]] = [
     ("optimize", "🔬", "Optimize"),
     ("download", "⬇", "Download"),
     ("strategy", "📋", "Strategy"),
+    ("lab", "🧪", "Strategy Lab"),
     ("settings", "⚙", "Settings"),
 ]
 

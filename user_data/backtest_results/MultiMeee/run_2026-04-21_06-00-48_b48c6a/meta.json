@@ -1,0 +1,30 @@
+{
+  "run_id": "run_2026-04-21_06-00-48_b48c6a",
+  "version_id": null,
+  "strategy": "MultiMeee",
+  "timeframe": "5m",
+  "pairs": [
+    "ADA/USDT",
+    "ETH/USDT"
+  ],
+  "start_time": "2026-04-21T06:00:48.093175",
+  "timerange": "20250424-20260419",
+  "backtest_start": "2025-04-24 00:00:00",
+  "backtest_end": "2026-04-11 00:40:00",
+  "status": "completed",
+  "profit_total_pct": -21.121,
+  "profit_total_abs": -16.8968,
+  "starting_balance": 80.0,
+  "final_balance": 63.1032,
+  "max_drawdown_pct": 22.8115,
+  "max_drawdown_abs": 18.6488,
+  "trades_count": 537,
+  "wins": 185,
+  "losses": 352,
+  "win_rate_pct": 34.45,
+  "sharpe": -2.457,
+  "sortino": -4.2371,
+  "calmar": -5.0253,
+  "profit_factor": 0.7904,
+  "expectancy": -0.0315
+}

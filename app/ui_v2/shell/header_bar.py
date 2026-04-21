@@ -107,26 +107,26 @@ class HeaderBar(QWidget):
         spacer.setStyleSheet("background: transparent;")
         layout.addWidget(spacer)
 
-        # Command palette button
-        self._cmd_btn = QPushButton("🔍")
+        # Command palette button — use text that renders reliably on all platforms
+        self._cmd_btn = QPushButton("Search")
         self._cmd_btn.setObjectName("secondary")
-        self._cmd_btn.setFixedSize(32, 32)
+        self._cmd_btn.setFixedHeight(32)
         self._cmd_btn.setToolTip("Command Palette (Ctrl+P)")
         self._cmd_btn.setAccessibleName("Command Palette")
         self._cmd_btn.clicked.connect(self.command_palette_requested)
         layout.addWidget(self._cmd_btn)
 
         # Settings shortcut button
-        self._settings_btn = QPushButton("⚙")
+        self._settings_btn = QPushButton("Settings")
         self._settings_btn.setObjectName("secondary")
-        self._settings_btn.setFixedSize(32, 32)
+        self._settings_btn.setFixedHeight(32)
         self._settings_btn.setToolTip("Settings")
         self._settings_btn.setAccessibleName("Settings")
         self._settings_btn.clicked.connect(self.settings_requested)
         layout.addWidget(self._settings_btn)
 
         # Theme toggle button
-        self._theme_btn = QPushButton("🌙 Dark")
+        self._theme_btn = QPushButton("Dark")
         self._theme_btn.setObjectName("secondary")
         self._theme_btn.setFixedHeight(32)
         self._theme_btn.setToolTip("Toggle theme (Dark / Light)")
@@ -159,11 +159,11 @@ class HeaderBar(QWidget):
         """Cycle the theme Dark → Light → Dark and apply the stylesheet."""
         if self._current_mode == ThemeMode.DARK:
             self._current_mode = ThemeMode.LIGHT
-            self._theme_btn.setText("☀ Light")
+            self._theme_btn.setText("Light")
             palette = _LIGHT_PALETTE
         else:
             self._current_mode = ThemeMode.DARK
-            self._theme_btn.setText("🌙 Dark")
+            self._theme_btn.setText("Dark")
             palette = PALETTE
 
         # Build and apply the combined stylesheet
