@@ -139,3 +139,65 @@
   - Run `ruff check app/ui/pages/loop_page.py app/core/services/loop_service.py` to confirm no lint errors introduced by the deletions
   - Confirm `_build_config_group` and all canonical method definitions are intact in `loop_page.py`
   - Confirm the canonical `run_gate_sequence` is intact in `loop_service.py`
+
+- [x] 6. Fix Bug 6 — Guard `_latest_diagnosis_input` reset in `_on_start()`
+  - **Root cause**: `_on_start()` resets `self._latest_diagnosis_input = None` unconditionally at its first line. When called as a baseline-completion restart (via `QTimer.singleShot(100, self._on_start)` from `_on_baseline_backtest_finished()`), this wipes the just-populated baseline result, causing `needs_baseline` to be `True` again and triggering an infinite baseline loop.
+  - File: `app/ui/pages/loop_page.py`, method `_on_start`
+  - Change the unconditional reset to a guarded reset:
+    ```python
+    # BEFORE
+    self._latest_diagnosis_input = None  # Reset stale state from any prior session
+
+    # AFTER
+    # Only reset stale session data on a fresh user-initiated start.
+    # When called as a baseline-completion restart (_baseline_in_progress is True),
+    # _latest_diagnosis_input has just been populated — do NOT wipe it.
+    if not getattr(self, '_baseline_in_progress', False):
+        self._latest_diagnosis_input = None
+    ```
+  - _Bug_Condition: `_on_start()` called with `_baseline_in_progress = True` AND `_latest_diagnosis_input` is not None → reset wipes baseline result → infinite loop_
+  - _Expected_Behavior: When `_baseline_in_progress` is True, `_latest_diagnosis_input` is preserved; `needs_baseline` evaluates to False; loop proceeds to iteration 1_
+  - _Preservation: When `_baseline_in_progress` is False (user-initiated start), `_latest_diagnosis_input` is still reset to None — stale-session protection unchanged_
+  - _Requirements: 2.6, 2.5, 3.1_
+
+- [x] 7. Fix Bug 7 — Include `_baseline_in_progress` in `_update_state_machine()` busy check
+  - **Root cause**: `_update_state_machine()` only checks `self._loop_service.is_running`. During the baseline phase, `LoopService.start()` has not been called yet, so `is_running` is `False`. The Start button and config widgets are re-enabled while the baseline subprocess is still running.
+  - File: `app/ui/pages/loop_page.py`, method `_update_state_machine`
+  - Change the `is_running` computation:
+    ```python
+    # BEFORE
+    is_running = self._loop_service.is_running
+
+    # AFTER
+    is_running = self._loop_service.is_running or getattr(self, '_baseline_in_progress', False)
+    ```
+  - _Bug_Condition: `_baseline_in_progress = True` AND `_loop_service.is_running = False` → UI treats page as idle → Start button enabled during baseline subprocess_
+  - _Expected_Behavior: While `_baseline_in_progress` is True, Start button and config widgets are disabled; Stop button is visible and enabled_
+  - _Preservation: All other `_update_state_machine` logic (result buttons, hyperopt block, etc.) is unchanged_
+  - _Requirements: 2.7_
+
+- [x] 8. Write and run regression tests for Bugs 6 and 7
+  - Create `tests/test_strategy_lab_regression_6_7.py`
+  - **Test 6a — Baseline-completion restart preserves `_latest_diagnosis_input`**:
+    - Create a `LoopPage` instance with mocked services
+    - Set `_baseline_in_progress = True` and `_latest_diagnosis_input` to a mock `DiagnosisInput`
+    - Call `_on_start()` (mock out everything after the reset guard to prevent full execution)
+    - Assert `_latest_diagnosis_input` is still the mock value (not None)
+  - **Test 6b — Fresh user start resets `_latest_diagnosis_input`**:
+    - Set `_baseline_in_progress = False` and `_latest_diagnosis_input` to a mock value
+    - Call `_on_start()` (mock out everything after the reset guard)
+    - Assert `_latest_diagnosis_input` is None after the guard line
+  - **Test 7a — UI busy during baseline**:
+    - Set `_baseline_in_progress = True`, `_loop_service.is_running = False`
+    - Call `_update_state_machine()`
+    - Assert `_start_btn.isEnabled()` is False
+    - Assert `_stop_btn.isVisible()` is True and `_stop_btn.isEnabled()` is True
+  - **Test 7b — UI not busy after baseline clears**:
+    - Set `_baseline_in_progress = False`, `_loop_service.is_running = False`
+    - Set valid settings (user_data_path set, valid strategy selected)
+    - Call `_update_state_machine()`
+    - Assert `_start_btn.isEnabled()` is True
+  - Run `pytest tests/test_strategy_lab_regression_6_7.py --tb=short`
+  - All tests must pass
+  - Run `ruff check app/ui/pages/loop_page.py` to confirm no lint errors
+  - _Requirements: 2.5, 2.6, 2.7, 3.1_

@@ -25,6 +25,7 @@ from app.app_state.settings_state import SettingsState
 from app.core.backtests.results_models import BacktestResults, BacktestSummary
 from app.core.freqtrade.resolvers.strategy_resolver import detect_strategy_timeframe
 from app.core.models.loop_models import LoopConfig, LoopIteration, LoopResult
+from app.core.models.settings_models import AppSettings
 from app.core.services.ai_advisor_service import AIAdvisorService
 from app.core.services.backtest_service import BacktestService
 from app.core.services.improve_service import ImproveService
@@ -86,9 +87,9 @@ def _btn(label: str, bg: str, fg: str = "white", min_w: int = 120) -> QPushButto
 
 
 def _lbl(text: str, dim: bool = True) -> QLabel:
-    l = QLabel(text)
-    l.setStyleSheet(f"color:{'#9d9d9d' if dim else _C_TEXT};font-size:11px;")
-    return l
+    lbl = QLabel(text)
+    lbl.setStyleSheet(f"color:{'#9d9d9d' if dim else _C_TEXT};font-size:11px;")
+    return lbl
 
 
 class _StatCard(QFrame):
@@ -991,7 +992,7 @@ class LoopPage(QWidget):
         """Update enabled/disabled widget state based on config and runtime."""
         settings = self._settings_state.settings_service.load_settings()
         ok = bool(settings.user_data_path)
-        is_running = self._loop_service.is_running
+        is_running = self._loop_service.is_running or getattr(self, '_baseline_in_progress', False)
         strategy = self._strategy_combo.currentText().strip()
         has_strategy = bool(strategy) and not strategy.startswith("(")
         has_result = (
@@ -1449,7 +1450,11 @@ class LoopPage(QWidget):
 
     def _on_start(self) -> None:
         """Validate config and kick off the first ladder iteration."""
-        self._latest_diagnosis_input = None  # Reset stale state from any prior session
+        # Only reset stale session data on a fresh user-initiated start.
+        # When called as a baseline-completion restart (_baseline_in_progress is True),
+        # _latest_diagnosis_input has just been populated — do NOT wipe it.
+        if not getattr(self, '_baseline_in_progress', False):
+            self._latest_diagnosis_input = None
         self._ensure_loop_runtime_state()
         strategy = self._strategy_combo.currentText().strip()
         error = self._validate_loop_inputs(strategy)
