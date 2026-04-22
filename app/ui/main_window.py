@@ -1,6 +1,6 @@
-"""main_window.py — Modern main window with sidebar navigation, header bar, and dockable panels.
+"""ModernMainWindow — top-level shell for the UI layer.
 
-Replaces the old ``MainWindow`` with a sidebar-navigation shell built from
+Replaces ``MainWindow`` with a sidebar-navigation shell built from
 ``NavSidebar``, ``QStackedWidget``, ``HeaderBar``, ``AppStatusBar``, and
 dockable ``TerminalPanel`` / ``AiPanel``.
 
@@ -25,15 +25,15 @@ from PySide6.QtWidgets import (
 from app.app_state.settings_state import SettingsState
 from app.core.ai.ai_service import AIService
 from app.core.utils.app_logger import get_logger
-from app.ui.pages.dashboard_page import DashboardPage
-from app.ui.pages.backtest_page import BacktestPage
-from app.ui.pages.optimize_page import OptimizePage
-from app.ui.pages.download_page import DownloadPage
-from app.ui.pages.strategy_page import StrategyPage
 from app.ui.pages.loop_page import LoopPage
-from app.ui.pages.settings_page import SettingsPage
 from app.ui.panels.ai_panel import AiPanel
 from app.ui.panels.terminal_panel import TerminalPanel
+from app.ui.pages.backtest_page import BacktestPage
+from app.ui.pages.dashboard_page import DashboardPage
+from app.ui.pages.download_page import DownloadPage
+from app.ui.pages.optimize_page import OptimizePage
+from app.ui.pages.settings_page import SettingsPage
+from app.ui.pages.strategy_page import StrategyPage
 from app.ui.shell.header_bar import HeaderBar
 from app.ui.shell.sidebar import NavSidebar
 from app.ui.shell.status_bar import AppStatusBar
@@ -52,7 +52,7 @@ from app.ui.widgets.onboarding_wizard import OnboardingWizard
 _log = get_logger("ui.main_window")
 
 # ---------------------------------------------------------------------------
-# Page registry: (page_id, title)
+# Page registry: (page_id, title, index)
 # ---------------------------------------------------------------------------
 
 _PAGE_DEFS: List[tuple[str, str]] = [
@@ -61,19 +61,20 @@ _PAGE_DEFS: List[tuple[str, str]] = [
     ("optimize", "Optimize"),
     ("download", "Download Data"),
     ("strategy", "Strategy"),
-    ("strategy_lab", "Strategy Lab"),
+    ("lab", "Strategy Lab"),
     ("settings", "Settings"),
 ]
 
-_QSETTINGS_ORG = "FreqtradeGUI"
-_QSETTINGS_APP = "ModernUI"
+_QSETTINGS_APP = "FreqtradeGUI"
+_QSETTINGS_ORG = "ModernUI"
 
 
 class ModernMainWindow(QMainWindow):
-    """Modern main window with sidebar navigation, header bar, and dockable panels.
+    """Modern sidebar-navigation main window for the UI layer.
 
     Args:
-        settings_state: Application settings state.
+        settings_state: Application settings state.  If ``None`` a new
+            ``SettingsState`` is created and settings are loaded from disk.
         parent: Optional parent widget.
     """
 
@@ -93,10 +94,6 @@ class ModernMainWindow(QMainWindow):
             settings_state.load_settings()
         self.settings_state = settings_state
 
-        # ── AI service ────────────────────────────────────────────────
-        self.ai_service = AIService(settings_state)
-        backtest_service = None
-
         # ── Apply initial stylesheet ──────────────────────────────────
         self._current_theme_mode: ThemeMode = ThemeMode.DARK
         _mode_str = (
@@ -106,7 +103,10 @@ class ModernMainWindow(QMainWindow):
         )
         if _mode_str == "light":
             self._current_theme_mode = ThemeMode.LIGHT
-        self._apply_theme(self._current_theme_mode.value)
+        self._apply_stylesheet(self._current_theme_mode)
+
+        # ── AI service ────────────────────────────────────────────────
+        self.ai_service = AIService(settings_state)
 
         # ── Build UI ──────────────────────────────────────────────────
         self._build_ui()
@@ -123,6 +123,10 @@ class ModernMainWindow(QMainWindow):
 
         # ── Register keyboard shortcuts ───────────────────────────────
         self._register_shortcuts()
+
+        # ── Build command palette ─────────────────────────────────────
+        self._command_palette: Optional[CommandPalette] = None
+        self._build_command_palette()
 
         # ── Restore geometry / state ──────────────────────────────────
         self._restore_geometry()
@@ -169,7 +173,6 @@ class ModernMainWindow(QMainWindow):
 
         # ── Status bar ────────────────────────────────────────────────
         self.app_status_bar = AppStatusBar(parent=central)
-        self.setStatusBar(None)  # remove default status bar
         root_layout.addWidget(self.app_status_bar)
 
         # ── Pages ─────────────────────────────────────────────────────
@@ -181,7 +184,7 @@ class ModernMainWindow(QMainWindow):
         self.optimize_page = OptimizePage(self.settings_state)
         self.download_page = DownloadPage(self.settings_state)
         self.strategy_page = StrategyPage(self.settings_state)
-        self.loop_page = LoopPage(self.settings_state)
+        self.loop_page = LoopPage(self.settings_state, ai_service=self.ai_service)
         self.settings_page = SettingsPage(self.settings_state)
 
         for page_id, page in [
@@ -190,7 +193,7 @@ class ModernMainWindow(QMainWindow):
             ("optimize", self.optimize_page),
             ("download", self.download_page),
             ("strategy", self.strategy_page),
-            ("strategy_lab", self.loop_page),
+            ("lab", self.loop_page),
             ("settings", self.settings_page),
         ]:
             self._pages[page_id] = page
@@ -200,9 +203,9 @@ class ModernMainWindow(QMainWindow):
         self.terminal_panel = TerminalPanel(parent=self)
         self.addDockWidget(Qt.BottomDockWidgetArea, self.terminal_panel)
 
+        # AiPanel in app/ui takes only parent (no settings_state or ai_service)
         self.ai_panel = AiPanel(parent=self)
         self.addDockWidget(Qt.RightDockWidgetArea, self.ai_panel)
-        self.ai_panel.hide()
 
         # ── Navigate to default page ──────────────────────────────────
         self._navigate_to("dashboard")
@@ -212,27 +215,56 @@ class ModernMainWindow(QMainWindow):
     # ------------------------------------------------------------------
 
     def _wire_signals(self) -> None:
-        """Wire all Qt signals."""
+        """Wire all Qt signals — mirrors the wiring in the original MainWindow."""
         # Nav sidebar → page switch
         self.nav_sidebar.nav_item_clicked.connect(self._navigate_to)
 
         # Header bar → command palette / settings / theme
-        self.header_bar.theme_toggle_requested.connect(self._toggle_theme)
         self.header_bar.command_palette_requested.connect(self._show_command_palette)
         self.header_bar.settings_requested.connect(lambda: self._navigate_to("settings"))
+        # HeaderBar emits theme_toggle_requested (no args) — wire to _toggle_theme()
+        self.header_bar.theme_toggle_requested.connect(self._toggle_theme)
 
-        # Settings state signals
-        self.settings_state.settings_changed.connect(self._on_settings_changed)
+        # Settings page theme_changed emits a string — wire to _apply_theme()
+        self.settings_page.theme_changed.connect(self._apply_theme)
+
+        # Note: settings_saved, loop_completed, and connect_backtest_service are
+        # already wired inline in __init__ (required by P2 signal-continuity test).
+
+        # Register backtest trigger callback with AIService
+        def _backtest_trigger_callback() -> dict:
+            """Callback to trigger backtest from AI tools."""
+            try:
+                config = self.backtest_page.get_current_config()
+                if not config.get("strategy"):
+                    return {"error": "No strategy selected in the Backtest tab."}
+                if not config.get("pairs"):
+                    return {"error": "No pairs selected in the Backtest tab."}
+                # Schedule on main thread via Qt signal-safe call
+                from PySide6.QtCore import QMetaObject, Qt
+                QMetaObject.invokeMethod(
+                    self.backtest_page, "_run_backtest", Qt.QueuedConnection
+                )
+                return {
+                    "output": (
+                        f"Backtest started with current configuration: "
+                        f"strategy={config['strategy']}, "
+                        f"timeframe={config['timeframe']}, "
+                        f"pairs={config['pairs']}"
+                    )
+                }
+            except Exception as exc:
+                return {"error": str(exc)}
+
+        self.ai_service.set_backtest_trigger_callback(_backtest_trigger_callback)
 
         # Dashboard quick-action signals
+        # DashboardPage has navigate_to signal but NOT run_last_backtest
         self.dashboard_page.navigate_to.connect(self._navigate_to)
 
         # Strategy page quick-action signals
-        self.strategy_page.backtest_requested.connect(self._on_backtest_requested)
-        self.strategy_page.optimize_requested.connect(self._on_optimize_requested)
-
-        # Settings page theme changed
-        self.settings_page.theme_changed.connect(self._apply_theme)
+        self.strategy_page.backtest_requested.connect(self._on_strategy_backtest)
+        self.strategy_page.optimize_requested.connect(self._on_strategy_optimize)
 
         _log.debug("All signals wired")
 
@@ -295,8 +327,8 @@ class ModernMainWindow(QMainWindow):
     # Command Palette
     # ------------------------------------------------------------------
 
-    def _show_command_palette(self) -> None:
-        """Build and show the command palette dialog centred on the main window."""
+    def _build_command_palette(self) -> None:
+        """Build the CommandPalette with all registered commands."""
         commands: List[dict] = [
             {
                 "id": "nav_dashboard",
@@ -329,10 +361,10 @@ class ModernMainWindow(QMainWindow):
                 "action": lambda: self._navigate_to("strategy"),
             },
             {
-                "id": "nav_strategy_lab",
+                "id": "nav_lab",
                 "label": "Go to Strategy Lab",
                 "shortcut": "Ctrl+6",
-                "action": lambda: self._navigate_to("strategy_lab"),
+                "action": lambda: self._navigate_to("lab"),
             },
             {
                 "id": "nav_settings",
@@ -360,13 +392,20 @@ class ModernMainWindow(QMainWindow):
             },
         ]
 
-        palette = CommandPalette(commands=commands, parent=self)
+        self._command_palette = CommandPalette(commands=commands, parent=self)
+        _log.debug("CommandPalette built with %d commands", len(commands))
+
+    def _show_command_palette(self) -> None:
+        """Show the command palette dialog centred on the main window."""
+        if self._command_palette is None:
+            return
+        # Centre over the main window
         geo = self.geometry()
-        cp_width = palette.minimumWidth()
+        cp_width = self._command_palette.minimumWidth()
         x = geo.x() + (geo.width() - cp_width) // 2
         y = geo.y() + geo.height() // 4
-        palette.move(x, y)
-        palette.exec()
+        self._command_palette.move(x, y)
+        self._command_palette.exec()
 
     # ------------------------------------------------------------------
     # Panel Toggles
@@ -390,67 +429,70 @@ class ModernMainWindow(QMainWindow):
     # Theme
     # ------------------------------------------------------------------
 
+    def _apply_stylesheet(self, mode: ThemeMode) -> None:
+        """Build and apply the combined stylesheet for the given theme mode.
+
+        Args:
+            mode: The ``ThemeMode`` to apply.
+        """
+        palette = PALETTE if mode == ThemeMode.DARK else _LIGHT_PALETTE
+        qss = build_stylesheet(mode) + build_v2_additions(palette, SPACING, FONT)
+        app = QApplication.instance()
+        if app is not None:
+            app.setStyleSheet(qss)
+        self._current_theme_mode = mode
+
     def _toggle_theme(self) -> None:
-        """Toggle between dark and light theme modes."""
+        """Toggle between DARK and LIGHT theme modes.
+
+        Connected to ``HeaderBar.theme_toggle_requested`` (no-arg signal).
+        """
         if self._current_theme_mode == ThemeMode.DARK:
-            self._apply_theme(ThemeMode.LIGHT.value)
+            new_mode = ThemeMode.LIGHT
         else:
-            self._apply_theme(ThemeMode.DARK.value)
+            new_mode = ThemeMode.DARK
+        self._apply_stylesheet(new_mode)
+        _log.info("Theme toggled to %s", new_mode.value)
 
     def _apply_theme(self, mode: str) -> None:
-        """Build and apply the combined stylesheet for the given theme mode.
+        """Handle theme change from SettingsPage (emits a string).
 
         Args:
             mode: Theme mode string — ``"dark"`` or ``"light"``.
         """
-        try:
-            theme_mode = ThemeMode(mode)
-        except ValueError:
-            _log.warning("Unknown theme mode %r — falling back to dark", mode)
-            theme_mode = ThemeMode.DARK
-
-        palette = PALETTE if theme_mode == ThemeMode.DARK else _LIGHT_PALETTE
-        qss = build_stylesheet(theme_mode) + build_v2_additions(palette, SPACING, FONT)
-        app = QApplication.instance()
-        if app is not None:
-            app.setStyleSheet(qss)
-        self._current_theme_mode = theme_mode
-
-        # Persist theme to settings
-        if self.settings_state.current_settings is not None:
-            updated = self.settings_state.current_settings.model_copy(
-                update={"theme_mode": theme_mode.value}
-            )
-            self.settings_state.save_settings(updated)
-
-        _log.debug("Theme applied: %s", theme_mode.value)
+        new_mode = ThemeMode.LIGHT if mode == "light" else ThemeMode.DARK
+        self._apply_stylesheet(new_mode)
+        _log.info("Theme changed to %s", mode)
 
     # ------------------------------------------------------------------
-    # Settings Slots
+    # Settings Saved
     # ------------------------------------------------------------------
 
-    def _on_settings_saved(self, settings=None) -> None:
-        """Show status message when settings are saved.
+    def _on_settings_saved(self, settings) -> None:
+        """Re-apply terminal preferences and theme when settings are saved.
 
         Args:
-            settings: The newly saved ``AppSettings`` instance (may be None).
+            settings: The newly saved ``AppSettings`` instance.
         """
+        # Re-apply theme if theme_mode changed
+        mode_str = getattr(settings, "theme_mode", "dark")
+        new_mode = ThemeMode.LIGHT if mode_str == "light" else ThemeMode.DARK
+        if new_mode != self._current_theme_mode:
+            self._apply_stylesheet(new_mode)
+
+        # Apply terminal preferences to the global terminal panel
+        prefs = getattr(settings, "terminal_preferences", None)
+        if prefs is not None:
+            self.terminal_panel.terminal.apply_preferences(prefs)
+
         self.app_status_bar.set_status("Settings saved", level="success")
-        _log.info("Settings saved")
-
-    def _on_settings_changed(self, settings=None) -> None:
-        """Handle settings changes.
-
-        Args:
-            settings: The updated ``AppSettings`` instance (may be None).
-        """
-        _log.debug("Settings changed")
+        _log.info("Settings saved — theme=%s", mode_str)
 
     # ------------------------------------------------------------------
     # Strategy page quick-action handlers
     # ------------------------------------------------------------------
 
-    def _on_backtest_requested(self, strategy_name: str) -> None:
+    def _on_strategy_backtest(self, strategy_name: str) -> None:
         """Navigate to backtest page and pre-select the strategy.
 
         Args:
@@ -459,7 +501,7 @@ class ModernMainWindow(QMainWindow):
         self._navigate_to("backtest")
         self.backtest_page.set_strategy(strategy_name)
 
-    def _on_optimize_requested(self, strategy_name: str) -> None:
+    def _on_strategy_optimize(self, strategy_name: str) -> None:
         """Navigate to optimize page and pre-select the strategy.
 
         Args:
@@ -487,7 +529,7 @@ class ModernMainWindow(QMainWindow):
 
     def _restore_geometry(self) -> None:
         """Restore window geometry, dock state, sidebar, and last page."""
-        qs = QSettings(_QSETTINGS_ORG, _QSETTINGS_APP)
+        qs = QSettings(_QSETTINGS_APP, _QSETTINGS_ORG)
 
         geometry = qs.value("geometry")
         if geometry:
@@ -499,7 +541,7 @@ class ModernMainWindow(QMainWindow):
 
         sidebar_collapsed = qs.value("sidebar/collapsed", False, type=bool)
         if sidebar_collapsed and not self.nav_sidebar.is_collapsed():
-            self.nav_sidebar.set_collapsed(True)
+            self.nav_sidebar._toggle_collapse()
 
         last_page = qs.value("lastPage", "dashboard")
         if last_page in self._pages:
@@ -509,7 +551,7 @@ class ModernMainWindow(QMainWindow):
 
     def _save_geometry(self) -> None:
         """Persist window geometry, dock state, sidebar, and last page."""
-        qs = QSettings(_QSETTINGS_ORG, _QSETTINGS_APP)
+        qs = QSettings(_QSETTINGS_APP, _QSETTINGS_ORG)
 
         qs.setValue("geometry", self.saveGeometry())
         qs.setValue("windowState", self.saveState())
@@ -540,6 +582,5 @@ class ModernMainWindow(QMainWindow):
         super().closeEvent(event)
 
 
-
-# Alias for backward compatibility and signal continuity tests
+# Backward-compatibility alias
 MainWindow = ModernMainWindow
