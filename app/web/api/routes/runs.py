@@ -5,7 +5,7 @@ Provides endpoints to list, retrieve, create, and delete backtest runs.
 from pathlib import Path
 from typing import List, Optional
 
-from fastapi import APIRouter, HTTPException, Query, BackgroundTasks
+from fastapi import APIRouter, HTTPException, Query, BackgroundTasks, Depends
 from pydantic import BaseModel
 
 from app.core.backtests.results_index import IndexStore
@@ -27,8 +27,8 @@ router = APIRouter()
 
 @router.get("/runs", response_model=List[RunResponse])
 async def list_runs(
+    settings: SettingsServiceDep,
     strategy: Optional[str] = Query(None, description="Filter by strategy name"),
-    settings: SettingsServiceDep = Depends(),
 ) -> List[RunResponse]:
     """List all backtest runs, optionally filtered by strategy."""
     app_settings = settings.load_settings()
@@ -79,7 +79,7 @@ async def list_runs(
 @router.get("/runs/{run_id}", response_model=RunDetailResponse)
 async def get_run(
     run_id: str,
-    settings: SettingsServiceDep = Depends(),
+    settings: SettingsServiceDep,
 ) -> RunDetailResponse:
     """Get detailed information for a specific run."""
     app_settings = settings.load_settings()
@@ -160,8 +160,8 @@ async def get_run(
 async def create_run(
     request: BacktestRequest,
     background_tasks: BackgroundTasks,
-    settings: SettingsServiceDep = Depends(),
-    backtest_service: BacktestServiceDep = Depends(),
+    settings: SettingsServiceDep,
+    backtest_service: BacktestServiceDep,
 ) -> dict:
     """Start a new backtest run asynchronously.
     
@@ -193,7 +193,7 @@ async def create_run(
 @router.delete("/runs/{run_id}")
 async def delete_run(
     run_id: str,
-    settings: SettingsServiceDep = Depends(),
+    settings: SettingsServiceDep,
 ) -> dict:
     """Delete a specific run."""
     app_settings = settings.load_settings()

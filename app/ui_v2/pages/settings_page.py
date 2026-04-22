@@ -788,7 +788,7 @@ class _AboutPanel(QWidget):
 
         settings_path_group = QGroupBox("Settings File")
         settings_path_layout = QVBoxLayout(settings_path_group)
-        settings_path = str(Path.home() / ".freqtrade_gui" / "settings.json")
+        settings_path = str(Path(__file__).parent.parent.parent.parent / "data" / "settings.json")
         path_label = QLabel(f"<code>{settings_path}</code>")
         path_label.setWordWrap(True)
         path_label.setTextInteractionFlags(Qt.TextSelectableByMouse)

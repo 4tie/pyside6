@@ -17,8 +17,8 @@ class SettingsService:
         if settings_file:
             self.settings_file = Path(settings_file)
         else:
-            # Store settings in the user's home directory, not the repo
-            self.settings_file = Path.home() / ".freqtrade_gui" / "settings.json"
+            # Store settings in the project's data directory
+            self.settings_file = Path(__file__).parent.parent.parent.parent / "data" / "settings.json"
         self.settings: Optional[AppSettings] = None
 
     def load_settings(self) -> AppSettings:

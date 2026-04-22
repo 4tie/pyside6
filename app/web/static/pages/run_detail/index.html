@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Run Detail - PySide6 Freqtrade</title>
+  <link rel="stylesheet" href="/static/shared/styles/variables.css">
+  <link rel="stylesheet" href="/static/shared/styles/base.css">
+  <link rel="stylesheet" href="/static/shared/styles/themes.css">
+  <link rel="stylesheet" href="/static/pages/run_detail/styles.css">
+</head>
+<body>
+  <div class="page-container">
+    <!-- Navigation -->
+    <nav class="navbar">
+      <div class="navbar-brand">
+        <h1>PySide6 Freqtrade</h1>
+      </div>
+      <div class="navbar-links">
+        <a href="/static/pages/dashboard/index.html">Dashboard</a>
+        <a href="/static/pages/run_detail/index.html" class="active">Run Detail</a>
+        <a href="/static/pages/comparison/index.html">Comparison</a>
+        <a href="/static/pages/settings/index.html">Settings</a>
+      </div>
+      <div class="navbar-actions">
+        <button id="theme-toggle" class="button button-secondary">Toggle Theme</button>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="container">
+        <div class="page-header">
+          <h2>Run Detail</h2>
+          <a href="/static/pages/dashboard/index.html" class="button button-secondary">Back to Dashboard</a>
+        </div>
+
+        <div id="loading" class="loading">Loading run details...</div>
+        <div id="error" class="error hidden"></div>
+
+        <div id="run-content" class="hidden">
+          <!-- Run Summary -->
+          <div class="card">
+            <h3>Summary</h3>
+            <div class="summary-grid">
+              <div class="summary-item">
+                <span class="label">Strategy</span>
+                <span class="value" id="strategy"></span>
+              </div>
+              <div class="summary-item">
+                <span class="label">Timeframe</span>
+                <span class="value" id="timeframe"></span>
+              </div>
+              <div class="summary-item">
+                <span class="label">Timerange</span>
+                <span class="value" id="timerange"></span>
+              </div>
+              <div class="summary-item">
+                <span class="label">Pairs</span>
+                <span class="value" id="pairs"></span>
+              </div>
+              <div class="summary-item">
+                <span class="label">Profit</span>
+                <span class="value" id="profit"></span>
+              </div>
+              <div class="summary-item">
+                <span class="label">Win Rate</span>
+                <span class="value" id="winrate"></span>
+              </div>
+              <div class="summary-item">
+                <span class="label">Max Drawdown</span>
+                <span class="value" id="drawdown"></span>
+              </div>
+              <div class="summary-item">
+                <span class="label">Trades</span>
+                <span class="value" id="trades-count"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tabs -->
+          <div class="tabs">
+            <button class="tab-button active" data-tab="trades">Trades</button>
+            <button class="tab-button" data-tab="diagnosis">Diagnosis</button>
+            <button class="tab-button" data-tab="params">Parameters</button>
+          </div>
+
+          <!-- Tab Content -->
+          <div class="tab-content">
+            <div class="tab-panel active" id="trades-panel">
+              <div class="card">
+                <h3>Trades</h3>
+                <div class="table-container">
+                  <table class="trades-table">
+                    <thead>
+                      <tr>
+                        <th>Pair</th>
+                        <th>Open Date</th>
+                        <th>Close Date</th>
+                        <th>Profit</th>
+                        <th>Exit Reason</th>
+                      </tr>
+                    </thead>
+                    <tbody id="trades-body"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-panel" id="diagnosis-panel">
+              <div class="card">
+                <h3>Diagnosis</h3>
+                <div id="diagnosis-content">
+                  <div class="loading">Loading diagnosis...</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-panel" id="params-panel">
+              <div class="card">
+                <h3>Parameters</h3>
+                <div id="params-content"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script type="module" src="/static/shared/js/api.js"></script>
+  <script type="module" src="/static/shared/js/state.js"></script>
+  <script type="module" src="/static/shared/js/utils.js"></script>
+  <script type="module" src="/static/shared/js/theme.js"></script>
+  <script type="module" src="/static/shared/js/components.js"></script>
+  <script type="module" src="/static/pages/run_detail/script.js"></script>
+</body>
+</html>

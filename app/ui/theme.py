@@ -592,3 +592,170 @@ QMessageBox {{
 }}
 """
     return qss
+
+
+# ---------------------------------------------------------------------------
+# v2 UI additions stylesheet builder
+# ---------------------------------------------------------------------------
+
+def build_v2_additions(palette: dict, spacing: dict, font: dict) -> str:
+    """Return QSS for all custom object names introduced by the redesigned UI layer.
+
+    Args:
+        palette: Colour palette dict (e.g. ``PALETTE`` or ``_LIGHT_PALETTE``).
+        spacing: Spacing scale dict (e.g. ``SPACING``).
+        font:    Font constants dict (e.g. ``FONT``).
+
+    Returns:
+        A QSS string covering every custom ``objectName`` used by the v2 UI.
+    """
+    p = palette
+    sp = spacing
+    f = font
+
+    qss = f"""
+/* ── nav_item — inactive sidebar button ────────────────────────────── */
+QPushButton#nav_item {{
+    background-color: transparent;
+    color: {p["text_secondary"]};
+    border: none;
+    border-radius: 4px;
+    padding: {sp["xs"]}px {sp["sm"]}px;
+    font-size: {f["size_base"]}px;
+    text-align: left;
+}}
+
+QPushButton#nav_item:hover {{
+    background-color: {p["bg_elevated"]};
+    color: {p["text_primary"]};
+}}
+
+/* ── nav_item_active — active sidebar button ────────────────────────── */
+QPushButton#nav_item_active {{
+    background-color: {p["bg_elevated"]};
+    color: {p["accent"]};
+    border: none;
+    border-left: 3px solid {p["accent"]};
+    border-radius: 4px;
+    padding: {sp["xs"]}px {sp["sm"]}px;
+    font-size: {f["size_base"]}px;
+    font-weight: 600;
+    text-align: left;
+}}
+
+QPushButton#nav_item_active:hover {{
+    background-color: {p["bg_card"]};
+}}
+
+/* ── metric_card — dashboard KPI card ──────────────────────────────── */
+QFrame#metric_card {{
+    background-color: {p["bg_card"]};
+    border: 1px solid {p["border"]};
+    border-radius: 6px;
+    padding: {sp["md"]}px;
+}}
+
+QFrame#metric_card QLabel {{
+    background-color: transparent;
+}}
+
+/* ── section_header — collapsible section title bar ────────────────── */
+QWidget#section_header {{
+    background-color: {p["bg_surface"]};
+    border: 1px solid {p["border"]};
+    border-radius: 4px;
+    padding: {sp["xs"]}px {sp["sm"]}px;
+}}
+
+QWidget#section_header QToolButton {{
+    background-color: transparent;
+    color: {p["text_secondary"]};
+    border: none;
+    font-size: {f["size_sm"]}px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}}
+
+QWidget#section_header QToolButton:hover {{
+    color: {p["text_primary"]};
+}}
+
+/* ── command_palette — command palette dialog ───────────────────────── */
+QDialog#command_palette {{
+    background-color: {p["bg_elevated"]};
+    border: 1px solid {p["border_focus"]};
+    border-radius: 8px;
+}}
+
+QDialog#command_palette QLineEdit {{
+    background-color: {p["bg_base"]};
+    color: {p["text_primary"]};
+    border: none;
+    border-bottom: 1px solid {p["border"]};
+    border-radius: 0;
+    padding: {sp["sm"]}px {sp["md"]}px;
+    font-size: {f["size_lg"]}px;
+}}
+
+QDialog#command_palette QListWidget {{
+    background-color: transparent;
+    border: none;
+    color: {p["text_primary"]};
+}}
+
+QDialog#command_palette QListWidget::item:selected {{
+    background-color: {p["bg_card"]};
+    color: {p["accent"]};
+}}
+
+/* ── toast_info — info notification toast ──────────────────────────── */
+QWidget#toast_info {{
+    background-color: {p["bg_elevated"]};
+    color: {p["text_primary"]};
+    border: 1px solid {p["border"]};
+    border-left: 4px solid {p["accent"]};
+    border-radius: 6px;
+    padding: {sp["sm"]}px {sp["md"]}px;
+}}
+
+/* ── toast_success — success notification toast ─────────────────────── */
+QWidget#toast_success {{
+    background-color: {p["bg_elevated"]};
+    color: {p["text_primary"]};
+    border: 1px solid {p["border"]};
+    border-left: 4px solid {p["success"]};
+    border-radius: 6px;
+    padding: {sp["sm"]}px {sp["md"]}px;
+}}
+
+/* ── toast_error — error notification toast ─────────────────────────── */
+QWidget#toast_error {{
+    background-color: {p["bg_elevated"]};
+    color: {p["text_primary"]};
+    border: 1px solid {p["border"]};
+    border-left: 4px solid {p["danger"]};
+    border-radius: 6px;
+    padding: {sp["sm"]}px {sp["md"]}px;
+}}
+
+/* ── toast_warning — warning notification toast ─────────────────────── */
+QWidget#toast_warning {{
+    background-color: {p["bg_elevated"]};
+    color: {p["text_primary"]};
+    border: 1px solid {p["border"]};
+    border-left: 4px solid {p["warning"]};
+    border-radius: 6px;
+    padding: {sp["sm"]}px {sp["md"]}px;
+}}
+
+/* ── page_title — large page heading label ──────────────────────────── */
+QLabel#page_title {{
+    color: {p["text_primary"]};
+    font-size: {f["size_lg"]}px;
+    font-weight: 700;
+    background-color: transparent;
+    padding: 0;
+}}
+"""
+    return qss

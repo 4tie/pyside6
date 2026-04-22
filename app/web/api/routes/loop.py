@@ -4,7 +4,7 @@ Provides endpoints to start, stop, and monitor the auto-optimization loop.
 """
 from typing import List
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 
 from app.core.services.loop_service import LoopService
 from app.web.dependencies import LoopServiceDep
@@ -19,7 +19,7 @@ router = APIRouter()
 
 @router.get("/loop/status", response_model=LoopStatusResponse)
 async def get_loop_status(
-    loop_service: LoopServiceDep = Depends(),
+    loop_service: LoopServiceDep,
 ) -> LoopStatusResponse:
     """Get current loop status."""
     return LoopStatusResponse(
@@ -33,7 +33,7 @@ async def get_loop_status(
 @router.post("/loop/start")
 async def start_loop(
     request: LoopStartRequest,
-    loop_service: LoopServiceDep = Depends(),
+    loop_service: LoopServiceDep,
 ) -> dict:
     """Start the optimization loop with the given configuration."""
     # For now, return a placeholder response
@@ -51,7 +51,7 @@ async def start_loop(
 
 @router.post("/loop/stop")
 async def stop_loop(
-    loop_service: LoopServiceDep = Depends(),
+    loop_service: LoopServiceDep,
 ) -> dict:
     """Stop the currently running loop."""
     if not loop_service.is_running():
@@ -63,7 +63,7 @@ async def stop_loop(
 
 @router.get("/loop/iterations", response_model=List[LoopIterationResponse])
 async def get_loop_iterations(
-    loop_service: LoopServiceDep = Depends(),
+    loop_service: LoopServiceDep,
 ) -> List[LoopIterationResponse]:
     """Get history of loop iterations."""
     # For now, return empty list

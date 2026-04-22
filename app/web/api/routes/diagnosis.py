@@ -5,7 +5,7 @@ Provides endpoints to retrieve diagnostic analysis for backtest runs.
 from pathlib import Path
 from typing import Dict, Any
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 
 from app.core.backtests.results_index import IndexStore
 from app.core.backtests.results_store import RunStore
@@ -21,7 +21,7 @@ router = APIRouter()
 @router.get("/diagnosis/{run_id}", response_model=DiagnosisResponse)
 async def get_diagnosis(
     run_id: str,
-    settings: SettingsServiceDep = Depends(),
+    settings: SettingsServiceDep,
 ) -> DiagnosisResponse:
     """Get diagnostic analysis for a specific run."""
     app_settings = settings.load_settings()

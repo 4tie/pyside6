@@ -96,13 +96,46 @@ class DiagnosisResponse(BaseModel):
 
 
 class ComparisonResponse(BaseModel):
-    """Response model for run comparison."""
+    """Response model for run comparison with detailed analysis."""
     run_a_id: str
     run_b_id: str
+
+    # Basic metrics
     profit_diff: float
     winrate_diff: float
     drawdown_diff: float
     verdict: str
+
+    # Multi-objective scores
+    score_a: float = 0.0
+    score_b: float = 0.0
+    score_diff: float = 0.0
+    score_pct_change: float = 0.0
+
+    # Risk-adjusted metrics
+    sharpe_diff: float = 0.0
+    sortino_diff: float = 0.0
+    calmar_diff: float = 0.0
+    profit_factor_diff: float = 0.0
+
+    # Trade quality
+    trade_frequency_diff: float = 0.0
+    avg_duration_diff: float = 0.0
+    expectancy_diff: float = 0.0
+
+    # Pattern detection
+    patterns_a: List[str] = Field(default_factory=list)
+    patterns_b: List[str] = Field(default_factory=list)
+    patterns_diff: List[str] = Field(default_factory=list)
+
+    # Confidence scoring
+    confidence_score: float = 0.5
+    confidence_reason: str = ""
+    is_statistically_significant: bool = False
+
+    # Detailed breakdown
+    metric_scores: Dict[str, float] = Field(default_factory=dict)
+    recommendations: List[str] = Field(default_factory=list)
 
 
 class SettingsResponse(BaseModel):

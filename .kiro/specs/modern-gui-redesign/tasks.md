@@ -21,7 +21,7 @@ All code is Python 3.9+ with PySide6. Follow project conventions: `_log = get_lo
     - **Property P6: Theme Consistency — `build_stylesheet` and `build_v2_additions` must produce consistent output**
     - **Validates: Requirements 1.1, 1.4, 18.1**
 
-- [x] 2. Implement shared widgets
+- [-] 2. Implement shared widgets
   - [x] 2.1 Implement `MetricCard` in `app/ui/widgets/metric_card.py`
     - `QFrame` subclass with `title: str`, `value: str = "—"`, `trend: Optional[float] = None`
     - `objectName = "metric_card"`; trend arrow shown as `▲`/`▼` colored green/red

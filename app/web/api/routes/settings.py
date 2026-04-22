@@ -2,7 +2,7 @@
 
 Provides endpoints to retrieve and update application settings.
 """
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 
 from app.core.services.settings_service import SettingsService
 from app.web.dependencies import SettingsServiceDep
@@ -13,7 +13,7 @@ router = APIRouter()
 
 @router.get("/settings", response_model=SettingsResponse)
 async def get_settings(
-    settings: SettingsServiceDep = Depends(),
+    settings: SettingsServiceDep,
 ) -> SettingsResponse:
     """Get current application settings."""
     app_settings = settings.load_settings()
@@ -30,7 +30,7 @@ async def get_settings(
 @router.put("/settings")
 async def update_settings(
     update: SettingsUpdate,
-    settings: SettingsServiceDep = Depends(),
+    settings: SettingsServiceDep,
 ) -> SettingsResponse:
     """Update application settings."""
     app_settings = settings.load_settings()

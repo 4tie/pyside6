@@ -1,6 +1,6 @@
 """Unit and property-based tests for app/ui/theme.py.
 
-Validates: Requirements 1.1, 1.2, 1.3, 4.1, 10.2
+Validates: Requirements 1.1, 1.2, 1.3, 1.4, 4.1, 10.2, 18.1
 """
 from hypothesis import given, settings as hyp_settings
 from hypothesis import strategies as st
@@ -12,6 +12,7 @@ from app.ui.theme import (
     ThemeMode,
     _LIGHT_PALETTE,
     build_stylesheet,
+    build_v2_additions,
 )
 
 # ---------------------------------------------------------------------------
@@ -126,3 +127,42 @@ def test_stylesheet_deterministic(mode):
     **Validates: Requirements 1.3, 10.2**
     """
     assert build_stylesheet(mode) == build_stylesheet(mode)
+
+
+# ---------------------------------------------------------------------------
+# Unit tests — build_v2_additions
+# ---------------------------------------------------------------------------
+
+_V2_OBJECT_NAMES = [
+    "nav_item",
+    "nav_item_active",
+    "metric_card",
+    "section_header",
+    "command_palette",
+    "toast_info",
+    "toast_success",
+    "toast_error",
+    "toast_warning",
+    "page_title",
+]
+
+
+def test_build_v2_additions_returns_nonempty_string():
+    """build_v2_additions returns a non-empty string."""
+    result = build_v2_additions(PALETTE, SPACING, FONT)
+    assert isinstance(result, str)
+    assert len(result) > 0
+
+
+def test_build_v2_additions_contains_all_object_names():
+    """build_v2_additions output contains every required objectName."""
+    result = build_v2_additions(PALETTE, SPACING, FONT)
+    for name in _V2_OBJECT_NAMES:
+        assert name in result, f"objectName '{name}' not found in build_v2_additions output"
+
+
+def test_build_stylesheet_invalid_mode_falls_back_to_dark():
+    """build_stylesheet with an invalid mode falls back to DARK output."""
+    dark_qss = build_stylesheet(ThemeMode.DARK)
+    fallback_qss = build_stylesheet("not_a_mode")  # type: ignore[arg-type]
+    assert fallback_qss == dark_qss

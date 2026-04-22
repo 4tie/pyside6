@@ -55,12 +55,81 @@ class RunComparison:
         drawdown_diff: run_b.max_drawdown - run_a.max_drawdown; positive means
             run_b has higher drawdown (worse).
         verdict: "improved" | "degraded" | "neutral".
+
+        # Multi-objective scores
+        score_a: 4-layer multi-objective score for run A.
+        score_b: 4-layer multi-objective score for run B.
+        score_diff: Positive = improvement.
+
+        # Risk-adjusted metrics
+        sharpe_diff: Sharpe ratio difference.
+        sortino_diff: Sortino ratio difference.
+        calmar_diff: Calmar ratio difference.
+        profit_factor_diff: Profit factor difference.
+
+        # Trade quality
+        trade_frequency_diff: Trades per day difference.
+        avg_duration_diff: Average trade duration difference (minutes).
+        expectancy_diff: Expectancy difference.
+
+        # Pattern detection
+        patterns_a: Pattern IDs affecting run A.
+        patterns_b: Pattern IDs affecting run B.
+
+        # Confidence scoring
+        confidence_score: 0.0 to 1.0 confidence in verdict.
+        confidence_reason: Explanation of confidence score.
+        is_statistically_significant: Whether improvement is meaningful.
+
+        # Detailed breakdown
+        metric_scores: Per-metric improvement scores (-1 to 1).
+        recommendations: Actionable recommendations.
     """
 
     profit_diff: float
     winrate_diff: float
     drawdown_diff: float
     verdict: str
+
+    # Multi-objective scores
+    score_a: float = 0.0
+    score_b: float = 0.0
+    score_diff: float = 0.0
+
+    # Risk-adjusted metrics
+    sharpe_diff: float = 0.0
+    sortino_diff: float = 0.0
+    calmar_diff: float = 0.0
+    profit_factor_diff: float = 0.0
+
+    # Trade quality
+    trade_frequency_diff: float = 0.0
+    avg_duration_diff: float = 0.0
+    expectancy_diff: float = 0.0
+
+    # Pattern detection
+    patterns_a: List[str] = None
+    patterns_b: List[str] = None
+
+    # Confidence scoring
+    confidence_score: float = 0.5
+    confidence_reason: str = ""
+    is_statistically_significant: bool = False
+
+    # Detailed breakdown
+    metric_scores: Dict[str, float] = None
+    recommendations: List[str] = None
+
+    def __post_init__(self):
+        """Initialize default values for mutable fields."""
+        if self.patterns_a is None:
+            self.patterns_a = []
+        if self.patterns_b is None:
+            self.patterns_b = []
+        if self.metric_scores is None:
+            self.metric_scores = {}
+        if self.recommendations is None:
+            self.recommendations = []
 
 
 @dataclass

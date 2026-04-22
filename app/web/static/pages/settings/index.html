@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings - PySide6 Freqtrade</title>
+  <link rel="stylesheet" href="/static/shared/styles/variables.css">
+  <link rel="stylesheet" href="/static/shared/styles/base.css">
+  <link rel="stylesheet" href="/static/shared/styles/themes.css">
+  <link rel="stylesheet" href="/static/pages/settings/styles.css">
+</head>
+<body>
+  <div class="page-container">
+    <!-- Navigation -->
+    <nav class="navbar">
+      <div class="navbar-brand">
+        <h1>PySide6 Freqtrade</h1>
+      </div>
+      <div class="navbar-links">
+        <a href="/static/pages/dashboard/index.html">Dashboard</a>
+        <a href="/static/pages/run_detail/index.html">Run Detail</a>
+        <a href="/static/pages/comparison/index.html">Comparison</a>
+        <a href="/static/pages/settings/index.html" class="active">Settings</a>
+      </div>
+      <div class="navbar-actions">
+        <button id="theme-toggle" class="button button-secondary">Toggle Theme</button>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="container">
+        <h2>Settings</h2>
+        
+        <div id="loading" class="loading">Loading settings...</div>
+        <div id="error" class="error hidden"></div>
+
+        <form id="settings-form" class="hidden">
+          <div class="card">
+            <h3>Application Settings</h3>
+            
+            <div class="form-group">
+              <label for="user_data_path">User Data Path</label>
+              <input type="text" id="user_data_path" name="user_data_path" class="input" placeholder="Path to user_data directory">
+            </div>
+            
+            <div class="form-group">
+              <label for="venv_path">Virtual Environment Path</label>
+              <input type="text" id="venv_path" name="venv_path" class="input" placeholder="Path to virtual environment">
+            </div>
+            
+            <div class="form-group">
+              <label for="python_executable">Python Executable</label>
+              <input type="text" id="python_executable" name="python_executable" class="input" placeholder="Path to python executable">
+            </div>
+            
+            <div class="form-group">
+              <label for="freqtrade_executable">Freqtrade Executable</label>
+              <input type="text" id="freqtrade_executable" name="freqtrade_executable" class="input" placeholder="Path to freqtrade executable">
+            </div>
+            
+            <div class="form-group">
+              <label for="use_module_execution">Use Module Execution</label>
+              <div class="checkbox-group">
+                <input type="checkbox" id="use_module_execution" name="use_module_execution">
+                <span>Execute freqtrade as Python module instead of subprocess</span>
+              </div>
+            </div>
+            
+            <div class="form-actions">
+              <button type="submit" class="button">Save Settings</button>
+              <button type="button" id="cancel-btn" class="button button-secondary">Cancel</button>
+            </div>
+          </div>
+        </form>
+
+        <div id="success-message" class="success-message hidden">
+          Settings saved successfully!
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script type="module" src="/static/shared/js/api.js"></script>
+  <script type="module" src="/static/shared/js/state.js"></script>
+  <script type="module" src="/static/shared/js/utils.js"></script>
+  <script type="module" src="/static/shared/js/theme.js"></script>
+  <script type="module" src="/static/shared/js/components.js"></script>
+  <script type="module" src="/static/pages/settings/script.js"></script>
+</body>
+</html>

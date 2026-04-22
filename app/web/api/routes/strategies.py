@@ -4,7 +4,7 @@ Provides endpoints to list available strategies and retrieve strategy configurat
 """
 from typing import List
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 
 from app.core.services.backtest_service import BacktestService
 from app.core.services.settings_service import SettingsService
@@ -23,7 +23,7 @@ router = APIRouter()
 
 @router.get("/strategies", response_model=List[StrategyResponse])
 async def list_strategies(
-    backtest_service: BacktestServiceDep = Depends(),
+    backtest_service: BacktestServiceDep,
 ) -> List[StrategyResponse]:
     """List all available strategies."""
     strategies = backtest_service.get_available_strategies()
@@ -39,7 +39,7 @@ async def list_strategies(
 @router.get("/strategies/{strategy_name}", response_model=StrategyResponse)
 async def get_strategy(
     strategy_name: str,
-    settings: SettingsServiceDep = Depends(),
+    settings: SettingsServiceDep,
 ) -> StrategyResponse:
     """Get strategy configuration details."""
     app_settings = settings.load_settings()
