@@ -35,7 +35,7 @@ class AIService:
 
     def __init__(self, settings_state=None) -> None:
         self._settings_state = settings_state
-        self._backtest_page = None  # set via set_backtest_page() after UI is built
+        self._backtest_trigger_callback = None  # callback to trigger backtest
 
         # Shared journal — records backtest and settings events
         self.journal: EventJournal = EventJournal()
@@ -57,14 +57,15 @@ class AIService:
         self.backtest_adapter._connect(backtest_service)
         _log.debug("BacktestJournalAdapter connected to BacktestService")
 
-    def set_backtest_page(self, backtest_page) -> None:
-        """Register the live BacktestPage so tools can read/trigger it.
+    def set_backtest_trigger_callback(self, callback) -> None:
+        """Register a callback to trigger backtest from AI tools.
 
         Args:
-            backtest_page: The :class:`BacktestPage` instance from MainWindow.
+            callback: Callable that takes a config dict and triggers backtest.
+                      Should return a dict with 'output' or 'error' key.
         """
-        self._backtest_page = backtest_page
-        _log.debug("BacktestPage registered with AIService")
+        self._backtest_trigger_callback = callback
+        _log.debug("Backtest trigger callback registered with AIService")
 
     def get_runtime(self, ai_settings: Optional[AISettings] = None) -> ConversationRuntime:
         """Build and return a fully wired :class:`ConversationRuntime`.
@@ -97,32 +98,16 @@ class AIService:
         register_backtest_tools(registry, settings=settings)
         register_strategy_tools(registry, settings=settings)
 
-        # Register run_backtest_with_current_config tool if backtest_page is available
-        if self._backtest_page is not None:
+        # Register run_backtest_with_current_config tool if callback is available
+        if self._backtest_trigger_callback is not None:
             from app.core.ai.tools.tool_registry import ToolDefinition
-            backtest_page = self._backtest_page
+            backtest_callback = self._backtest_trigger_callback
 
             def _run_backtest_with_current_config() -> dict:
-                """Trigger a backtest using the current Backtest tab configuration."""
+                """Trigger a backtest using the current configuration."""
                 try:
-                    config = backtest_page.get_current_config()
-                    if not config.get("strategy"):
-                        return {"error": "No strategy selected in the Backtest tab."}
-                    if not config.get("pairs"):
-                        return {"error": "No pairs selected in the Backtest tab."}
-                    # Schedule on main thread via Qt signal-safe call
-                    from PySide6.QtCore import QMetaObject, Qt
-                    QMetaObject.invokeMethod(
-                        backtest_page, "_run_backtest", Qt.QueuedConnection
-                    )
-                    return {
-                        "output": (
-                            f"Backtest started with current configuration: "
-                            f"strategy={config['strategy']}, "
-                            f"timeframe={config['timeframe']}, "
-                            f"pairs={config['pairs']}"
-                        )
-                    }
+                    result = backtest_callback()
+                    return result
                 except Exception as exc:
                     return {"error": str(exc)}
 
@@ -143,7 +128,7 @@ class AIService:
         backtest_prefs = settings.backtest_preferences if settings else None
         context_providers: List[AppContextProvider] = [
             AppStateContextProvider(self._settings_state),
-            BacktestContextProvider(backtest_prefs, backtest_page=self._backtest_page),
+            BacktestContextProvider(backtest_prefs),
             StrategyContextProvider(),
         ]
 

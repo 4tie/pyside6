@@ -176,6 +176,52 @@ class _GateIndicator(QFrame):
             return -1
 
 
+class _WorkflowIndicator(QFrame):
+    """Workflow stage indicator: changes → backtest → analyze → changes."""
+
+    _STAGE_NAMES = ["changes", "backtest", "analyze", "apply"]
+    _STAGE_LABELS = ["Changes", "Backtest", "Analyze", "Apply"]
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setStyleSheet(f"background:{_C_CARD_BG}; border-radius:4px;")
+        lay = QHBoxLayout(self)
+        lay.setContentsMargins(4, 2, 4, 2)
+        lay.setSpacing(4)
+        self._slots: List[QLabel] = []
+        for label in self._STAGE_LABELS:
+            slot = QLabel(f"○{label}")
+            slot.setStyleSheet(f"color:{_C_TEXT_DIM};font-size:9px;font-weight:bold;")
+            slot.setAlignment(Qt.AlignCenter)
+            slot.setToolTip(label)
+            lay.addWidget(slot)
+            self._slots.append(slot)
+
+    def reset(self) -> None:
+        for i, slot in enumerate(self._slots):
+            slot.setText(f"○{self._STAGE_LABELS[i]}")
+            slot.setStyleSheet(f"color:{_C_TEXT_DIM};font-size:9px;font-weight:bold;")
+            slot.setToolTip(self._STAGE_LABELS[i])
+
+    def set_running(self, stage_name: str) -> None:
+        idx = self._stage_index(stage_name)
+        if idx >= 0:
+            self._slots[idx].setText(f"⟳{self._STAGE_LABELS[idx]}")
+            self._slots[idx].setStyleSheet(f"color:{_C_YELLOW};font-size:9px;font-weight:bold;")
+
+    def set_completed(self, stage_name: str) -> None:
+        idx = self._stage_index(stage_name)
+        if idx >= 0:
+            self._slots[idx].setText(f"✓{self._STAGE_LABELS[idx]}")
+            self._slots[idx].setStyleSheet(f"color:{_C_GREEN};font-size:9px;font-weight:bold;")
+
+    def _stage_index(self, stage_name: str) -> int:
+        try:
+            return self._STAGE_NAMES.index(stage_name)
+        except ValueError:
+            return -1
+
+
 # ---------------------------------------------------------------------------
 # LoopPage
 # ---------------------------------------------------------------------------
@@ -220,6 +266,9 @@ class LoopPage(QWidget):
         self._export_dir: Optional[Path] = None
         self._initial_params: dict = {}
         self._session_history: List[dict] = []  # accepted param sets for rollback
+        
+        # Workflow stage tracking
+        self._current_stage = "idle"
 
         # Terminal (created early for MainWindow._all_terminals)
         self._terminal = TerminalWidget()
@@ -345,6 +394,14 @@ class LoopPage(QWidget):
         gate_row.addWidget(self._gate_indicator)
         gate_row.addStretch()
         root.addLayout(gate_row)
+
+        # Workflow indicator for current iteration
+        workflow_row = QHBoxLayout()
+        workflow_row.addWidget(_lbl("Workflow:"))
+        self._workflow_indicator = _WorkflowIndicator()
+        workflow_row.addWidget(self._workflow_indicator)
+        workflow_row.addStretch()
+        root.addLayout(workflow_row)
 
         # Splitter: history + terminal
         splitter = QSplitter(Qt.Vertical)
@@ -604,18 +661,67 @@ class LoopPage(QWidget):
 
     def _on_status_update(self, message: str) -> None:
         self._set_status(message)
+        self._update_workflow_indicator(message)
+
+    def _update_workflow_indicator(self, message: str) -> None:
+        """Update workflow indicator based on status message."""
+        message_lower = message.lower()
+        
+        # Detect stage from message
+        if "applying" in message_lower or "changes" in message_lower:
+            if self._current_stage != "changes":
+                self._workflow_indicator.set_running("changes")
+                self._current_stage = "changes"
+        elif "backtest" in message_lower or "running" in message_lower:
+            if self._current_stage != "backtest":
+                self._workflow_indicator.set_running("backtest")
+                self._current_stage = "backtest"
+        elif "analyze" in message_lower or "diagnose" in message_lower:
+            if self._current_stage != "analyze":
+                self._workflow_indicator.set_running("analyze")
+                self._current_stage = "analyze"
+        elif "apply" in message_lower or "complete" in message_lower:
+            if self._current_stage != "apply":
+                self._workflow_indicator.set_running("apply")
+                self._current_stage = "apply"
+        elif "idle" in message_lower or "stopped" in message_lower:
+            self._workflow_indicator.reset()
+            self._current_stage = "idle"
 
     def _finalize_loop(self) -> None:
         """Finalize the loop and update UI."""
         result = self._loop_service.finalize()
         self._loop_result = result
         stop_reason = result.stop_reason or "Complete"
-        self._set_status(stop_reason)
+        
+        # Reset workflow indicator
+        self._workflow_indicator.reset()
+        self._current_stage = "idle"
+        
+        # Add user-friendly guidance based on stop reason
+        guidance = self._get_stop_reason_guidance(stop_reason)
+        self._set_status(f"{stop_reason} - {guidance}")
+        
         self._progress_bar.setValue(100)
         self._update_state_machine()
         self._update_best_result_panel()
         self.loop_completed.emit(result)
         _log.info("Loop finalized: %s", stop_reason)
+
+    def _get_stop_reason_guidance(self, stop_reason: str) -> str:
+        """Get user-friendly guidance based on stop reason."""
+        if "All profitability targets met" in stop_reason:
+            return "Targets achieved! Review the best iteration below."
+        elif "No further improvements suggested" in stop_reason:
+            return "Review results and try different parameters or strategy."
+        elif "All parameters already at optimal values" in stop_reason:
+            return "Consider expanding parameter ranges or changing strategy."
+        elif "All parameter variations have been tested" in stop_reason:
+            return "Try expanding parameter ranges or starting fresh."
+        elif "Complete" in stop_reason:
+            return "Review the iteration history and best results."
+        else:
+            return "Review results and adjust strategy as needed."
 
     # ------------------------------------------------------------------
     # UI update helpers
@@ -1496,6 +1602,8 @@ class LoopPage(QWidget):
         self._loop_result = None
         self._best_group.setVisible(False)
         self._gate_indicator.reset()
+        self._workflow_indicator.reset()
+        self._current_stage = "idle"
         self._reset_iteration_runtime()
         if hasattr(self._terminal, "clear_output"):
             self._terminal.clear_output()

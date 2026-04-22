@@ -12,6 +12,7 @@ from PySide6.QtCore import QObject, QThread, Signal
 from app.core.ai.providers.provider_base import AIProvider, AIResponse, StreamToken
 from app.core.ai.providers.provider_factory import ProviderFactory
 from app.core.ai.runtime.agent_policy import AgentPolicy, default_policy
+from app.core.ai.runtime.async_base import AsyncRuntimeBase
 from app.core.models.settings_models import AISettings
 from app.core.utils.app_logger import get_logger
 
@@ -299,11 +300,13 @@ class AIWorker(QObject):
 # ---------------------------------------------------------------------------
 
 
-class ConversationRuntime(QObject):
+class ConversationRuntime(QObject, AsyncRuntimeBase):
     """Manages conversation history, model routing, and async provider calls.
 
     Dispatches requests to AIWorker on a background QThread and delivers
     results back to the main thread via Qt signals.
+
+    Implements AsyncRuntimeBase for framework-agnostic async operations.
     """
 
     token_received = Signal(object)     # StreamToken (secret-scrubbed)

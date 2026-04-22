@@ -234,9 +234,32 @@ class ModernMainWindow(QMainWindow):
         if backtest_service is not None:
             self.ai_service.connect_backtest_service(backtest_service)
 
-        # Give AIService a reference to the live BacktestPage
-        if hasattr(self.ai_service, "set_backtest_page"):
-            self.ai_service.set_backtest_page(self.backtest_page)
+        # Register backtest trigger callback with AIService
+        def _backtest_trigger_callback() -> dict:
+            """Callback to trigger backtest from AI tools."""
+            try:
+                config = self.backtest_page.get_current_config()
+                if not config.get("strategy"):
+                    return {"error": "No strategy selected in the Backtest tab."}
+                if not config.get("pairs"):
+                    return {"error": "No pairs selected in the Backtest tab."}
+                # Schedule on main thread via Qt signal-safe call
+                from PySide6.QtCore import QMetaObject, Qt
+                QMetaObject.invokeMethod(
+                    self.backtest_page, "_run_backtest", Qt.QueuedConnection
+                )
+                return {
+                    "output": (
+                        f"Backtest started with current configuration: "
+                        f"strategy={config['strategy']}, "
+                        f"timeframe={config['timeframe']}, "
+                        f"pairs={config['pairs']}"
+                    )
+                }
+            except Exception as exc:
+                return {"error": str(exc)}
+
+        self.ai_service.set_backtest_trigger_callback(_backtest_trigger_callback)
 
         # Dashboard quick-action signals
         self.dashboard_page.navigate_to.connect(self._navigate_to)

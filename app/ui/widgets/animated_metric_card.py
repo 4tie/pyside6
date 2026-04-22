@@ -6,7 +6,7 @@ from typing import Optional
 from PySide6.QtWidgets import QFrame, QVBoxLayout, QLabel, QProgressBar
 from PySide6.QtCore import QPropertyAnimation, QEasingCurve
 
-# Color palette (mirrors improve_page.py / theme.py)
+# Color palette (mirrors theme.py)
 _C_TEAL = "#4ec9a0"
 _C_CARD_BG = "#333337"
 _C_BORDER = "#3e3e42"

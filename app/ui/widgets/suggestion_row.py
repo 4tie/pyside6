@@ -8,7 +8,7 @@ from PySide6.QtCore import Qt
 
 from app.core.models.improve_models import ParameterSuggestion
 
-# Color palette (mirrors improve_page.py / theme.py)
+# Color palette (mirrors theme.py)
 _C_GREEN = "#4ec9a0"
 _C_GREEN_LIGHT = "#6ad4b0"
 _C_YELLOW = "#dcdcaa"

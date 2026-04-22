@@ -5,7 +5,7 @@ from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel
 
 from app.core.models.improve_models import DiagnosedIssue
 
-# Color palette (mirrors improve_page.py / theme.py)
+# Color palette (mirrors theme.py)
 _C_GREEN = "#4ec9a0"
 _C_RED = "#f44747"
 _C_ORANGE = "#ce9178"

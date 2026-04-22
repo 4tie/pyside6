@@ -1556,7 +1556,7 @@ class LoopService:
             bundle.exit_reason_suggestions,
         )
         if not suggestions:
-            self._result.stop_reason = "No more actionable suggestions to try"
+            self._result.stop_reason = "Optimization complete: No further improvements suggested"
             self._running = False
             _log.info("Loop: no more suggestions at iteration %d", self._current_iteration)
             return None
@@ -1609,7 +1609,7 @@ class LoopService:
         ]
 
         if not changes_summary:
-            self._result.stop_reason = "No actionable suggestions changed parameters"
+            self._result.stop_reason = "Optimization complete: All parameters already at optimal values"
             self._running = False
             _log.info("Loop: no-op candidate avoided at iteration %d", self._current_iteration)
             return None
@@ -1630,7 +1630,7 @@ class LoopService:
                     changes_summary = fallback_changes
 
             if self._rotator.already_tried(candidate_params):
-                self._result.stop_reason = "All reachable parameter combinations exhausted"
+                self._result.stop_reason = "Optimization complete: All parameter variations have been tested"
                 self._running = False
                 _log.info("Loop: duplicate candidate exhausted at iteration %d", self._current_iteration)
                 return None
