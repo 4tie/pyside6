@@ -3,71 +3,72 @@
 ## Top-Level Layout
 ```
 pyside6/
-├── main.py                  # Entry point
+├── main.py                  # Entry point — QApplication + ModernMainWindow
 ├── requirements.txt
-├── app/                     # Application source
-├── data/                    # Docs, rules, logs, tools
-├── tests/                   # Test suite
-└── user_data/               # Runtime freqtrade assets (strategies, results, config)
+├── app/                     # Application source code
+├── data/                    # Docs, rules, logs, tools, settings
+├── tests/                   # pytest test suite
+└── user_data/               # Runtime freqtrade assets (strategies, results, data)
 ```
 
-## App Directory
+## App Source Structure
 ```
 app/
-├── app_state/               # Shared state and signals (settings_state.py, ai_state.py)
+├── app_state/               # Shared state and signals (SettingsState, AIState)
 ├── core/
-│   ├── ai/                  # AI layer (context, journal, models, prompts, providers, runtime, tools)
-│   ├── backtests/           # Results domain (parsing, models, indexing, storage)
-│   ├── freqtrade/           # Freqtrade integration (resolvers, runners, command_runner.py)
-│   ├── models/              # Shared domain models (diagnosis, improve, loop, settings)
-│   ├── services/            # Business logic and orchestration (all major services)
-│   ├── utils/               # Utilities (app_logger.py, date_utils.py)
-│   └── versioning/          # Version tracking (index, models, store, service)
-└── ui/
-    ├── dialogs/             # Modal dialogs (pairs_selector, settings)
-    ├── pages/               # Top-level workflow tabs (backtest, loop, improve, optimize, etc.)
-    ├── widgets/             # Reusable visual components (results, stats, trades, terminal, AI chat)
-    ├── main_window.py       # Main application window
-    └── theme.py             # App theming
+│   ├── ai/                  # AI layer: providers, tools, runtime, context, prompts, journal
+│   ├── backtests/           # Results domain: parsing, models, indexing, storage
+│   ├── freqtrade/           # Freqtrade integration: command building, resolvers, runners
+│   ├── models/              # Pydantic domain models (analysis, diagnosis, improve, loop, settings)
+│   ├── services/            # Business logic and orchestration services
+│   ├── utils/               # Logging, date utilities
+│   └── versioning/          # Version models, store, index, versioning service
+├── ui/                      # Legacy UI (v1) — widgets, pages, dialogs, theme
+└── ui_v2/                   # Active UI (v2) — modern redesign
+    ├── shell/               # Header bar, sidebar, status bar
+    ├── pages/               # Workflow pages: backtest, dashboard, download, optimize, settings, strategy
+    ├── panels/              # AI panel, results panel, terminal panel
+    ├── widgets/             # Reusable widgets: metric card, notification toast, run config form, etc.
+    ├── dialogs/
+    ├── main_window.py       # ModernMainWindow — top-level window
+    └── theme.py
 ```
 
-## Canonical Layers (strict separation)
+## Architectural Layers
 | Layer | Location | Responsibility |
-|---|---|---|
-| UI | `app/ui/` | Display, forms, buttons, user actions |
+|-------|----------|----------------|
+| UI | `app/ui_v2/` | Display, forms, buttons, tables, user actions |
 | App State | `app/app_state/` | Shared state, signals, active selections |
 | Service | `app/core/services/` | Business rules, orchestration, file I/O |
 | Results Domain | `app/core/backtests/` | Result models, parsing, indexing, storage |
-| Freqtrade Integration | `app/core/freqtrade/` | Command construction, strategy/config resolution |
-| AI (future) | `app/core/ai/` | Deep analysis, suggestions, provider abstraction |
+| Freqtrade Integration | `app/core/freqtrade/` | Command construction, subprocess contracts |
+| AI Layer | `app/core/ai/` | Provider abstraction, tools, prompts, runtime |
+| Versioning | `app/core/versioning/` | Candidate/accepted/history version management |
+
+## Key Relationships
+- `main.py` → `SettingsState` → `ModernMainWindow`
+- UI pages → Services (never reverse)
+- Services → Freqtrade layer for command execution
+- Services → Backtests domain for result parsing
+- AI layer is optional — core services work without it
+- `user_data/` is runtime-owned, never hardcoded paths
 
 ## Data Directory
 ```
 data/
-├── docs/                    # Canonical product/architecture/workflow docs
-├── rules/                   # Short operational rules for contributors
-├── tools/                   # CI checks, MCP helpers, automation scripts
-├── log/                     # Application logs
-└── memory/                  # Project facts JSON
+├── docs/          # Canonical product/architecture/workflow docs
+├── rules/         # Short operational rules for contributors
+├── tools/         # CI checks, MCP helpers, automation scripts
+├── log/           # Application logs (rotating)
+├── memory/        # Project facts JSON for AI memory
+└── settings.json  # App settings persistence
 ```
 
-## Tests Directory
+## Test Structure
 ```
 tests/
-├── core/                    # Unit/property tests for core layers
-│   ├── ai/                  # AI service tests
-│   ├── backtests/           # Results store tests
-│   ├── services/            # Service layer tests
-│   └── versioning/          # Versioning tests
-├── ui/                      # UI tests (pages, widgets)
-└── conftest.py              # Shared fixtures
+├── core/          # Unit/property tests for services, AI, backtests, versioning
+├── ui/            # UI widget and page tests (pytest-qt)
+├── ui_v2/         # v2 UI tests
+└── conftest.py    # Shared fixtures
 ```
-
-## Architecture Rules
-- UI must NOT build freqtrade commands directly
-- Services must NOT import UI code
-- No UI imports inside `app/core/**`
-- No subprocess logic inside UI
-- AI layer must NOT be a hard dependency for core app functionality
-- No hardcoded absolute paths
-- No command building duplicated across multiple files

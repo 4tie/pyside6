@@ -1,32 +1,36 @@
 # product.md — Project Overview
 
-## Purpose
-A PySide6 desktop GUI for running, analyzing, and optimizing Freqtrade trading strategies. The app guides users through a structured workflow: Run → Read → Analyze → Suggest → Candidate → Re-test → Compare → Accept / Rollback.
+## What This Product Is
+A PySide6 desktop GUI for running, analyzing, and optimizing Freqtrade trading strategies. It wraps Freqtrade's CLI into a structured workflow with AI assistance capabilities.
 
-## Value Proposition
-- Faster than CLI for Freqtrade operations
-- Clear, organized backtest result visualization
-- Safe strategy optimization with versioning and rollback
-- AI-assisted analysis (optional, not a hard dependency)
+## Core Value Proposition
+Moves the user from raw strategy files to an organized loop:
+**Strategy → Backtest → Results → Analysis → Candidate Change → Re-test → Compare → Accept / Rollback**
 
 ## Key Features
-- **Execution**: Run backtests, download data, hyperopt, manage paths/settings
-- **Results**: Display profit (after fees), wallet stats, trade breakdown, pair metrics
-- **Logic Analysis**: Rule-based diagnosis (stoploss issues, low trade count, config problems)
-- **Deep Analysis**: AI-powered analysis of entry/exit weakness, timeframe fit, pair suitability
-- **Optimization**: 4 modes — parameter-only, rule-based fixes, numeric search, AI code optimization
-- **Versioning**: Track accepted vs. candidate vs. historical versions
-- **Comparison & Decision**: Show diffs, compare results, explicit accept/rollback by user
+- **Execution**: Run backtests, download market data, hyperopt/optimization via GUI
+- **Results Display**: Profit after fees, trade stats, pair breakdown, trade details, metrics
+- **Logic Analysis**: Rule-based diagnosis (bad stoploss, low trade count, weak strategy behavior)
+- **AI Assistant**: Chat panel with tool-calling AI for deep analysis and strategy suggestions
+- **Versioning**: Candidate versions, diff display, accept/rollback, history tracking
+- **Strategy Lab**: Iterative improvement loop with scoring and state machine
+- **Settings Management**: Paths, venv, freqtrade executable, exchange config
 
 ## Target Users
 Freqtrade users who want:
-- Faster iteration than raw CLI
-- Clear result visualization
-- Safe strategy modification without breaking the base version
-- Traceable history of changes and results
+- Faster workflow than raw CLI
+- Clear results visualization
+- Understand why a strategy is underperforming
+- Safe strategy modification without breaking the accepted version
+- Iterative improvement with full history
 
-## Core Principles
+## Product Philosophy
 - User makes final decisions — AI/system suggests, never forces
-- No silent auto-promotion of AI changes to accepted version
-- Every important step is visible and reversible
-- Core app must work without any live AI provider
+- Explicit buttons over hidden behavior
+- Every important step is reversible
+- AI is optional — core app works without a live AI provider
+- Accepted version is never touched directly by AI optimization
+
+## Current Scope
+Active: settings, backtest, results, logic analysis, strategy editing, versioning, AI chat panel, optimization loop
+Placeholders only: deep AI provider integration as hard dependency

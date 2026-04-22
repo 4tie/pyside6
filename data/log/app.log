@@ -21871,3 +21871,10 @@ Freqtrade Version:	freqtrade 2026.3
 2026-04-21 14:40:45.400 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
 2026-04-21 14:40:46.076 | DEBUG    | freqtrade_gui.ui_v2.main_window | Geometry saved (lastPage=lab)
 2026-04-21 14:40:46.083 | INFO     | freqtrade_gui.startup          | Application exiting — code=0
+2026-04-22 05:24:55.465 | DEBUG    | freqtrade_gui.services.pair_analysis | analyse called with empty trades list — returning empty PairAnalysis
+2026-04-22 05:24:55.466 | DEBUG    | freqtrade_gui.services.pair_analysis | analyse: 3 distinct pairs from 5 trades
+2026-04-22 05:24:55.466 | DEBUG    | freqtrade_gui.services.pair_analysis | analyse complete: 3 pairs, best=['BTC/USDT', 'ETH/USDT', 'SOL/USDT'], worst=['SOL/USDT', 'ETH/USDT', 'BTC/USDT'], flags=['profit_concentration']
+2026-04-22 05:24:55.466 | DEBUG    | freqtrade_gui.services.pair_analysis | analyse: 3 distinct pairs from 3 trades
+2026-04-22 05:24:55.467 | DEBUG    | freqtrade_gui.services.pair_analysis | analyse complete: 3 pairs, best=['A/USDT', 'B/USDT', 'C/USDT'], worst=['A/USDT', 'B/USDT', 'C/USDT'], flags=[]
+2026-04-22 05:24:55.467 | DEBUG    | freqtrade_gui.services.pair_analysis | analyse: 2 distinct pairs from 2 trades
+2026-04-22 05:24:55.467 | DEBUG    | freqtrade_gui.services.pair_analysis | analyse complete: 2 pairs, best=['A/USDT', 'B/USDT'], worst=['A/USDT', 'B/USDT'], flags=[]

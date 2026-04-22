@@ -1,74 +1,74 @@
 # tech.md — Technology Stack
 
-## Programming Language
-- **Python 3.x** (desktop application)
+## Languages & Runtime
+- Python 3.12 (target, per CI)
+- PySide6 >= 6.6.0 — Qt6 desktop GUI framework
+- Freqtrade — crypto trading bot (runs as subprocess or module)
 
 ## Core Dependencies
-- **PySide6 >= 6.6.0** — Qt6 bindings for Python (UI framework)
-- **Pydantic >= 2.0.0** — Data validation and settings management
-- **Freqtrade** — Trading bot framework (subprocess/module integration)
-- **filelock** — File locking for concurrent access
-- **optuna** — Hyperparameter optimization
+| Package | Purpose |
+|---------|---------|
+| PySide6 >= 6.6.0 | GUI framework |
+| pydantic >= 2.0.0 | Data models and validation |
+| freqtrade | Trading bot integration |
+| filelock | File-based locking for concurrent access |
+| optuna | Hyperparameter optimization |
 
-## Development & Testing
-- **pytest >= 7.4.0** — Test framework
-- **pytest-cov >= 4.1.0** — Coverage reporting
-- **pytest-qt >= 4.2.0** — Qt testing support
-- **hypothesis >= 6.100.0** — Property-based testing
-
-## Build System
-- Standard Python package with `requirements.txt`
-- No complex build tooling required
+## Dev / Test Dependencies
+| Package | Purpose |
+|---------|---------|
+| pytest >= 7.4.0 | Test runner |
+| pytest-cov >= 4.1.0 | Coverage reporting |
+| pytest-qt >= 4.2.0 | Qt widget testing |
+| hypothesis >= 6.100.0 | Property-based testing |
+| ruff | Linting and formatting |
 
 ## Development Commands
 ```bash
-# Install dependencies
-pip install -r requirements.txt
-
-# Run application
-python main.py
-
-# Run tests
+# Run all tests
 pytest
 
-# Run tests with coverage
-pytest --cov=app --cov-report=html
+# Run only core tests (no UI, works without PySide6)
+pytest tests/core/ --tb=short -q
 
-# Run specific test file
-pytest tests/core/services/test_backtest_service.py
+# Run UI tests
+pytest tests/ui/ tests/ui_v2/
 
-# Run CI checks
-python data/tools/run_checks.py
+# Lint
+ruff check app/ data/tools/
+
+# Format check
+ruff format --check app/ data/tools/
+
+# Run the app
+python main.py
 ```
 
-## CI Checks (automated)
-- `check_docs.py` — Validate documentation consistency
-- `check_hardcoded_paths.py` — Detect hardcoded paths
-- `check_layer_violations.py` — Enforce architecture layer separation
-- `check_strategy_json.py` — Validate strategy JSON files
+## pytest Configuration (pytest.ini)
+- testpaths: `tests/`
+- addopts: `--tb=short -q`
+- Custom markers:
+  - `bug_condition` — encodes a bug condition (expected to fail on unfixed code)
+  - `preservation` — verifies first-call behavior is unchanged by a fix
 
-## Freqtrade Integration
-- Runs as subprocess or module execution (configurable)
-- Commands built via `app/core/freqtrade/command_runner.py`
-- Strategy/config resolution via `app/core/freqtrade/resolvers/`
-- Results parsed from JSON output
+## CI Pipeline (GitHub Actions)
+Three jobs on push/PR to `main`:
+1. **Lint & Format** — `ruff check` + `ruff format --check` on `app/` and `data/tools/`
+2. **Tests** — `pytest tests/core/` (UI tests skipped in CI, PySide6 too heavy)
+3. **Structure Rules** — validates docs exist, no UI imports in services, no hardcoded paths, strategy JSON format
 
-## AI Integration (Optional)
-- Provider abstraction in `app/core/ai/providers/`
-- Supports Ollama, OpenRouter, and future providers
-- Not a hard dependency — core app works without AI
-- AI features: deep analysis, code suggestions, chat assistance
+## Architecture Constraints
+- No UI imports inside `app/core/**`
+- No subprocess logic in UI layer
+- No hardcoded absolute paths
+- AI provider is optional — app must work without a live AI connection
+- Freqtrade runs as subprocess via `app/core/freqtrade/` layer
 
 ## Logging
-- Rotating file logs in `data/log/`
-- Separate logs: app.log, services.log, process.log, ui.log
-- Configured via `app/core/utils/app_logger.py`
+- Rotating log files in `data/log/`
+- Separate loggers: `app.log`, `process.log`, `services.log`, `ui.log`
+- Setup via `app/core/utils/app_logger.py`
 
-## Configuration
-- User settings in `data/settings.json`
-- Freqtrade config in `user_data/config.json`
-- Strategy parameters in `user_data/strategies/*.json`
-
-## Platform Support
-- Windows (primary development platform)
-- Linux/macOS (should work, not primary target)
+## Settings Persistence
+- `data/settings.json` — app settings (paths, venv, exchange config)
+- `SettingsState` in `app/app_state/settings_state.py` manages load/save
