@@ -382,6 +382,7 @@ class SuggestionRotator:
         current_params: dict,
         prev_iteration: Optional[LoopIteration],
         structural: Optional[List] = None,
+        exit_reason_suggestions: Optional[List] = None,
     ) -> List[ParameterSuggestion]:
         """Generate a varied set of suggestions for this iteration.
 
@@ -394,11 +395,14 @@ class SuggestionRotator:
             current_params: Current strategy parameters.
             prev_iteration: The previous loop iteration, or None for the first.
             structural: Optional structural diagnosis patterns from DiagnosisBundle.
+            exit_reason_suggestions: Optional exit reason suggestions from DiagnosisBundle.
 
         Returns:
             List of non-advisory ParameterSuggestion objects to apply.
         """
-        actionable = RuleSuggestionService.suggest(issues, current_params, structural)
+        actionable = RuleSuggestionService.suggest(
+            issues, current_params, structural, exit_reason_suggestions
+        )
 
         # Inject trailing-stop proposal when high-drawdown structural pattern is present
         # and trailing_stop is currently disabled
@@ -806,9 +810,12 @@ class SuggestionRotator:
         self,
         structural: List,
         current_params: dict,
+        exit_reason_suggestions: Optional[List] = None,
     ) -> List[ParameterSuggestion]:
         """Compatibility wrapper around RuleSuggestionService structural mapping."""
-        return RuleSuggestionService.suggest([], current_params, structural)
+        return RuleSuggestionService.suggest(
+            [], current_params, structural, exit_reason_suggestions
+        )
 
 
 class LoopService:

@@ -48,9 +48,9 @@
   - [x] 7.4 Implement verdict logic in order: `"improved"` → `"degraded"` → `"neutral"`
 
 - [~] 8. Write property-based tests for ComparisonService
-  - [-] 8.1 Create `tests/test_comparison_properties.py` with Hypothesis strategy for `BacktestSummary`
-  - [~] 8.2 Implement `test_profit_diff_antisymmetry`: `compare(a,b).profit_diff == -compare(b,a).profit_diff`
-  - [~] 8.3 Run tests and confirm they pass
+  - [x] 8.1 Create `tests/test_comparison_properties.py` with Hypothesis strategy for `BacktestSummary`
+  - [x] 8.2 Implement `test_profit_diff_antisymmetry`: `compare(a,b).profit_diff == -compare(b,a).profit_diff`
+  - [-] 8.3 Run tests and confirm they pass
 
 - [~] 9. Harden ImproveService with deterministic version_id paths
   - [~] 9.1 Add `version_id: str` parameter to `prepare_sandbox()`
