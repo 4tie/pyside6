@@ -26,20 +26,20 @@
   - [x] 4.3 Implement `test_empty_trades_returns_empty_analysis`: all lists empty, no flags
   - [x] 4.4 Run tests and confirm they pass
 
-- [~] 5. Implement DiagnosisService
+- [x] 5. Implement DiagnosisService
   - [x] 5.1 Create `app/core/services/diagnosis_service.py` with stateless `DiagnosisService` class
   - [x] 5.2 Implement `diagnose(pair_analysis, summary) -> List[DiagnosisSuggestion]` as `@staticmethod`
   - [x] 5.3 Implement all 5 rules: `entry_too_aggressive`, `stoploss_too_loose`, `overfitting_risk`, `insufficient_trades`, `negative_expectancy`
   - [x] 5.4 Ensure all matching rules are included (rules are independent, not mutually exclusive)
-  - [-] 5.5 Return empty list when no rules fire
+  - [x] 5.5 Return empty list when no rules fire
 
-- [~] 6. Write unit tests for DiagnosisService
-  - [~] 6.1 Create `tests/test_diagnosis_service.py`
-  - [~] 6.2 Test each of the 5 rules fires when its condition is met
-  - [~] 6.3 Test each rule does NOT fire when its condition is not met
-  - [~] 6.4 Test empty list returned when no conditions met
-  - [~] 6.5 Test multiple rules fire simultaneously when multiple conditions met
-  - [~] 6.6 Run tests and confirm they pass
+- [x] 6. Write unit tests for DiagnosisService
+  - [x] 6.1 Create `tests/test_diagnosis_service.py`
+  - [x] 6.2 Test each of the 5 rules fires when its condition is met
+  - [x] 6.3 Test each rule does NOT fire when its condition is not met
+  - [x] 6.4 Test empty list returned when no conditions met
+  - [x] 6.5 Test multiple rules fire simultaneously when multiple conditions met
+  - [x] 6.6 Run tests and confirm they pass
 
 - [~] 7. Implement ComparisonService
   - [~] 7.1 Create `app/core/services/comparison_service.py` with stateless `ComparisonService` class
