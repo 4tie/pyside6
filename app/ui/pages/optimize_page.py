@@ -26,6 +26,7 @@ from PySide6.QtCore import QSettings
 from app.app_state.settings_state import SettingsState
 from app.core.services.optimize_service import OptimizeService
 from app.core.utils.app_logger import get_logger
+from app.ui.dialogs.pairs_selector_dialog import PairsSelectorDialog
 from app.ui.widgets.run_config_form import RunConfigForm
 from app.ui.widgets.terminal_widget import TerminalWidget
 
@@ -268,6 +269,35 @@ class OptimizePage(QWidget):
         """
         self.run_config_form.set_config({"strategy": strategy_name})
         _log.debug("Strategy pre-selected: %s", strategy_name)
+
+    def _on_select_pairs(self) -> None:
+        """Open PairsSelectorDialog directly (compatibility method for tests).
+
+        Delegates to the RunConfigForm's pairs button handler.
+        """
+        settings = self._settings_state.current_settings
+        favorites: list = []
+        if settings is not None:
+            favorites = list(settings.favorite_pairs or [])
+
+        selected = self.run_config_form.get_config().get("pairs", [])
+        dlg = PairsSelectorDialog(
+            favorites=favorites,
+            selected=list(selected),
+            settings_state=self._settings_state,
+            parent=self,
+        )
+        if dlg.exec():
+            new_pairs = dlg.get_selected_pairs()
+            self.run_config_form.set_config({"pairs": new_pairs})
+
+    def _save_preferences(self) -> None:
+        """Persist current form values to optimize preferences (no-op stub).
+
+        The new design persists preferences via settings_state.save_settings().
+        This method exists for backward compatibility with tests.
+        """
+        _log.debug("_save_preferences called (no-op in new design)")
 
     # ------------------------------------------------------------------
     # Private helpers

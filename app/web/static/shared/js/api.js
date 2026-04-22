@@ -72,6 +72,44 @@ export async function rollbackRun(runId, baselineRunId) {
   return response.json();
 }
 
+export async function downloadData(config) {
+  const response = await fetch(`${API_BASE}/download-data`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(config),
+  });
+  if (!response.ok) throw new Error('Failed to download data');
+  return response.json();
+}
+
+export async function getPairs() {
+  return fetch(`${API_BASE}/pairs`).then(r => r.json());
+}
+
+export async function saveFavorites(favorites) {
+  const response = await fetch(`${API_BASE}/favorites`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ favorites }),
+  });
+  if (!response.ok) throw new Error('Failed to save favorites');
+  return response.json();
+}
+
+export async function saveBacktestConfig(config) {
+  const response = await fetch(`${API_BASE}/backtest-config`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(config),
+  });
+  if (!response.ok) throw new Error('Failed to save config');
+  return response.json();
+}
+
+export async function getBacktestConfig() {
+  return fetch(`${API_BASE}/backtest-config`).then(r => r.json());
+}
+
 export async function getLoopStatus() {
   return fetch(`${API_BASE}/loop/status`).then(r => r.json());
 }
