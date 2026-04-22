@@ -1,70 +1,63 @@
-"""Abstract base for async AI operations.
+"""Base class for async AI operations.
 
 Defines the interface for framework-agnostic async operations,
 allowing implementations for Qt (desktop UI) and asyncio (web UI).
 """
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
 from typing import Callable, Optional
 
 from app.core.ai.providers.provider_base import AIResponse, StreamToken
 from app.core.models.settings_models import AISettings
 
 
-class AsyncRuntimeBase(ABC):
-    """Abstract base for async AI conversation runtime.
+class AsyncRuntimeBase:
+    """Base class for async AI conversation runtime.
 
     Implementations can use Qt signals (for desktop UI) or asyncio/futures
     (for web UI) to handle async operations.
     """
 
-    @abstractmethod
     def send_message(self, text: str) -> None:
         """Append a user message and dispatch a chat request asynchronously.
 
         Args:
             text: The user's message text.
         """
-        pass
+        raise NotImplementedError("Subclasses must implement send_message")
 
-    @abstractmethod
     def run_task(self, text: str) -> None:
         """Append a user message and dispatch a task run asynchronously.
 
         Args:
             text: The user's task description text.
         """
-        pass
+        raise NotImplementedError("Subclasses must implement run_task")
 
-    @abstractmethod
     def cancel_current_request(self) -> None:
         """Cancel the in-progress request."""
-        pass
+        raise NotImplementedError("Subclasses must implement cancel_current_request")
 
-    @abstractmethod
     def clear_history(self) -> None:
         """Remove all messages except the system prompt."""
-        pass
+        raise NotImplementedError("Subclasses must implement clear_history")
 
-    @abstractmethod
     def set_system_prompt(self, prompt: str) -> None:
         """Set or replace the system message at index 0 of history.
 
         Args:
             prompt: The new system prompt text.
         """
-        pass
+        raise NotImplementedError("Subclasses must implement set_system_prompt")
 
 
-class AsyncWorkerBase(ABC):
-    """Abstract base for async worker that executes AI requests.
+class AsyncWorkerBase:
+    """Base class for async worker that executes AI requests.
 
     Implementations handle the actual execution in a background thread
     or async context.
     """
 
-    @abstractmethod
     def run_chat(self, messages: list, model: str) -> None:
         """Execute a chat request and emit results via signals/callbacks.
 
@@ -72,9 +65,8 @@ class AsyncWorkerBase(ABC):
             messages: Conversation history as a list of role/content dicts.
             model: Model identifier to use.
         """
-        pass
+        raise NotImplementedError("Subclasses must implement run_chat")
 
-    @abstractmethod
     def run_task_loop(
         self,
         messages: list,
@@ -92,4 +84,4 @@ class AsyncWorkerBase(ABC):
             max_steps: Maximum number of tool call iterations allowed.
             tool_schemas: Optional list of OpenAI-format tool schema dicts.
         """
-        pass
+        raise NotImplementedError("Subclasses must implement run_task_loop")

@@ -20,7 +20,7 @@ from app.core.models.diagnosis_models import DiagnosisBundle, StructuralDiagnosi
 from app.core.models.improve_models import DiagnosedIssue
 from app.core.services.rule_suggestion_service import RuleSuggestionService
 from app.core.backtests.results_models import BacktestSummary, BacktestResults
-from app.ui.pages.improve_page import ImprovePage
+# improve_page.py has been removed - this test needs to be updated or removed
 from app.app_state.settings_state import SettingsState
 from app.core.models.settings_models import AppSettings
 from app.core.services.improve_service import ImproveService
@@ -226,6 +226,7 @@ def test_bug_condition_no_structural_handler():
 # Bug 2 exploration tests — rollback doesn't restore _baseline_run.summary
 # ---------------------------------------------------------------------------
 
+@pytest.mark.skip(reason="ImprovePage has been removed - this test is obsolete")
 @pytest.mark.bug_condition
 def test_bug_condition_rollback_missing_baseline_run(qapp, tmp_path):
     """
@@ -339,6 +340,7 @@ def test_bug_condition_rollback_missing_baseline_run(qapp, tmp_path):
     )
 
 
+@pytest.mark.skip(reason="ImprovePage has been removed - this test is obsolete")
 @pytest.mark.bug_condition
 def test_bug_condition_rollback_state_inconsistency(qapp, tmp_path):
     """
@@ -722,6 +724,7 @@ def test_property_rollback_traverses_entire_history(num_rounds):
 # Integration tests for Bug 1 fixes
 # ---------------------------------------------------------------------------
 
+@pytest.mark.skip(reason="ImprovePage has been removed - this test is obsolete")
 def test_full_workflow_structural_diagnosis(qapp, tmp_path):
     """
     Test 6.1 — Full Improve workflow with structural diagnosis patterns driving suggestions.
@@ -798,6 +801,7 @@ def test_full_workflow_structural_diagnosis(qapp, tmp_path):
 # Integration tests for Bug 2 fixes
 # ---------------------------------------------------------------------------
 
+@pytest.mark.skip(reason="ImprovePage has been removed - this test is obsolete")
 def test_rollback_then_run_candidate(qapp, tmp_path):
     """
     Test 6.3 — Rollback then run candidate, verify candidate starts from correct baseline.
@@ -890,6 +894,7 @@ def test_rollback_then_run_candidate(qapp, tmp_path):
     assert page._baseline_run.summary == last_round.summary
 
 
+@pytest.mark.skip(reason="ImprovePage has been removed - this test is obsolete")
 def test_rollback_then_accept(qapp, tmp_path):
     """
     Test 6.4 — Rollback then accept, verify new round captures correct state.
@@ -1008,6 +1013,7 @@ def test_rollback_then_accept(qapp, tmp_path):
 # Unit tests for Bug 2 fixes
 # ---------------------------------------------------------------------------
 
+@pytest.mark.skip(reason="ImprovePage has been removed - this test is obsolete")
 def test_rollback_restores_baseline_run_summary(qapp, tmp_path):
     """
     Test 4.5 — Rollback restores _baseline_run.summary from popped round.
@@ -1099,6 +1105,7 @@ def test_rollback_restores_baseline_run_summary(qapp, tmp_path):
     assert page._baseline_run.summary.total_profit == last_round.summary.total_profit
 
 
+@pytest.mark.skip(reason="ImprovePage has been removed - this test is obsolete")
 def test_rollback_restores_all_state_consistently(qapp, tmp_path):
     """
     Test 4.6 — Rollback restores all three state variables consistently.
@@ -1192,6 +1199,7 @@ def test_rollback_restores_all_state_consistently(qapp, tmp_path):
     assert page._baseline_run.summary == last_round.summary
 
 
+@pytest.mark.skip(reason="ImprovePage has been removed - this test is obsolete")
 def test_rollback_with_empty_session_history(qapp, tmp_path):
     """
     Test 4.7 — Rollback with empty session history (no-op).
@@ -1222,6 +1230,7 @@ def test_rollback_with_empty_session_history(qapp, tmp_path):
     assert page._session_history == []
 
 
+@pytest.mark.skip(reason="ImprovePage has been removed - this test is obsolete")
 def test_rollback_with_single_round(qapp, tmp_path):
     """
     Test 4.8 — Rollback with single round (restores initial state).
