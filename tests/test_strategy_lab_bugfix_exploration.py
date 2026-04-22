@@ -87,14 +87,15 @@ class TestBug1PrepareSandboxTypeError:
         # This is the BUGGY call pattern from _run_baseline_backtest (unfixed code):
         #   sandbox_dir = self._improve_service.prepare_sandbox(settings, strategy)
         # AppSettings is passed as strategy_name, "MyStrategy" as candidate_config.
+        # Note: With version_id parameter added, this will raise TypeError for missing argument
         with pytest.raises((FileNotFoundError, AttributeError, TypeError)) as exc_info:
-            improve_service.prepare_sandbox(settings, "MyStrategy")  # type: ignore[arg-type]
+            improve_service.prepare_sandbox(settings, "MyStrategy", "test_version")  # type: ignore[arg-type]
 
         # Document the counterexample
         error = exc_info.value
         print(
             f"\nCounterexample (Bug 1):\n"
-            f"  Call: prepare_sandbox(AppSettings(...), 'MyStrategy')\n"
+            f"  Call: prepare_sandbox(AppSettings(...), 'MyStrategy', 'test_version')\n"
             f"  Exception type: {type(error).__name__}\n"
             f"  Message: {error}\n"
             f"  Confirms: prepare_sandbox() crashes when AppSettings is passed as "
@@ -102,7 +103,7 @@ class TestBug1PrepareSandboxTypeError:
         )
 
     def test_bug1_prepare_sandbox_correct_args_succeeds(self, tmp_path):
-        """Verify the FIXED call pattern works: prepare_sandbox(strategy_name, {}).
+        """Verify the FIXED call pattern works: prepare_sandbox(strategy_name, {}, version_id).
 
         This test passes on both fixed and unfixed code — it documents the
         correct call signature.
@@ -120,13 +121,13 @@ class TestBug1PrepareSandboxTypeError:
         strategy_file.write_text("class MyStrategy:\n    pass\n", encoding="utf-8")
 
         # The FIXED call pattern:
-        #   sandbox_dir = self._improve_service.prepare_sandbox(strategy, {})
-        sandbox_dir = improve_service.prepare_sandbox(strategy_name, {})
+        #   sandbox_dir = self._improve_service.prepare_sandbox(strategy, {}, version_id)
+        version_id = "test_version_fixed"
+        sandbox_dir = improve_service.prepare_sandbox(strategy_name, {}, version_id)
         assert sandbox_dir.exists(), "Sandbox directory should be created"
         assert (sandbox_dir / f"{strategy_name}.py").exists(), (
             "Strategy .py should be copied into sandbox"
         )
-
 
 # ===========================================================================
 # Bug 2 — Missing --backtest-directory in baseline command

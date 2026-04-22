@@ -146,8 +146,8 @@ class TestRunBaselineBacktestMockedServices:
 
         captured_prepare_args = []
 
-        def fake_prepare_sandbox(strategy_arg, params_arg):
-            captured_prepare_args.append((strategy_arg, params_arg))
+        def fake_prepare_sandbox(strategy_arg, params_arg, version_id_arg):
+            captured_prepare_args.append((strategy_arg, params_arg, version_id_arg))
             sandbox_dir.mkdir(exist_ok=True)
             return sandbox_dir
 
@@ -168,7 +168,7 @@ class TestRunBaselineBacktestMockedServices:
         assert len(captured_prepare_args) == 1, (
             f"prepare_sandbox should be called once, got {len(captured_prepare_args)}"
         )
-        strategy_arg, params_arg = captured_prepare_args[0]
+        strategy_arg, params_arg, version_id_arg = captured_prepare_args[0]
         assert isinstance(strategy_arg, str), (
             f"prepare_sandbox first arg must be str, got {type(strategy_arg).__name__}: {strategy_arg!r}"
         )
@@ -203,7 +203,7 @@ class TestRunBaselineBacktestMockedServices:
         def fake_execute_command(cmd_list, **kwargs):
             captured_cmd_lists.append(cmd_list)
 
-        def fake_prepare_sandbox(strategy_arg, params_arg):
+        def fake_prepare_sandbox(strategy_arg, params_arg, version_id_arg):
             sandbox_dir.mkdir(exist_ok=True)
             return sandbox_dir
 
@@ -256,7 +256,7 @@ class TestRunBaselineBacktestMockedServices:
         def fake_execute_command(cmd_list, **kwargs):
             captured_kwargs.update(kwargs)
 
-        def fake_prepare_sandbox(strategy_arg, params_arg):
+        def fake_prepare_sandbox(strategy_arg, params_arg, version_id_arg):
             sandbox_dir.mkdir(exist_ok=True)
             return sandbox_dir
 

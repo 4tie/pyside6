@@ -186,6 +186,7 @@ class LoopIteration:
         validation_gate_passed: True if all attempted gates passed.
         gate_results: Ordered list of GateResult objects for each gate run.
         hard_filter_failures: List of HardFilterFailure objects if rejected.
+        version_id: ID of the version snapshot created for this iteration.
     """
 
     iteration_number: int
@@ -208,6 +209,8 @@ class LoopIteration:
     ai_suggestion_reason: Optional[str] = None
     # Structural diagnosis patterns that triggered changes
     diagnosed_structural: List = field(default_factory=list)
+    # Version tracking
+    version_id: Optional[str] = None
 
     @property
     def succeeded(self) -> bool:

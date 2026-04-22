@@ -332,8 +332,8 @@ class TestPrepareSandboxFromRunNextIterationPreserved:
 
         captured_args = []
 
-        def fake_prepare_sandbox(strategy_arg, params_arg):
-            captured_args.append((strategy_arg, params_arg))
+        def fake_prepare_sandbox(strategy_arg, params_arg, version_id_arg):
+            captured_args.append((strategy_arg, params_arg, version_id_arg))
             sandbox = tmp_path / "sandbox"
             sandbox.mkdir(exist_ok=True)
             return sandbox
@@ -352,7 +352,7 @@ class TestPrepareSandboxFromRunNextIterationPreserved:
         assert len(captured_args) == 1, (
             f"prepare_sandbox should have been called once, got {len(captured_args)} calls"
         )
-        strategy_arg, params_arg = captured_args[0]
+        strategy_arg, params_arg, version_id_arg = captured_args[0]
         assert isinstance(strategy_arg, str), (
             f"Preservation violated: prepare_sandbox first arg is {type(strategy_arg).__name__}, "
             f"expected str. Got: {strategy_arg!r}"
@@ -400,8 +400,8 @@ def test_pbt_run_next_iteration_prepare_sandbox_arg_types(
 
     captured_args = []
 
-    def fake_prepare_sandbox(strategy_arg, params_arg):
-        captured_args.append((strategy_arg, params_arg))
+    def fake_prepare_sandbox(strategy_arg, params_arg, version_id_arg):
+        captured_args.append((strategy_arg, params_arg, version_id_arg))
         sandbox = tmp_path / "sandbox"
         sandbox.mkdir(exist_ok=True)
         return sandbox
@@ -420,7 +420,7 @@ def test_pbt_run_next_iteration_prepare_sandbox_arg_types(
     assert len(captured_args) == 1, (
         f"PBT: prepare_sandbox should be called once, got {len(captured_args)}"
     )
-    strategy_arg, params_arg = captured_args[0]
+    strategy_arg, params_arg, version_id_arg = captured_args[0]
     assert isinstance(strategy_arg, str), (
         f"PBT: prepare_sandbox first arg type={type(strategy_arg).__name__}, expected str. "
         f"strategy_name={strategy_name!r}, params_after={params_after!r}"

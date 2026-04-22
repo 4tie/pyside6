@@ -112,9 +112,10 @@ def test_prepare_sandbox_writes_nested_format(flat_params):
         (strategies_dir / "MultiMeee.py").write_text("# strategy", encoding="utf-8")
 
         service = _make_service(tmp_path)
-        sandbox_dir = service.prepare_sandbox("MultiMeee", flat_params)
+        version_id = "test_bug_condition_version"
+        sandbox_dir = service.prepare_sandbox("MultiMeee", flat_params, version_id)
 
-        written = json.loads((sandbox_dir / "MultiMeee.json").read_text(encoding="utf-8"))
+        written = json.loads((sandbox_dir / f"{version_id}.json").read_text(encoding="utf-8"))
 
         # BUG: on unfixed code this assertion fails — the file is the flat dict
         assert "strategy_name" in written, (

@@ -98,12 +98,14 @@ def test_prepare_sandbox(tmp_path):
     (strategies_dir / "MyStrategy.py").write_text("# strategy", encoding="utf-8")
 
     service = _make_service(tmp_path)
-    sandbox_dir = service.prepare_sandbox("MyStrategy", {"stoploss": -0.08})
+    version_id = "test_version_123"
+    sandbox_dir = service.prepare_sandbox("MyStrategy", {"stoploss": -0.08}, version_id)
 
     assert sandbox_dir.exists()
     assert (sandbox_dir / "MyStrategy.py").exists()
-    assert (sandbox_dir / "MyStrategy.json").exists()
-    written = json.loads((sandbox_dir / "MyStrategy.json").read_text())
+    # Config file should now be named {version_id}.json
+    assert (sandbox_dir / f"{version_id}.json").exists()
+    written = json.loads((sandbox_dir / f"{version_id}.json").read_text())
     assert "strategy_name" in written
     assert written["ft_stratparam_v"] == 1
 
@@ -114,11 +116,34 @@ def test_prepare_sandbox_missing_strategy(tmp_path):
     # No .py file created
 
     service = _make_service(tmp_path)
+    version_id = "test_version_456"
     try:
-        service.prepare_sandbox("MyStrategy", {"stoploss": -0.08})
+        service.prepare_sandbox("MyStrategy", {"stoploss": -0.08}, version_id)
         assert False, "Expected FileNotFoundError"
     except FileNotFoundError:
         pass
+
+
+def test_prepare_sandbox_collision_guard(tmp_path):
+    """Test that prepare_sandbox raises ValueError if sandbox directory already exists."""
+    strategies_dir = tmp_path / "strategies"
+    strategies_dir.mkdir(parents=True)
+    (strategies_dir / "MyStrategy.py").write_text("# strategy", encoding="utf-8")
+
+    service = _make_service(tmp_path)
+    version_id = "test_version_collision"
+    
+    # First call should succeed
+    sandbox_dir = service.prepare_sandbox("MyStrategy", {"stoploss": -0.08}, version_id)
+    assert sandbox_dir.exists()
+    
+    # Second call with same version_id should raise ValueError
+    try:
+        service.prepare_sandbox("MyStrategy", {"stoploss": -0.10}, version_id)
+        assert False, "Expected ValueError for sandbox collision"
+    except ValueError as e:
+        assert "Sandbox collision" in str(e)
+        assert version_id in str(e)
 
 
 # ---------------------------------------------------------------------------

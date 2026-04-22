@@ -839,6 +839,8 @@ class LoopService:
         self._best_score: float = float("-inf")
         self._running: bool = False
         self._ai_advisor = None  # Set via set_ai_advisor()
+        self._version_manager = None  # Set via set_version_manager()
+        self._last_version_id: Optional[str] = None  # Track version lineage
 
         # Callbacks set by the UI layer
         self._on_iteration_complete: Optional[Callable[[LoopIteration], None]] = None
@@ -866,6 +868,14 @@ class LoopService:
             ai_advisor: AIAdvisorService instance, or None to disable.
         """
         self._ai_advisor = ai_advisor
+
+    def set_version_manager(self, version_manager) -> None:
+        """Register a VersionManagerService for version tracking.
+
+        Args:
+            version_manager: VersionManagerService instance, or None to disable.
+        """
+        self._version_manager = version_manager
 
     def set_callbacks(
         self,
@@ -1114,8 +1124,42 @@ class LoopService:
         return best_params
 
     def _record_iteration(self, iteration: LoopIteration) -> None:
-        """Append iteration to result and fire the callback."""
+        """Append iteration to result, create version, and fire the callback."""
         self._result.iterations.append(iteration)
+
+        # Create version snapshot if version manager is available
+        if self._version_manager is not None and iteration.summary is not None:
+            try:
+                from app.core.models.exit_reason_models import ExitReasonAnalysis
+
+                exit_reason_analysis = None
+                if iteration.summary and hasattr(iteration, 'diagnosed_structural'):
+                    # Extract exit reason analysis if available
+                    for diag in iteration.diagnosed_structural or []:
+                        if isinstance(diag, ExitReasonAnalysis):
+                            exit_reason_analysis = diag.to_dict() if hasattr(diag, 'to_dict') else None
+
+                version = self._version_manager.create_version(
+                    strategy_name=self._config.strategy,
+                    params=iteration.params_after,
+                    summary=iteration.summary,
+                    iteration_number=iteration.iteration_number,
+                    changes_summary=iteration.changes_summary,
+                    parent_version_id=self._last_version_id,
+                    score=iteration.score.total if iteration.score else 0.0,
+                    exit_reason_analysis=exit_reason_analysis,
+                )
+                self._last_version_id = version.version_id
+                iteration.version_id = version.version_id  # Store in iteration for reference
+
+                _log.debug(
+                    "Created version %s for iteration %d",
+                    version.version_id,
+                    iteration.iteration_number,
+                )
+            except Exception as e:
+                _log.warning("Failed to create version for iteration %d: %s", iteration.iteration_number, e)
+
         if self._on_iteration_complete is not None:
             self._on_iteration_complete(iteration)
 

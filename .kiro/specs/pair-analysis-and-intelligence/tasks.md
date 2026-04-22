@@ -52,18 +52,18 @@
   - [x] 8.2 Implement `test_profit_diff_antisymmetry`: `compare(a,b).profit_diff == -compare(b,a).profit_diff`
   - [x] 8.3 Run tests and confirm they pass
 
-- [~] 9. Harden ImproveService with deterministic version_id paths
-  - [-] 9.1 Add `version_id: str` parameter to `prepare_sandbox()`
-  - [~] 9.2 Change sandbox path to `{user_data}/strategies/_improve_sandbox/{version_id}/`
-  - [~] 9.3 Write config file as `{version_id}.json` (not `{strategy_name}.json`)
-  - [~] 9.4 Add collision guard: raise `ValueError` if sandbox directory already exists
-  - [~] 9.5 Add `version_id: str` parameter to `build_candidate_command()`
-  - [~] 9.6 Change export directory to `{user_data}/backtest_results/_improve/{version_id}/`
-  - [~] 9.7 Update `parse_candidate_run()` to try deterministic path `export_dir / f"{version_id}.zip"` first before falling back to `resolve_candidate_artifact()`
-  - [~] 9.8 Update all callers of `prepare_sandbox()` and `build_candidate_command()` in `LoopPage` and `ImprovePage` to pass a `version_id`
+- [x] 9. Harden ImproveService with deterministic version_id paths
+  - [x] 9.1 Add `version_id: str` parameter to `prepare_sandbox()`
+  - [x] 9.2 Change sandbox path to `{user_data}/strategies/_improve_sandbox/{version_id}/`
+  - [x] 9.3 Write config file as `{version_id}.json` (not `{strategy_name}.json`)
+  - [x] 9.4 Add collision guard: raise `ValueError` if sandbox directory already exists
+  - [x] 9.5 Add `version_id: str` parameter to `build_candidate_command()`
+  - [x] 9.6 Change export directory to `{user_data}/backtest_results/_improve/{version_id}/`
+  - [x] 9.7 Update `parse_candidate_run()` to try deterministic path `export_dir / f"{version_id}.zip"` first before falling back to `resolve_candidate_artifact()`
+  - [x] 9.8 Update all callers of `prepare_sandbox()` and `build_candidate_command()` in `LoopPage` and `ImprovePage` to pass a `version_id`
 
 - [~] 10. Create PairResultsWidget
-  - [~] 10.1 Create `app/ui_v2/widgets/pair_results_widget.py` with `PairResultsWidget(QWidget)`
+  - [-] 10.1 Create `app/ui_v2/widgets/pair_results_widget.py` with `PairResultsWidget(QWidget)`
   - [~] 10.2 Build table with columns: Pair | Profit (%) | Win Rate (%) | Trades | Max Drawdown (%)
   - [~] 10.3 Define `_PAIR_TABLE_STYLES` constant with best/worst row styles (single definition, no duplication)
   - [~] 10.4 Apply green background + bold to best pair rows; red background + italic to worst pair rows

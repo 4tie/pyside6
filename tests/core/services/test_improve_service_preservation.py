@@ -165,10 +165,10 @@ def test_load_baseline_params_round_trip(params):
 def test_prepare_sandbox_creates_directory_and_copies_files(tmp_path):
     """**Validates: Requirements 3.1**
 
-    Call prepare_sandbox("MultiMeee", {"stoploss": -0.10}), assert:
+    Call prepare_sandbox("MultiMeee", {"stoploss": -0.10}, version_id), assert:
     - The returned sandbox_dir exists
     - sandbox_dir / "MultiMeee.py" exists (copied from strategies dir)
-    - sandbox_dir / "MultiMeee.json" exists (written)
+    - sandbox_dir / "{version_id}.json" exists (written)
     - The sandbox_dir is under {user_data_path}/strategies/_improve_sandbox/
 
     This MUST PASS on unfixed code — sandbox creation is not broken.
@@ -178,7 +178,8 @@ def test_prepare_sandbox_creates_directory_and_copies_files(tmp_path):
     (strategies_dir / "MultiMeee.py").write_text("# strategy", encoding="utf-8")
 
     service = _make_service(tmp_path)
-    sandbox_dir = service.prepare_sandbox("MultiMeee", {"stoploss": -0.10})
+    version_id = "test_version_preservation"
+    sandbox_dir = service.prepare_sandbox("MultiMeee", {"stoploss": -0.10}, version_id)
 
     # Directory must exist
     assert sandbox_dir.exists(), f"sandbox_dir does not exist: {sandbox_dir}"
@@ -188,9 +189,9 @@ def test_prepare_sandbox_creates_directory_and_copies_files(tmp_path):
         f"MultiMeee.py not found in sandbox_dir: {sandbox_dir}"
     )
 
-    # .json file must be written
-    assert (sandbox_dir / "MultiMeee.json").exists(), (
-        f"MultiMeee.json not found in sandbox_dir: {sandbox_dir}"
+    # .json file must be written with version_id name
+    assert (sandbox_dir / f"{version_id}.json").exists(), (
+        f"{version_id}.json not found in sandbox_dir: {sandbox_dir}"
     )
 
     # sandbox_dir must be under {user_data_path}/strategies/_improve_sandbox/
