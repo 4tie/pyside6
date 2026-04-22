@@ -179,7 +179,7 @@ All code is Python 3.9+ with PySide6. Follow project conventions: `_log = get_lo
     - **Property P3: Settings Round-Trip — settings saved via new UI must produce identical `AppSettings` JSON**
     - **Validates: Requirements 12.3, 1.2**
 
-- [-] 12. Implement `ModernMainWindow`
+- [x] 12. Implement `ModernMainWindow`
   - Create `app/ui/main_window.py` (replaces old `MainWindow`)
   - `QMainWindow` subclass; constructor: `__init__(self, settings_state: SettingsState, parent=None)`
   - Layout: `HeaderBar` at top (set as central widget header via `QVBoxLayout` wrapper), `NavSidebar` + `QStackedWidget` in `QHBoxLayout` as central widget body, `AppStatusBar` replacing default status bar
@@ -205,7 +205,7 @@ All code is Python 3.9+ with PySide6. Follow project conventions: `_log = get_lo
     - **Property P1: Service Immutability — no file outside `app/ui/` and `main.py` is modified**
     - **Validates: Requirements 18.2**
 
-- [ ] 13. Checkpoint — Ensure all tests pass
+- [-] 13. Checkpoint — Ensure all tests pass
   - Run `pytest --tb=short` and confirm zero new failures.
   - Run `ruff check app/ui/` and fix any lint errors.
   - Ensure all tests pass, ask the user if questions arise.

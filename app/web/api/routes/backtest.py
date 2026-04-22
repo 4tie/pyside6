@@ -16,6 +16,7 @@ from app.web.dependencies import (
     BacktestServiceDep,
     ProcessServiceDep,
 )
+from app.core.services.process_service import ProcessService
 from app.web.models import (
     BacktestRequest,
     DownloadDataRequest,
@@ -173,99 +174,108 @@ async def execute_backtest(
     background_tasks: BackgroundTasks,
 ) -> dict:
     """Execute a backtest command and return run_id for redirect."""
-    app_settings = settings.load_settings()
-    if not app_settings.user_data_path:
-        raise HTTPException(status_code=404, detail="User data path not configured. Please configure it in settings.")
-    
-    # Check if venv is configured
-    if not app_settings.venv_path:
-        raise HTTPException(
-            status_code=400,
-            detail="Virtual environment not configured. Please configure the venv path in settings to run freqtrade commands."
-        )
-    
-    # Build the backtest command
     try:
-        command = backtest_service.build_command(
-            strategy_name=request.strategy,
-            timeframe=request.timeframe,
-            timerange=request.timerange,
-            pairs=request.pairs,
-            max_open_trades=request.max_open_trades,
-            dry_run_wallet=request.dry_run_wallet,
-        )
-    except FileNotFoundError as e:
-        raise HTTPException(status_code=404, detail=f"Strategy or configuration file not found: {str(e)}")
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=f"Invalid configuration: {str(e)}")
-    
-    # Build environment with venv
-    env = ProcessService.build_environment(app_settings.venv_path)
-    
-    import asyncio
-    from pathlib import Path
-    from app.core.backtests.results_parser import parse_backtest_zip
-    from app.core.backtests.results_store import RunStore
-    from app.core.freqtrade.resolvers.config_resolver import resolve_config_file
-    
-    def stream_output(line: str):
-        asyncio.create_task(manager.send_log(line))
-    
-    def stream_error(line: str):
-        asyncio.create_task(manager.send_log(line))
-    
-    def on_finished(exit_code: int):
-        if exit_code == 0:
-            # Parse results and save to index
-            try:
-                export_dir = Path(command.export_dir)
-                # Find the most recent zip file
-                zips = sorted(export_dir.glob("*.zip"), key=lambda p: p.stat().st_mtime, reverse=True)
-                if zips:
-                    results = parse_backtest_zip(str(zips[0]))
-                    if results:
-                        # Save to index
-                        config_path = None
-                        try:
-                            config_path = str(resolve_config_file(Path(app_settings.user_data_path), strategy_name=request.strategy))
-                        except FileNotFoundError:
-                            pass
-                        
-                        backtest_results_dir = Path(app_settings.user_data_path) / "backtest_results"
-                        strategy_dir = backtest_results_dir / request.strategy
-                        run_dir = RunStore.save(results, str(strategy_dir), config_path=config_path)
-                        
-                        # Get run_id from the saved run
-                        run_id = run_dir.name
-                        asyncio.create_task(manager.send_complete(run_id, True))
-                        return
-            except Exception as e:
-                asyncio.create_task(manager.send_error("Failed to parse results", str(e)))
-        else:
-            asyncio.create_task(manager.send_error("Backtest failed", f"Process exited with code: {exit_code}"))
-    
-    # Execute command in background
-    def execute_backtest_task():
+        app_settings = settings.load_settings()
+        if not app_settings.user_data_path:
+            raise HTTPException(status_code=404, detail="User data path not configured. Please configure it in settings.")
+        
+        # Check if venv is configured
+        if not app_settings.venv_path:
+            raise HTTPException(
+                status_code=400,
+                detail="Virtual environment not configured. Please configure the venv path in settings to run freqtrade commands."
+            )
+        
+        # Build the backtest command
         try:
-            process_service.execute_command(
-                command=command.args,
-                on_output=stream_output,
-                on_error=stream_error,
-                on_finished=on_finished,
-                working_directory=command.cwd,
-                env=env
+            command = backtest_service.build_command(
+                strategy_name=request.strategy,
+                timeframe=request.timeframe,
+                timerange=request.timerange,
+                pairs=request.pairs,
+                max_open_trades=request.max_open_trades,
+                dry_run_wallet=request.dry_run_wallet,
             )
         except FileNotFoundError as e:
-            asyncio.create_task(manager.send_error("Freqtrade not found", f"Could not execute freqtrade: {str(e)}. Please ensure freqtrade is installed in your virtual environment."))
+            raise HTTPException(status_code=404, detail=f"Strategy or configuration file not found: {str(e)}")
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=f"Invalid configuration: {str(e)}")
         except Exception as e:
-            asyncio.create_task(manager.send_error("Backtest execution failed", str(e)))
-    
-    background_tasks.add_task(execute_backtest_task)
-    
-    return {
-        "status": "started",
-        "message": "Backtest execution started",
-    }
+            raise HTTPException(status_code=500, detail=f"Failed to build command: {str(e)}")
+        
+        # Build environment with venv
+        env = ProcessService.build_environment(app_settings.venv_path)
+        
+        import asyncio
+        from pathlib import Path
+        from app.core.backtests.results_parser import parse_backtest_zip
+        from app.core.backtests.results_store import RunStore
+        from app.core.freqtrade.resolvers.config_resolver import resolve_config_file
+        
+        def stream_output(line: str):
+            asyncio.create_task(manager.send_log(line))
+        
+        def stream_error(line: str):
+            asyncio.create_task(manager.send_log(line))
+        
+        def on_finished(exit_code: int):
+            if exit_code == 0:
+                # Parse results and save to index
+                try:
+                    export_dir = Path(command.export_dir)
+                    # Find the most recent zip file
+                    zips = sorted(export_dir.glob("*.zip"), key=lambda p: p.stat().st_mtime, reverse=True)
+                    if zips:
+                        results = parse_backtest_zip(str(zips[0]))
+                        if results:
+                            # Save to index
+                            config_path = None
+                            try:
+                                config_path = str(resolve_config_file(Path(app_settings.user_data_path), strategy_name=request.strategy))
+                            except FileNotFoundError:
+                                pass
+                            
+                            backtest_results_dir = Path(app_settings.user_data_path) / "backtest_results"
+                            strategy_dir = backtest_results_dir / request.strategy
+                            run_dir = RunStore.save(results, str(strategy_dir), config_path=config_path)
+                            
+                            # Get run_id from the saved run
+                            run_id = run_dir.name
+                            asyncio.create_task(manager.send_complete(run_id, True))
+                            return
+                except Exception as e:
+                    asyncio.create_task(manager.send_error("Failed to parse results", str(e)))
+            else:
+                asyncio.create_task(manager.send_error("Backtest failed", f"Process exited with code: {exit_code}"))
+        
+        # Execute command in background
+        def execute_backtest_task():
+            try:
+                process_service.execute_command(
+                    command=command.args,
+                    on_output=stream_output,
+                    on_error=stream_error,
+                    on_finished=on_finished,
+                    working_directory=command.cwd,
+                    env=env
+                )
+            except FileNotFoundError as e:
+                asyncio.create_task(manager.send_error("Freqtrade not found", f"Could not execute freqtrade: {str(e)}. Please ensure freqtrade is installed in your virtual environment."))
+            except Exception as e:
+                asyncio.create_task(manager.send_error("Backtest execution failed", str(e)))
+        
+        background_tasks.add_task(execute_backtest_task)
+        
+        return {
+            "status": "started",
+            "message": "Backtest execution started",
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        import traceback
+        error_detail = f"{str(e)}\n{traceback.format_exc()}"
+        raise HTTPException(status_code=500, detail=f"Backtest start failed: {error_detail}")
 
 
 @router.post("/backtest-config", response_model=BacktestConfigResponse)
