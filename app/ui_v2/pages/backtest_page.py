@@ -30,14 +30,19 @@ from PySide6.QtWidgets import (
 
 from app.app_state.settings_state import SettingsState
 from app.core.backtests.results_index import IndexStore
+from app.core.backtests.results_models import BacktestResults
 from app.core.backtests.results_parser import parse_backtest_zip
 from app.core.backtests.results_store import RunStore
 from app.core.services.backtest_service import BacktestService
+from app.core.services.comparison_service import ComparisonService
+from app.core.services.pair_analysis_service import PairAnalysisService
 from app.core.services.process_service import ProcessService
 from app.core.services.settings_service import SettingsService
 from app.core.utils.app_logger import get_logger
 from app.ui.widgets.backtest_results_widget import BacktestResultsWidget
 from app.ui.widgets.terminal_widget import TerminalWidget
+from app.ui_v2.widgets.compare_widget import CompareWidget
+from app.ui_v2.widgets.pair_results_widget import PairResultsWidget
 from app.ui_v2.widgets.run_config_form import RunConfigForm
 from app.ui_v2.widgets.section_header import SectionHeader
 

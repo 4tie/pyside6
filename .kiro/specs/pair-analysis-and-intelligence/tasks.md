@@ -72,18 +72,18 @@
   - [x] 10.7 Implement `clear()` method showing empty state message
   - [x] 10.8 Ensure no service or model imports — widget receives `PairAnalysis` objects only
 
-- [~] 11. Create CompareWidget
-  - [-] 11.1 Create `app/ui_v2/widgets/compare_widget.py` with `CompareWidget(QWidget)`
-  - [~] 11.2 Add two `QComboBox` selectors (Run A, Run B) and a "Compare" button
-  - [~] 11.3 Define `_GREEN`, `_RED`, `_NEUTRAL` colour constants at module level (single definition)
-  - [~] 11.4 Implement three metric diff rows with green/red colouring per sign
-  - [~] 11.5 Implement verdict label with green/red/neutral colouring
-  - [~] 11.6 Show prompt label when fewer than two runs are selected
-  - [~] 11.7 Implement `set_run_choices(runs: List[dict])` method
-  - [~] 11.8 Implement `display(comparison: RunComparison)` method
+- [x] 11. Create CompareWidget
+  - [x] 11.1 Create `app/ui_v2/widgets/compare_widget.py` with `CompareWidget(QWidget)`
+  - [x] 11.2 Add two `QComboBox` selectors (Run A, Run B) and a "Compare" button
+  - [x] 11.3 Define `_GREEN`, `_RED`, `_NEUTRAL` colour constants at module level (single definition)
+  - [x] 11.4 Implement three metric diff rows with green/red colouring per sign
+  - [x] 11.5 Implement verdict label with green/red/neutral colouring
+  - [x] 11.6 Show prompt label when fewer than two runs are selected
+  - [x] 11.7 Implement `set_run_choices(runs: List[dict])` method
+  - [x] 11.8 Implement `display(comparison: RunComparison)` method
 
 - [~] 12. Update BacktestPage with new tabs and load_results()
-  - [~] 12.1 Import `PairResultsWidget`, `CompareWidget`, `PairAnalysisService`, `ComparisonService` in `backtest_page.py`
+  - [-] 12.1 Import `PairResultsWidget`, `CompareWidget`, `PairAnalysisService`, `ComparisonService` in `backtest_page.py`
   - [~] 12.2 Add `_pair_results_widget` and `_compare_widget` instances in `_build_right_panel()`
   - [~] 12.3 Set tab order: Results (0) → Pair Results (1) → Compare (2) → Terminal (3)
   - [~] 12.4 Implement `load_results(results: BacktestResults)` method that calls `_results_widget.display_results()`, `_pair_results_widget.display()`, and navigates to tab 0
