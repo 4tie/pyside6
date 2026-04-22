@@ -66,8 +66,9 @@ async def get_run_diff(
         raise HTTPException(status_code=404, detail=f"Baseline run {baseline_id} not found")
     
     # Load run data
-    run_dir = backtest_results_dir / run_entry.get("strategy", "") / run_entry.get("run_dir", "")
-    baseline_dir = backtest_results_dir / baseline_entry.get("strategy", "") / baseline_entry.get("run_dir", "")
+    # run_dir is relative to backtest_results_dir and already includes strategy path
+    run_dir = backtest_results_dir / run_entry.get("run_dir", "")
+    baseline_dir = backtest_results_dir / baseline_entry.get("run_dir", "")
     
     try:
         run_results = RunStore.load_run(run_dir)

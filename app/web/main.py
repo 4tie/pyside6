@@ -10,7 +10,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
 # Import route handlers
-from app.web.api.routes import runs, strategies, diagnosis, comparison, settings, loop, diff
+from app.web.api.routes import runs, strategies, diagnosis, comparison, settings, loop, diff, backtest
 from app.web.api.websocket import backtest, loop as loop_ws
 
 # Create FastAPI app

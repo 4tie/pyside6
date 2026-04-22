@@ -278,3 +278,53 @@ class RollbackResponse(BaseModel):
     message: str
     rollback_to_run_id: str
     strategy_name: str
+
+
+class BacktestConfigRequest(BaseModel):
+    """Request model for saving backtest form configuration."""
+    strategy: Optional[str] = None
+    timeframe: Optional[str] = None
+    pairs: Optional[List[str]] = None
+    timerange: Optional[str] = None
+    max_open_trades: Optional[int] = None
+    dry_run_wallet: Optional[float] = None
+
+
+class BacktestConfigResponse(BaseModel):
+    """Response model for backtest form configuration."""
+    strategy: Optional[str] = None
+    timeframe: Optional[str] = None
+    pairs: List[str] = Field(default_factory=list)
+    timerange: Optional[str] = None
+    max_open_trades: Optional[int] = None
+    dry_run_wallet: Optional[float] = None
+
+
+class DownloadDataRequest(BaseModel):
+    """Request model for download-data command."""
+    timeframe: str = Field(..., description="Timeframe (e.g., 5m, 1h)")
+    timerange: Optional[str] = Field(None, description="Date range (e.g., 20240101-20241231)")
+    pairs: Optional[List[str]] = Field(None, description="List of trading pairs")
+
+
+class DownloadDataResponse(BaseModel):
+    """Response model for download-data command."""
+    success: bool
+    message: str
+    task_id: Optional[str] = None
+
+
+class PairsResponse(BaseModel):
+    """Response model for available trading pairs."""
+    pairs: List[str]
+    favorites: List[str]
+
+
+class FavoritesRequest(BaseModel):
+    """Request model for saving favorite pairs."""
+    favorites: List[str]
+
+
+class FavoritesResponse(BaseModel):
+    """Response model for favorite pairs."""
+    favorites: List[str]

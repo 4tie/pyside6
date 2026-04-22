@@ -51,8 +51,9 @@ async def compare_runs(
         raise HTTPException(status_code=404, detail=f"Run {run_b_id} not found")
     
     # Load full run data
-    run_a_dir = backtest_results_dir / run_a_entry.get("strategy", "") / run_a_entry.get("run_dir", "")
-    run_b_dir = backtest_results_dir / run_b_entry.get("strategy", "") / run_b_entry.get("run_dir", "")
+    # run_dir is relative to backtest_results_dir and already includes strategy path
+    run_a_dir = backtest_results_dir / run_a_entry.get("run_dir", "")
+    run_b_dir = backtest_results_dir / run_b_entry.get("run_dir", "")
     
     try:
         results_a = RunStore.load_run(run_a_dir)
@@ -147,7 +148,8 @@ async def compare_multiple_runs(
     if not baseline_entry:
         raise HTTPException(status_code=404, detail=f"Baseline run {baseline} not found")
     
-    baseline_dir = backtest_results_dir / baseline_entry.get("strategy", "") / baseline_entry.get("run_dir", "")
+    # run_dir is relative to backtest_results_dir and already includes strategy path
+    baseline_dir = backtest_results_dir / baseline_entry.get("run_dir", "")
     try:
         baseline_results = RunStore.load_run(baseline_dir)
     except (FileNotFoundError, ValueError) as e:
@@ -165,7 +167,8 @@ async def compare_multiple_runs(
         if not run_entry:
             continue  # Skip missing runs
         
-        run_dir = backtest_results_dir / run_entry.get("strategy", "") / run_entry.get("run_dir", "")
+        # run_dir is relative to backtest_results_dir and already includes strategy path
+        run_dir = backtest_results_dir / run_entry.get("run_dir", "")
         try:
             run_results = RunStore.load_run(run_dir)
         except (FileNotFoundError, ValueError):

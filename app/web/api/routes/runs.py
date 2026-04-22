@@ -220,7 +220,8 @@ async def delete_run(
         raise HTTPException(status_code=404, detail=f"Run {run_id} not found")
     
     # Delete the run directory
-    run_dir = backtest_results_dir / strategy_name / run_entry.get("run_dir", "")
+    # run_dir is relative to backtest_results_dir and already includes strategy path
+    run_dir = backtest_results_dir / run_entry.get("run_dir", "")
     if run_dir.exists():
         import shutil
         shutil.rmtree(run_dir)
