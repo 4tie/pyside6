@@ -4,6 +4,7 @@ results_diagnosis_service.py — Stateless rule-based diagnosis of backtest resu
 Accepts a DiagnosisInput bundle and returns a DiagnosisBundle containing:
   - issues: legacy shallow DiagnosedIssue objects (eight rules)
   - structural: pattern-based StructuralDiagnosis objects (ten rules)
+  - exit_reason_suggestions: suggestions from exit reason analysis
 """
 from __future__ import annotations
 
@@ -11,6 +12,7 @@ from typing import List, Optional
 
 from app.core.backtests.results_models import BacktestSummary
 from app.core.models.diagnosis_models import DiagnosisBundle, DiagnosisInput, StructuralDiagnosis
+from app.core.models.exit_reason_models import ExitReasonSuggestion
 from app.core.models.improve_models import DiagnosedIssue
 from app.core.utils.app_logger import get_logger
 
@@ -48,25 +50,32 @@ class ResultsDiagnosisService:
         Args:
             input: DiagnosisInput containing in_sample summary and optional
                 supplementary data (OOS summary, fold summaries, trade
-                contributions, drawdown periods, ATR spike periods).
+                contributions, drawdown periods, ATR spike periods, exit_reason_analysis).
 
         Returns:
             DiagnosisBundle with:
               - issues: legacy DiagnosedIssue objects from eight shallow rules.
               - structural: StructuralDiagnosis objects from ten pattern rules.
-            Both lists may be empty. Neither is ever None.
+              - exit_reason_suggestions: suggestions from exit reason analysis.
+            All lists may be empty. None are ever None.
         """
         summary = input.in_sample
         issues = ResultsDiagnosisService._run_shallow_rules(summary)
         structural = ResultsDiagnosisService._run_structural_rules(input)
+        exit_reason_suggestions = ResultsDiagnosisService._run_exit_reason_rules(input)
 
         _log.debug(
-            "Diagnosed %d issue(s) and %d structural pattern(s) for strategy '%s'",
+            "Diagnosed %d issue(s), %d structural pattern(s), %d exit suggestions for strategy '%s'",
             len(issues),
             len(structural),
+            len(exit_reason_suggestions),
             summary.strategy,
         )
-        return DiagnosisBundle(issues=issues, structural=structural)
+        return DiagnosisBundle(
+            issues=issues,
+            structural=structural,
+            exit_reason_suggestions=exit_reason_suggestions,
+        )
 
     # ------------------------------------------------------------------
     # Legacy shallow rules (eight rules)
@@ -451,3 +460,99 @@ class ResultsDiagnosisService:
                 ))
 
         return structural
+
+    # ------------------------------------------------------------------
+    # Exit reason rules (six rules)
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _run_exit_reason_rules(input: DiagnosisInput) -> list:
+        """Generate suggestions from exit reason analysis.
+
+        Args:
+            input: DiagnosisInput containing optional exit_reason_analysis.
+
+        Returns:
+            List of ExitReasonSuggestion objects. May be empty.
+        """
+        if input.exit_reason_analysis is None:
+            return []
+
+        analysis = input.exit_reason_analysis
+        suggestions = []
+
+        # Pattern 1: High stoploss rate with negative returns
+        stoploss_stats = analysis.reason_stats.get("stoploss")
+        if stoploss_stats and stoploss_stats.frequency_pct > 40.0:
+            if stoploss_stats.total_profit_pct < 0:
+                suggestions.append(ExitReasonSuggestion(
+                    issue=f"High stoploss rate ({stoploss_stats.frequency_pct:.1f}%) with negative returns",
+                    affected_reason="stoploss",
+                    suggestion="Tighten stoploss to reduce per-trade loss exposure",
+                    expected_improvement="Lower drawdown and smaller individual losses",
+                    confidence=0.75,
+                ))
+
+        # Pattern 2: ROI dominance with low win rate
+        roi_stats = analysis.reason_stats.get("roi")
+        if roi_stats and roi_stats.frequency_pct > 50.0:
+            if roi_stats.win_rate_pct < 45.0:
+                suggestions.append(ExitReasonSuggestion(
+                    issue=f"ROI exits dominate ({roi_stats.frequency_pct:.1f}%) but with low win rate",
+                    affected_reason="roi",
+                    suggestion="Tighten ROI targets or review entry timing",
+                    expected_improvement="Higher win rate with more achievable targets",
+                    confidence=0.6,
+                ))
+
+        # Pattern 3: Signal exits with poor performance
+        signal_stats = analysis.reason_stats.get("signal")
+        if signal_stats and signal_stats.win_rate_pct < 40.0:
+            suggestions.append(ExitReasonSuggestion(
+                issue=f"Signal exits have poor win rate ({signal_stats.win_rate_pct:.1f}%)",
+                affected_reason="signal",
+                suggestion="Add entry confirmation filter or improve exit signal logic",
+                expected_improvement="Better entry quality and exit timing",
+                confidence=0.65,
+            ))
+
+        # Pattern 4: Trailing stop underperformance
+        trailing_stats = analysis.reason_stats.get("trailing_stop")
+        if trailing_stats and trailing_stats.avg_profit_pct < 0:
+            suggestions.append(ExitReasonSuggestion(
+                issue="Trailing stop exits are losing money on average",
+                affected_reason="trailing_stop",
+                suggestion="Adjust trailing stop distance or activation threshold",
+                expected_improvement="Better profit protection without premature exits",
+                confidence=0.6,
+            ))
+
+        # Pattern 5: High forced/emergency exit rate
+        force_stats = analysis.reason_stats.get("force_exit")
+        emergency_stats = analysis.reason_stats.get("emergency_exit")
+        total_forced = (force_stats.count if force_stats else 0) + (
+            emergency_stats.count if emergency_stats else 0
+        )
+        if total_forced > 0 and analysis.total_trades > 0:
+            forced_pct = (total_forced / analysis.total_trades * 100)
+            if forced_pct > 5.0:
+                suggestions.append(ExitReasonSuggestion(
+                    issue=f"High rate of forced/emergency exits ({forced_pct:.1f}%)",
+                    affected_reason="force_exit",
+                    suggestion="Reduce position size or add volatility filter",
+                    expected_improvement="Fewer forced liquidations and better risk control",
+                    confidence=0.7,
+                ))
+
+        # Pattern 6: Exit timing mismatch
+        if roi_stats and stoploss_stats:
+            if stoploss_stats.avg_duration_min > roi_stats.avg_duration_min * 1.5:
+                suggestions.append(ExitReasonSuggestion(
+                    issue="Losers (stoploss) last much longer than winners (ROI)",
+                    affected_reason="timing_mismatch",
+                    suggestion="Implement asymmetric exit rules or time-based stop",
+                    expected_improvement="Faster exit from losing trades",
+                    confidence=0.6,
+                ))
+
+        return suggestions

@@ -11,6 +11,7 @@ from typing import List, Optional, Tuple
 
 from app.core.backtests.results_models import BacktestSummary
 from app.core.models.improve_models import DiagnosedIssue
+from app.core.models.exit_reason_models import ExitReasonAnalysis, ExitReasonSuggestion
 
 
 @dataclass
@@ -52,6 +53,8 @@ class DiagnosisInput:
             identifying significant drawdown periods; None when not available.
         atr_spike_periods: List of (start_date, end_date) tuples identifying
             periods of elevated ATR / volatility; None when not available.
+        exit_reason_analysis: ExitReasonAnalysis from trade exits; None when
+            not available.
     """
 
     in_sample: BacktestSummary
@@ -60,6 +63,7 @@ class DiagnosisInput:
     trade_profit_contributions: Optional[List[float]] = None
     drawdown_periods: Optional[List[Tuple[str, str, float]]] = None
     atr_spike_periods: Optional[List[Tuple[str, str]]] = None
+    exit_reason_analysis: Optional[ExitReasonAnalysis] = None
 
 
 @dataclass
@@ -71,7 +75,10 @@ class DiagnosisBundle:
             rule-based checks.
         structural: List of StructuralDiagnosis objects from the ten
             pattern-based structural checks.
+        exit_reason_suggestions: List of ExitReasonSuggestion objects from
+            exit reason analysis.
     """
 
     issues: List[DiagnosedIssue] = field(default_factory=list)
     structural: List[StructuralDiagnosis] = field(default_factory=list)
+    exit_reason_suggestions: List[ExitReasonSuggestion] = field(default_factory=list)

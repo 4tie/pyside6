@@ -21879,3 +21879,7 @@ Freqtrade Version:	freqtrade 2026.3
 2026-04-22 05:24:55.467 | DEBUG    | freqtrade_gui.services.pair_analysis | analyse: 2 distinct pairs from 2 trades
 2026-04-22 05:24:55.467 | DEBUG    | freqtrade_gui.services.pair_analysis | analyse complete: 2 pairs, best=['A/USDT', 'B/USDT'], worst=['A/USDT', 'B/USDT'], flags=[]
 2026-04-22 06:05:18.553 | DEBUG    | freqtrade_gui.services.diagnosis | diagnose: 0 rules fired
+2026-04-22 06:10:35.956 | DEBUG    | freqtrade_gui.services.comparison | compare: profit_diff=5.00, winrate_diff=10.00, drawdown_diff=-2.00, verdict=improved
+2026-04-22 06:11:04.470 | DEBUG    | freqtrade_gui.services.comparison | compare: profit_diff=5.00, winrate_diff=10.00, drawdown_diff=-2.00, verdict=improved
+2026-04-22 06:11:04.470 | DEBUG    | freqtrade_gui.services.comparison | compare: profit_diff=-5.00, winrate_diff=-10.00, drawdown_diff=2.00, verdict=degraded
+2026-04-22 06:11:04.472 | DEBUG    | freqtrade_gui.services.comparison | compare: profit_diff=2.00, winrate_diff=5.00, drawdown_diff=3.00, verdict=neutral

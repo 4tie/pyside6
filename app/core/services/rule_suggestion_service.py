@@ -6,6 +6,7 @@ from __future__ import annotations
 from typing import Callable, List, Optional
 
 from app.core.models.diagnosis_models import StructuralDiagnosis
+from app.core.models.exit_reason_models import ExitReasonSuggestion
 from app.core.models.improve_models import DiagnosedIssue, ParameterSuggestion
 from app.core.utils.app_logger import get_logger
 
@@ -20,6 +21,7 @@ class RuleSuggestionService:
         issues: List[DiagnosedIssue],
         params: dict,
         structural: Optional[List[StructuralDiagnosis]] = None,
+        exit_reason_suggestions: Optional[List[ExitReasonSuggestion]] = None,
     ) -> List[ParameterSuggestion]:
         """Return concrete parameter mutations for handled diagnoses.
 
@@ -36,6 +38,12 @@ class RuleSuggestionService:
         if structural:
             for structural_diag in structural:
                 suggestion = RuleSuggestionService._handle_structural(structural_diag, params)
+                if suggestion is not None:
+                    suggestions.append(suggestion)
+
+        if exit_reason_suggestions:
+            for exit_suggestion in exit_reason_suggestions:
+                suggestion = RuleSuggestionService._handle_exit_reason(exit_suggestion, params)
                 if suggestion is not None:
                     suggestions.append(suggestion)
 
@@ -452,3 +460,141 @@ class RuleSuggestionService:
     def _suggest_expectancy_negative(_params: dict) -> Optional[ParameterSuggestion]:
         _log.debug("expectancy_negative has no deterministic JSON mutation")
         return None
+
+    # ------------------------------------------------------------------
+    # Exit reason handlers
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _handle_exit_reason(
+        exit_suggestion: ExitReasonSuggestion,
+        params: dict,
+    ) -> Optional[ParameterSuggestion]:
+        """Map exit reason suggestions to parameter mutations."""
+        handlers = {
+            "stoploss": RuleSuggestionService._suggest_stoploss_too_wide,  # Reuse existing handler
+            "roi": RuleSuggestionService._suggest_roi_adjustment,
+            "signal": RuleSuggestionService._suggest_signal_filter,
+            "trailing_stop": RuleSuggestionService._suggest_trailing_stop_adjustment,
+            "force_exit": RuleSuggestionService._suggest_risk_reduction,
+            "timing_mismatch": RuleSuggestionService._suggest_asymmetric_exits,
+        }
+
+        handler = handlers.get(exit_suggestion.affected_reason)
+        if handler is None:
+            _log.debug(
+                "No handler for exit reason '%s' — skipping suggestion",
+                exit_suggestion.affected_reason,
+            )
+            return None
+
+        return handler(params)
+
+    @staticmethod
+    def _suggest_roi_adjustment(params: dict) -> Optional[ParameterSuggestion]:
+        """Suggest ROI adjustment based on exit reason analysis."""
+        minimal_roi: dict = params.get("minimal_roi", {})
+        if not minimal_roi:
+            return None
+
+        # Widen ROI targets to capture larger moves
+        proposed_roi = {key: round(value + 0.005, 6) for key, value in minimal_roi.items()}
+        if proposed_roi == minimal_roi:
+            return None
+
+        return ParameterSuggestion(
+            parameter="minimal_roi",
+            proposed_value=proposed_roi,
+            reason="ROI exits dominate but underperform — widening targets",
+            expected_improvement="Better profit capture on winning trades",
+        )
+
+    @staticmethod
+    def _suggest_signal_filter(params: dict) -> Optional[ParameterSuggestion]:
+        """Suggest adding entry confirmation filter."""
+        buy_params: dict = params.get("buy_params", {})
+        if not buy_params:
+            return None
+
+        # Tighten first numeric buy param as proxy for confirmation
+        numeric_keys = [
+            key for key, value in buy_params.items()
+            if isinstance(value, (int, float)) and not isinstance(value, bool)
+        ]
+        if not numeric_keys:
+            return None
+
+        target_key = numeric_keys[0]
+        current_val = buy_params[target_key]
+
+        # Tighten threshold (decrease for RSI-like, increase for momentum-like)
+        if isinstance(current_val, (int, float)):
+            delta = -2 if isinstance(current_val, int) else -0.02
+            proposed_val = current_val + delta
+
+            proposed_group = dict(buy_params)
+            proposed_group[target_key] = round(proposed_val, 6) if isinstance(current_val, float) else int(round(proposed_val))
+
+            return ParameterSuggestion(
+                parameter="buy_params",
+                proposed_value=proposed_group,
+                reason="Signal exits have poor performance — adding confirmation",
+                expected_improvement="Better entry quality",
+            )
+        return None
+
+    @staticmethod
+    def _suggest_trailing_stop_adjustment(params: dict) -> Optional[ParameterSuggestion]:
+        """Suggest trailing stop adjustment."""
+        if not params.get("trailing_stop", False):
+            # Enable trailing stop if disabled
+            return ParameterSuggestion(
+                parameter="trailing_stop",
+                proposed_value=True,
+                reason="Trailing stop underperforming — enabling with defaults",
+                expected_improvement="Better profit protection",
+            )
+
+        # Adjust existing trailing stop parameters
+        current_positive = params.get("trailing_stop_positive", 0.0)
+        proposed_positive = round(current_positive + 0.005, 6) if current_positive > 0 else 0.01
+
+        return ParameterSuggestion(
+            parameter="trailing_stop_positive",
+            proposed_value=proposed_positive,
+            reason="Trailing stop underperforming — tightening distance",
+            expected_improvement="Earlier profit capture without premature exits",
+        )
+
+    @staticmethod
+    def _suggest_risk_reduction(params: dict) -> Optional[ParameterSuggestion]:
+        """Suggest risk reduction measures."""
+        current_mot = params.get("max_open_trades", 3)
+        proposed_mot = max(current_mot - 1, 1)
+
+        if proposed_mot == current_mot:
+            return None
+
+        return ParameterSuggestion(
+            parameter="max_open_trades",
+            proposed_value=proposed_mot,
+            reason="High forced/emergency exit rate — reducing exposure",
+            expected_improvement="Fewer forced liquidations",
+        )
+
+    @staticmethod
+    def _suggest_asymmetric_exits(params: dict) -> Optional[ParameterSuggestion]:
+        """Suggest asymmetric exit rules for timing mismatch."""
+        # Reduce stoploss (tighten) to exit losers faster
+        current_stoploss = params.get("stoploss", -0.10)
+        proposed_stoploss = round(max(-0.30, current_stoploss + 0.02), 10)
+
+        if proposed_stoploss == current_stoploss:
+            return None
+
+        return ParameterSuggestion(
+            parameter="stoploss",
+            proposed_value=proposed_stoploss,
+            reason="Losers lasting too long vs winners — tightening stoploss",
+            expected_improvement="Faster exit from losing trades",
+        )

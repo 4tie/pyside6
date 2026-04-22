@@ -1,8 +1,10 @@
-"""comparison_service.py — Stateless service for comparing two backtest runs.
+"""comparison_service.py — Stateless service for backtest run comparison.
 
-Compares two BacktestSummary objects and produces a RunComparison DTO
-with profit/winrate/drawdown diffs and a verdict string.
+Compares two BacktestSummary objects and returns a RunComparison with diffs
+and a verdict indicating whether the candidate run improved, degraded, or
+remained neutral relative to the baseline.
 """
+
 from __future__ import annotations
 
 from app.core.backtests.results_models import BacktestSummary, RunComparison
@@ -12,47 +14,44 @@ _log = get_logger("services.comparison")
 
 
 class ComparisonService:
-    """Stateless service for run comparison.
+    """Stateless service that compares two backtest runs.
 
-    Computes deltas between two backtest runs and derives a verdict
-    (improved/degraded/neutral). All methods are static.
+    All methods are static — no instance state is held.
     """
 
     @staticmethod
     def compare(run_a: BacktestSummary, run_b: BacktestSummary) -> RunComparison:
-        """Compare two backtest runs, computing deltas relative to run_a.
+        """Compute a RunComparison between two backtest summaries.
 
-        Computes three metrics and a verdict:
-        - profit_diff = run_b.total_profit - run_a.total_profit
-        - winrate_diff = run_b.win_rate - run_a.win_rate
-        - drawdown_diff = run_b.max_drawdown - run_a.max_drawdown (positive = worse)
+        run_b is treated as the candidate; run_a as the baseline.
+        Diffs are computed as run_b - run_a.
 
-        Verdict logic (checked in order):
-        1. If profit_diff > 0 AND winrate_diff > 0 AND drawdown_diff <= 0 → "improved"
-        2. Else if profit_diff < 0 OR winrate_diff < 0 OR drawdown_diff > 0 → "degraded"
-        3. Else → "neutral"
+        Verdict logic (evaluated in order, first match wins):
+        1. profit_diff > 0.0 AND drawdown_diff <= 0.0 → "improved"
+        2. profit_diff < 0.0 OR drawdown_diff > 5.0 → "degraded"
+        3. Otherwise → "neutral"
 
         Args:
-            run_a: Baseline run (reference).
-            run_b: Candidate run (comparison target).
+            run_a: Baseline BacktestSummary.
+            run_b: Candidate BacktestSummary.
 
         Returns:
-            RunComparison with computed diffs and verdict.
+            RunComparison with diffs and verdict.
         """
         profit_diff = run_b.total_profit - run_a.total_profit
         winrate_diff = run_b.win_rate - run_a.win_rate
         drawdown_diff = run_b.max_drawdown - run_a.max_drawdown
 
         # Verdict logic
-        if profit_diff > 0 and winrate_diff > 0 and drawdown_diff <= 0:
+        if profit_diff > 0.0 and drawdown_diff <= 0.0:
             verdict = "improved"
-        elif profit_diff < 0 or winrate_diff < 0 or drawdown_diff > 0:
+        elif profit_diff < 0.0 or drawdown_diff > 5.0:
             verdict = "degraded"
         else:
             verdict = "neutral"
 
         _log.debug(
-            "compare: profit_diff=%0.3f, winrate_diff=%0.1f%%, drawdown_diff=%0.1f%%, verdict=%s",
+            "compare: profit_diff=%0.2f, winrate_diff=%0.2f, drawdown_diff=%0.2f, verdict=%s",
             profit_diff,
             winrate_diff,
             drawdown_diff,

@@ -41,14 +41,14 @@
   - [x] 6.5 Test multiple rules fire simultaneously when multiple conditions met
   - [x] 6.6 Run tests and confirm they pass
 
-- [~] 7. Implement ComparisonService
-  - [~] 7.1 Create `app/core/services/comparison_service.py` with stateless `ComparisonService` class
-  - [~] 7.2 Implement `compare(run_a, run_b) -> RunComparison` as `@staticmethod`
-  - [~] 7.3 Compute `profit_diff`, `winrate_diff`, `drawdown_diff` as `run_b - run_a`
-  - [~] 7.4 Implement verdict logic in order: `"improved"` → `"degraded"` → `"neutral"`
+- [x] 7. Implement ComparisonService
+  - [x] 7.1 Create `app/core/services/comparison_service.py` with stateless `ComparisonService` class
+  - [x] 7.2 Implement `compare(run_a, run_b) -> RunComparison` as `@staticmethod`
+  - [x] 7.3 Compute `profit_diff`, `winrate_diff`, `drawdown_diff` as `run_b - run_a`
+  - [x] 7.4 Implement verdict logic in order: `"improved"` → `"degraded"` → `"neutral"`
 
 - [~] 8. Write property-based tests for ComparisonService
-  - [~] 8.1 Create `tests/test_comparison_properties.py` with Hypothesis strategy for `BacktestSummary`
+  - [-] 8.1 Create `tests/test_comparison_properties.py` with Hypothesis strategy for `BacktestSummary`
   - [~] 8.2 Implement `test_profit_diff_antisymmetry`: `compare(a,b).profit_diff == -compare(b,a).profit_diff`
   - [~] 8.3 Run tests and confirm they pass
 

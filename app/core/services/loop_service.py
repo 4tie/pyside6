@@ -267,6 +267,10 @@ def build_diagnosis_input(
     fold_results: Optional[List[BacktestResults]] = None,
 ) -> DiagnosisInput:
     """Build a DiagnosisInput bundle from parsed backtest results."""
+    from app.core.services.exit_reason_analysis_service import ExitReasonAnalysisService
+
+    exit_reason_analysis = ExitReasonAnalysisService.analyze(in_sample_results.trades)
+
     return DiagnosisInput(
         in_sample=in_sample_results.summary,
         oos_summary=oos_results.summary if oos_results is not None else None,
@@ -274,6 +278,7 @@ def build_diagnosis_input(
             result.summary for result in (fold_results or [])
         ] or None,
         trade_profit_contributions=compute_trade_profit_contributions(in_sample_results),
+        exit_reason_analysis=exit_reason_analysis,
     )
 
 
