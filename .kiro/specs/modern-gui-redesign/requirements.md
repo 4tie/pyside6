@@ -3,7 +3,7 @@
 ## Introduction
 
 This document defines the requirements for a complete GUI redesign of the Freqtrade GUI desktop
-application. The redesign replaces the current `app/ui_v2/` layer with a clean, modern,
+application. The redesign replaces the current `app/ui/` layer with a clean, modern,
 user-guided interface built on PySide6 (Qt6), Python 3.9+, and Pydantic v2. All existing backend
 services (`app/core/`) remain unchanged. The new UI must be intuitive — the user should always
 know their next step — and must reduce manual text entry by favouring dropdowns, selectors, and
@@ -24,7 +24,7 @@ Key new capabilities introduced by this redesign:
 ## Glossary
 
 - **Application**: The Freqtrade GUI PySide6 desktop application.
-- **Theme_System**: The centralised module (`app/ui_v2/theme.py`) that owns all colour palettes,
+- **Theme_System**: The centralised module (`app/ui/theme.py`) that owns all colour palettes,
   spacing scales, font constants, and QSS generation.
 - **Main_Window**: The top-level `QMainWindow` (`ModernMainWindow`) that hosts the sidebar,
   header bar, stacked page area, terminal dock, and AI panel dock.
@@ -504,13 +504,13 @@ project's existing conventions, so that it is easy to maintain and extend.
 
 #### Acceptance Criteria
 
-1. THE Application SHALL NOT import from `app/ui/` (legacy v1 UI) within any `app/ui_v2/` module,
-   except for `app/ui/theme.py` which is re-exported by `app/ui_v2/theme.py`.
-2. THE Application SHALL NOT import from `app/ui_v2/` within any `app/core/` module.
-3. EVERY non-trivial module in `app/ui_v2/` SHALL begin with a triple-quoted module-level
+1. THE Application SHALL NOT import from any legacy UI module within any `app/ui/` module,
+   except for `app/ui/theme.py` which is the single source of truth for all theme symbols.
+2. THE Application SHALL NOT import from `app/ui/` within any `app/core/` module.
+3. EVERY non-trivial module in `app/ui/` SHALL begin with a triple-quoted module-level
    docstring describing its purpose.
-4. EVERY non-trivial module in `app/ui_v2/` SHALL declare a module-level logger using
-   `_log = get_logger("ui_v2.<module_path>")`.
+4. EVERY non-trivial module in `app/ui/` SHALL declare a module-level logger using
+   `_log = get_logger("ui.<module_path>")`.
 5. ALL UI page classes SHALL follow the construction order: store dependencies → `_build_ui()` →
    `_connect_signals()` → `_refresh_*()` → restore persisted state.
 6. THE Theme_System SHALL be the single source of truth for all colour values; no page, widget,
