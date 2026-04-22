@@ -38,7 +38,7 @@ def main():
     log.info("use_module : %s", settings.use_module_execution)
     log.info("=" * 60)
 
-    from app.ui_v2.main_window import ModernMainWindow
+    from app.ui.main_window import ModernMainWindow
 
     window = ModernMainWindow(settings_state=settings_state)  # calls showMaximized() internally
 

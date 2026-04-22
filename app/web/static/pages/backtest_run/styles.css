@@ -1,14 +1,14 @@
 /* Backtest Run Page Styles */
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
+.page-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-.form-container {
-  max-width: 800px;
-  margin: 0 auto 2rem auto;
+.main-content {
+  flex: 1;
+  padding: 2rem 0;
 }
 
 .form-group {
@@ -47,10 +47,7 @@
 .pairs-container {
   max-height: 300px;
   overflow-y: auto;
-  border: 1px solid var(--border);
-  border-radius: 8px;
   padding: 0.5rem;
-  background-color: var(--surface);
 }
 
 .pair-item {
@@ -63,11 +60,10 @@
 }
 
 .pair-item:hover {
-  background-color: var(--card);
+  background-color: var(--surface);
 }
 
 .pair-item.favorite {
-  background-color: var(--card);
   border-left: 3px solid var(--accent-purple);
 }
 
@@ -96,12 +92,7 @@
 
 /* Logs Panel */
 .logs-panel {
-  background-color: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 1rem;
-  max-width: 800px;
-  margin: 0 auto;
+  margin-top: 2rem;
 }
 
 .logs-header {

@@ -9,9 +9,9 @@ from pathlib import Path
 from typing import Optional
 
 from PySide6.QtCore import Qt, Signal
+from PySide6.QtGui import QAction
 from PySide6.QtWidgets import (
     QAbstractItemView,
-    QAction,
     QHBoxLayout,
     QHeaderView,
     QLabel,

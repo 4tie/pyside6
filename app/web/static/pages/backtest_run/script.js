@@ -136,6 +136,11 @@ document.getElementById('pairs-search').addEventListener('input', () => {
 
 // Download data button
 document.getElementById('download-data-btn').addEventListener('click', async () => {
+  const btn = document.getElementById('download-data-btn');
+  
+  // Prevent double-click
+  if (btn.disabled) return;
+  
   const timeframe = document.getElementById('timeframe').value;
   const timerange = document.getElementById('timerange').value;
   const pairsArray = Array.from(selectedPairs);
@@ -150,7 +155,13 @@ document.getElementById('download-data-btn').addEventListener('click', async () 
     return;
   }
   
+  // Disable button to prevent double-click
+  btn.disabled = true;
+  btn.textContent = 'Downloading...';
+  
   addLog('info', `Downloading data for ${pairsArray.length} pairs...`);
+  addLog('info', `Timeframe: ${timeframe}`);
+  addLog('info', `Timerange: ${timerange || 'Not specified'}`);
   
   try {
     const result = await downloadData({
@@ -167,11 +178,20 @@ document.getElementById('download-data-btn').addEventListener('click', async () 
   } catch (error) {
     console.error('Download failed:', error);
     addLog('error', 'Download failed. Please try again.');
+  } finally {
+    // Re-enable button after request completes
+    btn.disabled = false;
+    btn.textContent = 'Download Data';
   }
 });
 
 // Run backtest button
 document.getElementById('run-backtest-btn').addEventListener('click', async () => {
+  const btn = document.getElementById('run-backtest-btn');
+  
+  // Prevent double-click
+  if (btn.disabled) return;
+  
   const strategy = document.getElementById('strategy').value;
   const timeframe = document.getElementById('timeframe').value;
   const timerange = document.getElementById('timerange').value;
@@ -194,14 +214,25 @@ document.getElementById('run-backtest-btn').addEventListener('click', async () =
     return;
   }
   
+  // Disable button to prevent double-click
+  btn.disabled = true;
+  btn.textContent = 'Running...';
+  
   addLog('info', `Starting backtest for ${strategy}...`);
   
   // Placeholder - would call backtest API
   addLog('info', `Strategy: ${strategy}`);
   addLog('info', `Timeframe: ${timeframe}`);
+  addLog('info', `Timerange: ${timerange || 'Not specified'}`);
   addLog('info', `Pairs: ${pairsArray.join(', ')}`);
   addLog('info', `Max Open Trades: ${maxOpenTrades}`);
   addLog('info', `Dry Run Wallet: ${dryRunWallet}`);
+  
+  // Re-enable button after a delay (in real implementation, this would be after backtest completes)
+  setTimeout(() => {
+    btn.disabled = false;
+    btn.textContent = 'Run Backtest';
+  }, 30000); // 30 second timeout for placeholder
 });
 
 // Clear logs

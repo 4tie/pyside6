@@ -15,9 +15,8 @@ const urlParams = new URLSearchParams(window.location.search);
 const runId = urlParams.get('run_id');
 
 if (!runId) {
-  document.getElementById('loading').classList.add('hidden');
-  document.getElementById('error').textContent = 'No run ID provided';
-  document.getElementById('error').classList.remove('hidden');
+  // Redirect to dashboard if no run_id provided
+  window.location.href = '/static/pages/dashboard/index.html';
 } else {
   loadRunDetail(runId);
 }

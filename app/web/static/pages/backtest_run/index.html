@@ -33,7 +33,7 @@
       <div class="container">
         <h2>Run Backtest</h2>
         
-        <div class="form-container">
+        <div class="card form-container">
           <form id="backtest-form">
             <!-- Strategy -->
             <div class="form-group">
@@ -71,7 +71,7 @@
               <div class="pairs-search">
                 <input type="text" id="pairs-search" class="input" placeholder="Search pairs...">
               </div>
-              <div class="pairs-container" id="pairs-container">
+              <div class="card pairs-container" id="pairs-container">
                 <div class="loading">Loading pairs...</div>
               </div>
             </div>
@@ -91,13 +91,13 @@
             <!-- Action Buttons -->
             <div class="form-actions">
               <button type="button" id="download-data-btn" class="button button-secondary">Download Data</button>
-              <button type="button" id="run-backtest-btn" class="button button-primary">Run Backtest</button>
+              <button type="button" id="run-backtest-btn" class="button">Run Backtest</button>
             </div>
           </form>
         </div>
 
         <!-- Live Logs Panel -->
-        <div class="logs-panel">
+        <div class="card logs-panel">
           <div class="logs-header">
             <h3>Live Logs</h3>
             <button id="clear-logs" class="button button-secondary">Clear</button>

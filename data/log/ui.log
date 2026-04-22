@@ -3745,3 +3745,16 @@
 2026-04-22 06:22:27.346 | INFO     | freqtrade_gui.ui.loop_page     | Baseline results: 21 trades, 57.14% win rate, 11.37% profit
 2026-04-22 06:22:27.346 | INFO     | freqtrade_gui.ui.loop_page     | Baseline established, restarting loop with real data
 2026-04-22 06:22:34.169 | INFO     | freqtrade_gui.ui.loop_page     | Loop finalized: All reachable parameter combinations exhausted
+2026-04-22 07:58:26.547 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Last Profit' updated: value='—' trend=None
+2026-04-22 07:58:26.547 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Win Rate' updated: value='—' trend=None
+2026-04-22 07:58:26.547 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Total Trades' updated: value='—' trend=None
+2026-04-22 07:58:26.548 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Best Strategy' updated: value='—' trend=None
+2026-04-22 07:58:26.548 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Last Profit' updated: value='-7.63%' trend=-7.6264
+2026-04-22 07:58:26.548 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Win Rate' updated: value='36.5%' trend=None
+2026-04-22 07:58:26.548 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Total Trades' updated: value='238' trend=None
+2026-04-22 07:58:26.548 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Best Strategy' updated: value='MultiMa_v3' trend=None
+2026-04-22 07:58:26.548 | DEBUG    | freqtrade_gui.ui.dashboard_page | DashboardPage refreshed: 22 total runs
+2026-04-22 07:58:26.550 | DEBUG    | freqtrade_gui.ui.run_config_form | Refreshed strategy list: 14 strategies found
+2026-04-22 07:58:26.570 | DEBUG    | freqtrade_gui.ui.run_config_form | Refreshed strategy list: 14 strategies found
+2026-04-22 07:58:28.183 | DEBUG    | freqtrade_gui.ui.strategy_page | Strategy list refreshed: 14 strategies
+2026-04-22 07:58:28.185 | DEBUG    | freqtrade_gui.ui.settings_page | Settings loaded into form

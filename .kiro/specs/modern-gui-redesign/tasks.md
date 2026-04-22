@@ -114,7 +114,7 @@ All code is Python 3.9+ with PySide6. Follow project conventions: `_log = get_lo
   - Run `pytest --tb=short` and confirm zero new failures before proceeding to pages.
   - Ensure all tests pass, ask the user if questions arise.
 
-- [-] 6. Implement `DashboardPage`
+- [x] 6. Implement `DashboardPage`
   - Create `app/ui/pages/dashboard_page.py`
   - `QWidget` with `__init__(self, settings_state: SettingsState, parent=None)`
   - `MetricCard` grid (2×2): last backtest profit, win rate, total trades, best strategy — data from `RunStore` / `IndexStore`
@@ -123,7 +123,7 @@ All code is Python 3.9+ with PySide6. Follow project conventions: `_log = get_lo
   - Empty-state label shown when no runs exist
   - _Requirements: 3.2, 3.7, 7.5, 16.1_
 
-- [-] 7. Implement `BacktestPage`
+- [x] 7. Implement `BacktestPage`
   - Create `app/ui/pages/backtest_page.py`
   - `QWidget` with `__init__(self, settings_state: SettingsState, parent=None)`
   - `QSplitter` (horizontal) with `RunConfigForm` on left, tabbed output on right
@@ -138,7 +138,7 @@ All code is Python 3.9+ with PySide6. Follow project conventions: `_log = get_lo
     - Construct page, call `run_config_form.set_config(cfg)`, assert `run_config_form.get_config() == cfg`
     - _Requirements: 4.1, 4.3_
 
-- [-] 8. Implement `OptimizePage`
+- [x] 8. Implement `OptimizePage`
   - Create `app/ui/pages/optimize_page.py`
   - `QWidget` with `__init__(self, settings_state: SettingsState, parent=None)`
   - `QSplitter` (horizontal): left panel has `RunConfigForm` + hyperopt options group (epochs `QSpinBox`, spaces `QComboBox`, loss function `QComboBox`) + collapsible advisor `SectionHeader`
@@ -147,14 +147,14 @@ All code is Python 3.9+ with PySide6. Follow project conventions: `_log = get_lo
   - Splitter state persisted under key `splitter/optimize`
   - _Requirements: 14.1, 14.5, 8.6_
 
-- [-] 9. Implement `DownloadPage`
+- [x] 9. Implement `DownloadPage`
   - Create `app/ui/pages/download_page.py`
   - `QWidget` with `__init__(self, settings_state: SettingsState, parent=None)`
   - `QSplitter` (horizontal): left panel has `RunConfigForm` (timeframe + timerange + pairs only, `show_strategy=False`) + inline validation warnings
   - Right panel: "Data Status" tab → `DataStatusWidget` (reused), "Terminal" tab → `TerminalWidget`
   - _Requirements: 13.1, 13.3, 13.4, 8.6_
 
-- [-] 10. Implement `StrategyPage`
+- [x] 10. Implement `StrategyPage`
   - Create `app/ui/pages/strategy_page.py`
   - `QWidget` with `__init__(self, settings_state: SettingsState, parent=None)`
   - Master-detail `QSplitter`: left `QListWidget` of strategies with search `QLineEdit` at top; each item shows name + last modified + last backtest profit from index
@@ -165,7 +165,7 @@ All code is Python 3.9+ with PySide6. Follow project conventions: `_log = get_lo
   - Splitter state persisted under key `splitter/strategy`
   - _Requirements: 6.1, 6.2, 6.3, 6.5, 6.6, 8.6_
 
-- [-] 11. Implement `SettingsPage`
+- [x] 11. Implement `SettingsPage`
   - Create `app/ui/pages/settings_page.py`
   - `QWidget` with `__init__(self, settings_state: SettingsState, parent=None)`
   - Category sidebar (`QListWidget`) + `QStackedWidget` for category panels: Paths, Execution, Terminal, AI, Appearance, About
@@ -179,7 +179,7 @@ All code is Python 3.9+ with PySide6. Follow project conventions: `_log = get_lo
     - **Property P3: Settings Round-Trip — settings saved via new UI must produce identical `AppSettings` JSON**
     - **Validates: Requirements 12.3, 1.2**
 
-- [x] 12. Implement `ModernMainWindow`
+- [-] 12. Implement `ModernMainWindow`
   - Create `app/ui/main_window.py` (replaces old `MainWindow`)
   - `QMainWindow` subclass; constructor: `__init__(self, settings_state: SettingsState, parent=None)`
   - Layout: `HeaderBar` at top (set as central widget header via `QVBoxLayout` wrapper), `NavSidebar` + `QStackedWidget` in `QHBoxLayout` as central widget body, `AppStatusBar` replacing default status bar
