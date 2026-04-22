@@ -36,7 +36,7 @@
     },
     "pyside6": {
       "command": "python",
-      "disabled": false,
+      "disabled": true,
       "timeout": 60000,
       "args": [
         "T:\\ae\\pyside6\\data\\tools\\mcp_pyside6.py"
@@ -45,7 +45,7 @@
     },
     "freqtrade": {
       "command": "python",
-      "disabled": false,
+      "disabled": true,
       "timeout": 60000,
       "args": [
         "T:\\ae\\pyside6\\data\\tools\\mcp_freqtrade.py"
@@ -54,7 +54,7 @@
     },
     "project-memory": {
       "command": "python",
-      "disabled": false,
+      "disabled": true,
       "timeout": 60000,
       "args": [
         "T:\\ae\\pyside6\\data\\tools\\mcp_project_memory.py"

@@ -3,6 +3,67 @@ from typing import Dict, List, Optional
 
 
 @dataclass
+class PairMetrics:
+    """Per-pair computed statistics for one backtest run.
+
+    Attributes:
+        pair: Trading pair symbol (e.g. "ETH/USDT").
+        total_profit_pct: Sum of BacktestTrade.profit for all trades on this pair.
+        win_rate: Wins divided by total trades, expressed as a percentage (0–100).
+        trade_count: Total number of trades on this pair.
+        max_drawdown_pct: Absolute value of the most negative single-trade profit
+            for this pair; 0.0 if no losing trades exist.
+        profit_share: This pair's total_profit_pct divided by the absolute sum of
+            all pairs' total_profit_pct; 0.0 when total absolute profit is zero.
+    """
+
+    pair: str
+    total_profit_pct: float
+    win_rate: float
+    trade_count: int
+    max_drawdown_pct: float
+    profit_share: float
+
+
+@dataclass
+class PairAnalysis:
+    """Full output of PairAnalysisService for one backtest run.
+
+    Attributes:
+        pair_metrics: One PairMetrics entry per distinct pair in the run.
+        best_pairs: Up to three PairMetrics with the highest total_profit_pct,
+            ordered descending.
+        worst_pairs: Up to three PairMetrics with the lowest total_profit_pct,
+            ordered ascending.
+        dominance_flags: List of flag strings; contains "profit_concentration"
+            when a single pair's profit_share exceeds 0.60.
+    """
+
+    pair_metrics: List[PairMetrics]
+    best_pairs: List[PairMetrics]
+    worst_pairs: List[PairMetrics]
+    dominance_flags: List[str]
+
+
+@dataclass
+class RunComparison:
+    """Diff between two backtest runs (run_b relative to run_a).
+
+    Attributes:
+        profit_diff: run_b.total_profit - run_a.total_profit.
+        winrate_diff: run_b.win_rate - run_a.win_rate.
+        drawdown_diff: run_b.max_drawdown - run_a.max_drawdown; positive means
+            run_b has higher drawdown (worse).
+        verdict: "improved" | "degraded" | "neutral".
+    """
+
+    profit_diff: float
+    winrate_diff: float
+    drawdown_diff: float
+    verdict: str
+
+
+@dataclass
 class BacktestTrade:
     """A single trade from backtest results."""
     pair: str

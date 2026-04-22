@@ -2,15 +2,15 @@
 
 ## Tasks
 
-- [-] 1. Add PairMetrics, PairAnalysis, and RunComparison dataclasses to results_models.py
-  - [ ] 1.1 Add `PairMetrics` dataclass with fields: `pair`, `total_profit_pct`, `win_rate`, `trade_count`, `max_drawdown_pct`, `profit_share`
-  - [ ] 1.2 Add `PairAnalysis` dataclass with fields: `pair_metrics`, `best_pairs`, `worst_pairs`, `dominance_flags`
-  - [ ] 1.3 Add `RunComparison` dataclass with fields: `profit_diff`, `winrate_diff`, `drawdown_diff`, `verdict`
-  - [ ] 1.4 Verify existing imports of `results_models` are unaffected (no regressions)
+- [x] 1. Add PairMetrics, PairAnalysis, and RunComparison dataclasses to results_models.py
+  - [x] 1.1 Add `PairMetrics` dataclass with fields: `pair`, `total_profit_pct`, `win_rate`, `trade_count`, `max_drawdown_pct`, `profit_share`
+  - [x] 1.2 Add `PairAnalysis` dataclass with fields: `pair_metrics`, `best_pairs`, `worst_pairs`, `dominance_flags`
+  - [x] 1.3 Add `RunComparison` dataclass with fields: `profit_diff`, `winrate_diff`, `drawdown_diff`, `verdict`
+  - [x] 1.4 Verify existing imports of `results_models` are unaffected (no regressions)
 
 - [ ] 2. Create DiagnosisSuggestion dataclass in analysis_models.py
-  - [ ] 2.1 Create `app/core/models/analysis_models.py` with `DiagnosisSuggestion` dataclass (`rule_id`, `message`, `severity`)
-  - [ ] 2.2 Add module-level logger and Google-style docstring
+  - [x] 2.1 Create `app/core/models/analysis_models.py` with `DiagnosisSuggestion` dataclass (`rule_id`, `message`, `severity`)
+  - [x] 2.2 Add module-level logger and Google-style docstring
 
 - [ ] 3. Implement PairAnalysisService
   - [ ] 3.1 Create `app/core/services/pair_analysis_service.py` with stateless `PairAnalysisService` class
