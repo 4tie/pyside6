@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="/static/shared/styles/base.css">
   <link rel="stylesheet" href="/static/shared/styles/themes.css">
   <link rel="stylesheet" href="/static/pages/run_detail/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
   <div class="page-container">
@@ -82,6 +83,7 @@
           <!-- Tabs -->
           <div class="tabs">
             <button class="tab-button active" data-tab="trades">Trades</button>
+            <button class="tab-button" data-tab="charts">Charts</button>
             <button class="tab-button" data-tab="diagnosis">Diagnosis</button>
             <button class="tab-button" data-tab="params">Parameters</button>
             <button class="tab-button" data-tab="diff">Diff Changes</button>
@@ -92,6 +94,24 @@
             <div class="tab-panel active" id="trades-panel">
               <div class="card">
                 <h3>Trades</h3>
+                <div class="trades-summary">
+                  <div class="summary-stat">
+                    <span class="label">Total Trades:</span>
+                    <span class="value" id="total-trades">0</span>
+                  </div>
+                  <div class="summary-stat">
+                    <span class="label">Wins:</span>
+                    <span class="value text-success" id="total-wins">0</span>
+                  </div>
+                  <div class="summary-stat">
+                    <span class="label">Losses:</span>
+                    <span class="value text-error" id="total-losses">0</span>
+                  </div>
+                  <div class="summary-stat">
+                    <span class="label">Win Rate:</span>
+                    <span class="value" id="trades-winrate">0%</span>
+                  </div>
+                </div>
                 <div class="table-container">
                   <table class="trades-table">
                     <thead>
@@ -105,6 +125,27 @@
                     </thead>
                     <tbody id="trades-body"></tbody>
                   </table>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-panel" id="charts-panel">
+              <div class="card">
+                <h3>Equity Curve</h3>
+                <div class="chart-container">
+                  <canvas id="equity-chart"></canvas>
+                </div>
+              </div>
+              <div class="card">
+                <h3>Drawdown</h3>
+                <div class="chart-container">
+                  <canvas id="drawdown-chart"></canvas>
+                </div>
+              </div>
+              <div class="card">
+                <h3>Profit Distribution</h3>
+                <div class="chart-container">
+                  <canvas id="profit-chart"></canvas>
                 </div>
               </div>
             </div>

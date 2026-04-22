@@ -14,6 +14,7 @@ from app.core.services.diagnosis_service import DiagnosisService
 from app.core.services.comparison_service import ComparisonService
 from app.core.services.loop_service import LoopService
 from app.core.services.improve_service import ImproveService
+from app.core.services.process_service import ProcessService
 
 
 @lru_cache
@@ -59,6 +60,12 @@ def get_loop_service() -> LoopService:
     return LoopService(settings, backtest, diagnosis, improve)
 
 
+@lru_cache
+def get_process_service() -> ProcessService:
+    """Get singleton ProcessService instance."""
+    return ProcessService()
+
+
 # Type aliases for dependency injection
 SettingsServiceDep = Annotated[SettingsService, Depends(get_settings_service)]
 BacktestServiceDep = Annotated[BacktestService, Depends(get_backtest_service)]
@@ -66,3 +73,4 @@ ImproveServiceDep = Annotated[ImproveService, Depends(get_improve_service)]
 DiagnosisServiceDep = Annotated[DiagnosisService, Depends(get_diagnosis_service)]
 ComparisonServiceDep = Annotated[ComparisonService, Depends(get_comparison_service)]
 LoopServiceDep = Annotated[LoopService, Depends(get_loop_service)]
+ProcessServiceDep = Annotated[ProcessService, Depends(get_process_service)]

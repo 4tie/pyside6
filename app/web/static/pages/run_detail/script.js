@@ -69,6 +69,17 @@ async function loadRunDetail(runId) {
       </tr>
     `).join('');
     
+    // Update trades summary
+    const totalTrades = run.trades.length;
+    const wins = run.trades.filter(t => t.profit >= 0).length;
+    const losses = run.trades.filter(t => t.profit < 0).length;
+    const winRate = totalTrades > 0 ? ((wins / totalTrades) * 100).toFixed(1) : 0;
+    
+    document.getElementById('total-trades').textContent = totalTrades;
+    document.getElementById('total-wins').textContent = wins;
+    document.getElementById('total-losses').textContent = losses;
+    document.getElementById('trades-winrate').textContent = `${winRate}%`;
+    
     // Load diagnosis
     loadDiagnosis(runId);
     
@@ -77,6 +88,9 @@ async function loadRunDetail(runId) {
     
     // Load baseline runs for diff
     loadBaselineRuns(run.strategy, runId);
+    
+    // Render charts
+    renderCharts(run);
     
   } catch (error) {
     console.error('Failed to load run:', error);
@@ -126,6 +140,150 @@ function renderParams(params) {
       `).join('')}
     </div>
   `;
+}
+
+function renderCharts(run) {
+  // Render equity chart
+  renderEquityChart(run);
+  
+  // Render drawdown chart
+  renderDrawdownChart(run);
+  
+  // Render profit distribution chart
+  renderProfitChart(run);
+}
+
+function renderEquityChart(run) {
+  const ctx = document.getElementById('equity-chart');
+  if (!ctx) return;
+  
+  // Generate equity curve data from trades
+  let balance = run.starting_balance || 100;
+  const equityData = [balance];
+  const labels = ['Start'];
+  
+  run.trades.forEach(trade => {
+    balance += trade.profit_abs || 0;
+    equityData.push(balance);
+    labels.push(formatDate(trade.close_date));
+  });
+  
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Equity',
+        data: equityData,
+        borderColor: 'rgb(75, 192, 192)',
+        backgroundColor: 'rgba(75, 192, 192, 0.1)',
+        fill: true,
+        tension: 0.1
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          display: true
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: false
+        }
+      }
+    }
+  });
+}
+
+function renderDrawdownChart(run) {
+  const ctx = document.getElementById('drawdown-chart');
+  if (!ctx) return;
+  
+  // Generate drawdown data
+  let balance = run.starting_balance || 100;
+  let peak = balance;
+  const drawdownData = [0];
+  const labels = ['Start'];
+  
+  run.trades.forEach(trade => {
+    balance += trade.profit_abs || 0;
+    if (balance > peak) peak = balance;
+    const drawdown = ((peak - balance) / peak) * 100;
+    drawdownData.push(drawdown);
+    labels.push(formatDate(trade.close_date));
+  });
+  
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Drawdown %',
+        data: drawdownData,
+        borderColor: 'rgb(255, 99, 132)',
+        backgroundColor: 'rgba(255, 99, 132, 0.1)',
+        fill: true,
+        tension: 0.1
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          display: true
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          max: Math.max(...drawdownData) * 1.1
+        }
+      }
+    }
+  });
+}
+
+function renderProfitChart(run) {
+  const ctx = document.getElementById('profit-chart');
+  if (!ctx) return;
+  
+  // Calculate profit distribution
+  const profits = run.trades.map(t => t.profit_abs || 0);
+  const winningTrades = profits.filter(p => p > 0);
+  const losingTrades = profits.filter(p => p < 0);
+  
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Winning Trades', 'Losing Trades'],
+      datasets: [{
+        label: 'Total Profit',
+        data: [
+          winningTrades.reduce((a, b) => a + b, 0),
+          losingTrades.reduce((a, b) => a + b, 0)
+        ],
+        backgroundColor: [
+          'rgba(75, 192, 192, 0.8)',
+          'rgba(255, 99, 132, 0.8)'
+        ]
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          display: true
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
 }
 
 async function loadBaselineRuns(strategy, currentRunId) {

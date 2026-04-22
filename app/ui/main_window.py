@@ -93,6 +93,10 @@ class ModernMainWindow(QMainWindow):
             settings_state.load_settings()
         self.settings_state = settings_state
 
+        # ── AI service ────────────────────────────────────────────────
+        self.ai_service = AIService(settings_state)
+        backtest_service = None
+
         # ── Apply initial stylesheet ──────────────────────────────────
         self._current_theme_mode: ThemeMode = ThemeMode.DARK
         _mode_str = (
@@ -112,6 +116,9 @@ class ModernMainWindow(QMainWindow):
         self.settings_state.settings_saved.connect(self._on_settings_saved)
         self.backtest_page.loop_completed.connect(self.strategy_page.refresh)
         self.loop_page.loop_completed.connect(self.strategy_page.refresh)
+        backtest_service = getattr(self.backtest_page, "_backtest_service", None)
+        if backtest_service is not None:
+            self.ai_service.connect_backtest_service(backtest_service)
         self._wire_signals()
 
         # ── Register keyboard shortcuts ───────────────────────────────

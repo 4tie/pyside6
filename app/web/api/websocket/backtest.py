@@ -53,6 +53,17 @@ class BacktestConnectionManager:
         for connection in self.active_connections:
             await connection.send_json(data)
 
+    async def send_log(self, line: str):
+        """Send a log line to all connected clients."""
+        data = {
+            "type": "log",
+            "data": {
+                "line": line
+            }
+        }
+        for connection in self.active_connections:
+            await connection.send_json(data)
+
 
 manager = BacktestConnectionManager()
 
