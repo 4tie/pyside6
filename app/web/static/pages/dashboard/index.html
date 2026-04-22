@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - PySide6 Freqtrade</title>
+  <link rel="stylesheet" href="../../shared/styles/variables.css">
+  <link rel="stylesheet" href="../../shared/styles/base.css">
+  <link rel="stylesheet" href="../../shared/styles/themes.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="page-container">
+    <!-- Navigation -->
+    <nav class="navbar">
+      <div class="navbar-brand">
+        <h1>PySide6 Freqtrade</h1>
+      </div>
+      <div class="navbar-links">
+        <a href="/pages/dashboard/index.html" class="active">Dashboard</a>
+        <a href="/pages/run_detail/index.html">Run Detail</a>
+        <a href="/pages/comparison/index.html">Comparison</a>
+        <a href="/pages/settings/index.html">Settings</a>
+      </div>
+      <div class="navbar-actions">
+        <button id="theme-toggle" class="button button-secondary">Toggle Theme</button>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="container">
+        <h2>Dashboard</h2>
+        
+        <!-- Metrics Cards -->
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <span class="metric-label">Total Runs</span>
+            <span class="metric-value" id="total-runs">0</span>
+          </div>
+          <div class="metric-card">
+            <span class="metric-label">Strategies</span>
+            <span class="metric-value" id="total-strategies">0</span>
+          </div>
+          <div class="metric-card">
+            <span class="metric-label">Avg Profit</span>
+            <span class="metric-value" id="avg-profit">0%</span>
+          </div>
+          <div class="metric-card">
+            <span class="metric-label">Avg Win Rate</span>
+            <span class="metric-value" id="avg-winrate">0%</span>
+          </div>
+        </div>
+
+        <!-- Recent Runs -->
+        <h3>Recent Runs</h3>
+        <div class="runs-list" id="runs-list">
+          <div class="loading">Loading runs...</div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script type="module" src="../../shared/js/api.js"></script>
+  <script type="module" src="../../shared/js/state.js"></script>
+  <script type="module" src="../../shared/js/utils.js"></script>
+  <script type="module" src="../../shared/js/theme.js"></script>
+  <script type="module" src="../../shared/js/components.js"></script>
+  <script type="module" src="script.js"></script>
+</body>
+</html>
