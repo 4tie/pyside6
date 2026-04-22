@@ -62,18 +62,18 @@
   - [x] 9.7 Update `parse_candidate_run()` to try deterministic path `export_dir / f"{version_id}.zip"` first before falling back to `resolve_candidate_artifact()`
   - [x] 9.8 Update all callers of `prepare_sandbox()` and `build_candidate_command()` in `LoopPage` and `ImprovePage` to pass a `version_id`
 
-- [~] 10. Create PairResultsWidget
-  - [-] 10.1 Create `app/ui_v2/widgets/pair_results_widget.py` with `PairResultsWidget(QWidget)`
-  - [~] 10.2 Build table with columns: Pair | Profit (%) | Win Rate (%) | Trades | Max Drawdown (%)
-  - [~] 10.3 Define `_PAIR_TABLE_STYLES` constant with best/worst row styles (single definition, no duplication)
-  - [~] 10.4 Apply green background + bold to best pair rows; red background + italic to worst pair rows
-  - [~] 10.5 Add concentration warning `QLabel` (hidden by default, shown when `"profit_concentration"` in flags)
-  - [~] 10.6 Implement `display(analysis: PairAnalysis)` method
-  - [~] 10.7 Implement `clear()` method showing empty state message
-  - [~] 10.8 Ensure no service or model imports — widget receives `PairAnalysis` objects only
+- [x] 10. Create PairResultsWidget
+  - [x] 10.1 Create `app/ui_v2/widgets/pair_results_widget.py` with `PairResultsWidget(QWidget)`
+  - [x] 10.2 Build table with columns: Pair | Profit (%) | Win Rate (%) | Trades | Max Drawdown (%)
+  - [x] 10.3 Define `_PAIR_TABLE_STYLES` constant with best/worst row styles (single definition, no duplication)
+  - [x] 10.4 Apply green background + bold to best pair rows; red background + italic to worst pair rows
+  - [x] 10.5 Add concentration warning `QLabel` (hidden by default, shown when `"profit_concentration"` in flags)
+  - [x] 10.6 Implement `display(analysis: PairAnalysis)` method
+  - [x] 10.7 Implement `clear()` method showing empty state message
+  - [x] 10.8 Ensure no service or model imports — widget receives `PairAnalysis` objects only
 
 - [~] 11. Create CompareWidget
-  - [~] 11.1 Create `app/ui_v2/widgets/compare_widget.py` with `CompareWidget(QWidget)`
+  - [-] 11.1 Create `app/ui_v2/widgets/compare_widget.py` with `CompareWidget(QWidget)`
   - [~] 11.2 Add two `QComboBox` selectors (Run A, Run B) and a "Compare" button
   - [~] 11.3 Define `_GREEN`, `_RED`, `_NEUTRAL` colour constants at module level (single definition)
   - [~] 11.4 Implement three metric diff rows with green/red colouring per sign

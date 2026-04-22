@@ -6,9 +6,8 @@ warnings when a single pair dominates profitability.
 """
 from __future__ import annotations
 
-from typing import List
-
 from PySide6.QtCore import Qt
+from PySide6.QtGui import QColor
 from PySide6.QtWidgets import (
     QLabel,
     QTableWidget,
@@ -115,8 +114,8 @@ class PairResultsWidget(QWidget):
             if pm.pair in best_pair_names:
                 for col in range(5):
                     item = self._table.item(row, col)
-                    item.setBackground(_PAIR_TABLE_STYLES["best_row_bg"])
-                    item.setForeground(_PAIR_TABLE_STYLES["best_row_fg"])
+                    item.setBackground(QColor(_PAIR_TABLE_STYLES["best_row_bg"]))
+                    item.setForeground(QColor(_PAIR_TABLE_STYLES["best_row_fg"]))
                     font = item.font()
                     font.setBold(True)
                     item.setFont(font)
@@ -124,8 +123,8 @@ class PairResultsWidget(QWidget):
             elif pm.pair in worst_pair_names:
                 for col in range(5):
                     item = self._table.item(row, col)
-                    item.setBackground(_PAIR_TABLE_STYLES["worst_row_bg"])
-                    item.setForeground(_PAIR_TABLE_STYLES["worst_row_fg"])
+                    item.setBackground(QColor(_PAIR_TABLE_STYLES["worst_row_bg"]))
+                    item.setForeground(QColor(_PAIR_TABLE_STYLES["worst_row_fg"]))
                     font = item.font()
                     font.setItalic(True)
                     item.setFont(font)
