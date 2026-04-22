@@ -93,10 +93,12 @@ class TestBacktestPageConstruction:
         assert page._splitter.count() == 2
 
     def test_output_tabs_has_two_tabs(self, page):
-        """Output tab widget has Results and Terminal tabs."""
-        assert page._output_tabs.count() == 2
+        """Output tab widget has Results, Pair Results, Compare, and Terminal tabs."""
+        assert page._output_tabs.count() == 4
         assert page._output_tabs.tabText(0) == "Results"
-        assert page._output_tabs.tabText(1) == "Terminal"
+        assert page._output_tabs.tabText(1) == "Pair Results"
+        assert page._output_tabs.tabText(2) == "Compare"
+        assert page._output_tabs.tabText(3) == "Terminal"
 
     def test_loop_completed_signal_exists(self, page):
         """loop_completed signal is declared on the page."""

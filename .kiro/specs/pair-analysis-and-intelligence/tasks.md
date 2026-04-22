@@ -83,7 +83,7 @@
   - [x] 11.8 Implement `display(comparison: RunComparison)` method
 
 - [~] 12. Update BacktestPage with new tabs and load_results()
-  - [-] 12.1 Import `PairResultsWidget`, `CompareWidget`, `PairAnalysisService`, `ComparisonService` in `backtest_page.py`
+  - [ ] 12.1 Import `PairResultsWidget`, `CompareWidget`, `PairAnalysisService`, `ComparisonService` in `backtest_page.py`
   - [~] 12.2 Add `_pair_results_widget` and `_compare_widget` instances in `_build_right_panel()`
   - [~] 12.3 Set tab order: Results (0) → Pair Results (1) → Compare (2) → Terminal (3)
   - [~] 12.4 Implement `load_results(results: BacktestResults)` method that calls `_results_widget.display_results()`, `_pair_results_widget.display()`, and navigates to tab 0

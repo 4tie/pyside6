@@ -282,9 +282,19 @@ class BacktestPage(QWidget):
         # Tabbed output
         self._output_tabs = QTabWidget()
 
+        # Tab 0: Results
         self._results_widget = BacktestResultsWidget()
         self._output_tabs.addTab(self._results_widget, "Results")
 
+        # Tab 1: Pair Results
+        self._pair_results_widget = PairResultsWidget()
+        self._output_tabs.addTab(self._pair_results_widget, "Pair Results")
+
+        # Tab 2: Compare
+        self._compare_widget = CompareWidget()
+        self._output_tabs.addTab(self._compare_widget, "Compare")
+
+        # Tab 3: Terminal
         self._terminal = TerminalWidget()
         self._output_tabs.addTab(self._terminal, "Terminal")
 
@@ -300,6 +310,7 @@ class BacktestPage(QWidget):
         """Wire internal signals for live updates."""
         self.settings_state.settings_changed.connect(self._on_settings_changed)
         self.run_config_form.config_changed.connect(self._on_config_changed)
+        self._compare_widget._btn_compare.clicked.connect(self._on_compare_runs)
 
     def _on_settings_changed(self, _settings) -> None:
         """Refresh strategies and run picker when settings change."""
@@ -338,11 +349,13 @@ class BacktestPage(QWidget):
         settings = self.settings_state.current_settings
         if not settings or not settings.user_data_path:
             self._run_combo.blockSignals(False)
+            self._compare_widget.set_run_choices([])
             return
 
         strategy = self.run_config_form.get_config().get("strategy", "").strip()
         if not strategy:
             self._run_combo.blockSignals(False)
+            self._compare_widget.set_run_choices([])
             return
 
         backtest_results_dir = str(Path(settings.user_data_path) / "backtest_results")
@@ -360,6 +373,11 @@ class BacktestPage(QWidget):
             self._run_combo.addItem("No saved runs found", userData=None)
 
         self._run_combo.blockSignals(False)
+
+        # Update compare widget with run choices
+        # Format runs for compare widget (needs 'id' key)
+        compare_runs = [{"id": run.get("run_id", ""), **run} for run in runs]
+        self._compare_widget.set_run_choices(compare_runs)
 
     def _on_load_run(self) -> None:
         """Load the selected run from the index into the results widget."""
@@ -389,11 +407,74 @@ class BacktestPage(QWidget):
                 results.summary.strategy,
                 len(results.trades),
             )
-            self._results_widget.display_results(results, export_dir=str(run_dir))
-            self._output_tabs.setCurrentIndex(0)  # Results tab
+            self.load_results(results)
         except (FileNotFoundError, ValueError) as e:
             _log.error("Failed to load run %s: %s", run_meta.get("run_id"), e)
             QMessageBox.critical(self, "Load Failed", str(e))
+
+    def load_results(self, results: BacktestResults) -> None:
+        """Populate all result tabs from a single BacktestResults object.
+
+        This is the unified entry point for loading backtest results into
+        the UI. It populates the Results tab, Pair Results tab, and
+        navigates to the Results tab.
+
+        Args:
+            results: BacktestResults from a completed or loaded run.
+        """
+        # Load Results tab
+        self._results_widget.display_results(results)
+
+        # Load Pair Results tab
+        pair_analysis = PairAnalysisService.analyse(results)
+        self._pair_results_widget.display(pair_analysis)
+
+        # Navigate to Results tab (index 0)
+        self._output_tabs.setCurrentIndex(0)
+
+    def _on_compare_runs(self) -> None:
+        """Handle Compare button click: load both runs and compare them."""
+        run_a_data, run_b_data = self._compare_widget.get_selected_runs()
+
+        if not run_a_data or not run_b_data:
+            QMessageBox.warning(
+                self,
+                "Selection Required",
+                "Please select two runs to compare.",
+            )
+            return
+
+        settings = self.settings_state.current_settings
+        if not settings or not settings.user_data_path:
+            return
+
+        backtest_results_dir = Path(settings.user_data_path) / "backtest_results"
+
+        try:
+            # Load run A
+            run_a_dir = backtest_results_dir / run_a_data["run_dir"]
+            results_a = RunStore.load_run(run_a_dir)
+
+            # Load run B
+            run_b_dir = backtest_results_dir / run_b_data["run_dir"]
+            results_b = RunStore.load_run(run_b_dir)
+
+            # Compare
+            comparison = ComparisonService.compare(results_a.summary, results_b.summary)
+
+            # Display
+            self._compare_widget.display(comparison)
+
+            _log.info(
+                "Comparison complete | run_a=%s | run_b=%s | verdict=%s",
+                run_a_data.get("run_id"),
+                run_b_data.get("run_id"),
+                comparison.verdict,
+            )
+
+        except (FileNotFoundError, ValueError) as e:
+            _log.error("Failed to compare runs: %s", e)
+            QMessageBox.critical(self, "Comparison Failed", str(e))
 
     # ------------------------------------------------------------------
     # Command Preview
@@ -478,7 +559,7 @@ class BacktestPage(QWidget):
         self._preview_timer.stop()
         self._terminal.append_output("[Process started]\n\n")
         self._run_started_at = time.time()
-        self._output_tabs.setCurrentIndex(1)  # Terminal tab
+        self._output_tabs.setCurrentIndex(3)  # Terminal tab
 
         try:
             self._process_service.execute_command(
@@ -558,10 +639,9 @@ class BacktestPage(QWidget):
                     config_path=self._last_run_config_path,
                 )
                 self._terminal.append_output(f"✓ Run saved → {run_dir}\n")
-                self._results_widget.display_results(results, export_dir=str(run_dir))
+                self.load_results(results)
                 self._terminal.append_output("✓ Results loaded successfully!\n")
                 self._refresh_run_picker()
-                self._output_tabs.setCurrentIndex(0)  # Results tab
 
         except Exception as e:
             _log.error("Failed to load results from %s: %s", zip_path.name, e)
