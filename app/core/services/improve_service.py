@@ -78,16 +78,13 @@ class ImproveService:
         """
         return RunStore.load_run(run_dir)
 
-    def prepare_sandbox(self, strategy_name: str, candidate_config: dict) -> Path:
+    def prepare_sandbox(self, strategy_name: str, candidate_config: dict, version_id: str) -> Path:
         """Create an isolated sandbox directory for a candidate backtest run.
 
-        Creates a timestamped sandbox directory under
-        ``{user_data_path}/strategies/_improve_sandbox/``, copies the strategy
+        Creates a deterministic sandbox directory under
+        ``{user_data_path}/strategies/_improve_sandbox/{version_id}/``, copies the strategy
         ``.py`` file into it, and writes the candidate config as
-        ``{strategy_name}.json``.
-
-        The directory name uses Unix timestamp in milliseconds (timestamp_ms)
-        to ensure uniqueness and determinism.
+        ``{version_id}.json``.
 
         Args:
             strategy_name: Strategy class name (must exist as a ``.py`` file).
@@ -95,12 +92,14 @@ class ImproveService:
                 all parameter groups: stoploss, max_open_trades, minimal_roi,
                 buy_params, sell_params, trailing_stop, trailing_stop_positive,
                 trailing_stop_positive_offset, trailing_only_offset_is_reached.
+            version_id: Canonical identifier for this candidate (from versioning system).
 
         Returns:
             Path to the created sandbox directory.
 
         Raises:
             FileNotFoundError: If the strategy ``.py`` file does not exist.
+            ValueError: If sandbox directory for the given version_id already exists (collision guard).
         """
         settings = self.settings_service.load_settings()
         user_data_path = Path(settings.user_data_path)
@@ -110,18 +109,23 @@ class ImproveService:
         if not strategy_py.exists():
             raise FileNotFoundError(f"Strategy file not found: {strategy_py}")
 
-        # Use Unix timestamp in milliseconds for uniqueness (task 12)
-        import time as _time
-        timestamp_ms = int(_time.time() * 1000)
+        # Use deterministic version_id path
         sandbox_dir = (
-            user_data_path / "strategies" / "_improve_sandbox"
-            / f"{strategy_name}_{timestamp_ms}"
+            user_data_path / "strategies" / "_improve_sandbox" / version_id
         )
-        sandbox_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Collision guard: raise ValueError if sandbox directory already exists
+        if sandbox_dir.exists():
+            raise ValueError(
+                f"Sandbox collision: version_id '{version_id}' already exists at {sandbox_dir}"
+            )
+        
+        sandbox_dir.mkdir(parents=True, exist_ok=False)
 
         shutil.copy2(strategy_py, sandbox_dir / f"{strategy_name}.py")
 
-        config_file = sandbox_dir / f"{strategy_name}.json"
+        # Write config file as {version_id}.json (not {strategy_name}.json)
+        config_file = sandbox_dir / f"{version_id}.json"
         config_file.write_text(
             json.dumps(
                 self._build_freqtrade_params_file(strategy_name, candidate_config),
@@ -138,6 +142,7 @@ class ImproveService:
         strategy_name: str,
         baseline: BacktestResults,
         sandbox_dir: Path,
+        version_id: str,
     ) -> Tuple[BacktestRunCommand, Path]:
         """Build a backtest command targeting the sandbox candidate.
 
@@ -149,18 +154,19 @@ class ImproveService:
             baseline: Baseline ``BacktestResults`` supplying timeframe and pairs.
             sandbox_dir: Path to the sandbox directory created by
                 ``prepare_sandbox()``.
+            version_id: Canonical identifier for this candidate (from versioning system).
 
         Returns:
             A tuple of ``(BacktestRunCommand, export_dir)`` where ``export_dir``
             is the directory Freqtrade will write the result zip into.
         """
         settings = self.settings_service.load_settings()
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        # Use deterministic version_id path for export directory
         export_dir = (
             Path(settings.user_data_path)
             / "backtest_results"
             / "_improve"
-            / f"{strategy_name}_{timestamp}"
+            / version_id
         )
         export_dir.mkdir(parents=True, exist_ok=True)
 
@@ -396,10 +402,11 @@ class ImproveService:
             return None
         return max(all_zips, key=lambda p: p.stat().st_mtime)
 
-    def parse_candidate_run(self, export_dir: Path, started_at: float = 0.0) -> BacktestResults:
+    def parse_candidate_run(self, export_dir: Path, started_at: float = 0.0, version_id: Optional[str] = None) -> BacktestResults:
         """Parse the candidate backtest zip from export_dir.
 
-        Calls resolve_candidate_artifact(export_dir) internally to locate the
+        Tries deterministic path `export_dir / f"{version_id}.zip"` first if version_id
+        is provided. Falls back to resolve_candidate_artifact(export_dir) to locate the
         zip before parsing. Falls back to the legacy mtime scan when
         resolve_candidate_artifact raises FileNotFoundError.
 
@@ -407,6 +414,8 @@ class ImproveService:
             export_dir: Directory where the candidate backtest wrote its zip.
             started_at: Unix timestamp of when the candidate process started.
                 Used for the legacy fallback mtime filter.
+            version_id: Optional canonical identifier for this candidate. If provided,
+                tries deterministic path first.
 
         Returns:
             BacktestResults parsed from the zip.
@@ -414,15 +423,27 @@ class ImproveService:
         Raises:
             FileNotFoundError: If no candidate zip is found.
         """
-        try:
-            zip_path = self.resolve_candidate_artifact(export_dir)
-        except FileNotFoundError:
-            # Legacy fallback: mtime scan
-            zip_path = self.resolve_candidate_zip(export_dir, started_at)
-            if zip_path is None:
-                raise FileNotFoundError(
-                    f"No candidate zip found in export_dir: {export_dir}"
-                )
+        zip_path = None
+        
+        # Try deterministic path first if version_id is provided
+        if version_id:
+            deterministic_path = export_dir / f"{version_id}.zip"
+            if deterministic_path.exists():
+                zip_path = deterministic_path
+                _log.info("Found candidate zip at deterministic path: %s", zip_path)
+        
+        # Fall back to resolve_candidate_artifact if deterministic path not found
+        if zip_path is None:
+            try:
+                zip_path = self.resolve_candidate_artifact(export_dir)
+            except FileNotFoundError:
+                # Legacy fallback: mtime scan
+                zip_path = self.resolve_candidate_zip(export_dir, started_at)
+                if zip_path is None:
+                    raise FileNotFoundError(
+                        f"No candidate zip found in export_dir: {export_dir}"
+                    )
+        
         return parse_backtest_zip(str(zip_path))
 
     def accept_candidate(self, strategy_name: str, candidate_config: dict) -> None:

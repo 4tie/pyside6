@@ -65,6 +65,11 @@ class RuleSuggestionService:
             "high_winrate_bad_payoff": RuleSuggestionService._suggest_high_winrate_bad_payoff,
             "outlier_trade_dependency": RuleSuggestionService._suggest_outlier_trade_dependency,
             "drawdown_after_volatility": RuleSuggestionService._suggest_drawdown_after_volatility,
+            # New structural patterns
+            "stoploss_during_volatility_expansion": RuleSuggestionService._suggest_volatility_aware_stoploss,
+            "roi_cutting_trend_continuation": RuleSuggestionService._suggest_roi_trend_adjustment,
+            "signal_exit_timing_mismatch": RuleSuggestionService._suggest_signal_confirmation,
+            "trailing_stop_underperformance": RuleSuggestionService._suggest_trailing_stop_adjustment,
             # Backward-compatible alias for older tests/data.
             "drawdown_cluster_dependency": RuleSuggestionService._suggest_drawdown_after_volatility,
         }
@@ -597,4 +602,106 @@ class RuleSuggestionService:
             proposed_value=proposed_stoploss,
             reason="Losers lasting too long vs winners — tightening stoploss",
             expected_improvement="Faster exit from losing trades",
+        )
+
+    # ------------------------------------------------------------------
+    # New structural pattern handlers (Phase 2)
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _suggest_volatility_aware_stoploss(params: dict) -> Optional[ParameterSuggestion]:
+        """Suggest volatility-aware stoploss adjustment."""
+        current_stoploss = params.get("stoploss", -0.10)
+
+        # Widen stoploss slightly to accommodate volatility
+        proposed_stoploss = round(min(-0.05, current_stoploss - 0.02), 10)
+
+        if proposed_stoploss == current_stoploss:
+            return None
+
+        return ParameterSuggestion(
+            parameter="stoploss",
+            proposed_value=proposed_stoploss,
+            reason="Stoploss hitting during volatility spikes — widening to accommodate",
+            expected_improvement="Fewer premature stoploss hits during normal volatility",
+        )
+
+    @staticmethod
+    def _suggest_roi_trend_adjustment(params: dict) -> Optional[ParameterSuggestion]:
+        """Suggest ROI adjustment for trend continuation."""
+        minimal_roi: dict = params.get("minimal_roi", {})
+        if not minimal_roi:
+            return None
+
+        # Widen ROI targets to capture trend continuation
+        proposed_roi = {key: round(value + 0.01, 6) for key, value in minimal_roi.items()}
+
+        if proposed_roi == minimal_roi:
+            return None
+
+        return ParameterSuggestion(
+            parameter="minimal_roi",
+            proposed_value=proposed_roi,
+            reason="ROI cutting trend continuation — widening targets",
+            expected_improvement="Capture larger moves during trending periods",
+        )
+
+    @staticmethod
+    def _suggest_signal_confirmation(params: dict) -> Optional[ParameterSuggestion]:
+        """Suggest adding confirmation to entry/exit signals."""
+        buy_params: dict = params.get("buy_params", {})
+        if not buy_params:
+            return None
+
+        # Find and tighten a threshold parameter
+        numeric_keys = [
+            key for key, value in buy_params.items()
+            if isinstance(value, (int, float)) and not isinstance(value, bool)
+        ]
+        if not numeric_keys:
+            return None
+
+        target_key = numeric_keys[0]
+        current_val = buy_params[target_key]
+
+        if isinstance(current_val, (int, float)):
+            # Tighten the threshold
+            delta = -3 if isinstance(current_val, int) else -0.03
+            proposed_val = current_val + delta
+
+            proposed_group = dict(buy_params)
+            proposed_group[target_key] = (
+                round(proposed_val, 6) if isinstance(current_val, float)
+                else int(round(proposed_val))
+            )
+
+            return ParameterSuggestion(
+                parameter="buy_params",
+                proposed_value=proposed_group,
+                reason="Signal exits underperforming — adding confirmation",
+                expected_improvement="Higher quality entries and exits",
+            )
+        return None
+
+    @staticmethod
+    def _suggest_trailing_stop_adjustment(params: dict) -> Optional[ParameterSuggestion]:
+        """Suggest trailing stop parameter adjustment."""
+        if not params.get("trailing_stop", False):
+            # Enable trailing stop
+            return ParameterSuggestion(
+                parameter="trailing_stop",
+                proposed_value=True,
+                reason="Trailing stop disabled — enabling for profit protection",
+                expected_improvement="Better profit protection on winning trades",
+            )
+
+        # Adjust trailing stop positive offset
+        current_positive = params.get("trailing_stop_positive", 0.0)
+        proposed_positive = round(current_positive + 0.01, 6) if current_positive > 0 else 0.02
+
+        return ParameterSuggestion(
+            parameter="trailing_stop_positive",
+            proposed_value=proposed_positive,
+            reason="Trailing stop underperforming — adjusting activation threshold",
+            expected_improvement="Earlier profit protection without premature exits",
         )

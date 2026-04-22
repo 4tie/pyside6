@@ -459,6 +459,130 @@ class ResultsDiagnosisService:
                     severity="advisory",
                 ))
 
+        # ------------------------------------------------------------------
+        # Rule 11: stoploss_during_volatility_expansion (moderate)
+        # Detection: High stoploss rate with increased trade duration
+        # ------------------------------------------------------------------
+        stoploss_stats_from_exit = (
+            input.exit_reason_analysis.reason_stats.get("stoploss")
+            if input.exit_reason_analysis
+            else None
+        )
+        if (
+            stoploss_stats_from_exit
+            and stoploss_stats_from_exit.frequency_pct > 30.0
+            and s.trade_duration_avg > 240  # > 4 hours
+            and s.max_drawdown > 15.0
+        ):
+            confidence = 0.6
+            if confidence >= _MIN_CONFIDENCE_MODERATE:
+                structural.append(StructuralDiagnosis(
+                    failure_pattern="stoploss_during_volatility_expansion",
+                    evidence=(
+                        f"stoploss_rate={stoploss_stats_from_exit.frequency_pct:.1f}%, "
+                        f"avg_duration={s.trade_duration_avg}min, "
+                        f"drawdown={s.max_drawdown:.1f}%"
+                    ),
+                    root_cause="Stoploss being hit during volatility spikes",
+                    mutation_direction=(
+                        "Widen stoploss during high ATR periods or add volatility filter"
+                    ),
+                    confidence=confidence,
+                    severity="moderate",
+                ))
+
+        # ------------------------------------------------------------------
+        # Rule 12: roi_cutting_trend_continuation (moderate)
+        # Detection: High ROI exit rate but low profit factor with long winners
+        # ------------------------------------------------------------------
+        roi_stats_from_exit = (
+            input.exit_reason_analysis.reason_stats.get("roi")
+            if input.exit_reason_analysis
+            else None
+        )
+        if (
+            roi_stats_from_exit
+            and roi_stats_from_exit.frequency_pct > 40.0
+            and 0.0 < s.profit_factor < 1.3
+            and roi_stats_from_exit.avg_duration_min > 180  # > 3 hours
+        ):
+            confidence = 0.65
+            if confidence >= _MIN_CONFIDENCE_MODERATE:
+                structural.append(StructuralDiagnosis(
+                    failure_pattern="roi_cutting_trend_continuation",
+                    evidence=(
+                        f"roi_rate={roi_stats_from_exit.frequency_pct:.1f}%, "
+                        f"profit_factor={s.profit_factor:.2f}, "
+                        f"roi_duration={roi_stats_from_exit.avg_duration_min:.0f}min"
+                    ),
+                    root_cause="ROI targets too conservative, cutting winners early",
+                    mutation_direction=(
+                        "Widen ROI targets or implement trailing stop for trend continuation"
+                    ),
+                    confidence=confidence,
+                    severity="moderate",
+                ))
+
+        # ------------------------------------------------------------------
+        # Rule 13: signal_exit_timing_mismatch (moderate)
+        # Detection: Signal exits have poor win rate vs other exit reasons
+        # ------------------------------------------------------------------
+        signal_stats_from_exit = (
+            input.exit_reason_analysis.reason_stats.get("signal")
+            if input.exit_reason_analysis
+            else None
+        )
+        if (
+            signal_stats_from_exit
+            and signal_stats_from_exit.win_rate_pct < 35.0
+            and signal_stats_from_exit.frequency_pct > 20.0
+        ):
+            confidence = 0.6
+            if confidence >= _MIN_CONFIDENCE_MODERATE:
+                structural.append(StructuralDiagnosis(
+                    failure_pattern="signal_exit_timing_mismatch",
+                    evidence=(
+                        f"signal_win_rate={signal_stats_from_exit.win_rate_pct:.1f}%, "
+                        f"signal_rate={signal_stats_from_exit.frequency_pct:.1f}%"
+                    ),
+                    root_cause="Exit signals firing too early or on weak momentum",
+                    mutation_direction=(
+                        "Add confirmation to exit signals or delay exit until momentum weakens"
+                    ),
+                    confidence=confidence,
+                    severity="moderate",
+                ))
+
+        # ------------------------------------------------------------------
+        # Rule 14: trailing_stop_underperformance (advisory)
+        # Detection: Trailing stop exits with negative returns despite being enabled
+        # ------------------------------------------------------------------
+        trailing_stats_from_exit = (
+            input.exit_reason_analysis.reason_stats.get("trailing_stop")
+            if input.exit_reason_analysis
+            else None
+        )
+        if (
+            trailing_stats_from_exit
+            and trailing_stats_from_exit.total_profit_pct < 0
+            and trailing_stats_from_exit.count > 5
+        ):
+            confidence = 0.55
+            if confidence >= _MIN_CONFIDENCE_ADVISORY:
+                structural.append(StructuralDiagnosis(
+                    failure_pattern="trailing_stop_underperformance",
+                    evidence=(
+                        f"trailing_profit={trailing_stats_from_exit.total_profit_pct:.2f}%, "
+                        f"trailing_count={trailing_stats_from_exit.count}"
+                    ),
+                    root_cause="Trailing stop parameters not optimal for current volatility",
+                    mutation_direction=(
+                        "Adjust trailing distance or use dynamic trailing based on ATR"
+                    ),
+                    confidence=confidence,
+                    severity="advisory",
+                ))
+
         return structural
 
     # ------------------------------------------------------------------

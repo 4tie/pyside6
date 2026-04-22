@@ -1533,9 +1533,12 @@ class LoopPage(QWidget):
         """
         _log.info("Starting baseline backtest for strategy: %s", strategy)
         
+        # Generate version_id for baseline (fallback since no versioning system is active)
+        version_id = f"{strategy}_baseline_{int(time.time() * 1000)}"
+        
         # Prepare sandbox directory for baseline
         try:
-            sandbox_dir = self._improve_service.prepare_sandbox(strategy, {})
+            sandbox_dir = self._improve_service.prepare_sandbox(strategy, {}, version_id)
             self._sandbox_dir = sandbox_dir
         except Exception as exc:
             _log.error("Failed to prepare sandbox for baseline: %s", exc)
@@ -1706,10 +1709,14 @@ class LoopPage(QWidget):
         self._reset_iteration_runtime()
         self._current_iteration = iteration
 
+        # Generate version_id for this iteration (fallback since no versioning system is active)
+        version_id = f"{config.strategy}_iter{iteration.iteration_number}_{int(time.time() * 1000)}"
+
         try:
             self._sandbox_dir = self._improve_service.prepare_sandbox(
                 config.strategy,
                 iteration.params_after,
+                version_id,
             )
             iteration.sandbox_path = self._sandbox_dir
 

@@ -47,13 +47,13 @@
   - [x] 7.3 Compute `profit_diff`, `winrate_diff`, `drawdown_diff` as `run_b - run_a`
   - [x] 7.4 Implement verdict logic in order: `"improved"` → `"degraded"` → `"neutral"`
 
-- [~] 8. Write property-based tests for ComparisonService
+- [x] 8. Write property-based tests for ComparisonService
   - [x] 8.1 Create `tests/test_comparison_properties.py` with Hypothesis strategy for `BacktestSummary`
   - [x] 8.2 Implement `test_profit_diff_antisymmetry`: `compare(a,b).profit_diff == -compare(b,a).profit_diff`
-  - [-] 8.3 Run tests and confirm they pass
+  - [x] 8.3 Run tests and confirm they pass
 
 - [~] 9. Harden ImproveService with deterministic version_id paths
-  - [~] 9.1 Add `version_id: str` parameter to `prepare_sandbox()`
+  - [-] 9.1 Add `version_id: str` parameter to `prepare_sandbox()`
   - [~] 9.2 Change sandbox path to `{user_data}/strategies/_improve_sandbox/{version_id}/`
   - [~] 9.3 Write config file as `{version_id}.json` (not `{strategy_name}.json`)
   - [~] 9.4 Add collision guard: raise `ValueError` if sandbox directory already exists

@@ -1497,10 +1497,11 @@ class LoopService:
         structural = bundle.structural
 
         _log.debug(
-            "Loop iter %d: %d issue(s) and %d structural pattern(s) diagnosed",
+            "Loop iter %d: %d issue(s), %d structural pattern(s), %d exit suggestions diagnosed",
             self._current_iteration,
             len(issues),
             len(structural),
+            len(bundle.exit_reason_suggestions),
         )
 
         suggestions = self._rotator.generate_suggestions(
@@ -1508,6 +1509,7 @@ class LoopService:
             self._current_params,
             prev_iteration,
             structural,
+            bundle.exit_reason_suggestions,
         )
         if not suggestions:
             self._result.stop_reason = "No more actionable suggestions to try"
