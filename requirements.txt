@@ -4,6 +4,7 @@ pydantic>=2.0.0
 freqtrade
 filelock
 optuna
+python-dotenv>=1.0.0
 ##aiodns
 
 

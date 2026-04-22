@@ -30,7 +30,23 @@ from app.core.services.results_diagnosis_service import ResultsDiagnosisService
 from app.core.services.rule_suggestion_service import RuleSuggestionService
 from app.core.utils.app_logger import get_logger
 
+# 4-Layer Diagnostic Architecture imports
+from app.core.models.pattern_models import Action, LoopState4L
+from app.core.services.pattern_database import PatternDatabase
+from app.core.services.pattern_engine import PatternEngine
+from app.core.services.decision_engine import DecisionEngine
+from app.core.services.execution_engine import ExecutionEngine
+from app.core.services.evaluation_engine import EvaluationEngine
+
 _log = get_logger("services.loop")
+
+# ---------------------------------------------------------------------------
+# 4-Layer Diagnostic Architecture fallback actions (emergency only)
+# ---------------------------------------------------------------------------
+_FALLBACK_ACTIONS = [
+    Action(id="reduce_trades", pattern_id="fallback", parameter="max_open_trades", type="set", value=3),
+    Action(id="tighten_stoploss", pattern_id="fallback", parameter="stoploss", type="set", value=-0.15),
+]
 
 # ---------------------------------------------------------------------------
 # Fixed reference ranges for norm() — set once, never change during a session.
@@ -842,6 +858,10 @@ class LoopService:
         self._version_manager = None  # Set via set_version_manager()
         self._last_version_id: Optional[str] = None  # Track version lineage
 
+        # 4-Layer Diagnostic Architecture state
+        self._state_4l: Optional[LoopState4L] = None
+        self._pattern_knowledge = None  # Set via set_pattern_knowledge()
+
         # Callbacks set by the UI layer
         self._on_iteration_complete: Optional[Callable[[LoopIteration], None]] = None
         self._on_loop_complete: Optional[Callable[[LoopResult], None]] = None
@@ -876,6 +896,14 @@ class LoopService:
             version_manager: VersionManagerService instance, or None to disable.
         """
         self._version_manager = version_manager
+
+    def set_pattern_knowledge(self, pattern_knowledge) -> None:
+        """Register a PatternKnowledgeService for 4-layer architecture.
+
+        Args:
+            pattern_knowledge: PatternKnowledgeService instance, or None to disable.
+        """
+        self._pattern_knowledge = pattern_knowledge
 
     def set_callbacks(
         self,
@@ -1957,3 +1985,239 @@ class LoopService:
         iteration.status = "success"
         iteration.validation_gate_passed = True
         return True
+
+    # ------------------------------------------------------------------
+    # 4-Layer Diagnostic Architecture Methods
+    # ------------------------------------------------------------------
+
+    def prepare_next_iteration_4l(
+        self,
+        latest_summary: BacktestSummary,
+    ) -> Optional[Tuple[LoopIteration, List[ParameterSuggestion]]]:
+        """Prepare next iteration using 4-layer diagnostic architecture.
+        
+        This is an alternative to prepare_next_iteration() that uses the
+        4-layer architecture: PatternEngine → DecisionEngine → ExecutionEngine → EvaluationEngine.
+        
+        Args:
+            latest_summary: BacktestSummary from the most recent backtest.
+            
+        Returns:
+            Tuple of (LoopIteration, suggestions) ready to execute, or None if
+            the loop should terminate.
+        """
+        if self._config is None or self._result is None:
+            return None
+        
+        # Initialize 4-layer state if not already done
+        if self._state_4l is None:
+            self._state_4l = LoopState4L(
+                params=copy.deepcopy(self._current_params),
+                last_summary=None,
+                candidate_actions=[],
+                fallback_index=0,
+                tried_actions=set(),
+                iteration=self._current_iteration,
+            )
+        
+        prev_iteration = self._result.iterations[-1] if self._result.iterations else None
+        self._current_iteration += 1
+        self._state_4l.iteration = self._current_iteration
+        
+        # Check targets
+        if (
+            prev_iteration is not None
+            and prev_iteration.validation_gate_passed
+            and self._config.stop_on_first_profitable
+            and targets_met(latest_summary, self._config)
+        ):
+            self._result.target_reached = True
+            self._result.stop_reason = "All profitability targets met"
+            self._running = False
+            return None
+        
+        # 1-2. Detect patterns using PatternEngine (pure function)
+        patterns = PatternDatabase.get_all()
+        diagnoses = PatternEngine.detect(latest_summary, patterns)
+        
+        # 3. Select action: try candidate queue first, then DecisionEngine
+        action = None
+        if self._state_4l.candidate_actions:
+            action = self._state_4l.candidate_actions.pop(0)  # FIFO exploration
+        else:
+            # Get knowledge for DecisionEngine
+            knowledge = {}
+            if self._pattern_knowledge:
+                knowledge = self._pattern_knowledge.get_data()
+            
+            action = DecisionEngine.select(
+                diagnoses,
+                patterns,
+                knowledge,
+                self._state_4l.iteration
+            )
+        
+        # 4. Fallback if no action or low confidence (emergency only)
+        avg_confidence = sum(d.confidence for d in diagnoses) / len(diagnoses) if diagnoses else 0
+        if not action or (diagnoses and avg_confidence < 0.3):
+            action = self._get_fallback_action_4l()
+        
+        if not action:
+            self._result.stop_reason = "Optimization complete: No further improvements suggested"
+            self._running = False
+            return None
+        
+        # 5. Track tried action with iteration (allows learning in different contexts)
+        self._state_4l.tried_actions.add((action.id, self._state_4l.iteration))
+        
+        # 6. Apply action using ExecutionEngine (deterministic)
+        new_params = ExecutionEngine.apply(action, self._current_params)
+        
+        # Build changes summary
+        changes_summary = [
+            f"{param}: {self._current_params.get(param)} -> {new_value}"
+            for param, new_value in new_params.items()
+            if self._current_params.get(param) != new_value
+        ]
+        
+        if not changes_summary:
+            self._result.stop_reason = "Optimization complete: All parameters already at optimal values"
+            self._running = False
+            return None
+        
+        # Check if already tried
+        if self._rotator and self._rotator.already_tried(new_params):
+            # Try fallback
+            fallback_action = self._get_fallback_action_4l()
+            if fallback_action:
+                new_params = ExecutionEngine.apply(fallback_action, self._current_params)
+                changes_summary = [
+                    f"{param}: {self._current_params.get(param)} -> {new_value}"
+                    for param, new_value in new_params.items()
+                    if self._current_params.get(param) != new_value
+                ]
+                action = fallback_action
+            
+            if self._rotator and self._rotator.already_tried(new_params):
+                self._result.stop_reason = "Optimization complete: All parameter variations have been tested"
+                self._running = False
+                return None
+        
+        if self._rotator:
+            self._rotator.mark_tried(new_params)
+        
+        # Create suggestions for compatibility
+        suggestions = [
+            ParameterSuggestion(
+                parameter=action.parameter,
+                current_value=self._current_params.get(action.parameter),
+                proposed_value=new_params.get(action.parameter),
+                reason=f"4L pattern: {action.pattern_id}",
+            )
+        ]
+        
+        # Create iteration
+        from pathlib import Path
+        
+        iteration = LoopIteration(
+            iteration_number=self._current_iteration,
+            params_before=copy.deepcopy(self._current_params),
+            params_after=new_params,
+            changes_summary=changes_summary,
+            sandbox_path=Path("."),
+            ai_suggested=False,
+            ai_suggestion_reason=None,
+            diagnosed_structural=[action.pattern_id] if action.pattern_id != "fallback" else [],
+        )
+        
+        self._emit_status(
+            f"Iteration {self._current_iteration}/{self._config.max_iterations} - "
+            f"applying 4L action: {action.id} ({action.pattern_id})"
+        )
+        
+        # Store action in iteration for later knowledge update
+        iteration._4l_action = action
+        
+        return iteration, suggestions
+
+    def record_iteration_result_4l(
+        self,
+        iteration: LoopIteration,
+        old_summary: BacktestSummary,
+        new_summary: BacktestSummary,
+    ) -> bool:
+        """Record iteration result using 4-layer evaluation.
+        
+        Args:
+            iteration: The iteration object.
+            old_summary: Previous backtest summary.
+            new_summary: New backtest summary.
+            
+        Returns:
+            True if this iteration improved over the previous best.
+        """
+        # Get the action from the iteration
+        action = getattr(iteration, '_4l_action', None)
+        if not action:
+            # Fallback to regular evaluation
+            return self.record_iteration_result(iteration, new_summary)
+        
+        # Evaluate using EvaluationEngine
+        result = EvaluationEngine.evaluate(old_summary, new_summary)
+        
+        # Update knowledge
+        if self._pattern_knowledge:
+            self._pattern_knowledge.update(
+                action.pattern_id,
+                action.id,
+                result["improved"]
+            )
+        
+        # Build debug log
+        log_data = {
+            "pattern_id": action.pattern_id,
+            "action": action.id,
+            "metrics_before": {
+                "profit": old_summary.profit_pct if old_summary else None,
+                "drawdown": old_summary.max_drawdown if old_summary else None,
+                "sharpe": old_summary.sharpe_ratio if old_summary else None,
+                "win_rate": old_summary.win_rate if old_summary else None,
+                "trades": old_summary.total_trades if old_summary else None,
+            },
+            "metrics_after": {
+                "profit": new_summary.profit_pct,
+                "drawdown": new_summary.max_drawdown,
+                "sharpe": new_summary.sharpe_ratio,
+                "win_rate": new_summary.win_rate,
+                "trades": new_summary.total_trades,
+            },
+            "improved": result["improved"],
+            "score_diff": result["score_diff"],
+        }
+        
+        _log.debug("4L iteration %d: %s", iteration.iteration_number, log_data)
+        
+        # Record as regular iteration
+        return self.record_iteration_result(iteration, new_summary)
+
+    def _get_fallback_action_4l(self) -> Optional[Action]:
+        """Get fallback action for 4-layer architecture (emergency only).
+        
+        Returns:
+            Fallback Action or None if exhausted.
+        """
+        if self._state_4l is None:
+            return None
+        
+        while self._state_4l.fallback_index < len(_FALLBACK_ACTIONS):
+            fallback = _FALLBACK_ACTIONS[self._state_4l.fallback_index]
+            self._state_4l.fallback_index += 1
+            if (fallback.id, self._state_4l.iteration) not in self._state_4l.tried_actions:
+                return fallback
+        
+        return None
+
+    def reset_4l_state(self) -> None:
+        """Reset the 4-layer architecture state."""
+        self._state_4l = None
+        _log.info("Reset 4-layer architecture state")

@@ -2,6 +2,11 @@ import sys
 import platform
 from pathlib import Path
 
+from dotenv import load_dotenv
+
+# Load .env file early so environment variables are available for settings
+load_dotenv()
+
 from PySide6.QtWidgets import QApplication
 from PySide6 import __version__ as pyside_version
 

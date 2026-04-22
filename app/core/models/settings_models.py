@@ -1,6 +1,8 @@
-from pydantic import BaseModel, Field, field_validator, model_validator
-from typing import List, Optional, Any
+import os
+from typing import Any, List, Optional
 from pathlib import Path
+
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 
 class TerminalPreferences(BaseModel):
@@ -131,6 +133,57 @@ class AISettings(BaseModel):
             keys_list = data.get("openrouter_api_keys", [])
             if single_key and not keys_list:
                 data["openrouter_api_keys"] = [single_key]
+        return data
+
+    @model_validator(mode="before")
+    @classmethod
+    def load_from_env(cls, data: Any) -> Any:
+        """Load AI settings from environment variables when not explicitly set."""
+        if not isinstance(data, dict):
+            return data
+        data = dict(data)
+
+        # Load API keys from env if not set
+        if not data.get("openrouter_api_key"):
+            env_key = os.getenv("OPENROUTER_API_KEY")
+            if env_key:
+                data["openrouter_api_key"] = env_key
+
+        if not data.get("openrouter_api_keys"):
+            env_keys = os.getenv("OPENROUTER_API_KEYS")
+            if env_keys:
+                data["openrouter_api_keys"] = [k.strip() for k in env_keys.split(",") if k.strip()]
+
+        # Load other AI settings from env
+        if not data.get("provider"):
+            env_provider = os.getenv("AI_PROVIDER")
+            if env_provider:
+                data["provider"] = env_provider
+
+        if not data.get("chat_model"):
+            env_chat_model = os.getenv("AI_CHAT_MODEL")
+            if env_chat_model:
+                data["chat_model"] = env_chat_model
+
+        if not data.get("task_model"):
+            env_task_model = os.getenv("AI_TASK_MODEL")
+            if env_task_model:
+                data["task_model"] = env_task_model
+
+        if data.get("ollama_base_url") is None:
+            env_ollama_url = os.getenv("OLLAMA_BASE_URL")
+            if env_ollama_url:
+                data["ollama_base_url"] = env_ollama_url
+
+        # Boolean env vars
+        stream_env = os.getenv("AI_STREAM_ENABLED")
+        if stream_env is not None and data.get("stream_enabled") is None:
+            data["stream_enabled"] = stream_env.lower() in ("true", "1", "yes")
+
+        tools_env = os.getenv("AI_TOOLS_ENABLED")
+        if tools_env is not None and data.get("tools_enabled") is None:
+            data["tools_enabled"] = tools_env.lower() in ("true", "1", "yes")
+
         return data
 
 

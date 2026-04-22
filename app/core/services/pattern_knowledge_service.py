@@ -308,3 +308,68 @@ class PatternKnowledgeService:
         self._knowledge = PatternKnowledgeBase()
         self._save()
         _log.info("Reset pattern knowledge base")
+
+    # -------------------------------------------------------------------------
+    # Simplified 4-Layer Architecture Methods
+    # -------------------------------------------------------------------------
+
+    def update(self, pattern_id: str, action_id: str, improved: bool) -> None:
+        """Record action outcome for 4-layer architecture.
+
+        Incremental update only, no full recalculation.
+
+        Args:
+            pattern_id: The pattern identifier.
+            action_id: The action identifier.
+            improved: Whether the action improved results.
+        """
+        # Use action_id as key for simplified tracking
+        if not hasattr(self._knowledge, '_action_data'):
+            self._knowledge._action_data = {}
+
+        if action_id not in self._knowledge._action_data:
+            self._knowledge._action_data[action_id] = {"success": 0, "failure": 0}
+
+        if improved:
+            self._knowledge._action_data[action_id]["success"] += 1
+        else:
+            self._knowledge._action_data[action_id]["failure"] += 1
+
+        # Also record in legacy format for compatibility
+        self.record_pattern_result(pattern_id, "action", improved)
+
+    def get_success_rate(self, action_id: str) -> float:
+        """Get success rate for an action.
+
+        Args:
+            action_id: The action identifier.
+
+        Returns:
+            Success rate in [0, 1], or 0.5 if unknown.
+        """
+        if not hasattr(self._knowledge, '_action_data'):
+            return 0.5
+
+        data = self._knowledge._action_data.get(action_id)
+        if not data:
+            return 0.5
+
+        total = data["success"] + data["failure"]
+        if total == 0:
+            return 0.5
+
+        return data["success"] / total
+
+    def get_data(self) -> dict:
+        """Get knowledge data for DecisionEngine.
+
+        Returns:
+            Dict mapping action_id to success_rate.
+        """
+        if not hasattr(self._knowledge, '_action_data'):
+            return {}
+
+        return {
+            action_id: self.get_success_rate(action_id)
+            for action_id in self._knowledge._action_data.keys()
+        }
