@@ -215,14 +215,14 @@ All code is Python 3.9+ with PySide6. Follow project conventions: `_log = get_lo
   - Run `ruff check app/ui_v2/` and fix any lint errors.
   - Ensure all tests pass, ask the user if questions arise.
 
-- [~] 15. Accessibility and keyboard navigation pass
+- [ ] 15. Accessibility and keyboard navigation pass
   - Add `setAccessibleName` / `setToolTip` to all interactive elements in `NavSidebar`, `HeaderBar`, `RunConfigForm`, and all page action buttons
   - Ensure `TabFocusReason` traversal order is logical in each page (use `setTabOrder`)
   - Add `setWhatsThis` help text to complex form fields in `RunConfigForm`, `SettingsPage`, `BacktestPage`
   - Verify all icon-only buttons have accessible text alternatives
   - _Requirements: 17.1, 17.3, 17.4, 17.5, 7.1, 7.2_
 
-- [~] 16. Final checkpoint — Ensure all tests pass
+- [ ] 16. Final checkpoint — Ensure all tests pass
   - Run `pytest --tb=short` and confirm zero new failures.
   - Run `ruff check . && ruff format --check .` and fix any issues.
   - Ensure all tests pass, ask the user if questions arise.

@@ -12,25 +12,25 @@
   - [x] 2.1 Create `app/core/models/analysis_models.py` with `DiagnosisSuggestion` dataclass (`rule_id`, `message`, `severity`)
   - [x] 2.2 Add module-level logger and Google-style docstring
 
-- [-] 3. Implement PairAnalysisService
-  - [ ] 3.1 Create `app/core/services/pair_analysis_service.py` with stateless `PairAnalysisService` class
-  - [ ] 3.2 Implement `analyse(results: BacktestResults) -> PairAnalysis` as `@staticmethod` following the 8-step algorithm in the design
-  - [ ] 3.3 Handle empty trades case: return `PairAnalysis([], [], [], [])`
-  - [ ] 3.4 Compute `profit_share` correctly (0.0 when `abs_total == 0`)
-  - [ ] 3.5 Populate `best_pairs` (top 3 desc) and `worst_pairs` (bottom 3 asc)
-  - [ ] 3.6 Set `dominance_flags = ["profit_concentration"]` when any single `profit_share > 0.60`
+- [x] 3. Implement PairAnalysisService
+  - [x] 3.1 Create `app/core/services/pair_analysis_service.py` with stateless `PairAnalysisService` class
+  - [x] 3.2 Implement `analyse(results: BacktestResults) -> PairAnalysis` as `@staticmethod` following the 8-step algorithm in the design
+  - [x] 3.3 Handle empty trades case: return `PairAnalysis([], [], [], [])`
+  - [x] 3.4 Compute `profit_share` correctly (0.0 when `abs_total == 0`)
+  - [x] 3.5 Populate `best_pairs` (top 3 desc) and `worst_pairs` (bottom 3 asc)
+  - [x] 3.6 Set `dominance_flags = ["profit_concentration"]` when any single `profit_share > 0.60`
 
-- [~] 4. Write property-based tests for PairAnalysisService
-  - [ ] 4.1 Create `tests/test_pair_analysis_properties.py` with Hypothesis strategies for `BacktestTrade` and `BacktestResults`
-  - [ ] 4.2 Implement `test_trade_count_invariant`: `sum(pm.trade_count) == len(trades)` for all non-empty inputs
-  - [ ] 4.3 Implement `test_empty_trades_returns_empty_analysis`: all lists empty, no flags
-  - [ ] 4.4 Run tests and confirm they pass
+- [x] 4. Write property-based tests for PairAnalysisService
+  - [x] 4.1 Create `tests/test_pair_analysis_properties.py` with Hypothesis strategies for `BacktestTrade` and `BacktestResults`
+  - [x] 4.2 Implement `test_trade_count_invariant`: `sum(pm.trade_count) == len(trades)` for all non-empty inputs
+  - [x] 4.3 Implement `test_empty_trades_returns_empty_analysis`: all lists empty, no flags
+  - [x] 4.4 Run tests and confirm they pass
 
 - [~] 5. Implement DiagnosisService
-  - [ ] 5.1 Create `app/core/services/diagnosis_service.py` with stateless `DiagnosisService` class
-  - [ ] 5.2 Implement `diagnose(pair_analysis, summary) -> List[DiagnosisSuggestion]` as `@staticmethod`
-  - [ ] 5.3 Implement all 5 rules: `entry_too_aggressive`, `stoploss_too_loose`, `overfitting_risk`, `insufficient_trades`, `negative_expectancy`
-  - [ ] 5.4 Ensure all matching rules are included (rules are independent, not mutually exclusive)
+  - [x] 5.1 Create `app/core/services/diagnosis_service.py` with stateless `DiagnosisService` class
+  - [x] 5.2 Implement `diagnose(pair_analysis, summary) -> List[DiagnosisSuggestion]` as `@staticmethod`
+  - [x] 5.3 Implement all 5 rules: `entry_too_aggressive`, `stoploss_too_loose`, `overfitting_risk`, `insufficient_trades`, `negative_expectancy`
+  - [x] 5.4 Ensure all matching rules are included (rules are independent, not mutually exclusive)
   - [ ] 5.5 Return empty list when no rules fire
 
 - [~] 6. Write unit tests for DiagnosisService
