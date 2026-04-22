@@ -2,39 +2,39 @@
 
 ## Overview
 
-Implement the `app/ui_v2/` directory as a parallel UI layer alongside the existing `app/ui/`. Each task builds incrementally — shared widgets first, then shell components, then pages, then wiring. The existing `app/ui/` and all files in `app/core/` and `app/app_state/` are never touched.
+Implement the redesigned UI within `app/ui/`, adding new subdirectories (`shell/`, `panels/`, `widgets/` subfolders) and updating existing files in-place. Each task builds incrementally — shared widgets first, then shell components, then pages, then wiring. All files in `app/core/` and `app/app_state/` are never touched.
 
-All code is Python 3.9+ with PySide6. Follow project conventions: `_log = get_logger("ui_v2.<module>")`, `snake_case` methods, `PascalCase` classes, empty `__init__.py` files.
+All code is Python 3.9+ with PySide6. Follow project conventions: `_log = get_logger("ui.<module>")`, `snake_case` methods, `PascalCase` classes, empty `__init__.py` files.
 
 ---
 
 ## Tasks
 
-- [x] 1. Scaffold `app/ui_v2/` directory structure and theme module
-  - Create all `__init__.py` files (empty) for every package under `app/ui_v2/`
-  - Create `app/ui_v2/theme.py` that re-exports all public symbols from `app/ui/theme.py` and adds `build_v2_additions(palette, spacing, font) -> str` returning QSS for new object names (`nav_item`, `nav_item_active`, `metric_card`, `section_header`, `command_palette`, `toast_info`, `toast_success`, `toast_error`, `toast_warning`, `page_title`)
-  - _Requirements: 1.1, 1.7, 9.1, 9.2, 9.3, 18.1_
+- [x] 1. Scaffold `app/ui/` directory structure and update theme module
+  - Create all `__init__.py` files (empty) for every new package under `app/ui/` (`shell/`, `panels/`, `widgets/` subfolders)
+  - Update `app/ui/theme.py` in-place to add `build_v2_additions(palette, spacing, font) -> str` returning QSS for new object names (`nav_item`, `nav_item_active`, `metric_card`, `section_header`, `command_palette`, `toast_info`, `toast_success`, `toast_error`, `toast_warning`, `page_title`)
+  - _Requirements: 1.1, 1.4, 1.7, 9.1, 9.2, 9.3, 18.1_
 
-  - [x] 1.1 Write unit test for theme re-export and `build_v2_additions`
-    - Verify `build_stylesheet` output is identical whether imported from `app/ui/theme` or `app/ui_v2/theme`
+  - [x] 1.1 Write unit test for theme module and `build_v2_additions`
+    - Verify `build_stylesheet` is importable from `app/ui/theme` and returns a non-empty string
     - Verify `build_v2_additions` returns a non-empty string containing each new object name
-    - **Property P6: Theme Consistency — `build_stylesheet` output must be identical from both modules**
-    - **Validates: Requirements 9.1, 18.1**
+    - **Property P6: Theme Consistency — `build_stylesheet` and `build_v2_additions` must produce consistent output**
+    - **Validates: Requirements 1.1, 1.4, 18.1**
 
 - [x] 2. Implement shared widgets
-  - [x] 2.1 Implement `MetricCard` in `app/ui_v2/widgets/metric_card.py`
+  - [x] 2.1 Implement `MetricCard` in `app/ui/widgets/metric_card.py`
     - `QFrame` subclass with `title: str`, `value: str = "—"`, `trend: Optional[float] = None`
     - `objectName = "metric_card"`; trend arrow shown as `▲`/`▼` colored green/red
     - Public `set_value(value: str, trend: Optional[float])` method for live updates
     - _Requirements: 3.2, 5.1_
 
-  - [x] 2.2 Implement `SectionHeader` in `app/ui_v2/widgets/section_header.py`
+  - [x] 2.2 Implement `SectionHeader` in `app/ui/widgets/section_header.py`
     - `QWidget` wrapping any `QWidget` body; `QToolButton` arrow toggle; `toggled = Signal(bool)`
     - `collapsed: bool = False` constructor param; animates body show/hide
     - `objectName = "section_header"` on the title bar widget
     - _Requirements: 3.3, 3.6_
 
-  - [x] 2.3 Implement `RunConfigForm` in `app/ui_v2/widgets/run_config_form.py`
+  - [x] 2.3 Implement `RunConfigForm` in `app/ui/widgets/run_config_form.py`
     - `QWidget` with `config_changed = Signal(dict)`; constructor flags `show_strategy`, `show_timeframe`, `show_timerange`, `show_pairs` (all default `True`)
     - `get_config() -> dict` and `set_config(config: dict) -> None` public API
     - Reuses `PairsSelectorDialog` from `app/ui/dialogs/pairs_selector_dialog.py` for pairs selection
@@ -48,13 +48,13 @@ All code is Python 3.9+ with PySide6. Follow project conventions: `_log = get_lo
     - Test inline validation rejects empty required fields
     - _Requirements: 4.3_
 
-  - [x] 2.5 Implement `NotificationToast` in `app/ui_v2/widgets/notification_toast.py`
+  - [x] 2.5 Implement `NotificationToast` in `app/ui/widgets/notification_toast.py`
     - `QWidget` overlay; `show_message(message: str, level: str = "info", duration_ms: int = 3000)`
     - Levels: `info`, `success`, `error`, `warning` — each sets matching `objectName`
     - Positioned bottom-right via `QWidget.move()`; auto-hides via `QTimer`
     - _Requirements: 7.3, 16.2_
 
-  - [x] 2.6 Implement `CommandPalette` in `app/ui_v2/widgets/command_palette.py`
+  - [x] 2.6 Implement `CommandPalette` in `app/ui/widgets/command_palette.py`
     - Frameless `QDialog`; `command_selected = Signal(str)`
     - Constructor: `commands: list[dict]` where each dict has `id`, `label`, `shortcut`, `action`
     - `QLineEdit` at top with live fuzzy filtering into `QListWidget` below
@@ -62,7 +62,7 @@ All code is Python 3.9+ with PySide6. Follow project conventions: `_log = get_lo
     - `objectName = "command_palette"` on the dialog
     - _Requirements: 11.1, 11.4_
 
-  - [x] 2.7 Implement `OnboardingWizard` in `app/ui_v2/widgets/onboarding_wizard.py`
+  - [x] 2.7 Implement `OnboardingWizard` in `app/ui/widgets/onboarding_wizard.py`
     - `QWizard` subclass with pages: Welcome → Venv Path → User Data → Validation → Done
     - Venv Path page validates path exists and contains Python executable
     - User Data page validates directory exists or offers to create it
@@ -70,7 +70,7 @@ All code is Python 3.9+ with PySide6. Follow project conventions: `_log = get_lo
     - _Requirements: 20.1, 20.2, 20.3, 20.4_
 
 - [x] 3. Implement shell components
-  - [x] 3.1 Implement `NavSidebar` in `app/ui_v2/shell/sidebar.py`
+  - [x] 3.1 Implement `NavSidebar` in `app/ui/shell/sidebar.py`
     - `QWidget` with `QVBoxLayout`; `nav_item_clicked = Signal(str)` emitting page id
     - `NavItem(QPushButton)` inner class: icon + label, checkable, `objectName = "nav_item"` / `"nav_item_active"`
     - Six nav items in order: dashboard, backtest, optimize, download, strategy, settings
@@ -78,34 +78,34 @@ All code is Python 3.9+ with PySide6. Follow project conventions: `_log = get_lo
     - `set_active(page_id: str)` updates `objectName` on all items
     - _Requirements: 2.1, 2.3, 2.6, 2.7_
 
-  - [x] 3.2 Implement `HeaderBar` in `app/ui_v2/shell/header_bar.py`
+  - [x] 3.2 Implement `HeaderBar` in `app/ui/shell/header_bar.py`
     - `QWidget` fixed height 48 px; app icon + app name + breadcrumb separator + page title label
     - `set_page_title(title: str)` updates breadcrumb
     - Command palette button (🔍) and settings shortcut button (⚙) on right side
     - Theme toggle button cycles Dark → Light; calls `build_stylesheet` + `build_v2_additions` and applies via `QApplication.setStyleSheet`
     - _Requirements: 2.3, 9.1, 18.1, 18.5_
 
-  - [x] 3.3 Implement `AppStatusBar` in `app/ui_v2/shell/status_bar.py`
+  - [x] 3.3 Implement `AppStatusBar` in `app/ui/shell/status_bar.py`
     - `QWidget` replacing default `QStatusBar`
     - `set_status(message: str, level: str = "info")` for process status messages
     - Displays last message with timestamp; clears after 10 seconds via `QTimer`
     - _Requirements: 3.2, 16.2_
 
 - [x] 4. Implement dockable panels
-  - [x] 4.1 Implement `TerminalPanel` in `app/ui_v2/panels/terminal_panel.py`
+  - [x] 4.1 Implement `TerminalPanel` in `app/ui/panels/terminal_panel.py`
     - `QDockWidget` subclass; wraps `TerminalWidget` from `app/ui/widgets/terminal_widget.py`
     - `setAllowedAreas(Qt.BottomDockWidgetArea | Qt.TopDockWidgetArea)`
     - `setFeatures(QDockWidget.DockWidgetClosable | QDockWidget.DockWidgetMovable)`
     - Exposes `.terminal` attribute for external access
     - _Requirements: 10.1, 10.2_
 
-  - [x] 4.2 Implement `AiPanel` in `app/ui_v2/panels/ai_panel.py`
+  - [x] 4.2 Implement `AiPanel` in `app/ui/panels/ai_panel.py`
     - `QDockWidget` subclass; wraps `AIChatDock` from `app/ui/widgets/ai_chat_dock.py` unchanged
     - `setAllowedAreas(Qt.RightDockWidgetArea | Qt.LeftDockWidgetArea)`
     - `setFeatures(QDockWidget.DockWidgetClosable | QDockWidget.DockWidgetMovable)`
     - _Requirements: 15.1, 15.5_
 
-  - [x] 4.3 Implement `ResultsPanel` in `app/ui_v2/panels/results_panel.py`
+  - [x] 4.3 Implement `ResultsPanel` in `app/ui/panels/results_panel.py`
     - `QDockWidget` wrapping `BacktestResultsWidget` from `app/ui/widgets/backtest_results_widget.py`
     - `setAllowedAreas(Qt.RightDockWidgetArea | Qt.BottomDockWidgetArea)`
     - _Requirements: 4.4, 5.1_
@@ -115,7 +115,7 @@ All code is Python 3.9+ with PySide6. Follow project conventions: `_log = get_lo
   - Ensure all tests pass, ask the user if questions arise.
 
 - [x] 6. Implement `DashboardPage`
-  - Create `app/ui_v2/pages/dashboard_page.py`
+  - Create `app/ui/pages/dashboard_page.py`
   - `QWidget` with `__init__(self, settings_state: SettingsState, parent=None)`
   - `MetricCard` grid (2×2): last backtest profit, win rate, total trades, best strategy — data from `RunStore` / `IndexStore`
   - Recent runs `QListWidget` populated from `IndexStore.get_strategy_runs`
@@ -124,7 +124,7 @@ All code is Python 3.9+ with PySide6. Follow project conventions: `_log = get_lo
   - _Requirements: 3.2, 3.7, 7.5, 16.1_
 
 - [x] 7. Implement `BacktestPage`
-  - Create `app/ui_v2/pages/backtest_page.py`
+  - Create `app/ui/pages/backtest_page.py`
   - `QWidget` with `__init__(self, settings_state: SettingsState, parent=None)`
   - `QSplitter` (horizontal) with `RunConfigForm` on left, tabbed output on right
   - Right panel: "Results" tab → `BacktestResultsWidget` (reused), "Terminal" tab → `TerminalWidget` (new instance)
@@ -139,7 +139,7 @@ All code is Python 3.9+ with PySide6. Follow project conventions: `_log = get_lo
     - _Requirements: 4.1, 4.3_
 
 - [x] 8. Implement `OptimizePage`
-  - Create `app/ui_v2/pages/optimize_page.py`
+  - Create `app/ui/pages/optimize_page.py`
   - `QWidget` with `__init__(self, settings_state: SettingsState, parent=None)`
   - `QSplitter` (horizontal): left panel has `RunConfigForm` + hyperopt options group (epochs `QSpinBox`, spaces `QComboBox`, loss function `QComboBox`) + collapsible advisor `SectionHeader`
   - Right panel: `TerminalWidget`; revert button in toolbar above terminal
@@ -148,14 +148,14 @@ All code is Python 3.9+ with PySide6. Follow project conventions: `_log = get_lo
   - _Requirements: 14.1, 14.5, 8.6_
 
 - [x] 9. Implement `DownloadPage`
-  - Create `app/ui_v2/pages/download_page.py`
+  - Create `app/ui/pages/download_page.py`
   - `QWidget` with `__init__(self, settings_state: SettingsState, parent=None)`
   - `QSplitter` (horizontal): left panel has `RunConfigForm` (timeframe + timerange + pairs only, `show_strategy=False`) + inline validation warnings
   - Right panel: "Data Status" tab → `DataStatusWidget` (reused), "Terminal" tab → `TerminalWidget`
   - _Requirements: 13.1, 13.3, 13.4, 8.6_
 
 - [x] 10. Implement `StrategyPage`
-  - Create `app/ui_v2/pages/strategy_page.py`
+  - Create `app/ui/pages/strategy_page.py`
   - `QWidget` with `__init__(self, settings_state: SettingsState, parent=None)`
   - Master-detail `QSplitter`: left `QListWidget` of strategies with search `QLineEdit` at top; each item shows name + last modified + last backtest profit from index
   - Right detail panel: tabbed — "Parameters" tab reuses `StrategyConfigPage` form, "History" tab shows run history `QTableWidget` from `IndexStore`
@@ -166,7 +166,7 @@ All code is Python 3.9+ with PySide6. Follow project conventions: `_log = get_lo
   - _Requirements: 6.1, 6.2, 6.3, 6.5, 6.6, 8.6_
 
 - [x] 11. Implement `SettingsPage`
-  - Create `app/ui_v2/pages/settings_page.py`
+  - Create `app/ui/pages/settings_page.py`
   - `QWidget` with `__init__(self, settings_state: SettingsState, parent=None)`
   - Category sidebar (`QListWidget`) + `QStackedWidget` for category panels: Paths, Execution, Terminal, AI, Appearance, About
   - Reuses all existing `SettingsService` / `SettingsState` logic — no new persistence code
@@ -180,7 +180,7 @@ All code is Python 3.9+ with PySide6. Follow project conventions: `_log = get_lo
     - **Validates: Requirements 12.3, 1.2**
 
 - [x] 12. Implement `ModernMainWindow`
-  - Create `app/ui_v2/main_window.py`
+  - Create `app/ui/main_window.py` (replaces old `MainWindow`)
   - `QMainWindow` subclass; constructor: `__init__(self, settings_state: SettingsState, parent=None)`
   - Layout: `HeaderBar` at top (set as central widget header via `QVBoxLayout` wrapper), `NavSidebar` + `QStackedWidget` in `QHBoxLayout` as central widget body, `AppStatusBar` replacing default status bar
   - Add `TerminalPanel` to `Qt.BottomDockWidgetArea`, `AiPanel` to `Qt.RightDockWidgetArea`
@@ -192,6 +192,7 @@ All code is Python 3.9+ with PySide6. Follow project conventions: `_log = get_lo
   - Apply `build_stylesheet` + `build_v2_additions` on init and on theme toggle
   - Persist/restore geometry, windowState, sidebar/collapsed, lastPage via `QSettings("FreqtradeGUI", "ModernUI")` in `closeEvent` / `__init__`
   - Trigger `OnboardingWizard` when `settings_state.settings.venv_path` is empty
+  - `main.py` imports `ModernMainWindow` from `app/ui/main_window` (replacing the old `MainWindow`)
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.8, 2.4, 8.1, 8.2, 11.2, 18.4, 18.5, 20.1_
 
   - [x] 12.1 Write property test for signal continuity
@@ -199,30 +200,24 @@ All code is Python 3.9+ with PySide6. Follow project conventions: `_log = get_lo
     - **Property P2: Signal Continuity — every signal connected in `MainWindow` must also be connected in `ModernMainWindow`**
     - **Validates: Requirements 1.8, 2.4**
 
-- [x] 13. Add `--ui-v2` flag to `main.py`
-  - Add `--ui-v2` boolean CLI argument via `argparse` (or `AppSettings.use_v2_ui: bool = False`)
-  - When flag is set, import `ModernMainWindow` from `app/ui_v2/main_window` instead of `MainWindow` from `app/ui/main_window`
-  - Both paths share the same `SettingsState` instantiation — no duplication
-  - _Requirements: 1.7, 16.1_
+  - [x] 12.2 Write property test for service immutability
+    - After running the full test suite, assert no file in `app/core/` or `app/app_state/` was modified (check via `git diff --name-only`)
+    - **Property P1: Service Immutability — no file outside `app/ui/` and `main.py` is modified**
+    - **Validates: Requirements 18.2**
 
-  - [x] 13.1 Write property test for service immutability
-    - After running the full test suite with `--ui-v2` path exercised, assert no file in `app/core/` or `app/app_state/` was modified (check via `git diff --name-only`)
-    - **Property P1: Service Immutability — no file outside `app/ui_v2/` and `main.py` is modified**
-    - **Validates: Requirements 1.7**
-
-- [ ] 14. Checkpoint — Ensure all tests pass
+- [ ] 13. Checkpoint — Ensure all tests pass
   - Run `pytest --tb=short` and confirm zero new failures.
-  - Run `ruff check app/ui_v2/` and fix any lint errors.
+  - Run `ruff check app/ui/` and fix any lint errors.
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 15. Accessibility and keyboard navigation pass
+- [ ] 14. Accessibility and keyboard navigation pass
   - Add `setAccessibleName` / `setToolTip` to all interactive elements in `NavSidebar`, `HeaderBar`, `RunConfigForm`, and all page action buttons
   - Ensure `TabFocusReason` traversal order is logical in each page (use `setTabOrder`)
   - Add `setWhatsThis` help text to complex form fields in `RunConfigForm`, `SettingsPage`, `BacktestPage`
   - Verify all icon-only buttons have accessible text alternatives
   - _Requirements: 17.1, 17.3, 17.4, 17.5, 7.1, 7.2_
 
-- [ ] 16. Final checkpoint — Ensure all tests pass
+- [ ] 15. Final checkpoint — Ensure all tests pass
   - Run `pytest --tb=short` and confirm zero new failures.
   - Run `ruff check . && ruff format --check .` and fix any issues.
   - Ensure all tests pass, ask the user if questions arise.
@@ -233,7 +228,7 @@ All code is Python 3.9+ with PySide6. Follow project conventions: `_log = get_lo
 
 - Tasks marked with `*` are optional and can be skipped for a faster MVP
 - All pages follow the constructor signature `__init__(self, settings_state: SettingsState, parent=None)`
-- `app/ui/` is never modified — all new code lives exclusively in `app/ui_v2/` and the `main.py` flag
+- All new code lives within `app/ui/` — `app/core/` and `app/app_state/` are never modified
 - Property tests (P1–P6) validate the correctness properties defined in the design document
 - `QSplitter` handle width should be set to 4 px in all pages for visual consistency
 - `QDockWidget` panels use `setFeatures(QDockWidget.DockWidgetClosable | QDockWidget.DockWidgetMovable)` — no floating by default

@@ -4,7 +4,7 @@
 
 This document describes the technical design for a complete UI layer redesign of the Freqtrade GUI application. The redesign replaces the current `QTabWidget`-based layout with a modern sidebar-navigation shell while keeping every file outside `app/ui/` completely untouched.
 
-The new UI lives in a parallel directory `app/ui_v2/` and is activated by a single flag in `main.py`. Once stable it replaces `app/ui/` entirely.
+The new UI replaces `app/ui/` in-place. `ModernMainWindow` supersedes the old `MainWindow` and `main.py` imports it directly from `app/ui/main_window`.
 
 ---
 
@@ -13,21 +13,21 @@ The new UI lives in a parallel directory `app/ui_v2/` and is activated by a sing
 ### Layer Boundaries (unchanged)
 
 ```
-app/ui_v2/          ← NEW: all redesigned UI code lives here
+app/ui/             ← redesigned UI layer lives here (replaces old contents in-place)
     ↓  (imports only)
 app/app_state/      ← UNCHANGED: SettingsState, signals
     ↓  (imports only)
 app/core/           ← UNCHANGED: services, models, runners, resolvers
 ```
 
-No file outside `app/ui_v2/` is modified.
+No file outside `app/ui/` is modified.
 
 ### New Directory Layout
 
 ```
-app/ui_v2/
+app/ui/
 ├── main_window.py              # ModernMainWindow — top-level shell
-├── theme.py                    # Re-exports app/ui/theme.py (no duplication)
+├── theme.py                    # Theme module (updated in-place; adds build_v2_additions)
 ├── shell/
 │   ├── sidebar.py              # NavSidebar — icon + label nav rail
 │   ├── header_bar.py           # HeaderBar — title, status, quick actions
@@ -52,7 +52,7 @@ app/ui_v2/
 │   ├── progress_overlay.py     # Full-page progress overlay
 │   └── onboarding_wizard.py    # First-run setup wizard
 └── dialogs/
-    └── pairs_selector_dialog.py  # Re-export from app/ui/dialogs/
+    └── pairs_selector_dialog.py  # Multi-select pairs dialog
 ```
 
 ---
@@ -346,15 +346,15 @@ Page-level state (selected pairs, last run, etc.) is managed identically to the 
 
 ## Theme System
 
-`app/ui_v2/theme.py` simply re-exports from `app/ui/theme.py`:
+`app/ui/theme.py` is updated in-place. It retains all existing symbols (`ThemeMode`, `PALETTE`, `_LIGHT_PALETTE`, `SPACING`, `FONT`, `build_stylesheet`) and gains a new function:
 
 ```python
-from app.ui.theme import (  # noqa: F401
-    ThemeMode, PALETTE, _LIGHT_PALETTE, SPACING, FONT, build_stylesheet
-)
+def build_v2_additions(palette: dict, spacing: dict, font: dict) -> str:
+    """Return QSS for all custom object names introduced by the v2 UI layer."""
+    ...
 ```
 
-New QSS additions for sidebar and new widgets are appended in a `build_v2_additions(p, sp, f)` function called from `ModernMainWindow` after `build_stylesheet`.
+`ModernMainWindow` calls both `build_stylesheet` and `build_v2_additions` and applies the combined result via `QApplication.setStyleSheet`. There is no separate re-export module — `app/ui/theme.py` is the single source of truth.
 
 New object names added to QSS:
 
@@ -421,25 +421,15 @@ Saved in `closeEvent`, restored in `__init__` after all widgets are created.
 
 ---
 
-## Migration Strategy
-
-1. New UI lives in `app/ui_v2/` — existing `app/ui/` is untouched.
-2. `main.py` gains a `--ui-v2` CLI flag (or `AppSettings.use_v2_ui: bool = False`).
-3. When flag is set, `main.py` imports `ModernMainWindow` from `app/ui_v2/` instead of `MainWindow` from `app/ui/`.
-4. Both UIs share all services, state, and models — zero duplication of business logic.
-5. Once `ui_v2` is validated, `app/ui/` is removed and `app/ui_v2/` is renamed to `app/ui/`.
-
----
-
 ## Correctness Properties
 
 The following properties must hold throughout the redesign:
 
 ### P1 — Service Immutability
-No file in `app/core/` or `app/app_state/` is modified. Verified by: `git diff --name-only` showing only `app/ui_v2/**` and `main.py`.
+No file in `app/core/` or `app/app_state/` is modified. Verified by: `git diff --name-only` showing only `app/ui/**` and `main.py`.
 
 ### P2 — Signal Continuity
-Every Qt signal that `MainWindow` connects must also be connected in `ModernMainWindow`. Verified by: running the existing integration tests with `--ui-v2` flag.
+Every Qt signal that `MainWindow` connects must also be connected in `ModernMainWindow`. Verified by: comparing signal connections between `MainWindow.__init__` and `ModernMainWindow.__init__`.
 
 ### P3 — Settings Round-Trip
 Settings saved via the new `SettingsPage` must produce an identical `AppSettings` JSON to the current `SettingsDialog`. Verified by: property test that saves via new UI and loads via `SettingsService.load_settings()`.
@@ -451,14 +441,15 @@ A backtest run via `ModernMainWindow.backtest_page` must produce the same `Backt
 `pytest --tb=short` must pass with zero new failures after the redesign. The test suite exercises services and models — not UI — so this is achievable without UI-specific tests.
 
 ### P6 — Theme Consistency
-`build_stylesheet` output must be identical whether called from `app/ui/` or `app/ui_v2/`. Verified by: unit test comparing string output.
+`build_stylesheet` and `build_v2_additions` must produce consistent output across all callers. Verified by: unit test asserting the combined stylesheet string contains all expected object names.
 
 ---
 
 ## Implementation Notes
 
 - All new pages follow the same constructor signature: `__init__(self, settings_state: SettingsState, parent=None)`
-- Module-level logger: `_log = get_logger("ui_v2.<module_name>")`
+- Module-level logger: `_log = get_logger("ui.<module_name>")`
+- All imports use `from app.ui.xxx import yyy`
 - `__init__.py` files remain empty
 - No new third-party dependencies — only PySide6 components already in use
 - `QSplitter` handle width set to 4 px for a clean look
