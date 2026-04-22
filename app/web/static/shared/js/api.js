@@ -46,11 +46,30 @@ export async function getSettings() {
 }
 
 export async function updateSettings(settings) {
-  return fetch(`${API_BASE}/settings`, {
-    method: "PUT",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify(settings)
-  }).then(r => r.json());
+  const response = await fetch(`${API_BASE}/settings`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(settings),
+  });
+  if (!response.ok) throw new Error('Failed to update settings');
+  return response.json();
+}
+
+export async function getRunDiff(runId, baselineId = null) {
+  const params = baselineId ? `?baseline_id=${baselineId}` : '';
+  const response = await fetch(`${API_BASE}/runs/${runId}/diff${params}`);
+  if (!response.ok) throw new Error('Failed to get run diff');
+  return response.json();
+}
+
+export async function rollbackRun(runId, baselineRunId) {
+  const response = await fetch(`${API_BASE}/runs/${runId}/rollback`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ baseline_run_id: baselineRunId }),
+  });
+  if (!response.ok) throw new Error('Failed to rollback run');
+  return response.json();
 }
 
 export async function getLoopStatus() {

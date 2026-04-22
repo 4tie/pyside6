@@ -227,3 +227,112 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Diff Panel Styles */
+.diff-controls {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-end;
+  margin-bottom: 1.5rem;
+}
+
+.diff-controls .form-group {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.diff-controls label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.diff-controls .input {
+  width: 100%;
+}
+
+.diff-content {
+  margin-top: 1rem;
+}
+
+.diff-section {
+  margin-bottom: 1.5rem;
+}
+
+.diff-section h4 {
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.diff-item {
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+  background-color: var(--surface);
+}
+
+.diff-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.diff-item-parameter {
+  color: var(--accent-purple);
+}
+
+.diff-item-values {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  font-size: 0.875rem;
+}
+
+.diff-item-value {
+  padding: 0.5rem;
+  border-radius: 4px;
+  background-color: var(--card);
+}
+
+.diff-item-value.before {
+  border-left: 3px solid var(--error);
+}
+
+.diff-item-value.after {
+  border-left: 3px solid var(--success);
+}
+
+.diff-item-value-label {
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+  opacity: 0.7;
+}
+
+.diff-item-value-content {
+  word-break: break-all;
+  font-family: monospace;
+}
+
+.rollback-section {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.button-danger {
+  background-color: var(--error);
+  color: white;
+}
+
+.button-danger:hover {
+  background-color: #cc0000;
+}
+
+.no-changes {
+  text-align: center;
+  padding: 2rem;
+  opacity: 0.7;
+}

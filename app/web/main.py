@@ -10,7 +10,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
 # Import route handlers
-from app.web.api.routes import runs, strategies, diagnosis, comparison, settings, loop
+from app.web.api.routes import runs, strategies, diagnosis, comparison, settings, loop, diff
 from app.web.api.websocket import backtest, loop as loop_ws
 
 # Create FastAPI app
@@ -59,6 +59,7 @@ app.include_router(diagnosis.router, prefix="/api", tags=["diagnosis"])
 app.include_router(comparison.router, prefix="/api", tags=["comparison"])
 app.include_router(settings.router, prefix="/api", tags=["settings"])
 app.include_router(loop.router, prefix="/api", tags=["loop"])
+app.include_router(diff.router, prefix="/api", tags=["diff"])
 
 # Register WebSocket handlers using decorator pattern
 from app.web.api.websocket import backtest, loop as loop_ws

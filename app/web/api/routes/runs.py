@@ -103,7 +103,8 @@ async def get_run(
         raise HTTPException(status_code=404, detail=f"Run {run_id} not found")
     
     # Load full run data
-    run_dir = backtest_results_dir / run_entry.get("strategy", "") / run_entry.get("run_dir", "")
+    # run_dir is relative to backtest_results_dir and already includes strategy path
+    run_dir = backtest_results_dir / run_entry.get("run_dir", "")
     try:
         results = RunStore.load_run(run_dir)
     except (FileNotFoundError, ValueError) as e:

@@ -83,6 +83,7 @@
             <button class="tab-button active" data-tab="trades">Trades</button>
             <button class="tab-button" data-tab="diagnosis">Diagnosis</button>
             <button class="tab-button" data-tab="params">Parameters</button>
+            <button class="tab-button" data-tab="diff">Diff Changes</button>
           </div>
 
           <!-- Tab Content -->
@@ -120,6 +121,27 @@
               <div class="card">
                 <h3>Parameters</h3>
                 <div id="params-content"></div>
+              </div>
+            </div>
+
+            <div class="tab-panel" id="diff-panel">
+              <div class="card">
+                <h3>Diff Changes</h3>
+                <div class="diff-controls">
+                  <div class="form-group">
+                    <label for="baseline-select">Baseline Run:</label>
+                    <select id="baseline-select" class="input">
+                      <option value="">Loading...</option>
+                    </select>
+                  </div>
+                  <button id="compare-diff-btn" class="button">Compare</button>
+                </div>
+                <div id="diff-content">
+                  <div class="loading">Select a baseline run to compare</div>
+                </div>
+                <div id="rollback-section" class="hidden">
+                  <button id="rollback-btn" class="button button-danger">Rollback to Baseline</button>
+                </div>
               </div>
             </div>
           </div>

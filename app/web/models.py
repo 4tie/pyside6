@@ -256,3 +256,25 @@ class LoopCompleteMessage(BaseModel):
         "best_run_id": "",
         "stop_reason": ""
     })
+
+
+class DiffResponse(BaseModel):
+    """Response model for diff between two runs."""
+    run_id: str
+    baseline_id: str
+    parameter_changes: List[Dict[str, Any]] = Field(default_factory=list)
+    code_changes: List[Dict[str, Any]] = Field(default_factory=list)
+    has_code_diff: bool = False
+
+
+class RollbackRequest(BaseModel):
+    """Request model for rollback operation."""
+    baseline_run_id: str = Field(..., description="Run ID to rollback to")
+
+
+class RollbackResponse(BaseModel):
+    """Response model for rollback operation."""
+    success: bool
+    message: str
+    rollback_to_run_id: str
+    strategy_name: str

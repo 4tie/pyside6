@@ -21,7 +21,7 @@ All code is Python 3.9+ with PySide6. Follow project conventions: `_log = get_lo
     - **Property P6: Theme Consistency — `build_stylesheet` and `build_v2_additions` must produce consistent output**
     - **Validates: Requirements 1.1, 1.4, 18.1**
 
-- [-] 2. Implement shared widgets
+- [x] 2. Implement shared widgets
   - [x] 2.1 Implement `MetricCard` in `app/ui/widgets/metric_card.py`
     - `QFrame` subclass with `title: str`, `value: str = "—"`, `trend: Optional[float] = None`
     - `objectName = "metric_card"`; trend arrow shown as `▲`/`▼` colored green/red
@@ -69,7 +69,7 @@ All code is Python 3.9+ with PySide6. Follow project conventions: `_log = get_lo
     - Validation page runs `SettingsService.validate_settings` and shows pass/fail per item
     - _Requirements: 20.1, 20.2, 20.3, 20.4_
 
-- [x] 3. Implement shell components
+- [-] 3. Implement shell components
   - [x] 3.1 Implement `NavSidebar` in `app/ui/shell/sidebar.py`
     - `QWidget` with `QVBoxLayout`; `nav_item_clicked = Signal(str)` emitting page id
     - `NavItem(QPushButton)` inner class: icon + label, checkable, `objectName = "nav_item"` / `"nav_item_active"`
@@ -91,7 +91,7 @@ All code is Python 3.9+ with PySide6. Follow project conventions: `_log = get_lo
     - Displays last message with timestamp; clears after 10 seconds via `QTimer`
     - _Requirements: 3.2, 16.2_
 
-- [x] 4. Implement dockable panels
+- [-] 4. Implement dockable panels
   - [x] 4.1 Implement `TerminalPanel` in `app/ui/panels/terminal_panel.py`
     - `QDockWidget` subclass; wraps `TerminalWidget` from `app/ui/widgets/terminal_widget.py`
     - `setAllowedAreas(Qt.BottomDockWidgetArea | Qt.TopDockWidgetArea)`

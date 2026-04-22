@@ -105,3 +105,117 @@ async def compare_runs(
         metric_scores=comparison.metric_scores,
         recommendations=comparison.recommendations,
     )
+
+
+@router.post("/comparison/batch")
+async def compare_multiple_runs(
+    settings: SettingsServiceDep,
+    run_ids: List[str],
+    baseline_id: Optional[str] = None,
+    detailed: bool = Query(False, description="Include pattern detection and full metrics"),
+) -> List[ComparisonResponse]:
+    """Compare multiple runs against a baseline or each other.
+    
+    If baseline_id is provided, compares each run against the baseline.
+    If no baseline_id, compares all runs against the first run in the list.
+    
+    Returns results sorted by score improvement (highest first).
+    """
+    app_settings = settings.load_settings()
+    if not app_settings.user_data_path:
+        raise HTTPException(status_code=404, detail="User data path not configured")
+    
+    if len(run_ids) < 2:
+        raise HTTPException(status_code=400, detail="At least 2 run IDs required")
+    
+    backtest_results_dir = Path(app_settings.user_data_path) / "backtest_results"
+    
+    # Determine baseline
+    baseline = baseline_id or run_ids[0]
+    candidates = [r for r in run_ids if r != baseline]
+    
+    # Load baseline run
+    def load_run_entry(run_id: str) -> Optional[dict]:
+        index = IndexStore.load(str(backtest_results_dir))
+        for strat_data in index.get("strategies", {}).values():
+            for run in strat_data.get("runs", []):
+                if run.get("run_id") == run_id:
+                    return run
+        return None
+    
+    baseline_entry = load_run_entry(baseline)
+    if not baseline_entry:
+        raise HTTPException(status_code=404, detail=f"Baseline run {baseline} not found")
+    
+    baseline_dir = backtest_results_dir / baseline_entry.get("strategy", "") / baseline_entry.get("run_dir", "")
+    try:
+        baseline_results = RunStore.load_run(baseline_dir)
+    except (FileNotFoundError, ValueError) as e:
+        raise HTTPException(status_code=404, detail=f"Failed to load baseline: {str(e)}")
+    
+    # Detect patterns for baseline if detailed
+    baseline_patterns = []
+    if detailed and PatternDatabase.is_loaded():
+        baseline_patterns = [d.pattern_id for d in PatternEngine.detect(baseline_results.summary, PatternDatabase.get_all())]
+    
+    # Compare each candidate
+    comparisons = []
+    for run_id in candidates:
+        run_entry = load_run_entry(run_id)
+        if not run_entry:
+            continue  # Skip missing runs
+        
+        run_dir = backtest_results_dir / run_entry.get("strategy", "") / run_entry.get("run_dir", "")
+        try:
+            run_results = RunStore.load_run(run_dir)
+        except (FileNotFoundError, ValueError):
+            continue  # Skip failed loads
+        
+        # Detect patterns for candidate if detailed
+        run_patterns = []
+        if detailed and PatternDatabase.is_loaded():
+            run_patterns = [d.pattern_id for d in PatternEngine.detect(run_results.summary, PatternDatabase.get_all())]
+        
+        # Perform comparison
+        if detailed:
+            comparison = ComparisonService.compare_enhanced(
+                baseline_results.summary,
+                run_results.summary,
+                patterns_a=baseline_patterns,
+                patterns_b=run_patterns,
+            )
+        else:
+            comparison = ComparisonService.compare(baseline_results.summary, run_results.summary)
+        
+        comparisons.append(ComparisonResponse(
+            run_a_id=baseline,
+            run_b_id=run_id,
+            profit_diff=comparison.profit_diff,
+            winrate_diff=comparison.winrate_diff,
+            drawdown_diff=comparison.drawdown_diff,
+            verdict=comparison.verdict,
+            score_a=comparison.score_a,
+            score_b=comparison.score_b,
+            score_diff=comparison.score_diff,
+            score_pct_change=(comparison.score_diff / abs(comparison.score_a) * 100) if comparison.score_a != 0 else 0.0,
+            sharpe_diff=comparison.sharpe_diff,
+            sortino_diff=comparison.sortino_diff,
+            calmar_diff=comparison.calmar_diff,
+            profit_factor_diff=comparison.profit_factor_diff,
+            trade_frequency_diff=comparison.trade_frequency_diff,
+            avg_duration_diff=comparison.avg_duration_diff,
+            expectancy_diff=comparison.expectancy_diff,
+            patterns_a=comparison.patterns_a,
+            patterns_b=comparison.patterns_b,
+            patterns_diff=list(set(comparison.patterns_b) - set(comparison.patterns_a)),
+            confidence_score=comparison.confidence_score,
+            confidence_reason=comparison.confidence_reason,
+            is_statistically_significant=comparison.is_statistically_significant,
+            metric_scores=comparison.metric_scores,
+            recommendations=comparison.recommendations,
+        ))
+    
+    # Sort by score improvement (highest first)
+    comparisons.sort(key=lambda x: x.score_diff, reverse=True)
+    
+    return comparisons
