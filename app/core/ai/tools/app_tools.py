@@ -11,7 +11,7 @@ from app.core.utils.app_logger import get_logger
 _log = get_logger("services.app_tools")
 
 
-def get_app_status(settings=None) -> dict:
+def get_application_status(settings=None) -> dict:
     """Return current app status including provider, model, and tools state.
 
     Args:
@@ -37,7 +37,7 @@ def get_app_status(settings=None) -> dict:
     }
 
 
-def read_recent_logs(lines: int = 50) -> str:
+def read_recent_log_lines(lines: int = 50) -> str:
     """Read the last N lines from the application log file.
 
     Args:
@@ -66,7 +66,7 @@ def read_recent_logs(lines: int = 50) -> str:
         return f"Error reading log file: {exc}"
 
 
-def get_last_error() -> str:
+def get_most_recent_error() -> str:
     """Return the most recent ERROR line from the application log.
 
     Returns:
@@ -87,7 +87,7 @@ def get_last_error() -> str:
         return "No recent errors found"
 
 
-def list_recent_events(event_journal=None, n: int = 20) -> str:
+def list_recent_application_events(event_journal=None, n: int = 20) -> str:
     """Return the last N events from the event journal as a JSON array.
 
     Args:
@@ -135,7 +135,7 @@ def register_app_tools(
         name="get_app_status",
         description="Get current app status including provider, model, and tools state",
         parameters_schema={"type": "object", "properties": {}, "required": []},
-        callable=lambda: get_app_status(settings),
+        callable=lambda: get_application_status(settings),
     ))
     registry.register(ToolDefinition(
         name="read_recent_logs",
@@ -145,13 +145,13 @@ def register_app_tools(
             "properties": {"lines": {"type": "integer", "default": 50}},
             "required": [],
         },
-        callable=lambda lines=50: read_recent_logs(lines),
+        callable=lambda lines=50: read_recent_log_lines(lines),
     ))
     registry.register(ToolDefinition(
         name="get_last_error",
         description="Get the most recent error from the application log",
         parameters_schema={"type": "object", "properties": {}, "required": []},
-        callable=lambda: get_last_error(),
+        callable=lambda: get_most_recent_error(),
     ))
     registry.register(ToolDefinition(
         name="list_recent_events",
@@ -161,5 +161,5 @@ def register_app_tools(
             "properties": {"n": {"type": "integer", "default": 20}},
             "required": [],
         },
-        callable=lambda n=20: list_recent_events(event_journal, n),
+        callable=lambda n=20: list_recent_application_events(event_journal, n),
     ))

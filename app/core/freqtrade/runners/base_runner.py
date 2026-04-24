@@ -21,10 +21,10 @@ class RunCommand:
 
     def to_display_string(self) -> str:
         """Return a shell-safe display string for the current platform."""
-        return format_command(self.as_list())
+        return format_command_string(self.as_list())
 
 
-def format_command(command: Sequence[str]) -> str:
+def format_command_string(command: Sequence[str]) -> str:
     """Render a tokenized command for display/copy without re-splitting it later."""
     command_parts = [str(part) for part in command if part is not None]
     if os.name == "nt":
@@ -32,7 +32,7 @@ def format_command(command: Sequence[str]) -> str:
     return shlex.join(command_parts)
 
 
-def build_command(settings: AppSettings, *ft_args: str) -> RunCommand:
+def create_command(settings: AppSettings, *ft_args: str) -> RunCommand:
     """Build a freqtrade command using python -m freqtrade or direct executable.
 
     Args:

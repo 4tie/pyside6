@@ -83,14 +83,14 @@ _log_dir: Optional[Path] = None
 _file_handlers: dict[str, logging.Handler] = {}
 
 
-def _fallback_log_dir() -> Path:
+def _get_fallback_log_directory() -> Path:
     """Return a temp-directory fallback for environments with read-only repo logs."""
     fallback = Path(tempfile.gettempdir()) / "freqtrade_gui_logs"
     fallback.mkdir(parents=True, exist_ok=True)
     return fallback
 
 
-def _resolve_log_dir(log_dir_path: Optional[str] = None) -> Path:
+def _resolve_log_directory(log_dir_path: Optional[str] = None) -> Path:
     """Resolve a writable log directory, honoring env override and temp fallback."""
     preferred = (
         Path(log_dir_path)
@@ -111,10 +111,10 @@ def _resolve_log_dir(log_dir_path: Optional[str] = None) -> Path:
         probe.unlink(missing_ok=True)
         return preferred
     except OSError:
-        return _fallback_log_dir()
+        return _get_fallback_log_directory()
 
 
-def _get_file_handler(log_dir: Path, filename: str) -> logging.Handler:
+def _get_file_handler_cached(log_dir: Path, filename: str) -> logging.Handler:
     """Return a cached RotatingFileHandler for the given filename."""
     if filename not in _file_handlers:
         target_dir = log_dir
@@ -140,7 +140,7 @@ def _get_file_handler(log_dir: Path, filename: str) -> logging.Handler:
     return _file_handlers[filename]
 
 
-def setup_logging(log_dir_path: Optional[str] = None) -> logging.Logger:
+def configure_logging(log_dir_path: Optional[str] = None) -> logging.Logger:
     """Configure application logging.
 
     Args:
@@ -152,7 +152,7 @@ def setup_logging(log_dir_path: Optional[str] = None) -> logging.Logger:
     global _root_logger, _log_dir
 
     # Resolve log directory
-    _log_dir = _resolve_log_dir(log_dir_path)
+    _log_dir = _resolve_log_directory(log_dir_path)
 
     logger = logging.getLogger("freqtrade_gui")
     logger.setLevel(logging.DEBUG)
@@ -166,7 +166,7 @@ def setup_logging(log_dir_path: Optional[str] = None) -> logging.Logger:
     logger.addHandler(console)
 
     # Main app.log file — everything
-    logger.addHandler(_get_file_handler(_log_dir, "app.log"))
+    logger.addHandler(_get_file_handler_cached(_log_dir, "app.log"))
 
     _root_logger = logger
     return logger
@@ -187,7 +187,7 @@ def get_logger(name: Optional[str] = None) -> logging.Logger:
     global _root_logger, _log_dir
 
     if _root_logger is None:
-        _root_logger = setup_logging()
+        _root_logger = configure_logging()
 
     if not name:
         return _root_logger
@@ -206,6 +206,6 @@ def get_logger(name: Optional[str] = None) -> logging.Logger:
         }
         target = str(_log_dir / filename)
         if target not in existing_files and filename != "app.log":
-            child.addHandler(_get_file_handler(_log_dir, filename))
+            child.addHandler(_get_file_handler_cached(_log_dir, filename))
 
     return child

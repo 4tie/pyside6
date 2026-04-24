@@ -8,7 +8,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtGui import QFont, QTextCursor, QColor, QTextCharFormat
 
-from app.core.freqtrade.runners.base_runner import build_command, format_command
+from app.core.freqtrade.runners.base_runner import create_command, format_command_string
 from app.core.services.process_service import ProcessService
 from app.core.models.settings_models import AppSettings, TerminalPreferences
 

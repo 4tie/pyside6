@@ -63,7 +63,7 @@ _NORM_MAX_DRAWDOWN_MIN: float = 0.0
 _NORM_MAX_DRAWDOWN_MAX: float = 100.0
 
 
-def _norm(value: float, lo: float, hi: float) -> float:
+def _normalize_value(value: float, lo: float, hi: float) -> float:
     """Linearly normalize value to [0, 1] using fixed reference range [lo, hi].
 
     Args:
@@ -79,7 +79,7 @@ def _norm(value: float, lo: float, hi: float) -> float:
     return max(0.0, min(1.0, (value - lo) / (hi - lo)))
 
 
-def _is_nan_or_none(v) -> bool:
+def _is_invalid_value(v) -> bool:
     """Return True if v is None or a float NaN."""
     if v is None:
         return True
@@ -89,7 +89,7 @@ def _is_nan_or_none(v) -> bool:
         return False
 
 
-def _normalize_summary(summary: BacktestSummary) -> BacktestSummary:
+def _normalize_backtest_summary(summary: BacktestSummary) -> BacktestSummary:
     """Return a copy of summary with None/NaN fields replaced by neutral values.
 
     Substitutions applied:
@@ -109,30 +109,30 @@ def _normalize_summary(summary: BacktestSummary) -> BacktestSummary:
     # Use copy to avoid mutating the original
     result = copy.copy(summary)
 
-    if _is_nan_or_none(result.sharpe_ratio):
+    if _is_invalid_value(result.sharpe_ratio):
         _log.warning(
-            "_normalize_summary: sharpe_ratio is None/NaN for strategy '%s' — substituting 0.0",
+            "_normalize_backtest_summary: sharpe_ratio is None/NaN for strategy '%s' — substituting 0.0",
             summary.strategy,
         )
         result.sharpe_ratio = 0.0
 
-    if _is_nan_or_none(result.profit_factor):
+    if _is_invalid_value(result.profit_factor):
         _log.warning(
-            "_normalize_summary: profit_factor is None/NaN for strategy '%s' — substituting 0.0",
+            "_normalize_backtest_summary: profit_factor is None/NaN for strategy '%s' — substituting 0.0",
             summary.strategy,
         )
         result.profit_factor = 0.0
 
-    if _is_nan_or_none(result.win_rate):
+    if _is_invalid_value(result.win_rate):
         _log.warning(
-            "_normalize_summary: win_rate is None/NaN for strategy '%s' — substituting 0.0",
+            "_normalize_backtest_summary: win_rate is None/NaN for strategy '%s' — substituting 0.0",
             summary.strategy,
         )
         result.win_rate = 0.0
 
-    if _is_nan_or_none(result.max_drawdown):
+    if _is_invalid_value(result.max_drawdown):
         _log.warning(
-            "_normalize_summary: max_drawdown is None/NaN for strategy '%s' — substituting 100.0",
+            "_normalize_backtest_summary: max_drawdown is None/NaN for strategy '%s' — substituting 100.0",
             summary.strategy,
         )
         result.max_drawdown = 100.0
@@ -140,7 +140,7 @@ def _normalize_summary(summary: BacktestSummary) -> BacktestSummary:
     return result
 
 
-def compute_score(input: RobustScoreInput) -> RobustScore:
+def calculate_robust_score(input: RobustScoreInput) -> RobustScore:
     """Compute a multi-dimensional RobustScore for a backtest result bundle.
 
     Formula:
@@ -157,14 +157,14 @@ def compute_score(input: RobustScoreInput) -> RobustScore:
     Returns:
         RobustScore with total and four component scores.
     """
-    s = _normalize_summary(input.in_sample)
+    s = _normalize_backtest_summary(input.in_sample)
 
     # ------------------------------------------------------------------
     # Profitability component (weight 0.35)
     # ------------------------------------------------------------------
-    norm_profit = _norm(s.total_profit, _NORM_NET_PROFIT_MIN, _NORM_NET_PROFIT_MAX)
-    norm_expectancy = _norm(s.expectancy, _NORM_EXPECTANCY_MIN, _NORM_EXPECTANCY_MAX)
-    norm_pf = _norm(min(s.profit_factor, 3.0), _NORM_PROFIT_FACTOR_MIN, _NORM_PROFIT_FACTOR_MAX)
+    norm_profit = _normalize_value(s.total_profit, _NORM_NET_PROFIT_MIN, _NORM_NET_PROFIT_MAX)
+    norm_expectancy = _normalize_value(s.expectancy, _NORM_EXPECTANCY_MIN, _NORM_EXPECTANCY_MAX)
+    norm_pf = _normalize_value(min(s.profit_factor, 3.0), _NORM_PROFIT_FACTOR_MIN, _NORM_PROFIT_FACTOR_MAX)
     profitability = 0.35 * (norm_profit + norm_expectancy + norm_pf) / 3.0
 
     # ------------------------------------------------------------------
@@ -206,12 +206,12 @@ def compute_score(input: RobustScoreInput) -> RobustScore:
     # ------------------------------------------------------------------
     # Fragility component (weight 0.15, subtracted)
     # ------------------------------------------------------------------
-    norm_dd = _norm(s.max_drawdown, _NORM_MAX_DRAWDOWN_MIN, _NORM_MAX_DRAWDOWN_MAX)
+    norm_dd = _normalize_value(s.max_drawdown, _NORM_MAX_DRAWDOWN_MIN, _NORM_MAX_DRAWDOWN_MAX)
 
     # slippage_sensitivity: ratio of stress-test profit drop to baseline profit
     slippage_sensitivity = 0.0
     if input.stress_summary is not None:
-        stress_s = _normalize_summary(input.stress_summary)
+        stress_s = _normalize_backtest_summary(input.stress_summary)
         if s.total_profit != 0:
             drop = s.total_profit - stress_s.total_profit
             slippage_sensitivity = max(0.0, min(1.0, drop / abs(s.total_profit)))
@@ -236,7 +236,7 @@ def compute_score(input: RobustScoreInput) -> RobustScore:
     )
 
 
-def compute_trade_profit_contributions(
+def calculate_trade_profit_contributions(
     results: Optional[BacktestResults],
 ) -> Optional[List[float]]:
     """Return per-trade profit contributions as fractions of total positive profit."""
@@ -254,7 +254,7 @@ def compute_trade_profit_contributions(
     ]
 
 
-def compute_pair_profit_distribution(
+def calculate_pair_profit_distribution(
     results: Optional[BacktestResults],
 ) -> Optional[Dict[str, float]]:
     """Return pair -> positive profit share distribution for stability scoring."""
@@ -277,7 +277,7 @@ def compute_pair_profit_distribution(
     }
 
 
-def build_diagnosis_input(
+def create_diagnosis_input(
     in_sample_results: BacktestResults,
     oos_results: Optional[BacktestResults] = None,
     fold_results: Optional[List[BacktestResults]] = None,
@@ -293,12 +293,12 @@ def build_diagnosis_input(
         fold_summaries=[
             result.summary for result in (fold_results or [])
         ] or None,
-        trade_profit_contributions=compute_trade_profit_contributions(in_sample_results),
+        trade_profit_contributions=calculate_trade_profit_contributions(in_sample_results),
         exit_reason_analysis=exit_reason_analysis,
     )
 
 
-def build_score_input(
+def create_score_input(
     in_sample_results: BacktestResults,
     fold_results: Optional[List[BacktestResults]] = None,
     stress_results: Optional[BacktestResults] = None,
@@ -308,11 +308,11 @@ def build_score_input(
         in_sample=in_sample_results.summary,
         fold_summaries=[result.summary for result in (fold_results or [])] or None,
         stress_summary=stress_results.summary if stress_results is not None else None,
-        pair_profit_distribution=compute_pair_profit_distribution(in_sample_results),
+        pair_profit_distribution=calculate_pair_profit_distribution(in_sample_results),
     )
 
 
-def targets_met(summary: BacktestSummary, config: LoopConfig) -> bool:
+def check_targets_met(summary: BacktestSummary, config: LoopConfig) -> bool:
     """Return True if all profitability targets in config are satisfied.
 
     All four conditions must be simultaneously satisfied.
@@ -950,7 +950,7 @@ class LoopService:
 
         if initial_results is not None:
             # Seed the best score from the existing baseline (Training Range only)
-            score = compute_score(RobustScoreInput(in_sample=initial_results.summary))
+            score = calculate_robust_score(RobustScoreInput(in_sample=initial_results.summary))
             self._best_score = score.total
             _log.info(
                 "Loop started with existing baseline; score=%.4f", self._best_score
@@ -1065,7 +1065,7 @@ class LoopService:
         Returns:
             OptimizeRunCommand ready for ProcessService.
         """
-        from app.core.freqtrade.runners.optimize_runner import build_optimize_command
+        from app.core.freqtrade.runners.optimize_runner import create_optimize_command
 
         timerange = None
         if config.date_from and config.date_to:
@@ -1075,7 +1075,7 @@ class LoopService:
             "--strategy-path", str(sandbox_dir),
         ]
 
-        return build_optimize_command(
+        return create_optimize_command(
             settings=settings,
             strategy_name=config.strategy,
             timeframe=timeframe,
@@ -1524,7 +1524,7 @@ class LoopService:
             prev_iteration is not None
             and prev_iteration.validation_gate_passed
             and self._config.stop_on_first_profitable
-            and targets_met(latest_summary, self._config)
+            and check_targets_met(latest_summary, self._config)
         ):
             from pathlib import Path
 
@@ -1727,7 +1727,7 @@ class LoopService:
 
         if score_input is None:
             score_input = RobustScoreInput(in_sample=summary)
-        robust_score = compute_score(score_input)
+        robust_score = calculate_robust_score(score_input)
         iteration.score = robust_score
 
         is_improvement = (
@@ -2029,7 +2029,7 @@ class LoopService:
             prev_iteration is not None
             and prev_iteration.validation_gate_passed
             and self._config.stop_on_first_profitable
-            and targets_met(latest_summary, self._config)
+            and check_targets_met(latest_summary, self._config)
         ):
             self._result.target_reached = True
             self._result.stop_reason = "All profitability targets met"

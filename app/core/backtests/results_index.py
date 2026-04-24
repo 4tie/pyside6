@@ -21,7 +21,7 @@ _INDEX_FILE = "index.json"
 # Shared helpers
 # ─────────────────────────────────────────────
 
-def _load_json(path: Path, default: dict) -> dict:
+def _load_json_file(path: Path, default: dict) -> dict:
     if path.exists():
         try:
             return json.loads(path.read_text(encoding="utf-8"))
@@ -30,11 +30,11 @@ def _load_json(path: Path, default: dict) -> dict:
     return default
 
 
-def _save_json(path: Path, data: dict) -> None:
+def _save_json_file(path: Path, data: dict) -> None:
     path.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
 
 
-def _entry_from_results(run_id: str, run_dir: Path, results: BacktestResults,
+def _create_index_entry_from_results(run_id: str, run_dir: Path, results: BacktestResults,
                         relative_to: Path, version_id: Optional[str] = None) -> Dict:
     s = results.summary
     return {
@@ -66,7 +66,7 @@ def _entry_from_results(run_id: str, run_dir: Path, results: BacktestResults,
     }
 
 
-def _upsert_run(runs: List[Dict], run_id: str, entry: Dict) -> None:
+def _update_or_insert_run_entry(runs: List[Dict], run_id: str, entry: Dict) -> None:
     for i, r in enumerate(runs):
         if r.get("run_id") == run_id:
             runs[i] = entry
@@ -88,22 +88,22 @@ class IndexStore:
         """Add or update a run entry in the global index."""
         root = Path(backtest_results_dir)
         index_path = root / _INDEX_FILE
-        index = _load_json(index_path, {"updated_at": "", "strategies": {}})
+        index = _load_json_file(index_path, {"updated_at": "", "strategies": {}})
 
-        entry = _entry_from_results(run_id, run_dir, results, root, version_id)
+        entry = _create_index_entry_from_results(run_id, run_dir, results, root, version_id)
         strategy = results.summary.strategy
         strat_block = index.setdefault("strategies", {}).setdefault(strategy, {"runs": []})
-        _upsert_run(strat_block["runs"], run_id, entry)
+        _update_or_insert_run_entry(strat_block["runs"], run_id, entry)
         strat_block["runs"].sort(key=lambda r: r.get("saved_at", ""), reverse=True)
 
         index["updated_at"] = datetime.now().isoformat()
-        _save_json(index_path, index)
+        _save_json_file(index_path, index)
         _log.debug("Global index updated | strategy=%s | run_id=%s", strategy, run_id)
 
     @staticmethod
     def load(backtest_results_dir: str) -> dict:
         """Load the full global index."""
-        return _load_json(
+        return _load_json_file(
             Path(backtest_results_dir) / _INDEX_FILE,
             {"updated_at": "", "strategies": {}}
         )
@@ -142,7 +142,7 @@ class IndexStore:
             if runs:
                 index["strategies"][strategy_dir.name] = {"runs": runs}
 
-        _save_json(root / _INDEX_FILE, index)
+        _save_json_file(root / _INDEX_FILE, index)
         return index
 
 
@@ -159,21 +159,21 @@ class StrategyIndexStore:
                version_id: Optional[str] = None) -> None:
         """Add or update a run entry in the strategy-level index."""
         index_path = strategy_dir / _INDEX_FILE
-        index = _load_json(index_path, {"strategy": results.summary.strategy,
+        index = _load_json_file(index_path, {"strategy": results.summary.strategy,
                                         "updated_at": "", "runs": []})
-        entry = _entry_from_results(run_id, run_dir, results, strategy_dir, version_id)
+        entry = _create_index_entry_from_results(run_id, run_dir, results, strategy_dir, version_id)
         entry["run_dir"] = run_dir.name   # relative to strategy dir
-        _upsert_run(index["runs"], run_id, entry)
+        _update_or_insert_run_entry(index["runs"], run_id, entry)
         index["runs"].sort(key=lambda r: r.get("saved_at", ""), reverse=True)
         index["updated_at"] = datetime.now().isoformat()
-        _save_json(index_path, index)
+        _save_json_file(index_path, index)
         _log.debug("Strategy index updated | strategy=%s | run_id=%s",
                    results.summary.strategy, run_id)
 
     @staticmethod
     def load(strategy_dir: str, strategy: str) -> dict:
         """Load the strategy-level index."""
-        return _load_json(
+        return _load_json_file(
             Path(strategy_dir) / _INDEX_FILE,
             {"strategy": strategy, "updated_at": "", "runs": []}
         )
@@ -204,6 +204,6 @@ class StrategyIndexStore:
             except Exception:
                 continue
 
-        _save_json(root / _INDEX_FILE, index)
+        _save_json_file(root / _INDEX_FILE, index)
         _log.info("Strategy index rebuilt | strategy=%s | runs=%d", strategy, len(index["runs"]))
         return index

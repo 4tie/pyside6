@@ -13,7 +13,7 @@ from typing import Dict, List, Optional, Tuple
 
 from app.core.backtests.results_index import IndexStore
 from app.core.backtests.results_models import BacktestResults
-from app.core.backtests.results_parser import parse_backtest_zip
+from app.core.backtests.results_parser import parse_backtest_results_from_zip
 from app.core.backtests.results_store import RunStore
 from app.core.freqtrade.runners.backtest_runner import BacktestRunCommand
 from app.core.services.backtest_service import BacktestService
@@ -444,7 +444,7 @@ class ImproveService:
                         f"No candidate zip found in export_dir: {export_dir}"
                     )
         
-        return parse_backtest_zip(str(zip_path))
+        return parse_backtest_results_from_zip(str(zip_path))
 
     def accept_candidate(self, strategy_name: str, candidate_config: dict) -> None:
         """Atomically write candidate_config as the live strategy parameter file.

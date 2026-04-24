@@ -24,7 +24,7 @@ class HyperoptSuggestion:
     source: str = "default"  # "last_run" | "default"
 
 
-def _load_last_hyperopt_result(hyperopt_results_dir: Path, strategy: str) -> Optional[dict]:
+def _load_latest_hyperopt_result(hyperopt_results_dir: Path, strategy: str) -> Optional[dict]:
     """Find the most recent .fthypt file for a strategy and read its summary."""
     if not hyperopt_results_dir.exists():
         return None
@@ -44,7 +44,7 @@ def _load_last_hyperopt_result(hyperopt_results_dir: Path, strategy: str) -> Opt
     return None
 
 
-def _load_last_backtest_meta(backtest_results_dir: Path, strategy: str) -> Optional[dict]:
+def _load_latest_backtest_metadata(backtest_results_dir: Path, strategy: str) -> Optional[dict]:
     """Load the most recent backtest meta.json for a strategy."""
     strategy_dir = backtest_results_dir / strategy
     if not strategy_dir.exists():
@@ -62,7 +62,7 @@ def _load_last_backtest_meta(backtest_results_dir: Path, strategy: str) -> Optio
         return None
 
 
-def analyse(
+def analyze(
     strategy: str,
     user_data_path: str,
 ) -> HyperoptSuggestion:
@@ -81,7 +81,7 @@ def analyse(
     hyperopt_dir = root / "hyperopt_results"
 
     suggestion = HyperoptSuggestion()
-    meta = _load_last_backtest_meta(backtest_dir, strategy)
+    meta = _load_latest_backtest_metadata(backtest_dir, strategy)
 
     # ── No history at all ──────────────────────────────────────────────
     if meta is None:

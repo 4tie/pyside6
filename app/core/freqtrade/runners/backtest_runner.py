@@ -2,8 +2,8 @@ from dataclasses import dataclass
 from typing import List, Optional
 
 from app.core.models.settings_models import AppSettings
-from app.core.freqtrade.runners.base_runner import RunCommand, build_command
-from app.core.freqtrade.resolvers.runtime_resolver import resolve_run_paths
+from app.core.freqtrade.runners.base_runner import RunCommand, create_command
+from app.core.freqtrade.resolvers.runtime_resolver import find_run_paths
 
 
 @dataclass
@@ -14,7 +14,7 @@ class BacktestRunCommand(RunCommand):
     strategy_file: str
 
 
-def build_backtest_command(
+def create_backtest_command(
     settings: AppSettings,
     strategy_name: str,
     timeframe: str,
@@ -43,7 +43,7 @@ def build_backtest_command(
         ValueError: If settings are incomplete.
         FileNotFoundError: If strategy file does not exist.
     """
-    paths = resolve_run_paths(settings, strategy_name=strategy_name)
+    paths = find_run_paths(settings, strategy_name=strategy_name)
 
     export_dir = paths.user_data_dir / "backtest_results"
     export_dir.mkdir(parents=True, exist_ok=True)
@@ -68,7 +68,7 @@ def build_backtest_command(
     if extra_flags:
         ft_args += list(extra_flags)
 
-    base = build_command(settings, *ft_args)
+    base = create_command(settings, *ft_args)
     return BacktestRunCommand(
         program=base.program,
         args=base.args,

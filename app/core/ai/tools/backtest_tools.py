@@ -51,12 +51,12 @@ _COMPARE_KEYS = (
 )
 
 
-def _backtest_results_dir(user_data_path: str) -> str:
+def _get_backtest_results_directory_path(user_data_path: str) -> str:
     """Return the backtest_results directory path string."""
     return str(Path(user_data_path) / "backtest_results")
 
 
-def _find_run_entry(backtest_results_dir: str, run_id: str) -> Optional[Dict]:
+def _find_run_entry_by_id(backtest_results_dir: str, run_id: str) -> Optional[Dict]:
     """Search the global index for a run entry by run_id."""
     index = IndexStore.load(backtest_results_dir)
     for _strategy, block in index.get("strategies", {}).items():
@@ -80,7 +80,7 @@ def get_latest_backtest_result(settings=None) -> Dict[str, Any]:
         _log.warning("get_latest_backtest_result: user_data_path not configured")
         return {"error": "user_data_path not configured"}
 
-    results_dir = _backtest_results_dir(settings.user_data_path)
+    results_dir = _get_backtest_results_directory_path(settings.user_data_path)
     index = IndexStore.load(results_dir)
 
     # Collect all runs across all strategies and find the newest
@@ -116,7 +116,7 @@ def load_run_history(strategy: str, settings=None) -> Dict[str, Any]:
         _log.warning("load_run_history: user_data_path not configured")
         return {"error": "user_data_path not configured"}
 
-    results_dir = _backtest_results_dir(settings.user_data_path)
+    results_dir = _get_backtest_results_directory_path(settings.user_data_path)
     runs = IndexStore.get_strategy_runs(results_dir, strategy)
 
     if not runs:
@@ -156,25 +156,25 @@ def compare_runs(run_id_a: str, run_id_b: str, settings=None) -> Dict[str, Any]:
         _log.warning("compare_runs: user_data_path not configured")
         return {"error": "user_data_path not configured"}
 
-    results_dir = _backtest_results_dir(settings.user_data_path)
+    results_dir = _get_backtest_results_directory_path(settings.user_data_path)
 
-    entry_a = _find_run_entry(results_dir, run_id_a)
+    entry_a = _find_run_entry_by_id(results_dir, run_id_a)
     if entry_a is None:
         _log.warning("compare_runs: run not found: %s", run_id_a)
         return {"error": f"Run not found: {run_id_a}"}
 
-    entry_b = _find_run_entry(results_dir, run_id_b)
+    entry_b = _find_run_entry_by_id(results_dir, run_id_b)
     if entry_b is None:
         _log.warning("compare_runs: run not found: %s", run_id_b)
         return {"error": f"Run not found: {run_id_b}"}
 
-    def _extract(entry: Dict) -> Dict:
+    def _extract_comparison_metrics(entry: Dict) -> Dict:
         return {k: entry.get(k) for k in _COMPARE_KEYS}
 
     _log.debug("compare_runs: comparing %s vs %s", run_id_a, run_id_b)
     return {
-        "run_a": _extract(entry_a),
-        "run_b": _extract(entry_b),
+        "run_a": _extract_comparison_metrics(entry_a),
+        "run_b": _extract_comparison_metrics(entry_b),
     }
 
 

@@ -9,7 +9,7 @@ from app.core.utils.app_logger import get_logger
 _log = get_logger("backtests.parser")
 
 
-def parse_backtest_zip(zip_path: str) -> BacktestResults:
+def parse_backtest_results_from_zip(zip_path: str) -> BacktestResults:
     """Parse a freqtrade backtest zip and return structured results.
 
     Args:
@@ -41,13 +41,13 @@ def parse_backtest_zip(zip_path: str) -> BacktestResults:
         _log.error("Failed to open zip %s: %s", path.name, e)
         raise ValueError(f"Failed to parse backtest zip: {e}")
 
-    result = _parse_data(data)
+    result = _parse_results_data(data)
     _log.info("Parsed | strategy=%s | trades=%d | profit=%.4f%%",
               result.summary.strategy, result.summary.total_trades, result.summary.total_profit)
     return result
 
 
-def parse_result_json_file(json_path: str) -> BacktestResults:
+def parse_backtest_results_from_json(json_path: str) -> BacktestResults:
     """Parse a bt-*.result.json file directly.
 
     Args:
@@ -65,14 +65,14 @@ def parse_result_json_file(json_path: str) -> BacktestResults:
         raise FileNotFoundError(f"Result file not found: {json_path}")
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
-        return _parse_data(data)
+        return _parse_results_data(data)
     except json.JSONDecodeError as e:
         raise ValueError(f"Failed to parse result JSON: {e}")
     except Exception as e:
         raise ValueError(f"Failed to parse result file: {e}")
 
 
-def _parse_data(data: Dict[str, Any]) -> BacktestResults:
+def _parse_results_data(data: Dict[str, Any]) -> BacktestResults:
     """Parse freqtrade result JSON (zip format or bt-*.result.json format).
 
     Zip format:  {"strategy": {"<Name>": {"trades": [...], "total_trades": N, ...}}}
@@ -89,12 +89,12 @@ def _parse_data(data: Dict[str, Any]) -> BacktestResults:
         sd = {}
         trades_data = data.get("result", {}).get("trades", [])
 
-    trades = _parse_trades(trades_data)
-    summary = _build_summary(strategy_name, sd, trades)
+    trades = _parse_trades_data(trades_data)
+    summary = _build_backtest_summary(strategy_name, sd, trades)
     return BacktestResults(summary=summary, trades=trades, raw_data=data)
 
 
-def _parse_trades(trades_data: List[Dict]) -> List[BacktestTrade]:
+def _parse_trades_data(trades_data: List[Dict]) -> List[BacktestTrade]:
     trades = []
     for t in trades_data:
         try:
@@ -117,7 +117,7 @@ def _parse_trades(trades_data: List[Dict]) -> List[BacktestTrade]:
     return trades
 
 
-def _build_summary(strategy_name: str, sd: Dict, trades: List[BacktestTrade]) -> BacktestSummary:
+def _build_backtest_summary(strategy_name: str, sd: Dict, trades: List[BacktestTrade]) -> BacktestSummary:
     total = len(trades)
     wins   = int(sd.get("wins",   sum(1 for t in trades if t.profit > 0)))
     losses = int(sd.get("losses", sum(1 for t in trades if t.profit < 0)))

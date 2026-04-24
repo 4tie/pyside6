@@ -1426,21 +1426,21 @@ class LoopPage(QWidget):
         self._current_gate_timerange = timerange
         self._current_gate_export_dir = self._build_gate_export_dir(gate_name)
 
-        from app.core.freqtrade.resolvers.config_resolver import resolve_config_file
-        from app.core.freqtrade.runners.backtest_runner import build_backtest_command
+        from app.core.freqtrade.resolvers.config_resolver import find_config_file_path
+        from app.core.freqtrade.runners.backtest_runner import create_backtest_command
 
         extra_flags = [
             "--strategy-path", str(self._sandbox_dir),
             "--backtest-directory", str(self._current_gate_export_dir),
         ]
         if gate_name == "stress_test":
-            config_path = resolve_config_file(Path(settings.user_data_path), strategy_name=config.strategy)
+            config_path = find_config_file_path(Path(settings.user_data_path), strategy_name=config.strategy)
             extra_flags.extend([
                 "--fee",
                 str(self._compute_stress_fee_ratio(config_path, config)),
             ])
 
-        cmd = build_backtest_command(
+        cmd = create_backtest_command(
             settings=settings,
             strategy_name=config.strategy,
             timeframe=config.timeframe,
@@ -1620,7 +1620,7 @@ class LoopPage(QWidget):
         _log.info("Baseline timerange: %s", in_sample_timerange)
         
         # Build backtest command for baseline
-        from app.core.freqtrade.runners.backtest_runner import build_backtest_command
+        from app.core.freqtrade.runners.backtest_runner import create_backtest_command
         
         export_dir = sandbox_dir / "baseline_export"
         export_dir.mkdir(parents=True, exist_ok=True)
@@ -1630,7 +1630,7 @@ class LoopPage(QWidget):
                 "--strategy-path", str(sandbox_dir),
                 "--backtest-directory", str(export_dir),
             ]
-            cmd = build_backtest_command(
+            cmd = create_backtest_command(
                 settings=settings,
                 strategy_name=strategy,
                 timeframe=config.timeframe,

@@ -20,7 +20,7 @@ _log = get_logger("services.strategy_tools")
 _MAX_CODE_BYTES = 50 * 1024  # 50 KB
 
 
-def list_strategies(settings=None) -> Dict[str, Any]:
+def list_available_strategies(settings=None) -> Dict[str, Any]:
     """Return the names of all strategies in the strategies directory.
 
     Args:
@@ -45,7 +45,7 @@ def list_strategies(settings=None) -> Dict[str, Any]:
     return {"strategies": names}
 
 
-def read_strategy_code(strategy_name: str, settings=None) -> Dict[str, Any]:
+def read_strategy_source_code(strategy_name: str, settings=None) -> Dict[str, Any]:
     """Return the source code of a named strategy file.
 
     Args:
@@ -81,7 +81,7 @@ def read_strategy_code(strategy_name: str, settings=None) -> Dict[str, Any]:
         return {"error": f"Failed to read strategy file: {exc}"}
 
 
-def read_strategy_params(strategy_name: str, settings=None) -> Dict[str, Any]:
+def read_strategy_parameters(strategy_name: str, settings=None) -> Dict[str, Any]:
     """Return buy/sell params and ROI table from a strategy's JSON params file.
 
     Args:
@@ -132,7 +132,7 @@ def register_strategy_tools(registry: ToolRegistry, settings=None) -> None:
             "Returns strategy names without the .py extension."
         ),
         parameters_schema={"type": "object", "properties": {}, "required": []},
-        callable=lambda: list_strategies(settings),
+        callable=lambda: list_available_strategies(settings),
     ))
 
     registry.register(ToolDefinition(
@@ -152,7 +152,7 @@ def register_strategy_tools(registry: ToolRegistry, settings=None) -> None:
             },
             "required": ["strategy_name"],
         },
-        callable=lambda strategy_name: read_strategy_code(strategy_name, settings),
+        callable=lambda strategy_name: read_strategy_source_code(strategy_name, settings),
     ))
 
     registry.register(ToolDefinition(
@@ -172,7 +172,7 @@ def register_strategy_tools(registry: ToolRegistry, settings=None) -> None:
             },
             "required": ["strategy_name"],
         },
-        callable=lambda strategy_name: read_strategy_params(strategy_name, settings),
+        callable=lambda strategy_name: read_strategy_parameters(strategy_name, settings),
     ))
 
     _log.debug("Strategy tools registered: list_strategies, read_strategy_code, read_strategy_params")

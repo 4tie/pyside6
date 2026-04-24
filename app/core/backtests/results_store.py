@@ -39,11 +39,11 @@ class RunStore:
         _log.info("Saving run | id=%s | strategy=%s | trades=%d | profit=%.4f%%",
                   run_id, s.strategy, s.total_trades, s.total_profit)
 
-        _write_meta(run_dir, run_id, results, version_id)
-        _write_results(run_dir, results)
-        _write_trades(run_dir, results)
-        _write_config_snapshot(run_dir, config_path)
-        _write_params(run_dir, run_params, results)
+        _write_metadata(run_dir, run_id, results, version_id)
+        _write_results_data(run_dir, results)
+        _write_trades_data(run_dir, results)
+        _write_configuration_snapshot(run_dir, config_path)
+        _write_parameters(run_dir, run_params, results)
 
         backtest_results_dir = str(Path(strategy_results_dir).parent)
         IndexStore.update(backtest_results_dir, run_id, run_dir, results, version_id)
@@ -138,7 +138,7 @@ class RunStore:
 # Private writers
 # ─────────────────────────────────────────────
 
-def _write_meta(run_dir: Path, run_id: str, results: BacktestResults, version_id: Optional[str] = None) -> None:
+def _write_metadata(run_dir: Path, run_id: str, results: BacktestResults, version_id: Optional[str] = None) -> None:
     s = results.summary
     meta = {
         "run_id":           run_id,
@@ -172,7 +172,7 @@ def _write_meta(run_dir: Path, run_id: str, results: BacktestResults, version_id
     )
 
 
-def _write_results(run_dir: Path, results: BacktestResults) -> None:
+def _write_results_data(run_dir: Path, results: BacktestResults) -> None:
     s = results.summary
     data = {
         "strategy":               s.strategy,
@@ -207,7 +207,7 @@ def _write_results(run_dir: Path, results: BacktestResults) -> None:
     )
 
 
-def _write_trades(run_dir: Path, results: BacktestResults) -> None:
+def _write_trades_data(run_dir: Path, results: BacktestResults) -> None:
     trades_out = [
         {
             "pair":         t.pair,
@@ -229,7 +229,7 @@ def _write_trades(run_dir: Path, results: BacktestResults) -> None:
     )
 
 
-def _write_config_snapshot(run_dir: Path, config_path: Optional[str]) -> None:
+def _write_configuration_snapshot(run_dir: Path, config_path: Optional[str]) -> None:
     """Copy the config used for the run into the run folder when available."""
     if not config_path:
         return
@@ -242,7 +242,7 @@ def _write_config_snapshot(run_dir: Path, config_path: Optional[str]) -> None:
     shutil.copy2(source, run_dir / "config.snapshot.json")
 
 
-def _write_params(run_dir: Path, run_params: Optional[dict],
+def _write_parameters(run_dir: Path, run_params: Optional[dict],
                   results: BacktestResults) -> None:
     if run_params:
         params = run_params

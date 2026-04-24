@@ -40,7 +40,7 @@ def detect_strategy_timeframe(strategy_path: Path) -> str:
         return "5m"
 
 
-def resolve_strategy_file(user_data: Path, strategy_name: str) -> Path:
+def find_strategy_file_path(user_data: Path, strategy_name: str) -> Path:
     """Resolve the absolute path to a strategy .py file.
 
     Args:
@@ -60,7 +60,7 @@ def resolve_strategy_file(user_data: Path, strategy_name: str) -> Path:
     return path
 
 
-def list_strategies(user_data: Path) -> List[str]:
+def list_available_strategies(user_data: Path) -> List[str]:
     """List available strategy names from user_data/strategies/.
 
     Args:

@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from typing import List, Optional
 
-from app.core.freqtrade.resolvers.runtime_resolver import resolve_run_paths
-from app.core.freqtrade.runners.base_runner import RunCommand, build_command
+from app.core.freqtrade.resolvers.runtime_resolver import find_run_paths
+from app.core.freqtrade.runners.base_runner import RunCommand, create_command
 from app.core.models.settings_models import AppSettings
 
 
@@ -14,7 +14,7 @@ class OptimizeRunCommand(RunCommand):
     strategy_file: str
 
 
-def build_optimize_command(
+def create_optimize_command(
     settings: AppSettings,
     strategy_name: str,
     timeframe: str,
@@ -26,7 +26,7 @@ def build_optimize_command(
     extra_flags: Optional[List[str]] = None,
 ) -> OptimizeRunCommand:
     """Build a freqtrade hyperopt command."""
-    paths = resolve_run_paths(settings, strategy_name=strategy_name)
+    paths = find_run_paths(settings, strategy_name=strategy_name)
 
     ft_args = [
         "hyperopt",
@@ -48,7 +48,7 @@ def build_optimize_command(
     if extra_flags:
         ft_args += list(extra_flags)
 
-    base = build_command(settings, *ft_args)
+    base = create_command(settings, *ft_args)
     return OptimizeRunCommand(
         program=base.program,
         args=base.args,
