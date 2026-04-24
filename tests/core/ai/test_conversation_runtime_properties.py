@@ -6,20 +6,14 @@ for all combinations of routing_mode and call type.
 
 Validates: Requirements 6.3, 6.4, 6.8
 """
-import sys
-from unittest.mock import MagicMock, patch, call
+from unittest.mock import MagicMock, patch
 
 import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
-from PySide6.QtWidgets import QApplication
-
-from app.core.ai.runtime.conversation_runtime import ConversationRuntime
+from app.core.ai.runtime.async_conversation_runtime import AsyncConversationRuntime
 from app.core.models.settings_models import AISettings
-
-# Ensure a QApplication exists for QObject-based tests
-_app = QApplication.instance() or QApplication(sys.argv)
 
 
 # ---------------------------------------------------------------------------
@@ -56,22 +50,19 @@ def test_property_5_send_message_always_uses_chat_model(
 
     captured_model: list[str] = []
 
-    def fake_start_worker(provider, run_fn):
-        # Create a mock worker and call run_fn to capture the model argument
-        mock_worker = MagicMock()
-        mock_worker.run_chat = lambda messages, model: captured_model.append(model)
-        mock_worker.run_task_loop = lambda messages, model, registry, steps, schemas=None: captured_model.append(model)
-        run_fn(mock_worker)
+    async def fake_chat_async(messages, model, **kwargs):
+        captured_model.append(model)
+        from app.core.ai.providers.provider_base import AIResponse
+        return AIResponse(content="", model=model)
 
     mock_provider = MagicMock()
+    mock_provider.chat_async = fake_chat_async
 
-    with patch("app.core.ai.runtime.conversation_runtime.ProviderFactory") as mock_factory:
+    with patch("app.core.ai.runtime.async_conversation_runtime.ProviderFactory") as mock_factory:
         mock_factory.create.return_value = mock_provider
 
-        runtime = ConversationRuntime(ai_settings)
-
-        with patch.object(runtime, "_start_worker", side_effect=fake_start_worker):
-            runtime.send_message("hello")
+        runtime = AsyncConversationRuntime(ai_settings)
+        runtime.send_message("hello")
 
     assert len(captured_model) == 1, "Expected exactly one model to be captured"
     assert captured_model[0] == chat_model, (
@@ -102,21 +93,19 @@ def test_property_5_run_task_routing_by_mode(
 
     captured_model: list[str] = []
 
-    def fake_start_worker(provider, run_fn):
-        mock_worker = MagicMock()
-        mock_worker.run_chat = lambda messages, model: captured_model.append(model)
-        mock_worker.run_task_loop = lambda messages, model, registry, steps, schemas=None: captured_model.append(model)
-        run_fn(mock_worker)
+    async def fake_chat_async(messages, model, **kwargs):
+        captured_model.append(model)
+        from app.core.ai.providers.provider_base import AIResponse
+        return AIResponse(content="", model=model)
 
     mock_provider = MagicMock()
+    mock_provider.chat_async = fake_chat_async
 
-    with patch("app.core.ai.runtime.conversation_runtime.ProviderFactory") as mock_factory:
+    with patch("app.core.ai.runtime.async_conversation_runtime.ProviderFactory") as mock_factory:
         mock_factory.create.return_value = mock_provider
 
-        runtime = ConversationRuntime(ai_settings)
-
-        with patch.object(runtime, "_start_worker", side_effect=fake_start_worker):
-            runtime.run_task("do something")
+        runtime = AsyncConversationRuntime(ai_settings)
+        runtime.run_task("do something")
 
     assert len(captured_model) == 1, "Expected exactly one model to be captured"
 
@@ -163,7 +152,7 @@ def test_property_6_history_trimming_preserves_system_message(
         messages = messages + [{"role": "user", "content": f"extra {i}"} for i in range(extra)]
 
     ai_settings = AISettings(max_history_messages=max_history_messages)
-    runtime = ConversationRuntime(ai_settings)
+    runtime = AsyncConversationRuntime(ai_settings)
 
     system_msg = {"role": "system", "content": "You are a helpful assistant."}
     runtime._history = [system_msg] + list(messages)
@@ -220,7 +209,7 @@ def test_property_7_clear_history_leaves_only_system_message(
     # Validates: Requirements 6.9
     """For any history state, clear_history() leaves exactly one system message."""
     ai_settings = AISettings()
-    runtime = ConversationRuntime(ai_settings)
+    runtime = AsyncConversationRuntime(ai_settings)
 
     # Build history: ensure at least one system message is present
     system_msg = {"role": "system", "content": "You are a helpful assistant."}

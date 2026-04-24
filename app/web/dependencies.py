@@ -10,6 +10,8 @@ from fastapi import Depends
 
 from app.core.services.settings_service import SettingsService
 from app.core.services.backtest_service import BacktestService
+from app.core.services.optimize_service import OptimizeService
+from app.core.services.download_data_service import DownloadDataService
 from app.core.services.diagnosis_service import DiagnosisService
 from app.core.services.comparison_service import ComparisonService
 from app.core.services.loop_service import LoopService
@@ -66,9 +68,25 @@ def get_process_service() -> ProcessService:
     return ProcessService()
 
 
+@lru_cache
+def get_optimize_service() -> OptimizeService:
+    """Get singleton OptimizeService instance."""
+    settings = get_settings_service()
+    return OptimizeService(settings)
+
+
+@lru_cache
+def get_download_data_service() -> DownloadDataService:
+    """Get singleton DownloadDataService instance."""
+    settings = get_settings_service()
+    return DownloadDataService(settings)
+
+
 # Type aliases for dependency injection
 SettingsServiceDep = Annotated[SettingsService, Depends(get_settings_service)]
 BacktestServiceDep = Annotated[BacktestService, Depends(get_backtest_service)]
+OptimizeServiceDep = Annotated[OptimizeService, Depends(get_optimize_service)]
+DownloadDataServiceDep = Annotated[DownloadDataService, Depends(get_download_data_service)]
 ImproveServiceDep = Annotated[ImproveService, Depends(get_improve_service)]
 DiagnosisServiceDep = Annotated[DiagnosisService, Depends(get_diagnosis_service)]
 ComparisonServiceDep = Annotated[ComparisonService, Depends(get_comparison_service)]

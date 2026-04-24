@@ -34,9 +34,9 @@ async def list_runs(
     app_settings = settings.load_settings()
     if not app_settings.user_data_path:
         return []
-    
+
     backtest_results_dir = Path(app_settings.user_data_path) / "backtest_results"
-    
+
     if strategy:
         runs = IndexStore.get_strategy_runs(str(backtest_results_dir), strategy)
     else:
@@ -44,7 +44,7 @@ async def list_runs(
         runs = []
         for strat_name, strat_data in index.get("strategies", {}).items():
             runs.extend(strat_data.get("runs", []))
-    
+
     return [
         RunResponse(
             run_id=r.get("run_id", ""),
@@ -76,18 +76,63 @@ async def list_runs(
     ]
 
 
-@router.get("/runs/{run_id}", response_model=RunDetailResponse)
-async def get_run(
+@router.get("/runs/{strategy}", response_model=List[RunResponse])
+async def list_strategy_runs(
+    strategy: str,
+    settings: SettingsServiceDep,
+) -> List[RunResponse]:
+    """List all backtest runs for a specific strategy."""
+    app_settings = settings.load_settings()
+    if not app_settings.user_data_path:
+        return []
+
+    backtest_results_dir = Path(app_settings.user_data_path) / "backtest_results"
+    runs = IndexStore.get_strategy_runs(str(backtest_results_dir), strategy)
+
+    return [
+        RunResponse(
+            run_id=r.get("run_id", ""),
+            strategy=r.get("strategy", ""),
+            timeframe=r.get("timeframe", ""),
+            pairs=r.get("pairs", []),
+            timerange=r.get("timerange", ""),
+            backtest_start=r.get("backtest_start", ""),
+            backtest_end=r.get("backtest_end", ""),
+            saved_at=r.get("saved_at", ""),
+            profit_total_pct=r.get("profit_total_pct", 0.0),
+            profit_total_abs=r.get("profit_total_abs", 0.0),
+            starting_balance=r.get("starting_balance", 0.0),
+            final_balance=r.get("final_balance", 0.0),
+            max_drawdown_pct=r.get("max_drawdown_pct", 0.0),
+            max_drawdown_abs=r.get("max_drawdown_abs", 0.0),
+            trades_count=r.get("trades_count", 0),
+            wins=r.get("wins", 0),
+            losses=r.get("losses", 0),
+            win_rate_pct=r.get("win_rate_pct", 0.0),
+            sharpe=r.get("sharpe"),
+            sortino=r.get("sortino"),
+            calmar=r.get("calmar"),
+            profit_factor=r.get("profit_factor", 0.0),
+            expectancy=r.get("expectancy", 0.0),
+            run_dir=r.get("run_dir", ""),
+        )
+        for r in runs
+    ]
+
+
+@router.get("/runs/{strategy}/{run_id}", response_model=RunDetailResponse)
+async def get_strategy_run(
+    strategy: str,
     run_id: str,
     settings: SettingsServiceDep,
 ) -> RunDetailResponse:
-    """Get detailed information for a specific run."""
+    """Get detailed information for a specific run within a strategy."""
     app_settings = settings.load_settings()
     if not app_settings.user_data_path:
         raise HTTPException(status_code=404, detail="User data path not configured")
-    
+
     backtest_results_dir = Path(app_settings.user_data_path) / "backtest_results"
-    
+
     # Find the run in the index
     index = IndexStore.load(str(backtest_results_dir))
     run_entry = None
@@ -98,10 +143,14 @@ async def get_run(
                 break
         if run_entry:
             break
-    
+
     if not run_entry:
         raise HTTPException(status_code=404, detail=f"Run {run_id} not found")
-    
+
+    # Verify strategy matches
+    if run_entry.get("strategy") != strategy:
+        raise HTTPException(status_code=404, detail=f"Run {run_id} not found in strategy {strategy}")
+
     # Load full run data
     # run_dir is relative to backtest_results_dir and already includes strategy path
     run_dir = backtest_results_dir / run_entry.get("run_dir", "")
@@ -109,14 +158,95 @@ async def get_run(
         results = RunStore.load_run(run_dir)
     except (FileNotFoundError, ValueError) as e:
         raise HTTPException(status_code=404, detail=f"Failed to load run data: {str(e)}")
-    
+
     # Load params if available
     params_file = run_dir / "params.json"
     params = {}
     if params_file.exists():
         import json
         params = json.loads(params_file.read_text(encoding="utf-8"))
-    
+
+    return RunDetailResponse(
+        run_id=run_entry.get("run_id", ""),
+        strategy=run_entry.get("strategy", ""),
+        timeframe=run_entry.get("timeframe", ""),
+        pairs=run_entry.get("pairs", []),
+        timerange=run_entry.get("timerange", ""),
+        backtest_start=run_entry.get("backtest_start", ""),
+        backtest_end=run_entry.get("backtest_end", ""),
+        saved_at=run_entry.get("saved_at", ""),
+        profit_total_pct=run_entry.get("profit_total_pct", 0.0),
+        profit_total_abs=run_entry.get("profit_total_abs", 0.0),
+        starting_balance=run_entry.get("starting_balance", 0.0),
+        final_balance=run_entry.get("final_balance", 0.0),
+        max_drawdown_pct=run_entry.get("max_drawdown_pct", 0.0),
+        max_drawdown_abs=run_entry.get("max_drawdown_abs", 0.0),
+        trades_count=run_entry.get("trades_count", 0),
+        wins=run_entry.get("wins", 0),
+        losses=run_entry.get("losses", 0),
+        win_rate_pct=run_entry.get("win_rate_pct", 0.0),
+        sharpe=run_entry.get("sharpe"),
+        sortino=run_entry.get("sortino"),
+        calmar=run_entry.get("calmar"),
+        profit_factor=run_entry.get("profit_factor", 0.0),
+        expectancy=run_entry.get("expectancy", 0.0),
+        run_dir=run_entry.get("run_dir", ""),
+        trades=[
+            {
+                "pair": t.pair,
+                "profit_abs": t.profit_abs,
+                "profit": t.profit,
+                "open_date": t.open_date,
+                "close_date": t.close_date,
+                "exit_reason": t.exit_reason,
+            }
+            for t in results.trades
+        ],
+        params=params,
+    )
+
+
+@router.get("/runs/{run_id}", response_model=RunDetailResponse)
+async def get_run(
+    run_id: str,
+    settings: SettingsServiceDep,
+) -> RunDetailResponse:
+    """Get detailed information for a specific run."""
+    app_settings = settings.load_settings()
+    if not app_settings.user_data_path:
+        raise HTTPException(status_code=404, detail="User data path not configured")
+
+    backtest_results_dir = Path(app_settings.user_data_path) / "backtest_results"
+
+    # Find the run in the index
+    index = IndexStore.load(str(backtest_results_dir))
+    run_entry = None
+    for strat_data in index.get("strategies", {}).values():
+        for run in strat_data.get("runs", []):
+            if run.get("run_id") == run_id:
+                run_entry = run
+                break
+        if run_entry:
+            break
+
+    if not run_entry:
+        raise HTTPException(status_code=404, detail=f"Run {run_id} not found")
+
+    # Load full run data
+    # run_dir is relative to backtest_results_dir and already includes strategy path
+    run_dir = backtest_results_dir / run_entry.get("run_dir", "")
+    try:
+        results = RunStore.load_run(run_dir)
+    except (FileNotFoundError, ValueError) as e:
+        raise HTTPException(status_code=404, detail=f"Failed to load run data: {str(e)}")
+
+    # Load params if available
+    params_file = run_dir / "params.json"
+    params = {}
+    if params_file.exists():
+        import json
+        params = json.loads(params_file.read_text(encoding="utf-8"))
+
     return RunDetailResponse(
         run_id=run_entry.get("run_id", ""),
         strategy=run_entry.get("strategy", ""),

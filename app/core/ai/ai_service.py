@@ -1,7 +1,7 @@
 """AIService — single integration point for the AI subsystem.
 
 Wires together EventJournal, ToolRegistry, context providers, journal
-adapters, and ConversationRuntime into one cohesive service.
+adapters, and AsyncConversationRuntime into one cohesive service.
 """
 from __future__ import annotations
 
@@ -15,7 +15,7 @@ from app.core.ai.journal.backtest_adapter import BacktestJournalAdapter
 from app.core.ai.journal.event_journal import EventJournal
 from app.core.ai.journal.settings_adapter import SettingsJournalAdapter
 from app.core.ai.runtime.agent_policy import default_policy
-from app.core.ai.runtime.conversation_runtime import ConversationRuntime
+from app.core.ai.runtime.async_conversation_runtime import AsyncConversationRuntime
 from app.core.ai.tools.app_tools import register_app_tools
 from app.core.ai.tools.backtest_tools import register_backtest_tools
 from app.core.ai.tools.strategy_tools import register_strategy_tools
@@ -67,8 +67,8 @@ class AIService:
         self._backtest_trigger_callback = callback
         _log.debug("Backtest trigger callback registered with AIService")
 
-    def get_runtime(self, ai_settings: Optional[AISettings] = None) -> ConversationRuntime:
-        """Build and return a fully wired :class:`ConversationRuntime`.
+    def get_runtime(self, ai_settings: Optional[AISettings] = None) -> AsyncConversationRuntime:
+        """Build and return a fully wired AsyncConversationRuntime.
 
         Creates a fresh :class:`ToolRegistry` with all tools registered and
         assembles the three context providers.  A new runtime is returned on
@@ -79,7 +79,7 @@ class AIService:
                 settings from ``settings_state``, then to defaults.
 
         Returns:
-            A :class:`ConversationRuntime` ready to send messages.
+            An AsyncConversationRuntime ready to send messages.
         """
         if ai_settings is None:
             if self._settings_state is not None:
@@ -132,14 +132,14 @@ class AIService:
             StrategyContextProvider(),
         ]
 
-        runtime = ConversationRuntime(
+        runtime = AsyncConversationRuntime(
             ai_settings=ai_settings,
             agent_policy=default_policy(),
             tool_registry=registry,
             context_providers=context_providers,
         )
         _log.info(
-            "ConversationRuntime created: provider=%s model=%s tools=%s",
+            "AsyncConversationRuntime created: provider=%s model=%s tools=%s",
             ai_settings.provider,
             ai_settings.chat_model,
             ai_settings.tools_enabled,

@@ -230,7 +230,7 @@ def test_property_14_tool_loop_terminates_at_max_tool_steps(max_steps: int):
 # Validates: Requirements 24.1
 # ---------------------------------------------------------------------------
 
-from app.core.ai.runtime.conversation_runtime import _get_model_capability
+from app.core.ai.runtime.async_conversation_runtime import _get_model_capability
 
 _VALID_LEVELS = {"Level_A", "Level_B", "Level_C"}
 

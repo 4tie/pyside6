@@ -313,42 +313,31 @@ class BacktestPage(QWidget):
             _log.warning("Backtest exited with code %d", exit_code)
             return
 
-        # Try to find and parse the newest zip
-        settings = self._settings_state.current_settings
-        if not settings or not settings.user_data_path:
-            _log.warning("No user_data_path configured — cannot auto-load results")
-            self.loop_completed.emit()
-            return
-
-        results_dir = Path(settings.user_data_path) / "backtest_results"
+        # Use shared service method to parse and save results
         cfg = self.run_config_form.get_config()
         strategy = cfg.get("strategy", "")
-
-        try:
-            zips = sorted(
-                results_dir.glob("*.zip"),
-                key=lambda p: p.stat().st_mtime,
-                reverse=True,
-            )
-            if not zips:
-                _log.warning("No zip files found in %s", results_dir)
-                self.loop_completed.emit()
-                return
-
-            newest_zip = zips[0]
-            results = parse_backtest_zip(str(newest_zip))
-
-            strategy_dir = str(results_dir / (strategy or results.summary.strategy))
-            RunStore.save(results, strategy_dir)
-
-            self._results_widget.display_results(results, export_dir=strategy_dir)
-            self._tabs.setCurrentWidget(self._results_widget)
-            self._refresh_run_picker()
-            self.loop_completed.emit()
-            _log.info("Backtest results loaded: strategy=%s", results.summary.strategy)
-        except Exception as e:
-            _log.error("Failed to auto-load backtest results: %s", e)
-            self.loop_completed.emit()
+        
+        run_id = self._backtest_service.parse_and_save_latest_results(
+            export_dir=Path(self._settings_state.current_settings.user_data_path) / "backtest_results",
+            strategy_name=strategy,
+        )
+        
+        if run_id:
+            # Load and display the saved results
+            try:
+                results_dir = Path(self._settings_state.current_settings.user_data_path) / "backtest_results"
+                run_dir = results_dir / strategy / run_id
+                results = RunStore.load_run(run_dir)
+                self._results_widget.display_results(results, export_dir=str(run_dir))
+                self._tabs.setCurrentWidget(self._results_widget)
+                self._refresh_run_picker()
+                _log.info("Backtest results loaded: strategy=%s run_id=%s", strategy, run_id)
+            except Exception as e:
+                _log.error("Failed to load saved backtest results: %s", e)
+        else:
+            _log.warning("Failed to parse or save backtest results")
+        
+        self.loop_completed.emit()
 
     def _on_load_clicked(self) -> None:
         """Load the selected run from the run picker."""

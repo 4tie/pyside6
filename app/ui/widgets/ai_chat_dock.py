@@ -1,4 +1,4 @@
-"""AIChatDock — dockable AI Chat panel wired to ConversationRuntime via AIService."""
+"""AIChatDock — dockable AI Chat panel wired to AsyncConversationRuntime via AIService."""
 
 from typing import Optional
 
@@ -20,9 +20,9 @@ from PySide6.QtWidgets import (
 from app.app_state.settings_state import SettingsState
 from app.core.ai.providers.provider_base import AIResponse, ProviderHealth, StreamToken
 from app.core.ai.providers.provider_factory import ProviderFactory
-from app.core.ai.runtime.conversation_runtime import ConversationRuntime
 from app.core.models.settings_models import AISettings
 from app.core.utils.app_logger import get_logger
+from app.ui.ai.qt_conversation_adapter import QtConversationAdapter
 from app.ui.widgets.ai_message_widget import AssistantMessageWidget, UserMessageWidget
 
 _log = get_logger("ui.ai_chat_dock")
@@ -78,7 +78,7 @@ class _ChatInput(QPlainTextEdit):
 
 
 class AIChatDock(QDockWidget):
-    """Dockable AI Chat panel backed by ConversationRuntime.
+    """Dockable AI Chat panel backed by AsyncConversationRuntime.
 
     Model and provider selection live exclusively in Settings → AI.
     Pass an :class:`AIService` instance to enable full tool + context support.
@@ -91,7 +91,7 @@ class AIChatDock(QDockWidget):
 
         self._settings_state = settings_state
         self._ai_service = ai_service
-        self._runtime: Optional[ConversationRuntime] = None
+        self._runtime: Optional[QtConversationAdapter] = None
         self._current_assistant_widget: Optional[AssistantMessageWidget] = None
         self._user_scrolled_up = False
         self._first_show = True
@@ -228,10 +228,19 @@ class AIChatDock(QDockWidget):
         ai_settings = settings.ai if settings else AISettings()
 
         if self._ai_service is not None:
-            self._runtime = self._ai_service.get_runtime(ai_settings)
+            # AIService returns AsyncConversationRuntime, wrap it in Qt adapter
+            async_runtime = self._ai_service.get_runtime(ai_settings)
+            self._runtime = QtConversationAdapter(
+                ai_settings=ai_settings,
+                agent_policy=None,  # Already configured in async_runtime
+                tool_registry=None,  # Already configured in async_runtime
+                context_providers=None,  # Already configured in async_runtime
+            )
+            # Copy the configured runtime's components
+            self._runtime._runtime = async_runtime
         else:
             from app.core.ai.runtime.agent_policy import default_policy
-            self._runtime = ConversationRuntime(
+            self._runtime = QtConversationAdapter(
                 ai_settings=ai_settings, agent_policy=default_policy()
             )
 
@@ -485,10 +494,19 @@ class AIChatDock(QDockWidget):
         self._disconnect_runtime_signals()
 
         if self._ai_service is not None:
-            self._runtime = self._ai_service.get_runtime(ai_settings)
+            # AIService returns AsyncConversationRuntime, wrap it in Qt adapter
+            async_runtime = self._ai_service.get_runtime(ai_settings)
+            self._runtime = QtConversationAdapter(
+                ai_settings=ai_settings,
+                agent_policy=None,  # Already configured in async_runtime
+                tool_registry=None,  # Already configured in async_runtime
+                context_providers=None,  # Already configured in async_runtime
+            )
+            # Copy the configured runtime's components
+            self._runtime._runtime = async_runtime
         else:
             from app.core.ai.runtime.agent_policy import default_policy
-            self._runtime = ConversationRuntime(
+            self._runtime = QtConversationAdapter(
                 ai_settings=ai_settings, agent_policy=default_policy()
             )
 

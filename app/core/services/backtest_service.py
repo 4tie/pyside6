@@ -98,3 +98,56 @@ class BacktestService:
                 _log.warning("Failed to import zip %s: %s", zip_path.name, e)
 
         _log.info("Index rebuild: imported=%d skipped=%d", imported, skipped)
+
+    def parse_and_save_latest_results(
+        self,
+        export_dir: Path,
+        strategy_name: Optional[str] = None,
+    ) -> Optional[str]:
+        """Parse the newest backtest result zip and save it to the index.
+
+        Args:
+            export_dir: Directory containing backtest result zip files.
+            strategy_name: Optional strategy name hint for directory naming.
+
+        Returns:
+            Run ID string if successful, None otherwise.
+        """
+        settings = self.settings_service.load_settings()
+        if not settings or not settings.user_data_path:
+            _log.warning("No user_data_path configured — cannot save results")
+            return None
+
+        try:
+            zips = sorted(
+                export_dir.glob("*.zip"),
+                key=lambda p: p.stat().st_mtime,
+                reverse=True,
+            )
+            if not zips:
+                _log.warning("No zip files found in %s", export_dir)
+                return None
+
+            newest_zip = zips[0]
+            results = parse_backtest_zip(str(newest_zip))
+
+            # Resolve config path for the strategy
+            config_path = None
+            strategy = strategy_name or results.summary.strategy
+            user_data_dir = Path(settings.user_data_path)
+            try:
+                config_path = str(resolve_config_file(user_data_dir, strategy_name=strategy))
+            except FileNotFoundError:
+                pass
+
+            backtest_results_dir = user_data_dir / "backtest_results"
+            strategy_dir = backtest_results_dir / strategy
+            run_dir = RunStore.save(results, str(strategy_dir), config_path=config_path)
+
+            run_id = run_dir.name
+            _log.info("Backtest results saved: strategy=%s run_id=%s", strategy, run_id)
+            return run_id
+
+        except Exception as e:
+            _log.error("Failed to parse and save backtest results: %s", e)
+            return None

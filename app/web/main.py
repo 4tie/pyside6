@@ -10,7 +10,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
 # Import route handlers
-from app.web.api.routes import runs, strategies, diagnosis, comparison, settings, loop, diff, backtest
+from app.web.api.routes import runs, strategies, diagnosis, comparison, settings, loop, diff, backtest, optimize, process
 
 # Create FastAPI app
 app = FastAPI(
@@ -60,6 +60,8 @@ app.include_router(settings.router, prefix="/api", tags=["settings"])
 app.include_router(loop.router, prefix="/api", tags=["loop"])
 app.include_router(diff.router, prefix="/api", tags=["diff"])
 app.include_router(backtest.router, prefix="/api", tags=["backtest"])
+app.include_router(optimize.router, prefix="/api", tags=["optimize"])
+app.include_router(process.router, prefix="/api", tags=["process"])
 
 if __name__ == "__main__":
     import uvicorn

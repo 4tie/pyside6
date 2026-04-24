@@ -213,10 +213,6 @@ async def execute_backtest(
         env = ProcessService.build_environment(app_settings.venv_path)
         full_command = command.as_list()
         
-        from app.core.backtests.results_parser import parse_backtest_zip
-        from app.core.backtests.results_store import RunStore
-        from app.core.freqtrade.resolvers.config_resolver import resolve_config_file
-        
         def stream_output(line: str):
             pass
         
@@ -225,31 +221,15 @@ async def execute_backtest(
         
         def on_finished(exit_code: int):
             if exit_code == 0:
-                # Parse results and save to index
-                try:
-                    export_dir = Path(command.export_dir)
-                    # Find the most recent zip file
-                    zips = sorted(export_dir.glob("*.zip"), key=lambda p: p.stat().st_mtime, reverse=True)
-                    if zips:
-                        results = parse_backtest_zip(str(zips[0]))
-                        if results:
-                            # Save to index
-                            config_path = None
-                            try:
-                                config_path = str(resolve_config_file(Path(app_settings.user_data_path), strategy_name=request.strategy))
-                            except FileNotFoundError:
-                                pass
-                            
-                            backtest_results_dir = Path(app_settings.user_data_path) / "backtest_results"
-                            strategy_dir = backtest_results_dir / request.strategy
-                            run_dir = RunStore.save(results, str(strategy_dir), config_path=config_path)
-                            
-                            # Get run_id from the saved run
-                            run_id = run_dir.name
-                            update_backtest_status("complete", run_id, "Backtest completed successfully")
-                            return
-                except Exception as e:
-                    update_backtest_status("error", message=f"Failed to parse results: {str(e)}")
+                # Use shared service method to parse and save results
+                run_id = backtest_service.parse_and_save_latest_results(
+                    export_dir=Path(command.export_dir),
+                    strategy_name=request.strategy,
+                )
+                if run_id:
+                    update_backtest_status("complete", run_id, "Backtest completed successfully")
+                else:
+                    update_backtest_status("error", message="Failed to parse or save results")
             else:
                 update_backtest_status("error", message=f"Process exited with code: {exit_code}")
         
