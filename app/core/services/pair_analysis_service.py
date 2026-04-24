@@ -8,7 +8,7 @@ from __future__ import annotations
 from collections import defaultdict
 from typing import Dict, List
 
-from app.core.backtests.results_models import (
+from app.core.models.backtest_models import (
     BacktestResults,
     BacktestTrade,
     PairAnalysis,

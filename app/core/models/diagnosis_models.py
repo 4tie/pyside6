@@ -9,7 +9,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import List, Optional, Tuple
 
-from app.core.backtests.results_models import BacktestSummary
+from app.core.models.backtest_models import BacktestSummary
 from app.core.models.improve_models import DiagnosedIssue
 from app.core.models.exit_reason_models import ExitReasonAnalysis, ExitReasonSuggestion
 

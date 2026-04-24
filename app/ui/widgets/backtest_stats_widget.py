@@ -9,7 +9,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from app.core.backtests.results_models import BacktestSummary
+from app.core.models.backtest_models import BacktestSummary
 
 _GREEN = QColor("#4ec9a0")   # mint-green — matches theme accent / success
 _RED   = QColor("#f44747")   # VS Code red — matches theme danger

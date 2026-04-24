@@ -8,7 +8,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtGui import QFont, QTextCursor, QColor, QTextCharFormat
 
-from app.core.freqtrade.runners.base_runner import create_command, format_command_string
+from app.core.models.command_models import format_command_string
 from app.core.services.process_service import ProcessService
 from app.core.models.settings_models import AppSettings, TerminalPreferences
 
@@ -141,20 +141,12 @@ class TerminalWidget(QWidget):
 
     def run_freqtrade_command(
         self,
-        *args: str,
-        settings: AppSettings,
-        working_directory: str = None
+        command: list[str],
+        working_directory: str = None,
+        env: dict = None
     ):
-        """Run a freqtrade command."""
-        try:
-            command = build_command(settings, *args).as_list()
-            env = ProcessService.build_environment(
-                settings.venv_path or settings.python_executable,
-                base_env=None
-            ) if settings.venv_path else None
-            self.run_command(command, working_directory=working_directory, env=env)
-        except Exception as e:
-            self._append_error(f"Error building command: {str(e)}\n")
+        """Run a freqtrade command - command should be pre-built by services."""
+        self.run_command(command, working_directory=working_directory, env=env)
 
     def stop_process(self):
         """Stop the running process."""

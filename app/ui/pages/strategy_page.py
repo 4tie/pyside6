@@ -30,7 +30,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import QSettings
 
 from app.app_state.settings_state import SettingsState
-from app.core.backtests.results_index import IndexStore
+from app.core.services.backtest_service import BacktestService
 from app.core.utils.app_logger import get_logger
 from app.ui.pages.strategy_config_page import StrategyConfigPage
 
@@ -59,6 +59,7 @@ class StrategyPage(QWidget):
     def __init__(self, settings_state: SettingsState, parent=None) -> None:
         super().__init__(parent)
         self._settings_state = settings_state
+        self._backtest_service = BacktestService(settings_state.settings_service)
         self._build_ui()
         self._connect_signals()
         self.refresh()
@@ -325,7 +326,7 @@ class StrategyPage(QWidget):
         )
 
         try:
-            runs = IndexStore.get_strategy_runs(backtest_results_dir, strategy_name)
+            runs = self._backtest_service.get_strategy_runs(backtest_results_dir, strategy_name)
         except Exception as e:
             _log.warning("Failed to load history for %s: %s", strategy_name, e)
             return

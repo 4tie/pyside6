@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import List, Optional
 
-from app.core.backtests.results_models import BacktestSummary
+from app.core.models.backtest_models import BacktestSummary
 from app.core.models.pattern_models import (
     FailurePattern,
     PatternCondition,

@@ -102,6 +102,18 @@ class BacktestService:
 
         _log.info("Index rebuild: imported=%d skipped=%d", imported, skipped)
 
+    def get_strategy_runs(self, backtest_results_dir: str, strategy_name: str) -> List[dict]:
+        """Get list of runs for a specific strategy from the index."""
+        return IndexStore.get_strategy_runs(backtest_results_dir, strategy_name)
+
+    def load_index(self, backtest_results_dir: str) -> dict:
+        """Load the backtest results index."""
+        return IndexStore.load(backtest_results_dir)
+
+    def save_run(self, results, strategy_results_dir: str, config_path: Optional[str] = None) -> Path:
+        """Save backtest results to the index."""
+        return RunStore.save(results, strategy_results_dir, config_path=config_path)
+
     def parse_and_save_latest_results(
         self,
         export_dir: Path,

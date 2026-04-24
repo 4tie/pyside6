@@ -9,7 +9,7 @@ from dataclasses import dataclass, field
 from typing import List, Optional, Dict, Any, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from app.core.backtests.results_models import BacktestSummary
+    from app.core.models.backtest_models import BacktestSummary  # noqa: PLC0415
 
 
 @dataclass

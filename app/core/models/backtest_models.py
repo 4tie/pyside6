@@ -1,3 +1,7 @@
+"""Backtest result data models.
+
+These dataclasses represent backtest results, trades, and related statistics.
+"""
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional
 

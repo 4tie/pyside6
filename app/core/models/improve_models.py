@@ -49,7 +49,7 @@ class ParameterSuggestion:
 
 def _get_backtest_summary_type():
     """Lazy import to avoid circular dependency at module load time."""
-    from app.core.backtests.results_models import BacktestSummary  # noqa: PLC0415
+    from app.core.models.backtest_models import BacktestSummary  # noqa: PLC0415
     return BacktestSummary
 
 

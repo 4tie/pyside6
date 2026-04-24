@@ -22,7 +22,7 @@ from PySide6.QtWidgets import (
 )
 
 from app.app_state.settings_state import SettingsState
-from app.core.backtests.results_index import IndexStore
+from app.core.services.backtest_service import BacktestService
 from app.core.utils.app_logger import get_logger
 from app.ui.widgets.metric_card import MetricCard
 
@@ -46,6 +46,7 @@ class DashboardPage(QWidget):
     def __init__(self, settings_state: SettingsState, parent=None) -> None:
         super().__init__(parent)
         self._settings_state = settings_state
+        self._backtest_service = BacktestService(settings_state.settings_service)
         self._build_ui()
         self._connect_signals()
         self.refresh()
@@ -174,7 +175,7 @@ class DashboardPage(QWidget):
         if not backtest_results_dir:
             return []
         try:
-            index = IndexStore.load(backtest_results_dir)
+            index = self._backtest_service.load_index(backtest_results_dir)
             all_runs: list = []
             for strategy_data in index.get("strategies", {}).values():
                 all_runs.extend(strategy_data.get("runs", []))

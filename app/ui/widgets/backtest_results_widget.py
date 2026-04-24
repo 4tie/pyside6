@@ -6,8 +6,8 @@ from PySide6.QtWidgets import (
     QLabel, QPushButton, QFileDialog, QMessageBox,
 )
 
-from app.core.backtests.results_models import BacktestResults
-from app.core.backtests.results_store import RunStore
+from app.core.models.backtest_models import BacktestResults
+from app.core.services.backtest_service import BacktestService
 from app.ui.widgets.backtest_stats_widget import BacktestStatsWidget
 from app.ui.widgets.backtest_trades_widget import BacktestTradesWidget
 
@@ -18,6 +18,7 @@ class BacktestResultsWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.results: Optional[BacktestResults] = None
+        self._backtest_service: Optional[BacktestService] = None
         self._export_dir: Optional[Path] = None
         self._build_ui()
 
@@ -59,9 +60,13 @@ class BacktestResultsWidget(QWidget):
         self.summary_widget.populate(results.summary)
         self.trades_widget.populate(results.trades)
 
+    def set_backtest_service(self, service: BacktestService):
+        """Set the backtest service for export functionality."""
+        self._backtest_service = service
+
     def _on_export(self):
-        """Export run folder via RunStore to a chosen directory."""
-        if not self.results:
+        """Export run folder via BacktestService to a chosen directory."""
+        if not self.results or not self._backtest_service:
             return
 
         out_dir = QFileDialog.getExistingDirectory(
@@ -71,7 +76,7 @@ class BacktestResultsWidget(QWidget):
             return
 
         try:
-            run_dir = RunStore.save(results=self.results, strategy_results_dir=out_dir)
+            run_dir = self._backtest_service.save_run(results=self.results, strategy_results_dir=out_dir)
             QMessageBox.information(
                 self, "Export Complete",
                 f"Run saved to:\n{run_dir}\n\n"

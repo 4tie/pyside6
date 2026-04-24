@@ -12,7 +12,7 @@ import statistics
 from datetime import datetime
 from typing import Dict, List, Optional
 
-from app.core.backtests.results_models import BacktestTrade
+from app.core.models.backtest_models import BacktestTrade
 from app.core.models.loop_models import GateResult, HardFilterFailure, LoopConfig
 from app.core.utils.app_logger import get_logger
 

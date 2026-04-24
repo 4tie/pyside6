@@ -12,7 +12,7 @@ import math
 import statistics
 from typing import Callable, Dict, List, Optional, Tuple
 
-from app.core.backtests.results_models import BacktestResults, BacktestSummary, BacktestTrade
+from app.core.models.backtest_models import BacktestResults, BacktestSummary, BacktestTrade
 from app.core.models.diagnosis_models import DiagnosisInput
 from app.core.models.improve_models import DiagnosedIssue, ParameterSuggestion
 from app.core.models.loop_models import (

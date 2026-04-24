@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import List
 
-from app.core.backtests.results_models import PairAnalysis, BacktestSummary
+from app.core.models.backtest_models import PairAnalysis, BacktestSummary
 from app.core.models.analysis_models import DiagnosisSuggestion
 from app.core.utils.app_logger import get_logger
 

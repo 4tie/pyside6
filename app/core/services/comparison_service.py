@@ -16,7 +16,7 @@ from __future__ import annotations
 
 from typing import Dict, List, Optional, Tuple
 
-from app.core.backtests.results_models import BacktestSummary, RunComparison
+from app.core.models.backtest_models import BacktestSummary, RunComparison
 from app.core.services.evaluation_engine import EvaluationEngine
 from app.core.utils.app_logger import get_logger
 

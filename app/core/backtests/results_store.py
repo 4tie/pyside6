@@ -8,7 +8,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, Optional
 
-from app.core.backtests.results_models import BacktestResults, BacktestSummary, BacktestTrade
+from app.core.models.backtest_models import BacktestResults, BacktestSummary, BacktestTrade
 from app.core.backtests.results_index import IndexStore, StrategyIndexStore
 from app.core.parsing.json_parser import parse_json_file, write_json_file_atomic, ParseError
 from app.core.utils.app_logger import get_logger

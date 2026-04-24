@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
 from app.core.backtests.results_index import IndexStore
-from app.core.backtests.results_models import BacktestResults
+from app.core.models.backtest_models import BacktestResults
 from app.core.parsing.backtest_parser import parse_backtest_results_from_zip as parse_backtest_zip
 from app.core.parsing.json_parser import write_json_file_atomic
 from app.core.backtests.results_store import RunStore

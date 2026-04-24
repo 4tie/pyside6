@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import Dict
 
-from app.core.backtests.results_models import BacktestSummary
+from app.core.models.backtest_models import BacktestSummary
 
 # Minimum trades required for stability
 MIN_TRADES = 30

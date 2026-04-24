@@ -8,7 +8,7 @@ import zipfile
 from pathlib import Path
 from typing import Any, Dict, List
 
-from app.core.backtests.results_models import BacktestResults, BacktestSummary, BacktestTrade
+from app.core.models.backtest_models import BacktestResults, BacktestSummary, BacktestTrade
 from app.core.parsing.json_parser import ParseError
 from app.core.utils.app_logger import get_logger
 

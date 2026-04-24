@@ -1,7 +1,7 @@
 """Central freqtrade parsing operations with proper wrappers."""
 from pathlib import Path
 from app.core.parsing.backtest_parser import parse_backtest_results_from_zip
-from app.core.backtests.results_models import BacktestResults
+from app.core.models.backtest_models import BacktestResults
 from app.core.utils.app_logger import get_logger
 
 _log = get_logger("freqtrade.parsing")

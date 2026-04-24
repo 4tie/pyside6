@@ -30,9 +30,6 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import QSettings
 
 from app.app_state.settings_state import SettingsState
-from app.core.backtests.results_index import IndexStore
-from app.core.parsing.backtest_parser import parse_backtest_results_from_zip
-from app.core.backtests.results_store import RunStore
 from app.core.services.backtest_service import BacktestService
 from app.core.utils.app_logger import get_logger
 from app.ui.dialogs.pairs_selector_dialog import PairsSelectorDialog
@@ -500,7 +497,7 @@ class BacktestPage(QWidget):
         self._run_picker.clear()
 
         try:
-            runs = IndexStore.get_strategy_runs(backtest_results_dir, strategy)
+            runs = self._backtest_service.get_strategy_runs(backtest_results_dir, strategy)
             for run in runs:
                 run_id = run.get("run_id", "?")
                 profit = run.get("profit_total_pct", 0.0)

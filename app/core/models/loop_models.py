@@ -13,7 +13,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from app.core.backtests.results_models import BacktestSummary
+from app.core.models.backtest_models import BacktestSummary
 from app.core.models.settings_models import AppSettings
 
 

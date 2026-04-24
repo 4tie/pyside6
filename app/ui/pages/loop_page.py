@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import List, Optional, Tuple
 
-from app.core.parsing.json_parser import parse_json_file
+from app.core.utils.path_utils import build_run_id
 from PySide6.QtCore import Qt, QTimer, Signal
 from PySide6.QtWidgets import (
     QCheckBox, QComboBox, QDoubleSpinBox, QFrame, QGridLayout,
@@ -21,7 +21,7 @@ from PySide6.QtWidgets import (
 )
 
 from app.app_state.settings_state import SettingsState
-from app.core.backtests.results_models import BacktestResults, BacktestSummary
+from app.core.models.backtest_models import BacktestResults, BacktestSummary
 from app.core.models.loop_models import LoopConfig, LoopIteration, LoopResult
 from app.core.models.settings_models import AppSettings
 from app.core.services.ai_advisor_service import AIAdvisorService
@@ -1417,7 +1417,6 @@ class LoopPage(QWidget):
 
         # Create LoopExecutionContext for this gate backtest
         from app.core.models.loop_models import LoopExecutionContext
-        from app.core.storage import build_run_id
         import time
         
         context = LoopExecutionContext(
@@ -1613,7 +1612,6 @@ class LoopPage(QWidget):
         
         # Create LoopExecutionContext for baseline backtest
         from app.core.models.loop_models import LoopExecutionContext
-        from app.core.storage import build_run_id
         import time
         
         # Use a dummy iteration number for baseline (iteration 0)
