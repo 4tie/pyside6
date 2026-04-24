@@ -31,8 +31,8 @@ from app.core.services.backtest_service import BacktestService
 from app.core.services.improve_service import ImproveService
 from app.core.services.loop_service import (
     LoopService,
-    build_diagnosis_input,
-    build_score_input,
+    create_diagnosis_input,
+    create_score_input,
 )
 from app.core.services.process_service import ProcessService
 from app.core.utils.app_logger import get_logger
@@ -1367,7 +1367,7 @@ class LoopPage(QWidget):
         self._ensure_loop_runtime_state()
         if self._iteration_in_sample_results is None:
             return
-        self._latest_diagnosis_input = build_diagnosis_input(
+        self._latest_diagnosis_input = create_diagnosis_input(
             self._iteration_in_sample_results,
             self._iteration_oos_results,
             self._iteration_fold_results or None,
@@ -1504,7 +1504,7 @@ class LoopPage(QWidget):
         self._loop_service.record_iteration_result(
             iteration,
             self._iteration_in_sample_results.summary,
-            score_input=build_score_input(
+            score_input=create_score_input(
                 self._iteration_in_sample_results,
                 self._iteration_fold_results or None,
                 self._iteration_stress_results,

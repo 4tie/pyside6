@@ -1,8 +1,8 @@
 import json
 import threading
-from typing import AsyncGenerator
+from typing import AsyncGenerator, Iterator, Optional
 
-from app.core.parsing.json_parser import parse_json_string, Optional
+from app.core.parsing.json_parser import parse_json_string
 
 import requests
 

@@ -182,7 +182,7 @@ class TerminalWidget(QWidget):
     def set_command_list(self, command: list[str]):
         """Update the command input field from a tokenized command."""
         self._current_command = list(command)
-        self.command_input.setText(format_command(command))
+        self.command_input.setText(format_command_string(command))
 
     def get_command(self) -> str:
         """Get the current command from the input field."""
