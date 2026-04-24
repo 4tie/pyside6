@@ -92,7 +92,7 @@ class TerminalWidget(QWidget):
         cursor.movePosition(QTextCursor.End)
         fmt = QTextCharFormat()
         fmt.setForeground(QColor(color))
-        cursor.insertText(text + "\n", fmt)
+        cursor.insertText(text, fmt)
         self._scroll_to_bottom()
 
     def set_status(self, status: str, color: str = theme.TEXT_MUTED):

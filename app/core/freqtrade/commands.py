@@ -58,18 +58,19 @@ def create_optimize_command(
 
 def create_download_data_command(
     settings,
-    timerange: str,
-    pairs: list[str],
-    extra_flags: list[str],
+    timeframe: str,
+    timerange: str | None = None,
+    pairs: list[str] | None = None,
+    extra_flags: list[str] | None = None,
 ):
     """Build download data command with explicit parameters, logging and validation."""
     _log.debug("Building download data command")
     try:
         return _create_download(
             settings=settings,
+            timeframe=timeframe,
             timerange=timerange,
             pairs=pairs,
-            extra_flags=extra_flags,
         )
     except Exception as e:
         _log.error("Failed to build download data command: %s", e)

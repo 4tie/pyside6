@@ -232,7 +232,7 @@ class DownloadPage(QWidget):
         self._stop_btn.setEnabled(True)
         self._terminal.clear()
         self._terminal.set_status("downloading", theme.ACCENT)
-        self._terminal.append_info(f"↓ {cmd.to_display_string()}\n", theme.ACCENT)
+        self._terminal.append_info(f"$ {cmd.to_display_string()}\n\n", theme.ACCENT)
 
         env = (
             ProcessService.build_environment(settings.venv_path)
