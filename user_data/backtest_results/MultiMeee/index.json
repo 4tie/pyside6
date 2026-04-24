@@ -16,6 +16,36 @@
       "profit_factor": 0.788,
       "profit_total_abs": -17.1518,
       "profit_total_pct": -21.4398,
+      "run_dir": "run_2026-04-24_13-35-54_4a1407",
+      "run_id": "run_2026-04-24_13-35-54_4a1407",
+      "saved_at": "2026-04-24T13:35:54.488467",
+      "sharpe": -2.4978,
+      "sortino": -4.2992,
+      "starting_balance": 80.0,
+      "strategy": "MultiMeee",
+      "timeframe": "5m",
+      "timerange": "20250422-20260417",
+      "trades_count": 542,
+      "version_id": null,
+      "win_rate_pct": 34.69,
+      "wins": 188
+    },
+    {
+      "backtest_end": "2026-04-11 00:35:00",
+      "backtest_start": "2025-04-22 00:00:00",
+      "calmar": -5.0599,
+      "expectancy": -0.0316,
+      "final_balance": 62.8482,
+      "losses": 354,
+      "max_drawdown_abs": 18.6327,
+      "max_drawdown_pct": 22.8676,
+      "pairs": [
+        "ADA/USDT",
+        "ETH/USDT"
+      ],
+      "profit_factor": 0.788,
+      "profit_total_abs": -17.1518,
+      "profit_total_pct": -21.4398,
       "run_dir": "run_2026-04-24_13-23-04_f9e0ce",
       "run_id": "run_2026-04-24_13-23-04_f9e0ce",
       "saved_at": "2026-04-24T13:23:04.898097",
@@ -714,5 +744,5 @@
     }
   ],
   "strategy": "MultiMeee",
-  "updated_at": "2026-04-24T13:23:04.898097"
+  "updated_at": "2026-04-24T13:35:54.488467"
 }

@@ -54,18 +54,7 @@ class RunStore:
 
     @staticmethod
     def load_run(run_dir: Path) -> BacktestResults:
-        """Reconstruct BacktestResults from a saved run folder.
-
-        Args:
-            run_dir: Path to the run folder containing results.json and trades.json.
-
-        Returns:
-            BacktestResults
-
-        Raises:
-            FileNotFoundError: If required files are missing.
-            ValueError: If JSON is malformed.
-        """
+        """Reconstruct BacktestResults from a saved run folder."""
         results_file = run_dir / "results.json"
         trades_file = run_dir / "trades.json"
 
@@ -127,9 +116,6 @@ class RunStore:
             for t in t_data
         ]
 
-        for record in t_data:
-            if "exit_reason" not in record and "reason" in record:
-                record["exit_reason"] = record["reason"]
         raw_data = {"result": {"trades": t_data}}
         return BacktestResults(summary=summary, trades=trades, raw_data=raw_data)
 
@@ -226,20 +212,19 @@ def _write_trades_data(run_dir: Path, results: BacktestResults) -> None:
 # Alias used by tests
 _write_trades = _write_trades_data
 
+
+def _write_configuration_snapshot(run_dir: Path, config_path: Optional[str]) -> None:
     """Copy the config used for the run into the run folder when available."""
     if not config_path:
         return
-
     source = Path(config_path)
     if not source.exists() or not source.is_file():
         _log.warning("Config snapshot skipped, file not found: %s", source)
         return
-
     shutil.copy2(source, run_dir / "config.snapshot.json")
 
 
-def _write_parameters(run_dir: Path, run_params: Optional[dict],
-                  results: BacktestResults) -> None:
+def _write_parameters(run_dir: Path, run_params: Optional[dict], results: BacktestResults) -> None:
     if run_params:
         params = run_params
     else:

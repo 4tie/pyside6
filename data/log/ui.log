@@ -4605,3 +4605,84 @@
 2026-04-24 13:23:04.900 | DEBUG    | freqtrade_gui.ui.strategy_page | Strategy list refreshed: 14 strategies
 2026-04-24 13:23:15.463 | ERROR    | freqtrade_gui.ui.backtest_page | Failed to load run: name 'RunStore' is not defined
 2026-04-24 13:25:36.256 | DEBUG    | freqtrade_gui.ui.main_window   | Geometry saved (lastPage=backtest)
+2026-04-24 13:35:37.295 | DEBUG    | freqtrade_gui.ui.header_bar    | HeaderBar initialised
+2026-04-24 13:35:37.295 | DEBUG    | freqtrade_gui.ui.sidebar       | NavSidebar initialised
+2026-04-24 13:35:37.296 | DEBUG    | freqtrade_gui.ui.status_bar    | AppStatusBar initialised
+2026-04-24 13:35:37.297 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Last Profit' updated: value='—' trend=None
+2026-04-24 13:35:37.298 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Win Rate' updated: value='—' trend=None
+2026-04-24 13:35:37.298 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Total Trades' updated: value='—' trend=None
+2026-04-24 13:35:37.298 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Best Strategy' updated: value='—' trend=None
+2026-04-24 13:35:37.306 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Last Profit' updated: value='-21.44%' trend=-21.4398
+2026-04-24 13:35:37.306 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Win Rate' updated: value='34.7%' trend=None
+2026-04-24 13:35:37.306 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Total Trades' updated: value='542' trend=None
+2026-04-24 13:35:37.306 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Best Strategy' updated: value='MultiMeee' trend=None
+2026-04-24 13:35:37.307 | DEBUG    | freqtrade_gui.ui.dashboard_page | DashboardPage refreshed: 27 total runs
+2026-04-24 13:35:37.318 | DEBUG    | freqtrade_gui.ui.run_config_form | Refreshed strategy list: 14 strategies found
+2026-04-24 13:35:37.364 | DEBUG    | freqtrade_gui.ui.run_config_form | RunConfigForm.set_config applied: {'strategy': 'MultiMeee', 'timeframe': '5m', 'timerange': '20250422-20260417', 'pairs': ['ADA/USDT', 'ETH/USDT']}
+2026-04-24 13:35:37.368 | DEBUG    | freqtrade_gui.ui.backtest_page | Backtest preferences restored: strategy=MultiMeee timeframe=5m
+2026-04-24 13:35:37.370 | DEBUG    | freqtrade_gui.ui.run_config_form | Refreshed strategy list: 14 strategies found
+2026-04-24 13:35:37.380 | DEBUG    | freqtrade_gui.ui.run_config_form | RunConfigForm.set_config applied: {'strategy': '', 'timeframe': '5m', 'timerange': '', 'pairs': []}
+2026-04-24 13:35:37.380 | DEBUG    | freqtrade_gui.ui.optimize_page | Optimize preferences restored: strategy= timeframe=5m
+2026-04-24 13:35:39.174 | DEBUG    | freqtrade_gui.ui.run_config_form | RunConfigForm.set_config applied: {'timeframe': '5m', 'timerange': '20250424-20260424', 'pairs': ['ADA/USDT', 'ETH/USDT']}
+2026-04-24 13:35:39.175 | DEBUG    | freqtrade_gui.ui.download_page | Download preferences restored: timeframe=5m
+2026-04-24 13:35:39.202 | DEBUG    | freqtrade_gui.ui.strategy_page | Strategy list refreshed: 14 strategies
+2026-04-24 13:35:39.247 | DEBUG    | freqtrade_gui.ui.settings_page | Settings loaded into form
+2026-04-24 13:35:39.290 | DEBUG    | freqtrade_gui.ui.terminal_panel | TerminalPanel initialised
+2026-04-24 13:35:39.291 | WARNING  | freqtrade_gui.ui.ai_panel      | Failed to instantiate AIChatDock: AIChatDock.__init__() missing 1 required positional argument: 'settings_state'
+2026-04-24 13:35:39.291 | DEBUG    | freqtrade_gui.ui.header_bar    | HeaderBar page title set to 'Dashboard'
+2026-04-24 13:35:39.291 | DEBUG    | freqtrade_gui.ui.sidebar       | NavSidebar active page set to 'dashboard'
+2026-04-24 13:35:39.292 | DEBUG    | freqtrade_gui.ui.status_bar    | Status set [info]: Navigated to Dashboard
+2026-04-24 13:35:39.292 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to page: dashboard
+2026-04-24 13:35:39.293 | DEBUG    | freqtrade_gui.ui.main_window   | All signals wired
+2026-04-24 13:35:39.294 | DEBUG    | freqtrade_gui.ui.main_window   | Keyboard shortcuts registered
+2026-04-24 13:35:39.296 | DEBUG    | freqtrade_gui.ui.main_window   | CommandPalette built with 10 commands
+2026-04-24 13:35:39.381 | DEBUG    | freqtrade_gui.ui.header_bar    | HeaderBar page title set to 'Backtest'
+2026-04-24 13:35:39.382 | DEBUG    | freqtrade_gui.ui.sidebar       | NavSidebar active page set to 'backtest'
+2026-04-24 13:35:39.382 | DEBUG    | freqtrade_gui.ui.status_bar    | Status set [info]: Navigated to Backtest
+2026-04-24 13:35:39.382 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to page: backtest
+2026-04-24 13:35:39.382 | DEBUG    | freqtrade_gui.ui.main_window   | Geometry restored (lastPage=backtest)
+2026-04-24 13:35:39.403 | INFO     | freqtrade_gui.ui.main_window   | ModernMainWindow initialised
+2026-04-24 13:35:42.426 | DEBUG    | freqtrade_gui.ui.section_header | SectionHeader 'Advanced Options' toggled: collapsed=False
+2026-04-24 13:35:43.510 | DEBUG    | freqtrade_gui.ui.section_header | SectionHeader 'Advanced Options' toggled: collapsed=True
+2026-04-24 13:35:44.039 | DEBUG    | freqtrade_gui.ui.section_header | SectionHeader 'Command Preview' toggled: collapsed=False
+2026-04-24 13:35:49.384 | DEBUG    | freqtrade_gui.ui.status_bar    | Status bar cleared
+2026-04-24 13:35:50.423 | INFO     | freqtrade_gui.ui.backtest_page | Backtest started: strategy=MultiMeee timeframe=5m
+2026-04-24 13:35:54.568 | INFO     | freqtrade_gui.ui.backtest_page | Backtest results loaded: strategy=MultiMeee run_id=run_2026-04-24_13-35-54_4a1407
+2026-04-24 13:35:54.568 | DEBUG    | freqtrade_gui.ui.strategy_page | Strategy list refreshed: 14 strategies
+2026-04-24 13:36:22.369 | DEBUG    | freqtrade_gui.ui.header_bar    | HeaderBar page title set to 'Optimize'
+2026-04-24 13:36:22.370 | DEBUG    | freqtrade_gui.ui.sidebar       | NavSidebar active page set to 'optimize'
+2026-04-24 13:36:22.370 | DEBUG    | freqtrade_gui.ui.status_bar    | Status set [info]: Navigated to Optimize
+2026-04-24 13:36:22.370 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to page: optimize
+2026-04-24 13:36:28.798 | DEBUG    | freqtrade_gui.ui.header_bar    | HeaderBar page title set to 'Backtest'
+2026-04-24 13:36:28.799 | DEBUG    | freqtrade_gui.ui.sidebar       | NavSidebar active page set to 'backtest'
+2026-04-24 13:36:28.800 | DEBUG    | freqtrade_gui.ui.status_bar    | Status set [info]: Navigated to Backtest
+2026-04-24 13:36:28.800 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to page: backtest
+2026-04-24 13:36:29.558 | DEBUG    | freqtrade_gui.ui.header_bar    | HeaderBar page title set to 'Optimize'
+2026-04-24 13:36:29.559 | DEBUG    | freqtrade_gui.ui.sidebar       | NavSidebar active page set to 'optimize'
+2026-04-24 13:36:29.559 | DEBUG    | freqtrade_gui.ui.status_bar    | Status set [info]: Navigated to Optimize
+2026-04-24 13:36:29.559 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to page: optimize
+2026-04-24 13:36:30.503 | DEBUG    | freqtrade_gui.ui.header_bar    | HeaderBar page title set to 'Download Data'
+2026-04-24 13:36:30.504 | DEBUG    | freqtrade_gui.ui.sidebar       | NavSidebar active page set to 'download'
+2026-04-24 13:36:30.504 | DEBUG    | freqtrade_gui.ui.status_bar    | Status set [info]: Navigated to Download Data
+2026-04-24 13:36:30.504 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to page: download
+2026-04-24 13:36:32.600 | DEBUG    | freqtrade_gui.ui.header_bar    | HeaderBar page title set to 'Strategy'
+2026-04-24 13:36:32.601 | DEBUG    | freqtrade_gui.ui.sidebar       | NavSidebar active page set to 'strategy'
+2026-04-24 13:36:32.601 | DEBUG    | freqtrade_gui.ui.status_bar    | Status set [info]: Navigated to Strategy
+2026-04-24 13:36:32.601 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to page: strategy
+2026-04-24 13:36:35.906 | DEBUG    | freqtrade_gui.ui.strategy_page | Strategy selected: MultiMeee
+2026-04-24 13:36:42.604 | DEBUG    | freqtrade_gui.ui.status_bar    | Status bar cleared
+2026-04-24 13:37:15.432 | WARNING  | freqtrade_gui.ui.main_window   | Unknown page_id: 'strategy_lab'
+2026-04-24 13:37:16.597 | WARNING  | freqtrade_gui.ui.main_window   | Unknown page_id: 'strategy_lab'
+2026-04-24 13:37:16.799 | WARNING  | freqtrade_gui.ui.main_window   | Unknown page_id: 'strategy_lab'
+2026-04-24 13:37:17.284 | DEBUG    | freqtrade_gui.ui.header_bar    | HeaderBar page title set to 'Settings'
+2026-04-24 13:37:17.285 | DEBUG    | freqtrade_gui.ui.sidebar       | NavSidebar active page set to 'settings'
+2026-04-24 13:37:17.285 | DEBUG    | freqtrade_gui.ui.status_bar    | Status set [info]: Navigated to Settings
+2026-04-24 13:37:17.285 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to page: settings
+2026-04-24 13:37:22.004 | INFO     | freqtrade_gui.ui.settings_page | Settings validated: valid=True
+2026-04-24 13:37:27.277 | DEBUG    | freqtrade_gui.ui.status_bar    | Status bar cleared
+2026-04-24 13:37:36.319 | WARNING  | freqtrade_gui.ui.main_window   | Unknown page_id: 'strategy_lab'
+2026-04-24 13:37:37.155 | DEBUG    | freqtrade_gui.ui.header_bar    | HeaderBar page title set to 'Backtest'
+2026-04-24 13:37:37.156 | DEBUG    | freqtrade_gui.ui.sidebar       | NavSidebar active page set to 'backtest'
+2026-04-24 13:37:37.156 | DEBUG    | freqtrade_gui.ui.status_bar    | Status set [info]: Navigated to Backtest
+2026-04-24 13:37:37.156 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to page: backtest
+2026-04-24 13:37:41.295 | DEBUG    | freqtrade_gui.ui.main_window   | Geometry saved (lastPage=backtest)

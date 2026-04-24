@@ -81,7 +81,7 @@ class VersionStore:
 
         # Write version.json atomically
         version_json_path = version_dir / "version.json"
-        VersionStore._write_atomic(version_json_path, version_to_dict(version))
+        write_json_file_atomic(version_json_path, version_to_dict(version))
         _log.info(
             "Saved version %s for strategy '%s'",
             version.version_id,

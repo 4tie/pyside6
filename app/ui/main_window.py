@@ -61,7 +61,7 @@ _PAGE_DEFS: List[tuple[str, str]] = [
     ("optimize", "Optimize"),
     ("download", "Download Data"),
     ("strategy", "Strategy"),
-    ("lab", "Strategy Lab"),
+    ("strategy_lab", "Strategy Lab"),
     ("settings", "Settings"),
 ]
 
@@ -193,7 +193,7 @@ class ModernMainWindow(QMainWindow):
             ("optimize", self.optimize_page),
             ("download", self.download_page),
             ("strategy", self.strategy_page),
-            ("lab", self.loop_page),
+            ("strategy_lab", self.loop_page),
             ("settings", self.settings_page),
         ]:
             self._pages[page_id] = page
@@ -365,7 +365,7 @@ class ModernMainWindow(QMainWindow):
                 "id": "nav_lab",
                 "label": "Go to Strategy Lab",
                 "shortcut": "Ctrl+6",
-                "action": lambda: self._navigate_to("lab"),
+                "action": lambda: self._navigate_to("strategy_lab"),
             },
             {
                 "id": "nav_settings",

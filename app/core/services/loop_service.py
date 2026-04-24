@@ -28,6 +28,7 @@ from app.core.services.hard_filter_service import HardFilterService
 from app.core.services.improve_service import ImproveService
 from app.core.services.results_diagnosis_service import ResultsDiagnosisService
 from app.core.services.rule_suggestion_service import RuleSuggestionService
+from app.core.parsing.json_parser import parse_json_string
 from app.core.utils.app_logger import get_logger
 
 # 4-Layer Diagnostic Architecture imports
@@ -2423,3 +2424,9 @@ class LoopService:
         """Reset the 4-layer architecture state."""
         self._state_4l = None
         _log.info("Reset 4-layer architecture state")
+
+
+# Aliases used by tests
+_normalize_summary = _normalize_backtest_summary
+compute_score = calculate_robust_score
+targets_met = check_targets_met

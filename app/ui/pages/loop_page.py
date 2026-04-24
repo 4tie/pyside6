@@ -7,6 +7,7 @@ AI advisor, transparent iteration history, and accept/discard/rollback controls.
 from __future__ import annotations
 
 import copy
+import time
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import List, Optional, Tuple
