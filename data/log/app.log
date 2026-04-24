@@ -28556,3 +28556,256 @@ Freqtrade Version:	freqtrade 2026.3
 2026-04-24 13:37:41.303 | INFO     | freqtrade_gui.startup          | Application exiting — code=0
 2026-04-24 14:14:54.142 | ERROR    | freqtrade_gui.services.pattern_database | Failed to load patterns from T:\ae\pyside6\data\patterns.json: Invalid JSON (path: T:\ae\pyside6\data\patterns.json)
 2026-04-24 14:16:04.609 | ERROR    | freqtrade_gui.services.pattern_database | Failed to load patterns from T:\ae\pyside6\data\patterns.json: Invalid JSON (path: T:\ae\pyside6\data\patterns.json)
+2026-04-24 17:14:44.386 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 17:14:44.386 | INFO     | freqtrade_gui.settings         | Validating settings...
+2026-04-24 17:14:44.879 | INFO     | freqtrade_gui.settings         | Validation result: valid=True python=True freqtrade=True user_data=True
+2026-04-24 17:14:44.879 | INFO     | freqtrade_gui.settings         |   Python 3.12.3
+2026-04-24 17:14:44.879 | INFO     | freqtrade_gui.settings         |   Operating System:	Linux-6.17.0-20-generic-x86_64-with-glibc2.39
+Python Version:		Python 3.12.3
+CCXT Version:		4.5.50
+
+Freqtrade Version:	freqtrade 2026.3
+2026-04-24 17:30:51.984 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 17:31:10.443 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 17:31:10.444 | INFO     | freqtrade_gui.startup          | ============================================================
+2026-04-24 17:31:10.444 | INFO     | freqtrade_gui.startup          | Freqtrade GUI starting
+2026-04-24 17:31:10.444 | INFO     | freqtrade_gui.startup          | Python     : 3.12.3
+2026-04-24 17:31:10.444 | INFO     | freqtrade_gui.startup          | Platform   : Linux 6.17.0-20-generic
+2026-04-24 17:31:10.444 | INFO     | freqtrade_gui.startup          | PySide6    : 6.11.0
+2026-04-24 17:31:10.444 | INFO     | freqtrade_gui.startup          | user_data  : /home/mohs/Desktop/ae/pyside6/user_data
+2026-04-24 17:31:10.444 | INFO     | freqtrade_gui.startup          | venv       : /home/mohs/Desktop/ae/pyside6/.venv
+2026-04-24 17:31:10.444 | INFO     | freqtrade_gui.startup          | python_exe : /home/mohs/Desktop/ae/pyside6/.venv/bin/python
+2026-04-24 17:31:10.445 | INFO     | freqtrade_gui.startup          | freqtrade  : /home/mohs/Desktop/ae/pyside6/.venv/bin/freqtrade
+2026-04-24 17:31:10.445 | INFO     | freqtrade_gui.startup          | use_module : True
+2026-04-24 17:31:10.445 | INFO     | freqtrade_gui.startup          | ============================================================
+2026-04-24 17:31:10.849 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 17:31:10.849 | DEBUG    | freqtrade_gui.freqtrade.discovery | Listing strategies from: /home/mohs/Desktop/ae/pyside6/user_data
+2026-04-24 17:31:28.710 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 17:31:28.711 | INFO     | freqtrade_gui.startup          | ============================================================
+2026-04-24 17:31:28.711 | INFO     | freqtrade_gui.startup          | Freqtrade GUI starting
+2026-04-24 17:31:28.711 | INFO     | freqtrade_gui.startup          | Python     : 3.12.3
+2026-04-24 17:31:28.711 | INFO     | freqtrade_gui.startup          | Platform   : Linux 6.17.0-20-generic
+2026-04-24 17:31:28.711 | INFO     | freqtrade_gui.startup          | PySide6    : 6.11.0
+2026-04-24 17:31:28.711 | INFO     | freqtrade_gui.startup          | user_data  : /home/mohs/Desktop/ae/pyside6/user_data
+2026-04-24 17:31:28.711 | INFO     | freqtrade_gui.startup          | venv       : /home/mohs/Desktop/ae/pyside6/.venv
+2026-04-24 17:31:28.711 | INFO     | freqtrade_gui.startup          | python_exe : /home/mohs/Desktop/ae/pyside6/.venv/bin/python
+2026-04-24 17:31:28.711 | INFO     | freqtrade_gui.startup          | freqtrade  : /home/mohs/Desktop/ae/pyside6/.venv/bin/freqtrade
+2026-04-24 17:31:28.712 | INFO     | freqtrade_gui.startup          | use_module : True
+2026-04-24 17:31:28.712 | INFO     | freqtrade_gui.startup          | ============================================================
+2026-04-24 17:31:29.105 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 17:31:29.105 | DEBUG    | freqtrade_gui.freqtrade.discovery | Listing strategies from: /home/mohs/Desktop/ae/pyside6/user_data
+2026-04-24 17:31:34.223 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 17:31:34.224 | INFO     | freqtrade_gui.startup          | ============================================================
+2026-04-24 17:31:34.224 | INFO     | freqtrade_gui.startup          | Freqtrade GUI starting
+2026-04-24 17:31:34.224 | INFO     | freqtrade_gui.startup          | Python     : 3.12.3
+2026-04-24 17:31:34.224 | INFO     | freqtrade_gui.startup          | Platform   : Linux 6.17.0-20-generic
+2026-04-24 17:31:34.224 | INFO     | freqtrade_gui.startup          | PySide6    : 6.11.0
+2026-04-24 17:31:34.224 | INFO     | freqtrade_gui.startup          | user_data  : /home/mohs/Desktop/ae/pyside6/user_data
+2026-04-24 17:31:34.224 | INFO     | freqtrade_gui.startup          | venv       : /home/mohs/Desktop/ae/pyside6/.venv
+2026-04-24 17:31:34.224 | INFO     | freqtrade_gui.startup          | python_exe : /home/mohs/Desktop/ae/pyside6/.venv/bin/python
+2026-04-24 17:31:34.224 | INFO     | freqtrade_gui.startup          | freqtrade  : /home/mohs/Desktop/ae/pyside6/.venv/bin/freqtrade
+2026-04-24 17:31:34.224 | INFO     | freqtrade_gui.startup          | use_module : True
+2026-04-24 17:31:34.224 | INFO     | freqtrade_gui.startup          | ============================================================
+2026-04-24 17:31:34.604 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 17:31:34.604 | DEBUG    | freqtrade_gui.freqtrade.discovery | Listing strategies from: /home/mohs/Desktop/ae/pyside6/user_data
+2026-04-24 17:35:06.986 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 17:35:06.987 | INFO     | freqtrade_gui.startup          | ============================================================
+2026-04-24 17:35:06.987 | INFO     | freqtrade_gui.startup          | Freqtrade GUI starting
+2026-04-24 17:35:06.987 | INFO     | freqtrade_gui.startup          | Python     : 3.12.3
+2026-04-24 17:35:06.987 | INFO     | freqtrade_gui.startup          | Platform   : Linux 6.17.0-20-generic
+2026-04-24 17:35:06.987 | INFO     | freqtrade_gui.startup          | PySide6    : 6.11.0
+2026-04-24 17:35:06.987 | INFO     | freqtrade_gui.startup          | user_data  : /home/mohs/Desktop/ae/pyside6/user_data
+2026-04-24 17:35:06.987 | INFO     | freqtrade_gui.startup          | venv       : /home/mohs/Desktop/ae/pyside6/.venv
+2026-04-24 17:35:06.987 | INFO     | freqtrade_gui.startup          | python_exe : /home/mohs/Desktop/ae/pyside6/.venv/bin/python
+2026-04-24 17:35:06.987 | INFO     | freqtrade_gui.startup          | freqtrade  : /home/mohs/Desktop/ae/pyside6/.venv/bin/freqtrade
+2026-04-24 17:35:06.987 | INFO     | freqtrade_gui.startup          | use_module : True
+2026-04-24 17:35:06.987 | INFO     | freqtrade_gui.startup          | ============================================================
+2026-04-24 17:35:07.425 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 17:35:07.425 | DEBUG    | freqtrade_gui.freqtrade.discovery | Listing strategies from: /home/mohs/Desktop/ae/pyside6/user_data
+2026-04-24 17:35:07.616 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 17:35:07.616 | DEBUG    | freqtrade_gui.freqtrade.discovery | Listing strategies from: /home/mohs/Desktop/ae/pyside6/user_data
+2026-04-24 17:35:07.713 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to dashboard
+2026-04-24 17:35:07.742 | INFO     | freqtrade_gui.ui.main_window   | ModernMainWindow initialised
+2026-04-24 17:35:07.742 | INFO     | freqtrade_gui.startup          | Main window shown
+2026-04-24 17:35:10.259 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to backtest
+2026-04-24 17:35:12.843 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to results
+2026-04-24 17:35:13.801 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to backtest
+2026-04-24 17:35:28.118 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to results
+2026-04-24 17:35:43.633 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to compare
+2026-04-24 17:35:47.758 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to optimize
+2026-04-24 17:35:49.711 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to download
+2026-04-24 17:36:06.429 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to optimize
+2026-04-24 17:36:07.743 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to compare
+2026-04-24 17:36:08.653 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to results
+2026-04-24 17:36:21.913 | INFO     | freqtrade_gui.startup          | Application exiting — code=0
+2026-04-24 17:59:15.477 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 17:59:15.477 | INFO     | freqtrade_gui.startup          | ============================================================
+2026-04-24 17:59:15.477 | INFO     | freqtrade_gui.startup          | Freqtrade GUI starting
+2026-04-24 17:59:15.477 | INFO     | freqtrade_gui.startup          | Python     : 3.12.3
+2026-04-24 17:59:15.477 | INFO     | freqtrade_gui.startup          | Platform   : Linux 6.17.0-20-generic
+2026-04-24 17:59:15.477 | INFO     | freqtrade_gui.startup          | PySide6    : 6.11.0
+2026-04-24 17:59:15.477 | INFO     | freqtrade_gui.startup          | user_data  : /home/mohs/Desktop/ae/pyside6/user_data
+2026-04-24 17:59:15.477 | INFO     | freqtrade_gui.startup          | venv       : /home/mohs/Desktop/ae/pyside6/.venv
+2026-04-24 17:59:15.478 | INFO     | freqtrade_gui.startup          | python_exe : /home/mohs/Desktop/ae/pyside6/.venv/bin/python
+2026-04-24 17:59:15.478 | INFO     | freqtrade_gui.startup          | freqtrade  : /home/mohs/Desktop/ae/pyside6/.venv/bin/freqtrade
+2026-04-24 17:59:15.478 | INFO     | freqtrade_gui.startup          | use_module : True
+2026-04-24 17:59:15.478 | INFO     | freqtrade_gui.startup          | ============================================================
+2026-04-24 17:59:15.916 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 17:59:15.917 | DEBUG    | freqtrade_gui.freqtrade.discovery | Listing strategies from: /home/mohs/Desktop/ae/pyside6/user_data
+2026-04-24 17:59:16.111 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 17:59:16.111 | DEBUG    | freqtrade_gui.freqtrade.discovery | Listing strategies from: /home/mohs/Desktop/ae/pyside6/user_data
+2026-04-24 17:59:16.219 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to dashboard
+2026-04-24 17:59:16.256 | INFO     | freqtrade_gui.ui.main_window   | ModernMainWindow initialised
+2026-04-24 17:59:16.257 | INFO     | freqtrade_gui.startup          | Main window shown
+2026-04-24 17:59:16.517 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-24_13-35-54_4a1407  (exists=True)
+2026-04-24 17:59:16.519 | DEBUG    | freqtrade_gui.ui.results       | Loaded 542 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-24_13-35-54_4a1407/trades.json
+2026-04-24 17:59:16.581 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-24_13-35-54_4a1407  (exists=True)
+2026-04-24 17:59:16.583 | DEBUG    | freqtrade_gui.ui.results       | Loaded 542 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-24_13-35-54_4a1407/trades.json
+2026-04-24 17:59:21.063 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to backtest
+2026-04-24 17:59:29.188 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 17:59:29.188 | DEBUG    | freqtrade_gui.freqtrade.commands | Building backtest command: MultiMeee
+2026-04-24 17:59:29.188 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: /home/mohs/Desktop/ae/pyside6/user_data/strategies/MultiMeee.py
+2026-04-24 17:59:29.189 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: /home/mohs/Desktop/ae/pyside6/user_data/config.json
+2026-04-24 17:59:29.191 | INFO     | freqtrade_gui.process          | Process started | cmd=/home/mohs/Desktop/ae/pyside6/.venv/bin/python -m freqtrade backtesting --user-data-dir /home/mohs/Desktop/ae/pyside6/user_data --config /home/mohs/Desktop/ae/pyside6/user_data/config.json --strategy-path /home/mohs/Desktop/ae/pyside6/user_data/strategies --strategy MultiMeee --timeframe 5m --export trades --max-open-trades 2 --dry-run-wallet 80.0 | cwd=/home/mohs/Desktop/ae/pyside6/user_data | pid=14410
+2026-04-24 17:59:29.301 | DEBUG    | freqtrade_gui.process          | stderr chunk: 62 bytes
+2026-04-24 17:59:43.659 | DEBUG    | freqtrade_gui.process          | stdout chunk: 30 bytes
+2026-04-24 17:59:53.718 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 17:59:53.718 | DEBUG    | freqtrade_gui.freqtrade.commands | Building backtest command: MultiMeee
+2026-04-24 17:59:53.718 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: /home/mohs/Desktop/ae/pyside6/user_data/strategies/MultiMeee.py
+2026-04-24 17:59:53.718 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: /home/mohs/Desktop/ae/pyside6/user_data/config.json
+2026-04-24 17:59:53.720 | INFO     | freqtrade_gui.process          | Process started | cmd=/home/mohs/Desktop/ae/pyside6/.venv/bin/python -m freqtrade backtesting --user-data-dir /home/mohs/Desktop/ae/pyside6/user_data --config /home/mohs/Desktop/ae/pyside6/user_data/config.json --strategy-path /home/mohs/Desktop/ae/pyside6/user_data/strategies --strategy MultiMeee --timeframe 5m --export trades --timerange 20250429-20260424 -p ADA/USDT ETH/USDT --max-open-trades 2 --dry-run-wallet 80.0 | cwd=/home/mohs/Desktop/ae/pyside6/user_data | pid=14499
+2026-04-24 17:59:53.822 | DEBUG    | freqtrade_gui.process          | stderr chunk: 62 bytes
+2026-04-24 18:00:01.379 | DEBUG    | freqtrade_gui.process          | stdout chunk: 30 bytes
+2026-04-24 18:00:53.066 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 18:00:53.066 | INFO     | freqtrade_gui.startup          | ============================================================
+2026-04-24 18:00:53.067 | INFO     | freqtrade_gui.startup          | Freqtrade GUI starting
+2026-04-24 18:00:53.067 | INFO     | freqtrade_gui.startup          | Python     : 3.12.3
+2026-04-24 18:00:53.067 | INFO     | freqtrade_gui.startup          | Platform   : Linux 6.17.0-20-generic
+2026-04-24 18:00:53.067 | INFO     | freqtrade_gui.startup          | PySide6    : 6.11.0
+2026-04-24 18:00:53.067 | INFO     | freqtrade_gui.startup          | user_data  : /home/mohs/Desktop/ae/pyside6/user_data
+2026-04-24 18:00:53.067 | INFO     | freqtrade_gui.startup          | venv       : /home/mohs/Desktop/ae/pyside6/.venv
+2026-04-24 18:00:53.067 | INFO     | freqtrade_gui.startup          | python_exe : /home/mohs/Desktop/ae/pyside6/.venv/bin/python
+2026-04-24 18:00:53.067 | INFO     | freqtrade_gui.startup          | freqtrade  : /home/mohs/Desktop/ae/pyside6/.venv/bin/freqtrade
+2026-04-24 18:00:53.067 | INFO     | freqtrade_gui.startup          | use_module : True
+2026-04-24 18:00:53.067 | INFO     | freqtrade_gui.startup          | ============================================================
+2026-04-24 18:00:53.470 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 18:00:53.470 | DEBUG    | freqtrade_gui.freqtrade.discovery | Listing strategies from: /home/mohs/Desktop/ae/pyside6/user_data
+2026-04-24 18:00:53.661 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 18:00:53.661 | DEBUG    | freqtrade_gui.freqtrade.discovery | Listing strategies from: /home/mohs/Desktop/ae/pyside6/user_data
+2026-04-24 18:00:53.767 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to dashboard
+2026-04-24 18:00:53.795 | INFO     | freqtrade_gui.ui.main_window   | ModernMainWindow initialised
+2026-04-24 18:00:53.795 | INFO     | freqtrade_gui.startup          | Main window shown
+2026-04-24 18:00:53.985 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-24_13-35-54_4a1407  (exists=True)
+2026-04-24 18:00:53.987 | DEBUG    | freqtrade_gui.ui.results       | Loaded 542 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-24_13-35-54_4a1407/trades.json
+2026-04-24 18:00:54.053 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-24_13-35-54_4a1407  (exists=True)
+2026-04-24 18:00:54.055 | DEBUG    | freqtrade_gui.ui.results       | Loaded 542 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-24_13-35-54_4a1407/trades.json
+2026-04-24 18:00:56.219 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to backtest
+2026-04-24 18:04:29.596 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 18:04:29.628 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 18:04:29.628 | DEBUG    | freqtrade_gui.freqtrade.discovery | Listing strategies from: /home/mohs/Desktop/ae/pyside6/user_data
+2026-04-24 18:04:29.643 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 18:04:29.643 | DEBUG    | freqtrade_gui.freqtrade.discovery | Listing strategies from: /home/mohs/Desktop/ae/pyside6/user_data
+2026-04-24 18:04:29.659 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 18:04:29.660 | DEBUG    | freqtrade_gui.parsing.backtest | Parsing zip: backtest-result-2026-04-24_18-00-01.zip | entry=backtest-result-2026-04-24_18-00-01.json
+2026-04-24 18:04:29.668 | INFO     | freqtrade_gui.parsing.backtest | Parsed | strategy=MultiMeee | trades=532 | profit=-21.0827%
+2026-04-24 18:04:29.668 | DEBUG    | freqtrade_gui.freqtrade.discovery | Finding config file for strategy: MultiMeee
+2026-04-24 18:04:29.668 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: /home/mohs/Desktop/ae/pyside6/user_data/config.json
+2026-04-24 18:04:29.668 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-24_18-04-29_1df3eb | strategy=MultiMeee | trades=532 | profit=-21.0827%
+2026-04-24 18:04:29.677 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=MultiMeee | run_id=run_2026-04-24_18-04-29_1df3eb
+2026-04-24 18:04:29.679 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=MultiMeee | run_id=run_2026-04-24_18-04-29_1df3eb
+2026-04-24 18:04:29.679 | INFO     | freqtrade_gui.backtests.store  | Run saved → /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-24_18-04-29_1df3eb
+2026-04-24 18:04:29.679 | INFO     | freqtrade_gui.services.backtest | Backtest results saved: strategy=MultiMeee run_id=run_2026-04-24_18-04-29_1df3eb
+2026-04-24 18:07:22.579 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 18:07:22.580 | INFO     | freqtrade_gui.startup          | ============================================================
+2026-04-24 18:07:22.580 | INFO     | freqtrade_gui.startup          | Freqtrade GUI starting
+2026-04-24 18:07:22.580 | INFO     | freqtrade_gui.startup          | Python     : 3.12.3
+2026-04-24 18:07:22.580 | INFO     | freqtrade_gui.startup          | Platform   : Linux 6.17.0-20-generic
+2026-04-24 18:07:22.580 | INFO     | freqtrade_gui.startup          | PySide6    : 6.11.0
+2026-04-24 18:07:22.580 | INFO     | freqtrade_gui.startup          | user_data  : /home/mohs/Desktop/ae/pyside6/user_data
+2026-04-24 18:07:22.580 | INFO     | freqtrade_gui.startup          | venv       : /home/mohs/Desktop/ae/pyside6/.venv
+2026-04-24 18:07:22.580 | INFO     | freqtrade_gui.startup          | python_exe : /home/mohs/Desktop/ae/pyside6/.venv/bin/python
+2026-04-24 18:07:22.580 | INFO     | freqtrade_gui.startup          | freqtrade  : /home/mohs/Desktop/ae/pyside6/.venv/bin/freqtrade
+2026-04-24 18:07:22.581 | INFO     | freqtrade_gui.startup          | use_module : True
+2026-04-24 18:07:22.581 | INFO     | freqtrade_gui.startup          | ============================================================
+2026-04-24 18:07:23.005 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 18:07:23.005 | DEBUG    | freqtrade_gui.freqtrade.discovery | Listing strategies from: /home/mohs/Desktop/ae/pyside6/user_data
+2026-04-24 18:07:23.193 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 18:07:23.194 | DEBUG    | freqtrade_gui.freqtrade.discovery | Listing strategies from: /home/mohs/Desktop/ae/pyside6/user_data
+2026-04-24 18:07:23.289 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to dashboard
+2026-04-24 18:07:23.321 | INFO     | freqtrade_gui.ui.main_window   | ModernMainWindow initialised
+2026-04-24 18:07:23.321 | INFO     | freqtrade_gui.startup          | Main window shown
+2026-04-24 18:07:23.518 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-24_18-04-29_1df3eb  (exists=True)
+2026-04-24 18:07:23.520 | DEBUG    | freqtrade_gui.ui.results       | Loaded 532 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-24_18-04-29_1df3eb/trades.json
+2026-04-24 18:07:23.586 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-24_18-04-29_1df3eb  (exists=True)
+2026-04-24 18:07:23.588 | DEBUG    | freqtrade_gui.ui.results       | Loaded 532 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-24_18-04-29_1df3eb/trades.json
+2026-04-24 18:07:24.692 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to backtest
+2026-04-24 18:07:27.957 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 18:07:27.957 | DEBUG    | freqtrade_gui.freqtrade.commands | Building backtest command: MultiMeee
+2026-04-24 18:07:27.958 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: /home/mohs/Desktop/ae/pyside6/user_data/strategies/MultiMeee.py
+2026-04-24 18:07:27.959 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: /home/mohs/Desktop/ae/pyside6/user_data/config.json
+2026-04-24 18:07:27.961 | INFO     | freqtrade_gui.process          | Process started | cmd=/home/mohs/Desktop/ae/pyside6/.venv/bin/python -m freqtrade backtesting --user-data-dir /home/mohs/Desktop/ae/pyside6/user_data --config /home/mohs/Desktop/ae/pyside6/user_data/config.json --strategy-path /home/mohs/Desktop/ae/pyside6/user_data/strategies --strategy MultiMeee --timeframe 5m --export trades --timerange 20250429-20260424 -p ADA/USDT ETH/USDT --max-open-trades 2 --dry-run-wallet 80.0 | cwd=/home/mohs/Desktop/ae/pyside6/user_data | pid=15963
+2026-04-24 18:07:28.059 | DEBUG    | freqtrade_gui.process          | stderr chunk: 62 bytes
+2026-04-24 18:07:29.104 | DEBUG    | freqtrade_gui.process          | stderr chunk: 141 bytes
+2026-04-24 18:07:29.107 | DEBUG    | freqtrade_gui.process          | stderr chunk: 80 bytes
+2026-04-24 18:07:29.107 | DEBUG    | freqtrade_gui.process          | stderr chunk: 72 bytes
+2026-04-24 18:07:29.107 | DEBUG    | freqtrade_gui.process          | stderr chunk: 72 bytes
+2026-04-24 18:07:29.108 | DEBUG    | freqtrade_gui.process          | stderr chunk: 163 bytes
+2026-04-24 18:07:29.108 | DEBUG    | freqtrade_gui.process          | stderr chunk: 118 bytes
+2026-04-24 18:07:29.108 | DEBUG    | freqtrade_gui.process          | stderr chunk: 135 bytes
+2026-04-24 18:07:29.108 | DEBUG    | freqtrade_gui.process          | stderr chunk: 148 bytes
+2026-04-24 18:07:29.109 | DEBUG    | freqtrade_gui.process          | stderr chunk: 149 bytes
+2026-04-24 18:07:29.109 | DEBUG    | freqtrade_gui.process          | stderr chunk: 127 bytes
+2026-04-24 18:07:29.110 | DEBUG    | freqtrade_gui.process          | stderr chunk: 144 bytes
+2026-04-24 18:07:29.110 | DEBUG    | freqtrade_gui.process          | stderr chunk: 152 bytes
+2026-04-24 18:07:29.110 | DEBUG    | freqtrade_gui.process          | stderr chunk: 113 bytes
+2026-04-24 18:07:29.110 | DEBUG    | freqtrade_gui.process          | stderr chunk: 108 bytes
+2026-04-24 18:07:29.111 | DEBUG    | freqtrade_gui.process          | stderr chunk: 110 bytes
+2026-04-24 18:07:29.111 | DEBUG    | freqtrade_gui.process          | stderr chunk: 119 bytes
+2026-04-24 18:07:29.112 | DEBUG    | freqtrade_gui.process          | stderr chunk: 90 bytes
+2026-04-24 18:07:29.120 | DEBUG    | freqtrade_gui.process          | stderr chunk: 147 bytes
+2026-04-24 18:07:29.120 | DEBUG    | freqtrade_gui.process          | stderr chunk: 106 bytes
+2026-04-24 18:07:29.124 | DEBUG    | freqtrade_gui.process          | stderr chunk: 111 bytes
+2026-04-24 18:07:29.125 | DEBUG    | freqtrade_gui.process          | stderr chunk: 104 bytes
+2026-04-24 18:07:29.126 | DEBUG    | freqtrade_gui.process          | stderr chunk: 81 bytes
+2026-04-24 18:07:29.127 | DEBUG    | freqtrade_gui.process          | stderr chunk: 141 bytes
+2026-04-24 18:07:29.140 | DEBUG    | freqtrade_gui.process          | stderr chunk: 141 bytes
+2026-04-24 18:07:29.149 | DEBUG    | freqtrade_gui.process          | stderr chunk: 88 bytes
+2026-04-24 18:07:30.328 | DEBUG    | freqtrade_gui.process          | stderr chunk: 110 bytes
+2026-04-24 18:07:30.337 | DEBUG    | freqtrade_gui.process          | stderr chunk: 173 bytes
+2026-04-24 18:07:30.338 | DEBUG    | freqtrade_gui.process          | stderr chunk: 155 bytes
+2026-04-24 18:07:30.338 | DEBUG    | freqtrade_gui.process          | stderr chunk: 142 bytes
+2026-04-24 18:07:30.338 | DEBUG    | freqtrade_gui.process          | stderr chunk: 149 bytes
+2026-04-24 18:07:30.339 | DEBUG    | freqtrade_gui.process          | stderr chunk: 152 bytes
+2026-04-24 18:07:30.339 | DEBUG    | freqtrade_gui.process          | stderr chunk: 150 bytes
+2026-04-24 18:07:30.339 | DEBUG    | freqtrade_gui.process          | stderr chunk: 147 bytes
+2026-04-24 18:07:30.340 | DEBUG    | freqtrade_gui.process          | stderr chunk: 150 bytes
+2026-04-24 18:07:30.340 | DEBUG    | freqtrade_gui.process          | stderr chunk: 102 bytes
+2026-04-24 18:07:30.340 | DEBUG    | freqtrade_gui.process          | stderr chunk: 105 bytes
+2026-04-24 18:07:30.341 | DEBUG    | freqtrade_gui.process          | stderr chunk: 108 bytes
+2026-04-24 18:07:30.341 | DEBUG    | freqtrade_gui.process          | stderr chunk: 118 bytes
+2026-04-24 18:07:30.341 | DEBUG    | freqtrade_gui.process          | stderr chunk: 125 bytes
+2026-04-24 18:07:30.342 | DEBUG    | freqtrade_gui.process          | stderr chunk: 127 bytes
+2026-04-24 18:07:30.342 | DEBUG    | freqtrade_gui.process          | stderr chunk: 115 bytes
+2026-04-24 18:07:30.343 | DEBUG    | freqtrade_gui.process          | stderr chunk: 119 bytes
+2026-04-24 18:07:30.344 | DEBUG    | freqtrade_gui.process          | stderr chunk: 190 bytes
+2026-04-24 18:07:30.344 | DEBUG    | freqtrade_gui.process          | stderr chunk: 37 bytes
+2026-04-24 18:07:30.344 | DEBUG    | freqtrade_gui.process          | stderr chunk: 141 bytes
+2026-04-24 18:07:30.344 | DEBUG    | freqtrade_gui.process          | stderr chunk: 109 bytes
+2026-04-24 18:07:30.344 | DEBUG    | freqtrade_gui.process          | stderr chunk: 112 bytes
+2026-04-24 18:07:30.344 | DEBUG    | freqtrade_gui.process          | stderr chunk: 112 bytes
+2026-04-24 18:07:30.345 | DEBUG    | freqtrade_gui.process          | stderr chunk: 110 bytes
+2026-04-24 18:07:30.345 | DEBUG    | freqtrade_gui.process          | stderr chunk: 112 bytes
+2026-04-24 18:07:30.345 | DEBUG    | freqtrade_gui.process          | stderr chunk: 122 bytes
+2026-04-24 18:07:30.345 | DEBUG    | freqtrade_gui.process          | stderr chunk: 112 bytes
+2026-04-24 18:07:30.345 | DEBUG    | freqtrade_gui.process          | stderr chunk: 120 bytes
+2026-04-24 18:07:30.346 | DEBUG    | freqtrade_gui.process          | stderr chunk: 126 bytes
+2026-04-24 18:07:30.346 | DEBUG    | freqtrade_gui.process          | stderr chunk: 122 bytes
+2026-04-24 18:07:30.346 | DEBUG    | freqtrade_gui.process          | stderr chunk: 122 bytes
+2026-04-24 18:07:30.347 | DEBUG    | freqtrade_gui.process          | stderr chunk: 107 bytes
+2026-04-24 18:07:30.347 | DEBUG    | freqtrade_gui.process          | stderr chunk: 106 bytes
+2026-04-24 18:07:30.352 | DEBUG    | freqtrade_gui.process          | stderr chunk: 110 bytes
+2026-04-24 18:07:30.353 | DEBUG    | freqtrade_gui.process          | stderr chunk: 115 bytes
+2026-04-24 18:07:30.372 | DEBUG    | freqtrade_gui.process          | stderr chunk: 130 bytes
+2026-04-24 18:07:56.905 | INFO     | freqtrade_gui.process          | Process started | cmd=.venv/bin/python -c import sys; print("stdout line"); print("err line", file=sys.stderr) | cwd=(default) | pid=16144
+2026-04-24 18:07:56.914 | DEBUG    | freqtrade_gui.process          | stderr chunk: 9 bytes
+2026-04-24 18:07:56.914 | DEBUG    | freqtrade_gui.process          | stdout chunk: 12 bytes

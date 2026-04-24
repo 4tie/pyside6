@@ -312,16 +312,14 @@ class PatternDatabase:
         """
         if cls._loaded:
             return True
-            
-        import os
+
         if base_path is None:
-            base_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-            base_path = os.path.dirname(base_path)  # Go up from app/core/services to project root
-        
-        json_path = os.path.join(base_path, 'data', 'patterns.json')
-        
-        if os.path.exists(json_path):
-            return cls.load_from_json(json_path)
+            json_path = Path(__file__).parents[3] / "data" / "patterns.json"
+        else:
+            json_path = Path(base_path) / "data" / "patterns.json"
+
+        if json_path.exists():
+            return cls.load_from_json(str(json_path))
         else:
             _log.warning("Pattern database not found at %s", json_path)
             return False

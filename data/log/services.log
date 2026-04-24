@@ -16609,3 +16609,39 @@ CCXT Version:		4.5.49
 Freqtrade Version:	freqtrade 2026.3
 2026-04-24 14:14:54.142 | ERROR    | freqtrade_gui.services.pattern_database | Failed to load patterns from T:\ae\pyside6\data\patterns.json: Invalid JSON (path: T:\ae\pyside6\data\patterns.json)
 2026-04-24 14:16:04.609 | ERROR    | freqtrade_gui.services.pattern_database | Failed to load patterns from T:\ae\pyside6\data\patterns.json: Invalid JSON (path: T:\ae\pyside6\data\patterns.json)
+2026-04-24 17:14:44.386 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 17:14:44.386 | INFO     | freqtrade_gui.settings         | Validating settings...
+2026-04-24 17:14:44.879 | INFO     | freqtrade_gui.settings         | Validation result: valid=True python=True freqtrade=True user_data=True
+2026-04-24 17:14:44.879 | INFO     | freqtrade_gui.settings         |   Python 3.12.3
+2026-04-24 17:14:44.879 | INFO     | freqtrade_gui.settings         |   Operating System:	Linux-6.17.0-20-generic-x86_64-with-glibc2.39
+Python Version:		Python 3.12.3
+CCXT Version:		4.5.50
+
+Freqtrade Version:	freqtrade 2026.3
+2026-04-24 17:30:51.984 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 17:31:10.443 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 17:31:10.849 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 17:31:28.710 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 17:31:29.105 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 17:31:34.223 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 17:31:34.604 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 17:35:06.986 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 17:35:07.425 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 17:35:07.616 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 17:59:15.477 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 17:59:15.916 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 17:59:16.111 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 17:59:29.188 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 17:59:53.718 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 18:00:53.066 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 18:00:53.470 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 18:00:53.661 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 18:04:29.596 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 18:04:29.628 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 18:04:29.643 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 18:04:29.659 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 18:04:29.679 | INFO     | freqtrade_gui.services.backtest | Backtest results saved: strategy=MultiMeee run_id=run_2026-04-24_18-04-29_1df3eb
+2026-04-24 18:07:22.579 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 18:07:23.005 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 18:07:23.193 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 18:07:27.957 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json

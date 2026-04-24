@@ -263,10 +263,15 @@ class AppSettings(BaseModel):
     )
     @classmethod
     def normalize_paths(cls, v):
-        """Normalize path strings to absolute paths."""
+        """Normalize path strings to absolute paths without resolving symlinks.
+
+        Uses absolute() instead of resolve() to avoid following symlinks,
+        which would cause venv Python paths to resolve to the system Python
+        and lose access to venv site-packages.
+        """
         if v is None:
             return None
-        return str(Path(v).expanduser().resolve())
+        return str(Path(v).expanduser().absolute())
 
 
 class SettingsValidationResult(BaseModel):
