@@ -16,11 +16,13 @@ from app.core.parsing.json_parser import parse_json_file
 from app.web.dependencies import (
     SettingsServiceDep,
     BacktestServiceDep,
+    RollbackServiceDep,
 )
 from app.web.models import (
     BacktestRequest,
     RunResponse,
     RunDetailResponse,
+    RollbackResponse,
 )
 
 router = APIRouter()
@@ -203,6 +205,46 @@ async def get_strategy_run(
             for t in results.trades
         ],
         params=params,
+    )
+
+
+@router.post("/runs/{strategy}/{run_id}/rollback", response_model=RollbackResponse)
+async def rollback_run(
+    strategy: str,
+    run_id: str,
+    settings: SettingsServiceDep,
+    rollback_service: RollbackServiceDep,
+) -> RollbackResponse:
+    """Restore strategy params and config from a saved run."""
+    from app.core.utils.app_logger import get_logger
+    _log = get_logger("web.runs")
+
+    app_settings = settings.load_settings()
+    if not app_settings.user_data_path:
+        raise HTTPException(status_code=404, detail="User data path not configured")
+
+    backtest_results_dir = Path(app_settings.user_data_path) / "backtest_results"
+    run_dir = backtest_results_dir / strategy / run_id
+
+    try:
+        result = rollback_service.rollback(
+            run_dir=run_dir,
+            user_data_path=Path(app_settings.user_data_path),
+            strategy_name=strategy,
+        )
+    except FileNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except ValueError as e:
+        raise HTTPException(status_code=422, detail=str(e))
+    except Exception as e:
+        _log.error("Rollback failed: %s", e, exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Rollback failed: {e}")
+
+    return RollbackResponse(
+        success=result.success,
+        message=f"Rolled back to run {result.rolled_back_to}",
+        rollback_to_run_id=result.rolled_back_to,
+        strategy_name=result.strategy_name,
     )
 
 

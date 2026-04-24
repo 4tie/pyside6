@@ -2,18 +2,15 @@
 
 ## Introduction
 
-This feature enforces a clean three-layer architecture (core → services → ui/web) across the
-Freqtrade GUI codebase and adds a fully functional web layer (`app/web/`) that shares the same
-Python service functions as the PySide6 desktop UI. The goals are:
+This feature enforces a clean layered architecture across the Freqtrade GUI codebase and adds a
+fully functional web layer (`app/web/`) that delegates to the existing service layer. The goals are:
 
 1. **Architectural purity** — no PySide6 symbols may appear in `app/core/` or `app/core/services/`;
    the one known violation (`app/core/ai/runtime/conversation_runtime.py`) must be resolved.
-2. **Service extraction** — any business logic still embedded in UI button slots must be moved
-   into service functions so both the desktop and web layers can call the same code.
-3. **Web layer completion** — `app/web/` exposes a FastAPI REST API that delegates every
+2. **Web layer completion** — `app/web/` exposes a FastAPI REST API that delegates every
    operation to the existing service layer; no business logic lives in route handlers.
-4. **Shared execution** — both `app/ui/` and `app/web/` call the same `app/core/services/`
-   functions; there is no duplication of logic between the two front-ends.
+3. **Architecture validation** — layer boundary rules are enforced automatically in CI so future
+   changes cannot re-introduce cross-layer import violations.
 
 The web layer is already partially scaffolded (`app/web/main.py`, `app/web/dependencies.py`,
 `app/web/api/routes/`). `ProcessService` is already framework-agnostic (uses `subprocess`,
@@ -30,11 +27,9 @@ and ensuring every web route delegates cleanly to services.
   Must have zero PySide6 dependencies.
 - **Service_Layer**: Modules under `app/core/services/` — stateless or lightly stateful
   business-logic classes. Must have zero PySide6 or UI dependencies.
-- **UI_Layer**: Modules under `app/ui/` — PySide6 pages, widgets, and dialogs. May import
-  from Service_Layer and Core_Layer but not vice-versa.
 - **Web_Layer**: Modules under `app/web/` — FastAPI application, route handlers, Pydantic
   request/response models, and dependency injection. May import from Service_Layer and
-  Core_Layer but not from UI_Layer.
+  Core_Layer.
 - **ProcessService**: `app/core/services/process_service.py` — framework-agnostic subprocess
   wrapper using Python's `subprocess.Popen` and threading.
 - **ConversationRuntime**: `app/core/ai/runtime/conversation_runtime.py` — the single known
@@ -45,6 +40,7 @@ and ensuring every web route delegates cleanly to services.
   to Route_Handlers via FastAPI's `Depends()` mechanism.
 - **SSE**: Server-Sent Events — HTTP streaming mechanism used to push live subprocess output
   from the web server to the browser.
+- **Rollback**: The operation of restoring a strategy's configuration and parameter state to match a previously saved backtest run, using the `config.snapshot.json` and `params.json` stored in that run's directory.
 
 ---
 
@@ -94,34 +90,7 @@ services remain independently testable and reusable across front-ends.
 
 ---
 
-### Requirement 3: Business Logic Extraction from UI Slots
-
-**User Story:** As a developer, I want business logic extracted from PySide6 button-slot
-methods into service functions, so that the same logic can be invoked from the web layer
-without duplicating code.
-
-#### Acceptance Criteria
-
-1. THE Service_Layer SHALL expose a `run_backtest` function (or equivalent method on
-   `BacktestService`) that accepts strategy, timeframe, pairs, timerange, wallet, and
-   max_open_trades parameters and returns a `BacktestRunCommand`.
-2. THE Service_Layer SHALL expose a `run_optimize` function (or equivalent method on
-   `OptimizeService`) that accepts strategy, timeframe, epochs, spaces, loss function,
-   pairs, and timerange parameters and returns a `RunCommand`.
-3. THE Service_Layer SHALL expose a `run_download_data` function (or equivalent method on
-   `DownloadDataService`) that accepts timeframe, pairs, and timerange parameters and
-   returns a `RunCommand`.
-4. WHEN a UI_Layer slot calls a service function, THE UI_Layer slot SHALL pass only
-   primitive values or Pydantic models — not Qt widget references.
-5. THE Service_Layer functions referenced in criteria 1–3 SHALL have no dependency on
-   PySide6 or any Qt class.
-6. FOR ALL service functions referenced in criteria 1–3, calling the function with valid
-   parameters SHALL return a command object whose `as_list()` method returns a non-empty
-   list of strings.
-
----
-
-### Requirement 4: Web Layer — Shared Service Delegation
+### Requirement 3: Web Layer — Shared Service Delegation
 
 **User Story:** As a developer, I want every web API route handler to delegate to the same
 service functions used by the desktop UI, so that there is a single source of truth for
@@ -151,7 +120,7 @@ business logic.
 
 ---
 
-### Requirement 5: Web Layer — Live Process Output via SSE
+### Requirement 4: Web Layer — Live Process Output via SSE
 
 **User Story:** As a web UI user, I want to see live subprocess output (backtest, optimize,
 download) streamed to the browser, so that I have the same real-time feedback as the desktop
@@ -174,7 +143,7 @@ terminal widget.
 
 ---
 
-### Requirement 6: Web Layer — Backtest Results API
+### Requirement 5: Web Layer — Backtest Results API
 
 **User Story:** As a web UI user, I want to browse and load saved backtest runs through the
 web API, so that I can view historical results in a browser without running the desktop app.
@@ -191,10 +160,21 @@ web API, so that I can view historical results in a browser without running the 
    message.
 5. THE Web_Layer SHALL expose a `GET /api/health` endpoint that returns HTTP 200 with
    `{"status": "ok"}` when the service is running.
+6. THE Web_Layer SHALL expose a `POST /api/runs/{strategy}/{run_id}/rollback` endpoint that
+   restores the strategy file and config snapshot from the selected run, delegating to a
+   `RollbackService` or equivalent service method.
+7. WHEN a rollback is requested, THE Web_Layer SHALL copy the `config.snapshot.json` and
+   strategy params from the selected run directory back to the active strategy location.
+8. WHEN a rollback succeeds, THE Web_Layer SHALL return HTTP 200 with
+   `{"success": true, "rolled_back_to": run_id}`.
+9. WHEN a rollback fails because the run does not exist, THE Web_Layer SHALL return HTTP 404
+   with a descriptive error message.
+10. WHEN a rollback fails due to a file system error, THE Web_Layer SHALL return HTTP 500
+    with a descriptive error message.
 
 ---
 
-### Requirement 7: Web Layer — Settings Persistence
+### Requirement 6: Web Layer — Settings Persistence
 
 **User Story:** As a web UI user, I want to read and update application settings through the
 web API, so that I can configure paths and preferences without the desktop app.
@@ -215,7 +195,7 @@ web API, so that I can configure paths and preferences without the desktop app.
 
 ---
 
-### Requirement 8: Architecture Validation in CI
+### Requirement 7: Architecture Validation in CI
 
 **User Story:** As a developer, I want the layer boundary rules enforced automatically in the
 test suite, so that future changes cannot accidentally re-introduce cross-layer import

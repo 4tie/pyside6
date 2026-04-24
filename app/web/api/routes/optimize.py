@@ -12,6 +12,7 @@ from app.web.dependencies import (
     SettingsServiceDep,
     OptimizeServiceDep,
     ProcessServiceDep,
+    ProcessOutputBusDep,
 )
 from app.core.services.process_service import ProcessService
 
@@ -30,6 +31,7 @@ async def run_optimize(
     settings: SettingsServiceDep = None,
     optimize_service: OptimizeServiceDep = None,
     process_service: ProcessServiceDep = None,
+    bus: ProcessOutputBusDep = None,
     background_tasks: BackgroundTasks = None,
 ) -> dict:
     """Run hyperopt optimization."""
@@ -65,9 +67,9 @@ async def run_optimize(
         try:
             process_service.execute_command(
                 command=full_command,
-                on_output=lambda line: None,
-                on_error=lambda line: None,
-                on_finished=lambda exit_code: None,
+                on_output=bus.push_line,
+                on_error=bus.push_line,
+                on_finished=bus.push_finished,
                 working_directory=command.cwd,
                 env=env
             )

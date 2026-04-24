@@ -17,6 +17,8 @@ from app.core.services.comparison_service import ComparisonService
 from app.core.services.loop_service import LoopService
 from app.core.services.improve_service import ImproveService
 from app.core.services.process_service import ProcessService
+from app.core.services.rollback_service import RollbackService
+from app.web.process_output_bus import ProcessOutputBus
 
 
 @lru_cache
@@ -82,6 +84,18 @@ def get_download_data_service() -> DownloadDataService:
     return DownloadDataService(settings)
 
 
+@lru_cache
+def get_rollback_service() -> RollbackService:
+    """Get singleton RollbackService instance."""
+    return RollbackService()
+
+
+@lru_cache
+def get_process_output_bus() -> ProcessOutputBus:
+    """Get singleton ProcessOutputBus instance."""
+    return ProcessOutputBus()
+
+
 # Type aliases for dependency injection
 SettingsServiceDep = Annotated[SettingsService, Depends(get_settings_service)]
 BacktestServiceDep = Annotated[BacktestService, Depends(get_backtest_service)]
@@ -92,3 +106,5 @@ DiagnosisServiceDep = Annotated[DiagnosisService, Depends(get_diagnosis_service)
 ComparisonServiceDep = Annotated[ComparisonService, Depends(get_comparison_service)]
 LoopServiceDep = Annotated[LoopService, Depends(get_loop_service)]
 ProcessServiceDep = Annotated[ProcessService, Depends(get_process_service)]
+RollbackServiceDep = Annotated[RollbackService, Depends(get_rollback_service)]
+ProcessOutputBusDep = Annotated[ProcessOutputBus, Depends(get_process_output_bus)]

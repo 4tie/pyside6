@@ -14,6 +14,7 @@ from app.web.dependencies import (
     SettingsServiceDep,
     BacktestServiceDep,
     ProcessServiceDep,
+    ProcessOutputBusDep,
 )
 from app.core.services.process_service import ProcessService
 from app.core.parsing.json_parser import parse_json_file, write_json_file_atomic, ParseError
@@ -63,6 +64,7 @@ async def download_data(
     request: DownloadDataRequest,
     settings: SettingsServiceDep,
     process_service: ProcessServiceDep,
+    bus: ProcessOutputBusDep,
     background_tasks: BackgroundTasks,
 ) -> DownloadDataResponse:
     """Start download-data command with --prepend flag."""
@@ -93,24 +95,15 @@ async def download_data(
     # Build environment with venv
     env = ProcessService.build_environment(app_settings.venv_path)
     full_command = command.as_list()
-    
-    def stream_output(line: str):
-        pass
-    
-    def stream_error(line: str):
-        pass
-    
-    def on_finished(exit_code: int):
-        pass
-    
+
     # Execute command in background
     def execute_download():
         try:
             process_service.execute_command(
                 command=full_command,
-                on_output=stream_output,
-                on_error=stream_error,
-                on_finished=on_finished,
+                on_output=bus.push_line,
+                on_error=bus.push_line,
+                on_finished=bus.push_finished,
                 working_directory=command.cwd,
                 env=env
             )
@@ -118,7 +111,7 @@ async def download_data(
             pass
         except Exception:
             pass
-    
+
     background_tasks.add_task(execute_download)
     
     return DownloadDataResponse(
@@ -172,6 +165,7 @@ async def execute_backtest(
     settings: SettingsServiceDep,
     backtest_service: BacktestServiceDep,
     process_service: ProcessServiceDep,
+    bus: ProcessOutputBusDep,
     background_tasks: BackgroundTasks,
 ) -> dict:
     """Execute a backtest command and return run_id for redirect."""
@@ -210,13 +204,7 @@ async def execute_backtest(
         # Build environment with venv
         env = ProcessService.build_environment(app_settings.venv_path)
         full_command = command.as_list()
-        
-        def stream_output(line: str):
-            pass
-        
-        def stream_error(line: str):
-            pass
-        
+
         def on_finished(exit_code: int):
             if exit_code == 0:
                 # Use shared service method to parse and save results
@@ -237,8 +225,8 @@ async def execute_backtest(
             try:
                 process_service.execute_command(
                     command=full_command,
-                    on_output=stream_output,
-                    on_error=stream_error,
+                    on_output=bus.push_line,
+                    on_error=bus.push_line,
                     on_finished=on_finished,
                     working_directory=command.cwd,
                     env=env
