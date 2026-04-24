@@ -20,34 +20,44 @@ the user explicitly confirms an export.
 - **Strategy_Optimizer**: The new PySide6 page and its backing service layer that orchestrates
   the parameter search loop.
 - **Optimizer_Session**: One complete run of the optimizer loop for a given strategy, from
-  start to stop or completion. Identified by a unique `session_id`.
+  start to stop or completion. Identified by a unique `session_id` (UUID4).
 - **Trial**: A single backtest execution within an `Optimizer_Session`, identified by a
   sequential `trial_number` (1-based). Each trial uses one candidate parameter set.
 - **Trial_Record**: The persisted artefact for one `Trial`: candidate parameters, backtest
   result metrics, raw result file path, log excerpt, and acceptance status.
 - **Accepted_Best**: The `Trial_Record` with the highest score that the user has approved as
   the current best checkpoint. There is at most one `Accepted_Best` per `Optimizer_Session`.
+  Tracked via a lightweight `best.json` pointer file — no file duplication.
 - **Candidate_Params**: The full parameter dict (buy params, sell params, stoploss, ROI,
   trailing settings) written to a temporary JSON file before each trial backtest.
 - **Backtest_Config**: The shared configuration snapshot (pairs, timeframe, timerange, wallet,
   max open trades, config file path) read from `BacktestPreferences` at session start.
-- **Strategy_Parser**: The component that reads a `.py` strategy file and extracts the class
-  name, timeframe, ROI table, stoploss, trailing settings, and buy/sell parameter definitions
-  with their ranges and defaults.
-- **Optimizer_Score**: A scalar value computed from a trial's backtest metrics used to rank
-  trials and decide acceptance. Higher is better.
+- **Trial_Strategy_Dir**: A temporary directory created per trial containing a symlink or copy
+  of the strategy `.py` file and a `{StrategyName}.json` file with the trial's
+  `Candidate_Params`. Passed to Freqtrade via `--strategy-path`.
+- **Strategy_Parser**: The component that reads a `.py` strategy file using Python's `ast`
+  module (AST traversal, not regex) and extracts the class name, timeframe, ROI table,
+  stoploss, trailing settings, and buy/sell parameter definitions with their ranges and
+  defaults from `IntParameter`, `DecimalParameter`, `CategoricalParameter`, and
+  `BooleanParameter` declarations.
+- **Optimizer_Score**: A finite `float` scalar computed from a trial's backtest metrics used
+  to rank trials and decide acceptance. Higher is better. Always sanitized to a finite value
+  — never `NaN`, `+Inf`, or `-Inf`.
 - **Session_Store**: The filesystem layout under `{user_data}/optimizer/sessions/` that
-  persists all session and trial artefacts.
+  persists all session and trial artefacts, including a per-session SQLite file
+  (`study.db`) for Optuna's RDB storage backend.
 - **Export**: The user-confirmed action of writing the `Accepted_Best` parameters to the live
-  strategy JSON file, with a backup created first.
-- **Rollback**: The user-confirmed action of restoring a previous checkpoint from a
-  `Trial_Record` or a backup, undoing a prior export.
-- **Optuna_Sampler**: The Optuna `Study` and `Trial` objects used to propose `Candidate_Params`
-  values within declared parameter ranges.
+  strategy JSON file, with a timestamped backup created first via atomic `os.replace`.
+- **Rollback**: The user-confirmed action of restoring a previous checkpoint from a backup
+  file, undoing a prior export, using the existing `RollbackService`.
+- **Optuna_Ask_Tell**: The decoupled Optuna interface (`study.ask()` / `study.tell()`) used
+  instead of `study.optimize()` to keep the main thread non-blocking during trial execution.
 - **ProcessService**: The existing `app.core.services.process_service.ProcessService` used to
-  launch Freqtrade backtest subprocesses.
+  launch Freqtrade backtest subprocesses with streaming stdout/stderr callbacks.
 - **BacktestPreferences**: The `app.core.models.settings_models.BacktestPreferences` Pydantic
   model that stores the user's last-used backtest settings.
+- **RollbackService**: The existing `app.core.services.rollback_service.RollbackService` that
+  provides atomic backup, restore, and pruning logic reused by the export and rollback flows.
 
 ---
 
@@ -99,7 +109,11 @@ configure what to optimize.
    that no JSON was found.
 5. THE `Strategy_Parser` SHALL extract parameter range metadata (minimum, maximum, default)
    from Freqtrade `IntParameter`, `DecimalParameter`, `CategoricalParameter`, and
-   `BooleanParameter` declarations found in the strategy source.
+   `BooleanParameter` declarations found in the strategy source using Python's `ast` module
+   (`ast.NodeVisitor`) — NOT regular expressions. The AST visitor SHALL locate these
+   declarations by matching `ast.Call` nodes whose function name is one of the four parameter
+   class names and SHALL map their keyword arguments (`low`, `high`, `default`, `space`)
+   directly into the `StrategyParams` model.
 6. WHEN parameter extraction completes, THE `Strategy_Optimizer` SHALL display a parameter
    table showing each detected parameter, its type, its default value, and its declared range
    so the user can review before starting.
@@ -195,9 +209,16 @@ data to guide the search.
    `{user_data}/optimizer/sessions/{session_id}/trial_{n:03d}/` containing: `params.json`,
    `metrics.json` (extracted metrics), `score.json` (score value and metric used),
    `backtest_result.json` (full parsed result), and `trial.log` (captured stdout/stderr).
-8. THE `Strategy_Optimizer` SHALL use Optuna to propose `Candidate_Params` for each trial,
-   reporting the `Optimizer_Score` back to the Optuna study after each completed trial so
-   subsequent proposals benefit from prior results.
+8. THE `Strategy_Optimizer` SHALL use Optuna's **ask-and-tell** interface
+   (`study.ask()` / `study.tell()`) — NOT `study.optimize()` — to propose `Candidate_Params`
+   for each trial. This keeps the main thread non-blocking: `study.ask()` generates the next
+   candidate instantly, the backtest subprocess runs asynchronously, and `study.tell(trial,
+   score)` reports the result back to the study after the subprocess exits so subsequent
+   proposals benefit from prior results.
+9. THE `Session_Store` SHALL persist the Optuna study to a SQLite database at
+   `{user_data}/optimizer/sessions/{session_id}/study.db` using Optuna's RDB storage backend
+   (`sqlite:///.../study.db`), so that the Bayesian probability model survives application
+   restarts and can resume from the last completed trial.
 
 ---
 
@@ -286,8 +307,16 @@ JSON file safely, so that I can apply the optimized result without risking data 
    dialog showing: the target JSON file path, the current parameter values that will be
    overwritten, and the new parameter values from `Accepted_Best`.
 2. WHEN the user confirms the export, THE `Strategy_Optimizer` SHALL execute the following
-   sequence atomically: create a timestamped backup of the existing strategy JSON file, write
-   the new JSON, validate that the written file is parseable, and only then report success.
+   sequence atomically:
+   (a) read the current live JSON and write a timestamped backup (e.g.
+       `MohsBaseline_v2.json.bak_20260424T230500`);
+   (b) write the `Accepted_Best` parameters to a hidden temporary file (e.g.
+       `.MohsBaseline_v2.json.tmp`);
+   (c) validate that the temporary file is parseable JSON;
+   (d) invoke `os.replace()` to atomically swap the temporary file into the live JSON path —
+       ensuring any concurrent reader sees either the complete old file or the complete new
+       file, never a partial write;
+   (e) report success only after the rename completes.
 3. IF any step in the export sequence fails, THEN THE `Strategy_Optimizer` SHALL abort the
    export, restore the backup if the write had already occurred, and display a descriptive
    error message.
@@ -331,18 +360,22 @@ can review results from previous runs after restarting the application.
 
 1. THE `Session_Store` SHALL persist all session artefacts under
    `{user_data}/optimizer/sessions/{session_id}/` using the directory layout defined in
-   Requirement 5.7.
+   Requirement 5.7, plus the Optuna SQLite database at
+   `{user_data}/optimizer/sessions/{session_id}/study.db` (Requirement 5.9).
 2. WHEN the Strategy Optimizer page is opened, THE `Strategy_Optimizer` SHALL load the list
    of past sessions from `Session_Store` and display them in a session history panel, sorted
    newest-first.
 3. WHEN the user selects a past session from the history panel, THE `Strategy_Optimizer`
    SHALL restore the trial list and best result panel for that session from the persisted
-   artefacts.
+   artefacts. IF the session's `study.db` exists, THE `Strategy_Optimizer` SHALL reconnect
+   the Optuna study to that database so a resumed session can continue proposing parameters
+   informed by all prior trials.
 4. THE `Strategy_Optimizer` SHALL display the following per-session summary in the history
    panel: strategy name, session start time, total trials run, best score achieved, and
    session status (`running`, `stopped`, `completed`).
 5. THE `Strategy_Optimizer` SHALL allow the user to delete a past session from the history
-   panel; deletion SHALL remove the entire session directory after a confirmation prompt.
+   panel; deletion SHALL remove the entire session directory (including `study.db`) after a
+   confirmation prompt.
 
 ---
 
@@ -414,3 +447,47 @@ parameter files are always valid and recoverable.
 5. IF the strategy `.py` file contains no `buy_params` or `sell_params` declarations, THEN
    THE `Strategy_Parser` SHALL return a `StrategyParams` with empty `buy_params` and
    `sell_params` dicts rather than raising an exception.
+
+---
+
+### Requirement 15: Trial List UI Performance
+
+**User Story:** As a user, I want the trial list to remain smooth and responsive even when
+hundreds of trials have completed, so that the interface never freezes during a long session.
+
+#### Acceptance Criteria
+
+1. THE `Strategy_Optimizer` PySide6 page SHALL back the trial list with a
+   `QAbstractTableModel` subclass (`TrialTableModel`) rather than a `QTableWidget`, so that
+   Qt only renders the rows currently visible on screen.
+2. WHEN a new trial completes, THE `TrialTableModel` SHALL append the row by emitting
+   `beginInsertRows` / `endInsertRows` without repainting the entire table.
+3. WHEN the `Accepted_Best` pointer changes, THE `TrialTableModel` SHALL emit
+   `dataChanged` only for the affected rows (the previously best row and the newly best row)
+   rather than resetting the entire model.
+4. THE trial list SHALL display at minimum: trial number, key parameter values (up to 3
+   params), profit %, max drawdown %, `Optimizer_Score`, and an accepted-best badge (★ for
+   best, blank otherwise).
+5. THE `TrialTableModel` SHALL support sorting by any numeric column without reloading data
+   from disk.
+
+---
+
+### Requirement 16: Metrics Sanitization
+
+**User Story:** As a developer, I want all backtest metrics passed to Optuna to be finite
+floats, so that the Bayesian sampler never crashes on NaN or infinite values from edge-case
+backtests.
+
+#### Acceptance Criteria
+
+1. BEFORE calling `study.tell(trial, score)`, THE `Optimizer_Score` function SHALL guarantee
+   the returned value is a finite `float` by replacing `None`, `NaN`, `+Inf`, and `-Inf`
+   with `0.0`.
+2. WHEN a backtest produces zero trades, THE `Optimizer_Score` function SHALL return `0.0`
+   for all metrics rather than raising a `ZeroDivisionError` or returning `NaN`.
+3. THE metrics extraction step (Requirement 5.4) SHALL sanitize every numeric field in the
+   `metrics.json` artefact using the same finite-float guarantee before persisting to disk.
+4. FOR ALL combinations of score metric name and metrics dict (including empty dicts and dicts
+   with `None` values), THE `Optimizer_Score` function SHALL return a finite `float` — this
+   SHALL be verified by a property-based test using Hypothesis.
