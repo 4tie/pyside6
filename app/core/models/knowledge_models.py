@@ -5,7 +5,6 @@ Provides PatternKnowledge and PatternKnowledgeBase for tracking successful patte
 """
 from __future__ import annotations
 
-import json
 from dataclasses import dataclass, field, asdict
 from datetime import datetime
 from pathlib import Path
@@ -237,10 +236,7 @@ class PatternKnowledgeBase:
 
     def save(self, file_path: Path) -> None:
         """Save knowledge base to disk."""
-        file_path.write_text(
-            json.dumps(self.to_dict(), indent=2),
-            encoding="utf-8",
-        )
+        write_json_file_atomic(file_path, self.to_dict())
         _log.debug("Saved knowledge base to %s", file_path)
 
     @classmethod

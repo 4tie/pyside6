@@ -5,11 +5,10 @@ Provides StrategyVersion for tracking and managing strategy versions.
 """
 from __future__ import annotations
 
-import json
 from dataclasses import dataclass, field, asdict
 from datetime import datetime
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, Any
 
 from app.core.parsing.json_parser import parse_json_file, write_json_file_atomic
 from app.core.utils.app_logger import get_logger
@@ -154,10 +153,7 @@ class StrategyVersion:
         file_path = strategy_dir / f"{self.version_id}.json"
 
         try:
-            file_path.write_text(
-                json.dumps(self.to_dict(), indent=2),
-                encoding="utf-8",
-            )
+            write_json_file_atomic(file_path, self.to_dict())
             _log.debug("Saved version %s to %s", self.version_id, file_path)
             return file_path
         except Exception as e:

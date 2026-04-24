@@ -11,7 +11,7 @@ import re
 from dataclasses import dataclass, field
 from typing import Any, Optional, Callable, List
 
-from app.core.parsing.json_parser import parse_json_string
+from app.core.parsing.json_parser import parse_json_string, json_dumps
 from app.core.ai.providers.provider_base import AIProvider, AIResponse, StreamToken
 from app.core.ai.providers.provider_factory import ProviderFactory
 from app.core.ai.runtime.agent_policy import AgentPolicy, default_policy
@@ -508,9 +508,7 @@ class AsyncConversationRuntime(AsyncRuntimeBase):
             try:
                 ctx = cp.get_context()
                 if ctx:
-                    import json
-
-                    context_parts.append(json.dumps(ctx, default=str))
+                    context_parts.append(json_dumps(ctx, default=str))
             except Exception as exc:
                 _log.warning("Context provider error: %s", exc)
 

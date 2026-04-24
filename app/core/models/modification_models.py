@@ -5,7 +5,6 @@ Provides ModificationRecord for detailed tracking of parameter changes.
 """
 from __future__ import annotations
 
-import json
 from dataclasses import dataclass, field, asdict
 from datetime import datetime
 from pathlib import Path
@@ -194,10 +193,7 @@ class ModificationHistory:
 
     def save(self, file_path: Path) -> None:
         """Save to disk."""
-        file_path.write_text(
-            json.dumps(self.to_dict(), indent=2),
-            encoding="utf-8",
-        )
+        write_json_file_atomic(file_path, self.to_dict())
 
     @classmethod
     def load(cls, file_path: Path) -> ModificationHistory:

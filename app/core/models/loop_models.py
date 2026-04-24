@@ -9,8 +9,10 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Dict, List, Optional
+import time
 
 from app.core.backtests.results_models import BacktestSummary
+from app.core.models.settings_models import AppSettings
 
 
 # ---------------------------------------------------------------------------
@@ -289,3 +291,40 @@ class LoopResult:
     def successful_iterations(self) -> int:
         """Number of iterations that completed without error."""
         return sum(1 for it in self.iterations if it.succeeded)
+
+
+# ---------------------------------------------------------------------------
+# Execution context for loop operations
+# ---------------------------------------------------------------------------
+
+@dataclass
+class LoopExecutionContext:
+    """Context object for loop execution to reduce parameter passing.
+    
+    Includes run_id and started_at for linking logs, files, results,
+    and preventing race conditions. Critical for AI integration.
+    """
+    config: LoopConfig
+    settings: AppSettings
+    sandbox_dir: Path
+    iteration_number: int
+    user_data_path: Path
+    run_id: str  # Unique identifier linking logs, files, results
+    started_at: float  # Timestamp for race condition prevention
+
+
+# ---------------------------------------------------------------------------
+# Custom exceptions for loop execution
+# ---------------------------------------------------------------------------
+
+class LoopExecutionError(Exception):
+    """Base exception for loop execution errors."""
+    pass
+
+class GateBacktestError(LoopExecutionError):
+    """Error during gate backtest execution."""
+    pass
+
+class ConfigValidationError(LoopExecutionError):
+    """Error during configuration validation."""
+    pass

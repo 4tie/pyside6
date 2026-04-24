@@ -93,11 +93,33 @@ def write_json_file_atomic(
 
     tmp_path = path.with_suffix(".tmp")
     try:
-        tmp_path.write_text(json.dumps(data, indent=indent), encoding=encoding)
+        tmp_path.write_text(json_dumps(data), encoding=encoding)
         os.replace(tmp_path, path)
     except Exception as e:
         tmp_path.unlink(missing_ok=True)
         raise ParseError(f"Failed to write file", str(path), e)
+
+
+def json_dumps(data: Dict[str, Any]) -> str:
+    """Serialize dict to JSON string with consistent formatting.
+
+    Uses consistent formatting across the application:
+    - indent=2: Readable output
+    - ensure_ascii=False: Arabic/Unicode support
+    - sort_keys=True: Stable diffs for versioning
+
+    Args:
+        data: Dictionary to serialize.
+
+    Returns:
+        JSON string.
+    """
+    return json.dumps(
+        data,
+        indent=2,
+        ensure_ascii=False,
+        sort_keys=True,
+    )
 
 
 def parse_json_with_default(

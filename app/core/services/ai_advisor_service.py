@@ -10,7 +10,7 @@ import re
 from typing import Dict, Optional
 
 from app.core.utils.app_logger import get_logger
-from app.core.parsing.json_parser import parse_json_string
+from app.core.parsing.json_parser import parse_json_string, json_dumps
 
 _log = get_logger("services.ai_advisor")
 
@@ -67,7 +67,7 @@ class AIAdvisorService:
         params_lines = []
         for k, v in params.items():
             if isinstance(v, dict):
-                params_lines.append(f"  {k}: {json.dumps(v)}")
+                params_lines.append(f"  {k}: {json_dumps(v)}")
             else:
                 params_lines.append(f"  {k}: {v}")
         params_str = "\n".join(params_lines) if params_lines else "  (none)"

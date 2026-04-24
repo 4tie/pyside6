@@ -5,12 +5,12 @@ Provides version creation, storage, retrieval, and rollback capabilities.
 """
 from __future__ import annotations
 
-import json
 import shutil
 from pathlib import Path
 from typing import List, Optional
 
 from app.core.models.version_models import StrategyVersion, VersionLineage
+from app.core.parsing.json_parser import parse_json_file, write_json_file_atomic
 from app.core.utils.app_logger import get_logger
 
 _log = get_logger("services.version_manager")
@@ -394,10 +394,7 @@ class VersionManagerService:
             data["version_id"] = version.version_id
 
             # Write back
-            strategy_json.write_text(
-                json.dumps(data, indent=2),
-                encoding="utf-8",
-            )
+            write_json_file_atomic(strategy_json, data)
 
             _log.info(
                 "Exported version %s to %s",

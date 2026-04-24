@@ -1,8 +1,7 @@
 from pathlib import Path
 from typing import List, Optional
 
-from app.core.freqtrade.runners.optimize_runner import OptimizeRunCommand, create_optimize_command
-from app.core.freqtrade.resolvers.strategy_resolver import list_available_strategies
+from app.core.freqtrade import create_optimize_command, list_strategies
 from app.core.services.settings_service import SettingsService
 
 
@@ -22,7 +21,7 @@ class OptimizeService:
         spaces: Optional[List[str]] = None,
         hyperopt_loss: Optional[str] = None,
         extra_flags: Optional[List[str]] = None,
-    ) -> OptimizeRunCommand:
+    ):
         """Build a hyperopt command."""
         settings = self.settings_service.load_settings()
         return create_optimize_command(
@@ -42,4 +41,4 @@ class OptimizeService:
         settings = self.settings_service.load_settings()
         if not settings.user_data_path:
             return []
-        return list_available_strategies(Path(settings.user_data_path).expanduser().resolve())
+        return list_strategies(Path(settings.user_data_path).expanduser().resolve())

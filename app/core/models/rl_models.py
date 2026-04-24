@@ -5,7 +5,6 @@ Provides RLAgentState for Q-learning based parameter adjustment recommendations.
 """
 from __future__ import annotations
 
-import json
 import random
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -261,10 +260,7 @@ class RLAgentState:
 
     def save(self, file_path: Path) -> None:
         """Save agent state to disk."""
-        file_path.write_text(
-            json.dumps(self.to_dict(), indent=2),
-            encoding="utf-8",
-        )
+        write_json_file_atomic(file_path, self.to_dict())
         _log.debug("Saved RL agent state to %s", file_path)
 
     @classmethod

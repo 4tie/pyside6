@@ -4,12 +4,12 @@ results_index.py — IndexStore and StrategyIndexStore.
 IndexStore      : manages backtest_results/index.json (all strategies)
 StrategyIndexStore : manages backtest_results/{strategy}/index.json (per strategy)
 """
-import json
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
 
 from app.core.backtests.results_models import BacktestResults
+from app.core.parsing.json_parser import parse_json_file, write_json_file_atomic
 from app.core.utils.app_logger import get_logger
 
 _log = get_logger("backtests.index")

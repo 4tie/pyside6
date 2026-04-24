@@ -7,7 +7,6 @@ AI advisor, transparent iteration history, and accept/discard/rollback controls.
 from __future__ import annotations
 
 import copy
-import json
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import List, Optional, Tuple
@@ -23,7 +22,6 @@ from PySide6.QtWidgets import (
 
 from app.app_state.settings_state import SettingsState
 from app.core.backtests.results_models import BacktestResults, BacktestSummary
-from app.core.freqtrade.resolvers.strategy_resolver import detect_strategy_timeframe
 from app.core.models.loop_models import LoopConfig, LoopIteration, LoopResult
 from app.core.models.settings_models import AppSettings
 from app.core.services.ai_advisor_service import AIAdvisorService
@@ -35,6 +33,8 @@ from app.core.services.loop_service import (
     create_score_input,
 )
 from app.core.services.process_service import ProcessService
+from app.core.mappers import ui_to_loop_config
+from app.core.models.process_models import ProcessEvent
 from app.core.utils.app_logger import get_logger
 from app.ui.theme import PALETTE as _THEME_PALETTE
 from app.ui.widgets.iteration_history_row import IterationHistoryRow
@@ -1238,42 +1238,43 @@ class LoopPage(QWidget):
         self._stat_score.set_value(f"{best.score.total:.3f}" if best.score else "-")
 
     def _build_loop_config(self, strategy: str) -> LoopConfig:
-        """Build a LoopConfig from the current UI state."""
+        """Build a LoopConfig from the current UI state using mapper."""
         settings = self._settings_state.current_settings
         if not settings or not settings.user_data_path:
             raise ValueError("user_data_path is not configured")
-        strategy_py = Path(settings.user_data_path) / "strategies" / f"{strategy}.py"
-        detected_timeframe = "5m"  # fallback default
-        if strategy_py.exists():
-            detected_timeframe = detect_strategy_timeframe(strategy_py)
         
-        return LoopConfig(
-            strategy=strategy,
-            timeframe=detected_timeframe,
-            max_iterations=self._max_iter_spin.value(),
-            target_profit_pct=self._target_profit_spin.value(),
-            target_win_rate=self._target_wr_spin.value(),
-            target_max_drawdown=self._target_dd_spin.value(),
-            target_min_trades=self._target_trades_spin.value(),
-            stop_on_first_profitable=self._stop_on_target_chk.isChecked(),
-            date_from=self._date_from_edit.text().strip(),
-            date_to=self._date_to_edit.text().strip(),
-            oos_split_pct=self._oos_split_spin.value(),
-            walk_forward_folds=self._wf_folds_spin.value(),
-            stress_fee_multiplier=self._stress_fee_spin.value(),
-            stress_slippage_pct=self._stress_slippage_spin.value(),
-            stress_profit_target_pct=self._stress_profit_spin.value(),
-            consistency_threshold_pct=self._consistency_spin.value(),
-            validation_mode=("full" if self._validation_mode_combo.currentIndex() == 0 else "quick"),
-            iteration_mode=("rule_based" if self._iteration_mode_combo.currentIndex() == 0 else "hyperopt"),
-            hyperopt_epochs=self._hyperopt_epochs_spin.value(),
-            hyperopt_spaces=[
-                space for space, chk in self._hyperopt_space_checks.items() if chk.isChecked()
-            ],
-            hyperopt_loss_function=self._hyperopt_loss_combo.currentText(),
-            pairs=list(self._selected_pairs),
-            ai_advisor_enabled=self._ai_advisor_chk.isChecked(),
+        # Detect timeframe using LoopService (moved from mapper to service layer)
+        detected_timeframe = self._loop_service.detect_strategy_timeframe(
+            strategy, Path(settings.user_data_path)
         )
+        
+        # Build UI values dict
+        ui_values = {
+            "max_iterations": self._max_iter_spin.value(),
+            "target_profit_pct": self._target_profit_spin.value(),
+            "target_win_rate": self._target_wr_spin.value(),
+            "target_max_drawdown": self._target_dd_spin.value(),
+            "target_min_trades": self._target_trades_spin.value(),
+            "stop_on_first_profitable": self._stop_on_target_chk.isChecked(),
+            "date_from": self._date_from_edit.text().strip(),
+            "date_to": self._date_to_edit.text().strip(),
+            "oos_split_pct": self._oos_split_spin.value(),
+            "walk_forward_folds": self._wf_folds_spin.value(),
+            "stress_fee_multiplier": self._stress_fee_spin.value(),
+            "stress_slippage_pct": self._stress_slippage_spin.value(),
+            "stress_profit_target_pct": self._stress_profit_spin.value(),
+            "consistency_threshold_pct": self._consistency_spin.value(),
+            "validation_mode": ("full" if self._validation_mode_combo.currentIndex() == 0 else "quick"),
+            "iteration_mode": ("rule_based" if self._iteration_mode_combo.currentIndex() == 0 else "hyperopt"),
+            "hyperopt_epochs": self._hyperopt_epochs_spin.value(),
+            "hyperopt_spaces": self._hyperopt_space_combo.currentData() or [],
+            "hyperopt_loss_function": self._hyperopt_loss_combo.currentText() or "SharpeHyperOptLoss",
+            "pairs": self._pairs_edit.toPlainText().split() if self._pairs_edit.toPlainText().strip() else [],
+            "ai_advisor_enabled": self._ai_advisor_chk.isChecked(),
+        }
+        
+        # Use mapper to transform UI values to LoopConfig
+        return ui_to_loop_config(strategy, ui_values, detected_timeframe)
 
     def _validate_loop_inputs(self, strategy: str) -> Optional[str]:
         """Return an error message if the Strategy Lab config is not runnable."""
@@ -1391,22 +1392,6 @@ class LoopPage(QWidget):
         export_dir.mkdir(parents=True, exist_ok=True)
         return export_dir
 
-    def _compute_stress_fee_ratio(self, config_path: Path, config: LoopConfig) -> float:
-        """Approximate stress by combining configured fee and slippage into `--fee`."""
-        base_fee = 0.001
-        try:
-            payload = parse_json_file(config_path)
-            raw_fee = payload.get("fee")
-            if raw_fee is None and isinstance(payload.get("exchange"), dict):
-                raw_fee = payload["exchange"].get("fee")
-            if isinstance(raw_fee, (int, float)) and raw_fee >= 0:
-                base_fee = float(raw_fee)
-        except Exception as exc:
-            _log.warning("Falling back to default base fee for stress gate: %s", exc)
-
-        stress_fee = base_fee * config.stress_fee_multiplier
-        stress_fee += config.stress_slippage_pct / 100.0
-        return round(stress_fee, 6)
 
     def _start_gate_backtest(
         self,
@@ -1414,7 +1399,11 @@ class LoopPage(QWidget):
         timerange: str,
         phase_label: str,
     ) -> None:
-        """Launch one gate backtest subprocess and update the indicator/status."""
+        """Launch one gate backtest subprocess and update the indicator/status.
+        
+        Now uses LoopService.run_gate_backtest with ProcessEvent callbacks
+        instead of direct freqtrade imports and ProcessService calls.
+        """
         self._ensure_loop_runtime_state()
         config = self._loop_service._config
         iteration = self._current_iteration
@@ -1426,45 +1415,48 @@ class LoopPage(QWidget):
         self._current_gate_timerange = timerange
         self._current_gate_export_dir = self._build_gate_export_dir(gate_name)
 
-        from app.core.freqtrade.resolvers.config_resolver import find_config_file_path
-        from app.core.freqtrade.runners.backtest_runner import create_backtest_command
-
-        extra_flags = [
-            "--strategy-path", str(self._sandbox_dir),
-            "--backtest-directory", str(self._current_gate_export_dir),
-        ]
-        if gate_name == "stress_test":
-            config_path = find_config_file_path(Path(settings.user_data_path), strategy_name=config.strategy)
-            extra_flags.extend([
-                "--fee",
-                str(self._compute_stress_fee_ratio(config_path, config)),
-            ])
-
-        cmd = create_backtest_command(
+        # Create LoopExecutionContext for this gate backtest
+        from app.core.models.loop_models import LoopExecutionContext
+        from app.core.storage import build_run_id
+        import time
+        
+        context = LoopExecutionContext(
+            config=config,
             settings=settings,
-            strategy_name=config.strategy,
-            timeframe=config.timeframe,
+            sandbox_dir=self._sandbox_dir,
+            iteration_number=iteration.iteration_number,
+            user_data_path=Path(settings.user_data_path),
+            run_id=build_run_id(),
+            started_at=time.time(),
+        )
+
+        # ProcessEvent callback handler
+        def on_process_event(event: ProcessEvent) -> None:
+            if event.type == "started":
+                self._gate_indicator.set_running(gate_name)
+                self._set_status(phase_label)
+                self._gate_run_started_at = time.time()
+            elif event.type == "stdout":
+                if event.message:
+                    self._terminal.append_output(event.message)
+            elif event.type == "stderr":
+                if event.message:
+                    self._terminal.append_error(event.message)
+            elif event.type == "finished":
+                self._on_gate_backtest_finished(event.exit_code or 0)
+            elif event.type == "error":
+                if event.message:
+                    self._terminal.append_error(f"ERROR: {event.message}")
+                    self._on_gate_backtest_finished(1)
+
+        # Use LoopService.run_gate_backtest instead of direct freqtrade imports
+        self._loop_service.run_gate_backtest(
+            context=context,
+            gate_name=gate_name,
             timerange=timerange,
-            pairs=config.pairs if config.pairs else None,
-            extra_flags=extra_flags,
+            on_event=on_process_event,
         )
 
-        self._gate_indicator.set_running(gate_name)
-        self._set_status(phase_label)
-        self._gate_run_started_at = time.time()
-
-        env = None
-        if settings and settings.venv_path:
-            env = ProcessService.build_environment(settings.venv_path)
-
-        self._process_service.execute_command(
-            cmd.as_list(),
-            on_output=self._terminal.append_output,
-            on_error=self._terminal.append_error,
-            on_finished=self._on_gate_backtest_finished,
-            working_directory=cmd.cwd,
-            env=env,
-        )
 
     def _parse_current_gate_results(self) -> BacktestResults:
         """Parse the most recent gate artifact from the current export dir."""
@@ -1619,49 +1611,63 @@ class LoopPage(QWidget):
         in_sample_timerange = self._loop_service.compute_in_sample_timerange(config)
         _log.info("Baseline timerange: %s", in_sample_timerange)
         
-        # Build backtest command for baseline
-        from app.core.freqtrade.runners.backtest_runner import create_backtest_command
+        # Create LoopExecutionContext for baseline backtest
+        from app.core.models.loop_models import LoopExecutionContext
+        from app.core.storage import build_run_id
+        import time
+        
+        # Use a dummy iteration number for baseline (iteration 0)
+        context = LoopExecutionContext(
+            config=config,
+            settings=settings,
+            sandbox_dir=sandbox_dir,
+            iteration_number=0,
+            user_data_path=Path(settings.user_data_path),
+            run_id=build_run_id(),
+            started_at=time.time(),
+        )
         
         export_dir = sandbox_dir / "baseline_export"
         export_dir.mkdir(parents=True, exist_ok=True)
+        self._current_gate_export_dir = export_dir
         
+        # ProcessEvent callback handler for baseline
+        def on_baseline_event(event: ProcessEvent) -> None:
+            if event.type == "started":
+                self._set_status("Running baseline backtest...")
+                self._progress_bar.setValue(0)
+                self._update_state_machine()
+                self._baseline_run_started_at = time.time()
+            elif event.type == "stdout":
+                if event.message:
+                    self._terminal.append_output(event.message)
+            elif event.type == "stderr":
+                if event.message:
+                    self._terminal.append_error(event.message)
+            elif event.type == "finished":
+                self._on_baseline_backtest_finished(event.exit_code or 0)
+            elif event.type == "error":
+                if event.message:
+                    self._terminal.append_error(f"ERROR: {event.message}")
+                    self._on_baseline_backtest_finished(1)
+        
+        # Use LoopService.run_gate_backtest for baseline
         try:
-            extra_flags = [
-                "--strategy-path", str(sandbox_dir),
-                "--backtest-directory", str(export_dir),
-            ]
-            cmd = create_backtest_command(
-                settings=settings,
-                strategy_name=strategy,
-                timeframe=config.timeframe,
+            self._loop_service.run_gate_backtest(
+                context=context,
+                gate_name="baseline",
                 timerange=in_sample_timerange,
-                pairs=list(config.pairs) if config.pairs else None,
-                extra_flags=extra_flags,
+                on_event=on_baseline_event,
             )
         except Exception as exc:
-            _log.error("Failed to build baseline backtest command: %s", exc)
+            _log.error("Failed to start baseline backtest: %s", exc)
             QMessageBox.critical(
-                self, "Strategy Lab", f"Failed to build baseline backtest command: {exc}"
+                self, "Strategy Lab", f"Failed to start baseline backtest: {exc}"
             )
             self._baseline_in_progress = False
             self._update_state_machine()
             return
-        
-        # Update UI
-        self._set_status("Running baseline backtest...")
-        self._progress_bar.setValue(0)
-        self._update_state_machine()
-        
-        # Execute baseline backtest
-        _log.info("Executing baseline backtest command: %s", " ".join(cmd.as_list()))
-        self._baseline_run_started_at = time.time()
-        self._process_service.execute_command(
-            cmd.as_list(),
-            working_directory=str(cmd.cwd) if cmd.cwd else None,  # Fixed: cwd -> working_directory
-            on_output=self._terminal.append_output,
-            on_error=self._terminal.append_error,
-            on_finished=self._on_baseline_backtest_finished,
-        )
+
 
     def _on_baseline_backtest_finished(self, exit_code: int) -> None:  # Fixed: removed exit_status parameter
         """Handle baseline backtest completion.

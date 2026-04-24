@@ -16495,3 +16495,62 @@ Freqtrade Version:	freqtrade 2026.3
 2026-04-24 10:58:21.152 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
 2026-04-24 10:58:21.977 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
 2026-04-24 12:05:24.284 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:05:32.291 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:05:44.184 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:06:02.871 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:06:03.085 | INFO     | freqtrade_gui.services.ai_service | AIService initialised
+2026-04-24 12:06:04.879 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:06:04.937 | DEBUG    | freqtrade_gui.services.ai_service | BacktestJournalAdapter connected to BacktestService
+2026-04-24 12:06:04.937 | DEBUG    | freqtrade_gui.services.ai_service | Backtest trigger callback registered with AIService
+2026-04-24 12:06:05.065 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:06:09.508 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:15:55.071 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:15:55.285 | INFO     | freqtrade_gui.services.ai_service | AIService initialised
+2026-04-24 12:15:57.046 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:15:57.109 | DEBUG    | freqtrade_gui.services.ai_service | BacktestJournalAdapter connected to BacktestService
+2026-04-24 12:15:57.110 | DEBUG    | freqtrade_gui.services.ai_service | Backtest trigger callback registered with AIService
+2026-04-24 12:15:57.216 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:16:08.721 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:16:16.418 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:16:16.419 | ERROR    | freqtrade_gui.services.backtest | Failed to parse and save backtest results: name 'parse_backtest_results_from_zip' is not defined
+2026-04-24 12:17:09.502 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:17:09.684 | INFO     | freqtrade_gui.services.ai_service | AIService initialised
+2026-04-24 12:17:11.445 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:17:11.498 | DEBUG    | freqtrade_gui.services.ai_service | BacktestJournalAdapter connected to BacktestService
+2026-04-24 12:17:11.498 | DEBUG    | freqtrade_gui.services.ai_service | Backtest trigger callback registered with AIService
+2026-04-24 12:17:11.604 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:17:20.174 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:17:24.741 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:17:24.754 | ERROR    | freqtrade_gui.services.backtest | Failed to parse and save backtest results: name 'write_json_file_atomic' is not defined
+2026-04-24 12:17:49.270 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:17:49.457 | INFO     | freqtrade_gui.services.ai_service | AIService initialised
+2026-04-24 12:17:51.204 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:17:51.261 | DEBUG    | freqtrade_gui.services.ai_service | BacktestJournalAdapter connected to BacktestService
+2026-04-24 12:17:51.261 | DEBUG    | freqtrade_gui.services.ai_service | Backtest trigger callback registered with AIService
+2026-04-24 12:17:51.361 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:17:56.862 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:18:00.754 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:18:00.769 | INFO     | freqtrade_gui.services.backtest | Backtest results saved: strategy=MultiMeee run_id=run_2026-04-24_12-18-00_3a3aaf
+2026-04-24 12:18:25.649 | INFO     | freqtrade_gui.settings         | Settings saved to T:\ae\pyside6\data\settings.json
+2026-04-24 12:18:25.649 | DEBUG    | freqtrade_gui.settings         | Saved: python=T:\ae\pyside6\.venv\Scripts\python.exe venv=T:\ae\pyside6\.venv user_data=T:\ae\pyside6\user_data
+2026-04-24 12:18:25.649 | DEBUG    | freqtrade_gui.services.settings_adapter | Recording settings_saved
+2026-04-24 12:18:27.196 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:18:32.225 | INFO     | freqtrade_gui.settings         | Settings saved to T:\ae\pyside6\data\settings.json
+2026-04-24 12:18:32.226 | DEBUG    | freqtrade_gui.settings         | Saved: python=T:\ae\pyside6\.venv\Scripts\python.exe venv=T:\ae\pyside6\.venv user_data=T:\ae\pyside6\user_data
+2026-04-24 12:18:32.226 | DEBUG    | freqtrade_gui.services.settings_adapter | Recording settings_saved
+2026-04-24 12:18:33.767 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:18:33.779 | INFO     | freqtrade_gui.settings         | Settings saved to T:\ae\pyside6\data\settings.json
+2026-04-24 12:18:33.779 | DEBUG    | freqtrade_gui.settings         | Saved: python=T:\ae\pyside6\.venv\Scripts\python.exe venv=T:\ae\pyside6\.venv user_data=T:\ae\pyside6\user_data
+2026-04-24 12:18:33.780 | DEBUG    | freqtrade_gui.services.settings_adapter | Recording settings_saved
+2026-04-24 12:18:35.341 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:18:49.185 | INFO     | freqtrade_gui.settings         | Settings saved to T:\ae\pyside6\data\settings.json
+2026-04-24 12:18:49.185 | DEBUG    | freqtrade_gui.settings         | Saved: python=T:\ae\pyside6\.venv\Scripts\python.exe venv=T:\ae\pyside6\.venv user_data=T:\ae\pyside6\user_data
+2026-04-24 12:18:49.185 | DEBUG    | freqtrade_gui.services.settings_adapter | Recording settings_saved
+2026-04-24 12:18:50.730 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:18:51.004 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:19:34.380 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:19:50.977 | INFO     | freqtrade_gui.settings         | Settings saved to T:\ae\pyside6\data\settings.json
+2026-04-24 12:19:50.977 | DEBUG    | freqtrade_gui.settings         | Saved: python=T:\ae\pyside6\.venv\Scripts\python.exe venv=T:\ae\pyside6\.venv user_data=T:\ae\pyside6\user_data
+2026-04-24 12:19:50.977 | DEBUG    | freqtrade_gui.services.settings_adapter | Recording settings_saved
+2026-04-24 12:19:52.653 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:19:53.296 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json

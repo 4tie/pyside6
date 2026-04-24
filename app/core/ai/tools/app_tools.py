@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-import json
 from pathlib import Path
 from typing import Optional
 
 from app.core.ai.tools.log_path_resolver import LogPathResolver
 from app.core.ai.tools.tool_registry import ToolDefinition, ToolRegistry
+from app.core.parsing.json_parser import json_dumps
 from app.core.utils.app_logger import get_logger
 
 _log = get_logger("services.app_tools")
@@ -112,7 +112,7 @@ def list_recent_application_events(event_journal=None, n: int = 20) -> str:
             }
             for r in records
         ]
-        return json.dumps(serialized)
+        return json_dumps(serialized)
     except Exception as exc:
         _log.error("Failed to serialize event journal: %s", exc)
         return "[]"

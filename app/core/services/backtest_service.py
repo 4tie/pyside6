@@ -4,9 +4,12 @@ from typing import List, Optional
 from app.core.backtests.results_index import IndexStore
 from app.core.parsing.backtest_parser import parse_backtest_results_from_zip as parse_backtest_zip
 from app.core.backtests.results_store import RunStore
-from app.core.freqtrade.resolvers.config_resolver import find_config_file_path
-from app.core.freqtrade.resolvers.strategy_resolver import list_available_strategies
-from app.core.freqtrade.runners.backtest_runner import BacktestRunCommand, create_backtest_command
+from app.core.freqtrade import (
+    BacktestRunCommand,
+    create_backtest_command,
+    list_strategies,
+    find_config_file_safe,
+)
 from app.core.services.settings_service import SettingsService
 from app.core.utils.app_logger import get_logger
 
@@ -47,7 +50,7 @@ class BacktestService:
         settings = self.settings_service.load_settings()
         if not settings.user_data_path:
             return []
-        return list_available_strategies(Path(settings.user_data_path).expanduser().resolve())
+        return list_strategies(Path(settings.user_data_path).expanduser().resolve())
 
     def rebuild_index(self, backtest_results_dir: str) -> None:
         """Parse any root-level zips not yet in the index and save them as runs."""
@@ -66,7 +69,7 @@ class BacktestService:
 
         for zip_path in sorted(results_dir.glob("*.zip"), key=lambda p: p.stat().st_mtime):
             try:
-                results = parse_backtest_results_from_zip(str(zip_path))
+                results = parse_backtest_zip(str(zip_path))
                 if not results:
                     continue
                 strategy = results.summary.strategy
@@ -84,7 +87,7 @@ class BacktestService:
                 if user_data_dir:
                     try:
                         config_path = str(
-                            find_config_file_path(user_data_dir, strategy_name=strategy)
+                            find_config_file_safe(user_data_dir, strategy_name=strategy)
                         )
                     except FileNotFoundError:
                         config_path = None
@@ -129,14 +132,14 @@ class BacktestService:
                 return None
 
             newest_zip = zips[0]
-            results = parse_backtest_results_from_zip(str(newest_zip))
+            results = parse_backtest_zip(str(newest_zip))
 
             # Resolve config path for the strategy
             config_path = None
             strategy = strategy_name or results.summary.strategy
             user_data_dir = Path(settings.user_data_path)
             try:
-                config_path = str(find_config_file_path(user_data_dir, strategy_name=strategy))
+                config_path = str(find_config_file_safe(user_data_dir, strategy_name=strategy))
             except FileNotFoundError:
                 pass
 

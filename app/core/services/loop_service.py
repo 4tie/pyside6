@@ -845,8 +845,9 @@ class LoopService:
         improve_service: Provides sandbox, command building, and result parsing.
     """
 
-    def __init__(self, improve_service: ImproveService) -> None:
+    def __init__(self, improve_service: ImproveService, process_service=None) -> None:
         self._improve_service = improve_service
+        self._process = process_service  # Injected dependency for subprocess management
         self._config: Optional[LoopConfig] = None
         self._result: Optional[LoopResult] = None
         self._rotator: Optional[SuggestionRotator] = None
@@ -857,6 +858,7 @@ class LoopService:
         self._ai_advisor = None  # Set via set_ai_advisor()
         self._version_manager = None  # Set via set_version_manager()
         self._last_version_id: Optional[str] = None  # Track version lineage
+        self._current_process = None  # Track for cancellation
 
         # 4-Layer Diagnostic Architecture state
         self._state_4l: Optional[LoopState4L] = None
@@ -966,6 +968,206 @@ class LoopService:
         self._running = False
         _log.info("LoopService.stop requested")
 
+    def cancel_current_run(self) -> None:
+        """Cancel the currently running gate backtest."""
+        if self._current_process:
+            self._process.terminate()
+            _log.info("Cancelled current gate backtest")
+
+    def detect_strategy_timeframe(self, strategy: str, user_data_path: Path) -> str:
+        """Detect strategy timeframe (moved from mapper to service layer)."""
+        from app.core.freqtrade.discovery import detect_strategy_timeframe_safe
+        strategy_py = user_data_path / "strategies" / f"{strategy}.py"
+        return detect_strategy_timeframe_safe(strategy_py)
+
+    def _resolve_latest_result(self, context) -> Path:
+        """Resolve the latest backtest result path using run_id to prevent race conditions.
+        
+        Uses run_id from context to find the correct result file,
+        not just "latest file" which can cause race conditions.
+        """
+        from app.core.storage.path_builder import build_gate_export_dir
+        
+        # Build expected export directory using run_id from context
+        export_dir = build_gate_export_dir(
+            context.sandbox_dir,
+            "in_sample",  # or appropriate gate name
+            context.iteration_number,
+        )
+        
+        # Find result files in the export directory
+        result_files = list(export_dir.glob("results*.zip"))
+        
+        if not result_files:
+            raise FileNotFoundError(f"No result files found in {export_dir}")
+        
+        # Return the most recent result file
+        return max(result_files, key=lambda p: p.stat().st_mtime)
+
+    def compute_stress_fee_ratio(self, config_path: Path, config: LoopConfig) -> float:
+        """Calculate stress fee by combining configured fee and slippage."""
+        from app.core.parsing.json_parser import parse_json_file
+        
+        _log = get_logger("services.loop")
+        base_fee = 0.001
+        try:
+            payload = parse_json_file(config_path)
+            raw_fee = payload.get("fee")
+            if raw_fee is None and isinstance(payload.get("exchange"), dict):
+                raw_fee = payload["exchange"].get("fee")
+            if isinstance(raw_fee, (int, float)) and raw_fee >= 0:
+                base_fee = float(raw_fee)
+        except Exception as exc:
+            _log.warning("Falling back to default base fee for stress gate: %s", exc)
+
+        stress_fee = base_fee * config.stress_fee_multiplier
+        stress_fee += config.stress_slippage_pct / 100.0
+        return round(stress_fee, 6)
+
+    def validate_loop_config(self, config: LoopConfig, user_data_path: Path) -> Optional[str]:
+        """Validate loop configuration, return error message or None.
+        
+        NOTE: Validates on LoopConfig model, not raw UI values.
+        Raises ConfigValidationError on validation failure.
+        """
+        from datetime import datetime
+        from app.core.models.loop_models import ConfigValidationError
+        
+        # Validate dates
+        if not config.date_from or not config.date_to:
+            return "Strategy Lab requires both Start Date and End Date."
+        
+        try:
+            from_dt = datetime.strptime(config.date_from, "%Y%m%d")
+            to_dt = datetime.strptime(config.date_to, "%Y%m%d")
+        except ValueError:
+            return "Dates must use YYYYMMDD format."
+        
+        if from_dt >= to_dt:
+            return "Start Date must be earlier than End Date."
+        
+        # Validate strategy file
+        strategy_py = user_data_path / "strategies" / f"{config.strategy}.py"
+        if not strategy_py.exists():
+            return f"Strategy file not found: {strategy_py}"
+        
+        # Validate iteration mode
+        if config.iteration_mode == "hyperopt":
+            return "Hyperopt-guided Strategy Lab runtime is not implemented in this pass."
+        
+        return None
+
+    def run_gate_backtest(
+        self,
+        context,
+        gate_name: str,
+        timerange: str,
+        on_event,
+    ) -> None:
+        """Run gate backtest subprocess and manage lifecycle.
+        
+        Uses injected ProcessService, rich ProcessEvent callbacks,
+        and Execution Context to reduce parameter passing.
+        
+        Includes correlation IDs (run_id, gate_name, iteration) in all logs.
+        Tracks process for cancellation support.
+        Raises GateBacktestError on failure after sending event.
+        """
+        from app.core.models.loop_models import GateBacktestError
+        from app.core.storage.path_builder import build_gate_export_dir
+        from app.core.freqtrade import create_backtest_command, find_config_file_safe
+        from app.core.utils.app_logger import get_logger
+        import time
+        
+        _log = get_logger("services.loop")
+        
+        try:
+            export_dir = build_gate_export_dir(
+                context.sandbox_dir,
+                gate_name,
+                context.iteration_number,
+            )
+            
+            extra_flags = [
+                "--strategy-path", str(context.sandbox_dir),
+                "--backtest-directory", str(export_dir),
+            ]
+            
+            if gate_name == "stress_test":
+                config_path = find_config_file_safe(
+                    context.user_data_path,
+                    strategy_name=context.config.strategy,
+                )
+                stress_fee = self.compute_stress_fee_ratio(config_path, context.config)
+                extra_flags.extend(["--fee", str(stress_fee)])
+            
+            cmd = create_backtest_command(
+                settings=context.settings,
+                strategy_name=context.config.strategy,
+                timeframe=context.config.timeframe,
+                timerange=timerange,
+                pairs=context.config.pairs if context.config.pairs else None,
+                extra_flags=extra_flags,
+            )
+            
+            env = None
+            if context.settings and context.settings.venv_path:
+                env = self._process.build_environment(context.settings.venv_path)
+            
+            # Event wrapper for ProcessService callbacks
+            def _wrap_event(event_type: str, message: str = None, exit_code: int = None, metadata: dict = None):
+                from app.core.models.process_models import ProcessEvent
+                on_event(ProcessEvent(
+                    type=event_type,
+                    message=message,
+                    exit_code=exit_code,
+                    metadata=metadata,
+                    timestamp=time.time()
+                ))
+            
+            _log.info(
+                "Gate backtest started: run_id=%s gate=%s iteration=%d",
+                context.run_id,
+                gate_name,
+                context.iteration_number
+            )
+            _wrap_event("started", metadata={"command": cmd.as_list()})
+            
+            # Track process for cancellation
+            self._current_process = self._process.execute_command(
+                cmd.as_list(),
+                on_output=lambda line: _wrap_event("stdout", message=line),
+                on_error=lambda line: _wrap_event("stderr", message=line),
+                on_finished=lambda exit_code: _wrap_event("finished", exit_code=exit_code),
+                working_directory=cmd.cwd,
+                env=env,
+            )
+            
+            _log.info(
+                "Gate backtest launched: run_id=%s gate=%s iteration=%d",
+                context.run_id,
+                gate_name,
+                context.iteration_number
+            )
+            
+        except Exception as e:
+            # Send error event AND propagate
+            _log.error(
+                "Failed to start gate backtest: run_id=%s gate=%s iteration=%d error=%s",
+                context.run_id,
+                gate_name,
+                context.iteration_number,
+                e
+            )
+            from app.core.models.process_models import ProcessEvent
+            on_event(ProcessEvent(
+                type="error",
+                message=str(e),
+                timestamp=time.time()
+            ))
+            raise GateBacktestError(f"Gate backtest failed: {e}") from e
+
+
     def should_continue(self) -> bool:
         """Return True if the loop should proceed to the next iteration.
 
@@ -1065,7 +1267,7 @@ class LoopService:
         Returns:
             OptimizeRunCommand ready for ProcessService.
         """
-        from app.core.freqtrade.runners.optimize_runner import create_optimize_command
+        from app.core.freqtrade import create_optimize_command
 
         timerange = None
         if config.date_from and config.date_to:

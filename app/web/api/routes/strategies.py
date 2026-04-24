@@ -16,7 +16,6 @@ from app.web.dependencies import (
 )
 from app.web.models import StrategyResponse
 from pathlib import Path
-import json
 
 router = APIRouter()
 

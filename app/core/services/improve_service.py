@@ -13,8 +13,9 @@ from typing import Dict, List, Optional, Tuple
 from app.core.backtests.results_index import IndexStore
 from app.core.backtests.results_models import BacktestResults
 from app.core.parsing.backtest_parser import parse_backtest_results_from_zip as parse_backtest_zip
+from app.core.parsing.json_parser import write_json_file_atomic
 from app.core.backtests.results_store import RunStore
-from app.core.freqtrade.runners.backtest_runner import BacktestRunCommand
+from app.core.freqtrade import BacktestRunCommand
 from app.core.services.backtest_service import BacktestService
 from app.core.services.settings_service import SettingsService
 from app.core.utils.app_logger import get_logger
@@ -456,8 +457,7 @@ class ImproveService:
         final_path = strategies_dir / f"{strategy_name}.json"
         tmp_path = strategies_dir / f"{strategy_name}.json.tmp"
 
-        tmp_path.write_text(json.dumps(self._build_freqtrade_params_file(strategy_name, candidate_config), indent=2), encoding="utf-8")
-        os.replace(tmp_path, final_path)
+        write_json_file_atomic(tmp_path, self._build_freqtrade_params_file(strategy_name, candidate_config))
         _log.info("Candidate accepted; written to %s", final_path)
 
     def reject_candidate(self, sandbox_dir: Path) -> None:
@@ -481,8 +481,7 @@ class ImproveService:
         final_path = strategies_dir / f"{strategy_name}.json"
         tmp_path = strategies_dir / f"{strategy_name}.json.tmp"
 
-        tmp_path.write_text(json.dumps(self._build_freqtrade_params_file(strategy_name, baseline_params), indent=2), encoding="utf-8")
-        os.replace(tmp_path, final_path)
+        write_json_file_atomic(tmp_path, self._build_freqtrade_params_file(strategy_name, baseline_params))
         _log.info("Rollback complete; restored %s", final_path)
 
     def cleanup_stale_sandboxes(self) -> None:

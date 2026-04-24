@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from app.core.freqtrade.runners.download_data_runner import RunCommand, create_download_data_command
+from app.core.freqtrade import DownloadDataRunCommand, create_download_data_command
 from app.core.services.settings_service import SettingsService
 
 
@@ -15,7 +15,7 @@ class DownloadDataService:
         timeframe: str,
         timerange: Optional[str] = None,
         pairs: Optional[List[str]] = None,
-    ) -> RunCommand:
+    ) -> DownloadDataRunCommand:
         """Build a download-data command."""
         settings = self.settings_service.load_settings()
         return create_download_data_command(

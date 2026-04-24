@@ -26695,3 +26695,1088 @@ Freqtrade Version:	freqtrade 2026.3
 2026-04-24 12:05:24.314 | INFO     | freqtrade_gui.startup          | freqtrade  : T:\ae\pyside6\.venv\Scripts\freqtrade.exe
 2026-04-24 12:05:24.314 | INFO     | freqtrade_gui.startup          | use_module : True
 2026-04-24 12:05:24.315 | INFO     | freqtrade_gui.startup          | ============================================================
+2026-04-24 12:05:32.291 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:05:32.291 | INFO     | freqtrade_gui.startup          | ============================================================
+2026-04-24 12:05:32.291 | INFO     | freqtrade_gui.startup          | Freqtrade GUI starting
+2026-04-24 12:05:32.291 | INFO     | freqtrade_gui.startup          | Python     : 3.12.10
+2026-04-24 12:05:32.308 | INFO     | freqtrade_gui.startup          | Platform   : Windows 11
+2026-04-24 12:05:32.308 | INFO     | freqtrade_gui.startup          | PySide6    : 6.11.0
+2026-04-24 12:05:32.308 | INFO     | freqtrade_gui.startup          | user_data  : T:\ae\pyside6\user_data
+2026-04-24 12:05:32.308 | INFO     | freqtrade_gui.startup          | venv       : T:\ae\pyside6\.venv
+2026-04-24 12:05:32.309 | INFO     | freqtrade_gui.startup          | python_exe : T:\ae\pyside6\.venv\Scripts\python.exe
+2026-04-24 12:05:32.309 | INFO     | freqtrade_gui.startup          | freqtrade  : T:\ae\pyside6\.venv\Scripts\freqtrade.exe
+2026-04-24 12:05:32.309 | INFO     | freqtrade_gui.startup          | use_module : True
+2026-04-24 12:05:32.309 | INFO     | freqtrade_gui.startup          | ============================================================
+2026-04-24 12:05:44.184 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:05:44.185 | INFO     | freqtrade_gui.startup          | ============================================================
+2026-04-24 12:05:44.185 | INFO     | freqtrade_gui.startup          | Freqtrade GUI starting
+2026-04-24 12:05:44.186 | INFO     | freqtrade_gui.startup          | Python     : 3.12.10
+2026-04-24 12:05:44.201 | INFO     | freqtrade_gui.startup          | Platform   : Windows 11
+2026-04-24 12:05:44.201 | INFO     | freqtrade_gui.startup          | PySide6    : 6.11.0
+2026-04-24 12:05:44.202 | INFO     | freqtrade_gui.startup          | user_data  : T:\ae\pyside6\user_data
+2026-04-24 12:05:44.202 | INFO     | freqtrade_gui.startup          | venv       : T:\ae\pyside6\.venv
+2026-04-24 12:05:44.202 | INFO     | freqtrade_gui.startup          | python_exe : T:\ae\pyside6\.venv\Scripts\python.exe
+2026-04-24 12:05:44.202 | INFO     | freqtrade_gui.startup          | freqtrade  : T:\ae\pyside6\.venv\Scripts\freqtrade.exe
+2026-04-24 12:05:44.202 | INFO     | freqtrade_gui.startup          | use_module : True
+2026-04-24 12:05:44.202 | INFO     | freqtrade_gui.startup          | ============================================================
+2026-04-24 12:06:02.871 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:06:02.873 | INFO     | freqtrade_gui.startup          | ============================================================
+2026-04-24 12:06:02.873 | INFO     | freqtrade_gui.startup          | Freqtrade GUI starting
+2026-04-24 12:06:02.873 | INFO     | freqtrade_gui.startup          | Python     : 3.12.10
+2026-04-24 12:06:02.890 | INFO     | freqtrade_gui.startup          | Platform   : Windows 11
+2026-04-24 12:06:02.890 | INFO     | freqtrade_gui.startup          | PySide6    : 6.11.0
+2026-04-24 12:06:02.891 | INFO     | freqtrade_gui.startup          | user_data  : T:\ae\pyside6\user_data
+2026-04-24 12:06:02.891 | INFO     | freqtrade_gui.startup          | venv       : T:\ae\pyside6\.venv
+2026-04-24 12:06:02.891 | INFO     | freqtrade_gui.startup          | python_exe : T:\ae\pyside6\.venv\Scripts\python.exe
+2026-04-24 12:06:02.891 | INFO     | freqtrade_gui.startup          | freqtrade  : T:\ae\pyside6\.venv\Scripts\freqtrade.exe
+2026-04-24 12:06:02.891 | INFO     | freqtrade_gui.startup          | use_module : True
+2026-04-24 12:06:02.891 | INFO     | freqtrade_gui.startup          | ============================================================
+2026-04-24 12:06:03.085 | INFO     | freqtrade_gui.services.ai_service | AIService initialised
+2026-04-24 12:06:03.089 | DEBUG    | freqtrade_gui.ui.header_bar    | HeaderBar initialised
+2026-04-24 12:06:03.090 | DEBUG    | freqtrade_gui.ui.sidebar       | NavSidebar initialised
+2026-04-24 12:06:03.093 | DEBUG    | freqtrade_gui.ui.status_bar    | AppStatusBar initialised
+2026-04-24 12:06:03.094 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Last Profit' updated: value='—' trend=None
+2026-04-24 12:06:03.094 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Win Rate' updated: value='—' trend=None
+2026-04-24 12:06:03.095 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Total Trades' updated: value='—' trend=None
+2026-04-24 12:06:03.095 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Best Strategy' updated: value='—' trend=None
+2026-04-24 12:06:03.100 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Last Profit' updated: value='—' trend=None
+2026-04-24 12:06:03.100 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Win Rate' updated: value='—' trend=None
+2026-04-24 12:06:03.100 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Total Trades' updated: value='—' trend=None
+2026-04-24 12:06:03.100 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Best Strategy' updated: value='—' trend=None
+2026-04-24 12:06:03.100 | DEBUG    | freqtrade_gui.ui.dashboard_page | DashboardPage refreshed: 0 total runs
+2026-04-24 12:06:03.121 | DEBUG    | freqtrade_gui.ui.run_config_form | Refreshed strategy list: 14 strategies found
+2026-04-24 12:06:03.173 | DEBUG    | freqtrade_gui.ui.run_config_form | RunConfigForm.set_config applied: {'strategy': 'MultiMeee', 'timeframe': '5m', 'timerange': '20250422-20260417', 'pairs': ['ADA/USDT', 'ETH/USDT']}
+2026-04-24 12:06:03.173 | DEBUG    | freqtrade_gui.ui.backtest_page | Backtest preferences restored: strategy=MultiMeee timeframe=5m
+2026-04-24 12:06:03.175 | DEBUG    | freqtrade_gui.ui.run_config_form | Refreshed strategy list: 14 strategies found
+2026-04-24 12:06:03.185 | DEBUG    | freqtrade_gui.ui.run_config_form | RunConfigForm.set_config applied: {'strategy': '', 'timeframe': '5m', 'timerange': '', 'pairs': []}
+2026-04-24 12:06:03.186 | DEBUG    | freqtrade_gui.ui.optimize_page | Optimize preferences restored: strategy= timeframe=5m
+2026-04-24 12:06:04.815 | DEBUG    | freqtrade_gui.ui.run_config_form | RunConfigForm.set_config applied: {'timeframe': '5m', 'timerange': '', 'pairs': []}
+2026-04-24 12:06:04.815 | DEBUG    | freqtrade_gui.ui.download_page | Download preferences restored: timeframe=5m
+2026-04-24 12:06:04.825 | DEBUG    | freqtrade_gui.parsing.strategy | Loaded strategy JSON: MohsBaseline_v2.json
+2026-04-24 12:06:04.831 | INFO     | freqtrade_gui.strategy_config_page | Loaded: MohsBaseline_v2.json
+2026-04-24 12:06:04.844 | DEBUG    | freqtrade_gui.ui.strategy_page | Strategy list refreshed: 14 strategies
+2026-04-24 12:06:04.879 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:06:04.890 | DEBUG    | freqtrade_gui.ui.settings_page | Settings loaded into form
+2026-04-24 12:06:04.935 | DEBUG    | freqtrade_gui.ui.terminal_panel | TerminalPanel initialised
+2026-04-24 12:06:04.936 | WARNING  | freqtrade_gui.ui.ai_panel      | Failed to instantiate AIChatDock: AIChatDock.__init__() missing 1 required positional argument: 'settings_state'
+2026-04-24 12:06:04.936 | DEBUG    | freqtrade_gui.ui.header_bar    | HeaderBar page title set to 'Dashboard'
+2026-04-24 12:06:04.936 | DEBUG    | freqtrade_gui.ui.sidebar       | NavSidebar active page set to 'dashboard'
+2026-04-24 12:06:04.936 | DEBUG    | freqtrade_gui.ui.status_bar    | Status set [info]: Navigated to Dashboard
+2026-04-24 12:06:04.936 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to page: dashboard
+2026-04-24 12:06:04.937 | DEBUG    | freqtrade_gui.services.ai_service | BacktestJournalAdapter connected to BacktestService
+2026-04-24 12:06:04.937 | DEBUG    | freqtrade_gui.services.ai_service | Backtest trigger callback registered with AIService
+2026-04-24 12:06:04.937 | DEBUG    | freqtrade_gui.ui.main_window   | All signals wired
+2026-04-24 12:06:04.938 | DEBUG    | freqtrade_gui.ui.main_window   | Keyboard shortcuts registered
+2026-04-24 12:06:04.940 | DEBUG    | freqtrade_gui.ui.main_window   | CommandPalette built with 10 commands
+2026-04-24 12:06:05.036 | DEBUG    | freqtrade_gui.ui.header_bar    | HeaderBar page title set to 'Backtest'
+2026-04-24 12:06:05.037 | DEBUG    | freqtrade_gui.ui.sidebar       | NavSidebar active page set to 'backtest'
+2026-04-24 12:06:05.037 | DEBUG    | freqtrade_gui.ui.status_bar    | Status set [info]: Navigated to Backtest
+2026-04-24 12:06:05.037 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to page: backtest
+2026-04-24 12:06:05.037 | DEBUG    | freqtrade_gui.ui.main_window   | Geometry restored (lastPage=backtest)
+2026-04-24 12:06:05.062 | INFO     | freqtrade_gui.ui.main_window   | ModernMainWindow initialised
+2026-04-24 12:06:05.062 | INFO     | freqtrade_gui.startup          | Main window shown
+2026-04-24 12:06:05.065 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:06:08.050 | DEBUG    | freqtrade_gui.ui.header_bar    | HeaderBar page title set to 'Optimize'
+2026-04-24 12:06:08.051 | DEBUG    | freqtrade_gui.ui.sidebar       | NavSidebar active page set to 'optimize'
+2026-04-24 12:06:08.051 | DEBUG    | freqtrade_gui.ui.status_bar    | Status set [info]: Navigated to Optimize
+2026-04-24 12:06:08.051 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to page: optimize
+2026-04-24 12:06:08.579 | DEBUG    | freqtrade_gui.ui.header_bar    | HeaderBar page title set to 'Backtest'
+2026-04-24 12:06:08.580 | DEBUG    | freqtrade_gui.ui.sidebar       | NavSidebar active page set to 'backtest'
+2026-04-24 12:06:08.580 | DEBUG    | freqtrade_gui.ui.status_bar    | Status set [info]: Navigated to Backtest
+2026-04-24 12:06:08.580 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to page: backtest
+2026-04-24 12:06:09.508 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:06:09.509 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-24 12:06:09.509 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-24 12:06:18.580 | DEBUG    | freqtrade_gui.ui.status_bar    | Status bar cleared
+2026-04-24 12:06:20.523 | WARNING  | freqtrade_gui.ui.main_window   | Unknown page_id: 'strategy_lab'
+2026-04-24 12:06:21.553 | DEBUG    | freqtrade_gui.ui.header_bar    | HeaderBar page title set to 'Strategy'
+2026-04-24 12:06:21.554 | DEBUG    | freqtrade_gui.ui.sidebar       | NavSidebar active page set to 'strategy'
+2026-04-24 12:06:21.554 | DEBUG    | freqtrade_gui.ui.status_bar    | Status set [info]: Navigated to Strategy
+2026-04-24 12:06:21.554 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to page: strategy
+2026-04-24 12:06:22.086 | WARNING  | freqtrade_gui.ui.main_window   | Unknown page_id: 'strategy_lab'
+2026-04-24 12:06:22.631 | WARNING  | freqtrade_gui.ui.main_window   | Unknown page_id: 'strategy_lab'
+2026-04-24 12:06:22.963 | WARNING  | freqtrade_gui.ui.main_window   | Unknown page_id: 'strategy_lab'
+2026-04-24 12:06:23.179 | DEBUG    | freqtrade_gui.ui.header_bar    | HeaderBar page title set to 'Settings'
+2026-04-24 12:06:23.180 | DEBUG    | freqtrade_gui.ui.sidebar       | NavSidebar active page set to 'settings'
+2026-04-24 12:06:23.180 | DEBUG    | freqtrade_gui.ui.status_bar    | Status set [info]: Navigated to Settings
+2026-04-24 12:06:23.180 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to page: settings
+2026-04-24 12:06:23.382 | DEBUG    | freqtrade_gui.ui.header_bar    | HeaderBar page title set to 'Settings'
+2026-04-24 12:06:23.382 | DEBUG    | freqtrade_gui.ui.sidebar       | NavSidebar active page set to 'settings'
+2026-04-24 12:06:23.382 | DEBUG    | freqtrade_gui.ui.status_bar    | Status set [info]: Navigated to Settings
+2026-04-24 12:06:23.383 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to page: settings
+2026-04-24 12:06:23.587 | WARNING  | freqtrade_gui.ui.main_window   | Unknown page_id: 'strategy_lab'
+2026-04-24 12:06:23.773 | DEBUG    | freqtrade_gui.ui.header_bar    | HeaderBar page title set to 'Strategy'
+2026-04-24 12:06:23.773 | DEBUG    | freqtrade_gui.ui.sidebar       | NavSidebar active page set to 'strategy'
+2026-04-24 12:06:23.774 | DEBUG    | freqtrade_gui.ui.status_bar    | Status set [info]: Navigated to Strategy
+2026-04-24 12:06:23.774 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to page: strategy
+2026-04-24 12:06:23.949 | DEBUG    | freqtrade_gui.ui.header_bar    | HeaderBar page title set to 'Strategy'
+2026-04-24 12:06:23.950 | DEBUG    | freqtrade_gui.ui.sidebar       | NavSidebar active page set to 'strategy'
+2026-04-24 12:06:23.950 | DEBUG    | freqtrade_gui.ui.status_bar    | Status set [info]: Navigated to Strategy
+2026-04-24 12:06:23.950 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to page: strategy
+2026-04-24 12:06:24.132 | DEBUG    | freqtrade_gui.ui.header_bar    | HeaderBar page title set to 'Strategy'
+2026-04-24 12:06:24.133 | DEBUG    | freqtrade_gui.ui.sidebar       | NavSidebar active page set to 'strategy'
+2026-04-24 12:06:24.133 | DEBUG    | freqtrade_gui.ui.status_bar    | Status set [info]: Navigated to Strategy
+2026-04-24 12:06:24.134 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to page: strategy
+2026-04-24 12:06:24.995 | DEBUG    | freqtrade_gui.ui.strategy_page | Strategy selected: MultiMa2
+2026-04-24 12:06:25.348 | DEBUG    | freqtrade_gui.ui.strategy_page | Strategy selected: MohsBaseline
+2026-04-24 12:06:27.094 | DEBUG    | freqtrade_gui.ui.main_window   | Geometry saved (lastPage=strategy)
+2026-04-24 12:06:27.100 | INFO     | freqtrade_gui.startup          | Application exiting — code=0
+2026-04-24 12:15:55.071 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:15:55.072 | INFO     | freqtrade_gui.startup          | ============================================================
+2026-04-24 12:15:55.072 | INFO     | freqtrade_gui.startup          | Freqtrade GUI starting
+2026-04-24 12:15:55.072 | INFO     | freqtrade_gui.startup          | Python     : 3.12.10
+2026-04-24 12:15:55.097 | INFO     | freqtrade_gui.startup          | Platform   : Windows 11
+2026-04-24 12:15:55.097 | INFO     | freqtrade_gui.startup          | PySide6    : 6.11.0
+2026-04-24 12:15:55.097 | INFO     | freqtrade_gui.startup          | user_data  : T:\ae\pyside6\user_data
+2026-04-24 12:15:55.097 | INFO     | freqtrade_gui.startup          | venv       : T:\ae\pyside6\.venv
+2026-04-24 12:15:55.097 | INFO     | freqtrade_gui.startup          | python_exe : T:\ae\pyside6\.venv\Scripts\python.exe
+2026-04-24 12:15:55.097 | INFO     | freqtrade_gui.startup          | freqtrade  : T:\ae\pyside6\.venv\Scripts\freqtrade.exe
+2026-04-24 12:15:55.097 | INFO     | freqtrade_gui.startup          | use_module : True
+2026-04-24 12:15:55.097 | INFO     | freqtrade_gui.startup          | ============================================================
+2026-04-24 12:15:55.285 | INFO     | freqtrade_gui.services.ai_service | AIService initialised
+2026-04-24 12:15:55.287 | DEBUG    | freqtrade_gui.ui.header_bar    | HeaderBar initialised
+2026-04-24 12:15:55.287 | DEBUG    | freqtrade_gui.ui.sidebar       | NavSidebar initialised
+2026-04-24 12:15:55.289 | DEBUG    | freqtrade_gui.ui.status_bar    | AppStatusBar initialised
+2026-04-24 12:15:55.290 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Last Profit' updated: value='—' trend=None
+2026-04-24 12:15:55.290 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Win Rate' updated: value='—' trend=None
+2026-04-24 12:15:55.290 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Total Trades' updated: value='—' trend=None
+2026-04-24 12:15:55.291 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Best Strategy' updated: value='—' trend=None
+2026-04-24 12:15:55.292 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Last Profit' updated: value='—' trend=None
+2026-04-24 12:15:55.293 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Win Rate' updated: value='—' trend=None
+2026-04-24 12:15:55.293 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Total Trades' updated: value='—' trend=None
+2026-04-24 12:15:55.293 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Best Strategy' updated: value='—' trend=None
+2026-04-24 12:15:55.293 | DEBUG    | freqtrade_gui.ui.dashboard_page | DashboardPage refreshed: 0 total runs
+2026-04-24 12:15:55.305 | DEBUG    | freqtrade_gui.ui.run_config_form | Refreshed strategy list: 14 strategies found
+2026-04-24 12:15:55.348 | DEBUG    | freqtrade_gui.ui.run_config_form | RunConfigForm.set_config applied: {'strategy': 'MultiMeee', 'timeframe': '5m', 'timerange': '20250422-20260417', 'pairs': ['ADA/USDT', 'ETH/USDT']}
+2026-04-24 12:15:55.348 | DEBUG    | freqtrade_gui.ui.backtest_page | Backtest preferences restored: strategy=MultiMeee timeframe=5m
+2026-04-24 12:15:55.350 | DEBUG    | freqtrade_gui.ui.run_config_form | Refreshed strategy list: 14 strategies found
+2026-04-24 12:15:55.359 | DEBUG    | freqtrade_gui.ui.run_config_form | RunConfigForm.set_config applied: {'strategy': '', 'timeframe': '5m', 'timerange': '', 'pairs': []}
+2026-04-24 12:15:55.359 | DEBUG    | freqtrade_gui.ui.optimize_page | Optimize preferences restored: strategy= timeframe=5m
+2026-04-24 12:15:56.983 | DEBUG    | freqtrade_gui.ui.run_config_form | RunConfigForm.set_config applied: {'timeframe': '5m', 'timerange': '', 'pairs': []}
+2026-04-24 12:15:56.983 | DEBUG    | freqtrade_gui.ui.download_page | Download preferences restored: timeframe=5m
+2026-04-24 12:15:56.993 | DEBUG    | freqtrade_gui.parsing.strategy | Loaded strategy JSON: MohsBaseline_v2.json
+2026-04-24 12:15:56.998 | INFO     | freqtrade_gui.strategy_config_page | Loaded: MohsBaseline_v2.json
+2026-04-24 12:15:57.012 | DEBUG    | freqtrade_gui.ui.strategy_page | Strategy list refreshed: 14 strategies
+2026-04-24 12:15:57.046 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:15:57.060 | DEBUG    | freqtrade_gui.ui.settings_page | Settings loaded into form
+2026-04-24 12:15:57.108 | DEBUG    | freqtrade_gui.ui.terminal_panel | TerminalPanel initialised
+2026-04-24 12:15:57.108 | WARNING  | freqtrade_gui.ui.ai_panel      | Failed to instantiate AIChatDock: AIChatDock.__init__() missing 1 required positional argument: 'settings_state'
+2026-04-24 12:15:57.108 | DEBUG    | freqtrade_gui.ui.header_bar    | HeaderBar page title set to 'Dashboard'
+2026-04-24 12:15:57.109 | DEBUG    | freqtrade_gui.ui.sidebar       | NavSidebar active page set to 'dashboard'
+2026-04-24 12:15:57.109 | DEBUG    | freqtrade_gui.ui.status_bar    | Status set [info]: Navigated to Dashboard
+2026-04-24 12:15:57.109 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to page: dashboard
+2026-04-24 12:15:57.109 | DEBUG    | freqtrade_gui.services.ai_service | BacktestJournalAdapter connected to BacktestService
+2026-04-24 12:15:57.110 | DEBUG    | freqtrade_gui.services.ai_service | Backtest trigger callback registered with AIService
+2026-04-24 12:15:57.110 | DEBUG    | freqtrade_gui.ui.main_window   | All signals wired
+2026-04-24 12:15:57.110 | DEBUG    | freqtrade_gui.ui.main_window   | Keyboard shortcuts registered
+2026-04-24 12:15:57.111 | DEBUG    | freqtrade_gui.ui.main_window   | CommandPalette built with 10 commands
+2026-04-24 12:15:57.194 | DEBUG    | freqtrade_gui.ui.header_bar    | HeaderBar page title set to 'Strategy'
+2026-04-24 12:15:57.194 | DEBUG    | freqtrade_gui.ui.sidebar       | NavSidebar active page set to 'strategy'
+2026-04-24 12:15:57.195 | DEBUG    | freqtrade_gui.ui.status_bar    | Status set [info]: Navigated to Strategy
+2026-04-24 12:15:57.195 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to page: strategy
+2026-04-24 12:15:57.195 | DEBUG    | freqtrade_gui.ui.main_window   | Geometry restored (lastPage=strategy)
+2026-04-24 12:15:57.213 | INFO     | freqtrade_gui.ui.main_window   | ModernMainWindow initialised
+2026-04-24 12:15:57.213 | INFO     | freqtrade_gui.startup          | Main window shown
+2026-04-24 12:15:57.216 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:15:59.351 | WARNING  | freqtrade_gui.ui.main_window   | Unknown page_id: 'strategy_lab'
+2026-04-24 12:16:00.246 | DEBUG    | freqtrade_gui.ui.header_bar    | HeaderBar page title set to 'Backtest'
+2026-04-24 12:16:00.246 | DEBUG    | freqtrade_gui.ui.sidebar       | NavSidebar active page set to 'backtest'
+2026-04-24 12:16:00.246 | DEBUG    | freqtrade_gui.ui.status_bar    | Status set [info]: Navigated to Backtest
+2026-04-24 12:16:00.246 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to page: backtest
+2026-04-24 12:16:00.844 | DEBUG    | freqtrade_gui.ui.header_bar    | HeaderBar page title set to 'Dashboard'
+2026-04-24 12:16:00.845 | DEBUG    | freqtrade_gui.ui.sidebar       | NavSidebar active page set to 'dashboard'
+2026-04-24 12:16:00.845 | DEBUG    | freqtrade_gui.ui.status_bar    | Status set [info]: Navigated to Dashboard
+2026-04-24 12:16:00.845 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to page: dashboard
+2026-04-24 12:16:05.769 | DEBUG    | freqtrade_gui.ui.header_bar    | HeaderBar page title set to 'Backtest'
+2026-04-24 12:16:05.770 | DEBUG    | freqtrade_gui.ui.sidebar       | NavSidebar active page set to 'backtest'
+2026-04-24 12:16:05.770 | DEBUG    | freqtrade_gui.ui.status_bar    | Status set [info]: Navigated to Backtest
+2026-04-24 12:16:05.770 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to page: backtest
+2026-04-24 12:16:08.721 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:16:08.722 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-24 12:16:08.722 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-24 12:16:08.726 | INFO     | freqtrade_gui.process          | Process started | cmd=T:\ae\pyside6\.venv\Scripts\python.exe -m freqtrade backtesting --user-data-dir T:\ae\pyside6\user_data --config T:\ae\pyside6\user_data\config.json --strategy-path T:\ae\pyside6\user_data\strategies --strategy MultiMeee --timeframe 5m --export trades --timerange 20250422-20260417 -p ADA/USDT ETH/USDT --max-open-trades 2 --dry-run-wallet 80.0 | cwd=(default) | pid=26956
+2026-04-24 12:16:08.727 | INFO     | freqtrade_gui.ui.backtest_page | Backtest started: strategy=MultiMeee timeframe=5m
+2026-04-24 12:16:08.899 | DEBUG    | freqtrade_gui.process          | stderr chunk: 62 bytes
+2026-04-24 12:16:11.641 | DEBUG    | freqtrade_gui.process          | stderr chunk: 125 bytes
+2026-04-24 12:16:11.643 | DEBUG    | freqtrade_gui.process          | stderr chunk: 80 bytes
+2026-04-24 12:16:11.643 | DEBUG    | freqtrade_gui.process          | stderr chunk: 72 bytes
+2026-04-24 12:16:11.643 | DEBUG    | freqtrade_gui.process          | stderr chunk: 72 bytes
+2026-04-24 12:16:11.644 | DEBUG    | freqtrade_gui.process          | stderr chunk: 147 bytes
+2026-04-24 12:16:11.644 | DEBUG    | freqtrade_gui.process          | stderr chunk: 118 bytes
+2026-04-24 12:16:11.644 | DEBUG    | freqtrade_gui.process          | stderr chunk: 135 bytes
+2026-04-24 12:16:11.644 | DEBUG    | freqtrade_gui.process          | stderr chunk: 148 bytes
+2026-04-24 12:16:11.644 | DEBUG    | freqtrade_gui.process          | stderr chunk: 149 bytes
+2026-04-24 12:16:11.644 | DEBUG    | freqtrade_gui.process          | stderr chunk: 127 bytes
+2026-04-24 12:16:11.645 | DEBUG    | freqtrade_gui.process          | stderr chunk: 128 bytes
+2026-04-24 12:16:11.645 | DEBUG    | freqtrade_gui.process          | stderr chunk: 136 bytes
+2026-04-24 12:16:11.645 | DEBUG    | freqtrade_gui.process          | stderr chunk: 113 bytes
+2026-04-24 12:16:11.645 | DEBUG    | freqtrade_gui.process          | stderr chunk: 108 bytes
+2026-04-24 12:16:11.646 | DEBUG    | freqtrade_gui.process          | stderr chunk: 110 bytes
+2026-04-24 12:16:11.646 | DEBUG    | freqtrade_gui.process          | stderr chunk: 119 bytes
+2026-04-24 12:16:11.646 | DEBUG    | freqtrade_gui.process          | stderr chunk: 90 bytes
+2026-04-24 12:16:11.650 | DEBUG    | freqtrade_gui.process          | stderr chunk: 147 bytes
+2026-04-24 12:16:11.651 | DEBUG    | freqtrade_gui.process          | stderr chunk: 106 bytes
+2026-04-24 12:16:11.652 | DEBUG    | freqtrade_gui.process          | stderr chunk: 111 bytes
+2026-04-24 12:16:11.653 | DEBUG    | freqtrade_gui.process          | stderr chunk: 104 bytes
+2026-04-24 12:16:11.653 | DEBUG    | freqtrade_gui.process          | stderr chunk: 81 bytes
+2026-04-24 12:16:11.653 | DEBUG    | freqtrade_gui.process          | stderr chunk: 141 bytes
+2026-04-24 12:16:11.657 | DEBUG    | freqtrade_gui.process          | stderr chunk: 141 bytes
+2026-04-24 12:16:11.662 | DEBUG    | freqtrade_gui.process          | stderr chunk: 88 bytes
+2026-04-24 12:16:12.790 | DEBUG    | freqtrade_gui.process          | stderr chunk: 110 bytes
+2026-04-24 12:16:12.817 | DEBUG    | freqtrade_gui.process          | stderr chunk: 157 bytes
+2026-04-24 12:16:12.817 | DEBUG    | freqtrade_gui.process          | stderr chunk: 139 bytes
+2026-04-24 12:16:12.818 | DEBUG    | freqtrade_gui.process          | stderr chunk: 142 bytes
+2026-04-24 12:16:12.818 | DEBUG    | freqtrade_gui.process          | stderr chunk: 149 bytes
+2026-04-24 12:16:12.818 | DEBUG    | freqtrade_gui.process          | stderr chunk: 152 bytes
+2026-04-24 12:16:12.818 | DEBUG    | freqtrade_gui.process          | stderr chunk: 150 bytes
+2026-04-24 12:16:12.818 | DEBUG    | freqtrade_gui.process          | stderr chunk: 147 bytes
+2026-04-24 12:16:12.819 | DEBUG    | freqtrade_gui.process          | stderr chunk: 150 bytes
+2026-04-24 12:16:12.819 | DEBUG    | freqtrade_gui.process          | stderr chunk: 102 bytes
+2026-04-24 12:16:12.819 | DEBUG    | freqtrade_gui.process          | stderr chunk: 105 bytes
+2026-04-24 12:16:12.819 | DEBUG    | freqtrade_gui.process          | stderr chunk: 108 bytes
+2026-04-24 12:16:12.821 | DEBUG    | freqtrade_gui.process          | stderr chunk: 118 bytes
+2026-04-24 12:16:12.821 | DEBUG    | freqtrade_gui.process          | stderr chunk: 125 bytes
+2026-04-24 12:16:12.821 | DEBUG    | freqtrade_gui.process          | stderr chunk: 127 bytes
+2026-04-24 12:16:12.821 | DEBUG    | freqtrade_gui.process          | stderr chunk: 115 bytes
+2026-04-24 12:16:12.822 | DEBUG    | freqtrade_gui.process          | stderr chunk: 119 bytes
+2026-04-24 12:16:12.822 | DEBUG    | freqtrade_gui.process          | stderr chunk: 190 bytes
+2026-04-24 12:16:12.822 | DEBUG    | freqtrade_gui.process          | stderr chunk: 37 bytes
+2026-04-24 12:16:12.822 | DEBUG    | freqtrade_gui.process          | stderr chunk: 141 bytes
+2026-04-24 12:16:12.822 | DEBUG    | freqtrade_gui.process          | stderr chunk: 109 bytes
+2026-04-24 12:16:12.822 | DEBUG    | freqtrade_gui.process          | stderr chunk: 112 bytes
+2026-04-24 12:16:12.822 | DEBUG    | freqtrade_gui.process          | stderr chunk: 112 bytes
+2026-04-24 12:16:12.822 | DEBUG    | freqtrade_gui.process          | stderr chunk: 110 bytes
+2026-04-24 12:16:12.823 | DEBUG    | freqtrade_gui.process          | stderr chunk: 112 bytes
+2026-04-24 12:16:12.823 | DEBUG    | freqtrade_gui.process          | stderr chunk: 122 bytes
+2026-04-24 12:16:12.823 | DEBUG    | freqtrade_gui.process          | stderr chunk: 112 bytes
+2026-04-24 12:16:12.823 | DEBUG    | freqtrade_gui.process          | stderr chunk: 120 bytes
+2026-04-24 12:16:12.823 | DEBUG    | freqtrade_gui.process          | stderr chunk: 126 bytes
+2026-04-24 12:16:12.823 | DEBUG    | freqtrade_gui.process          | stderr chunk: 122 bytes
+2026-04-24 12:16:12.823 | DEBUG    | freqtrade_gui.process          | stderr chunk: 122 bytes
+2026-04-24 12:16:12.823 | DEBUG    | freqtrade_gui.process          | stderr chunk: 107 bytes
+2026-04-24 12:16:12.824 | DEBUG    | freqtrade_gui.process          | stderr chunk: 106 bytes
+2026-04-24 12:16:12.940 | DEBUG    | freqtrade_gui.process          | stderr chunk: 197 bytes
+2026-04-24 12:16:12.945 | DEBUG    | freqtrade_gui.process          | stderr chunk: 130 bytes
+2026-04-24 12:16:13.036 | DEBUG    | freqtrade_gui.process          | stderr chunk: 140 bytes
+2026-04-24 12:16:13.155 | DEBUG    | freqtrade_gui.process          | stderr chunk: 140 bytes
+2026-04-24 12:16:13.183 | DEBUG    | freqtrade_gui.process          | stderr chunk: 142 bytes
+2026-04-24 12:16:14.000 | DEBUG    | freqtrade_gui.process          | stderr chunk: 108 bytes
+2026-04-24 12:16:14.001 | DEBUG    | freqtrade_gui.process          | stderr chunk: 109 bytes
+2026-04-24 12:16:14.002 | DEBUG    | freqtrade_gui.process          | stderr chunk: 98 bytes
+2026-04-24 12:16:14.002 | DEBUG    | freqtrade_gui.process          | stderr chunk: 96 bytes
+2026-04-24 12:16:14.002 | DEBUG    | freqtrade_gui.process          | stderr chunk: 99 bytes
+2026-04-24 12:16:14.003 | DEBUG    | freqtrade_gui.process          | stderr chunk: 97 bytes
+2026-04-24 12:16:14.135 | DEBUG    | freqtrade_gui.process          | stderr chunk: 151 bytes
+2026-04-24 12:16:15.785 | DEBUG    | freqtrade_gui.ui.status_bar    | Status bar cleared
+2026-04-24 12:16:15.855 | DEBUG    | freqtrade_gui.process          | stderr chunk: 314 bytes
+2026-04-24 12:16:15.855 | DEBUG    | freqtrade_gui.process          | stderr chunk: 66 bytes
+2026-04-24 12:16:15.876 | DEBUG    | freqtrade_gui.process          | stderr chunk: 155 bytes
+2026-04-24 12:16:16.017 | DEBUG    | freqtrade_gui.process          | stdout chunk: 30 bytes
+2026-04-24 12:16:16.019 | DEBUG    | freqtrade_gui.process          | stdout chunk: 110 bytes
+2026-04-24 12:16:16.019 | DEBUG    | freqtrade_gui.process          | stdout chunk: 110 bytes
+2026-04-24 12:16:16.019 | DEBUG    | freqtrade_gui.process          | stdout chunk: 110 bytes
+2026-04-24 12:16:16.019 | DEBUG    | freqtrade_gui.process          | stdout chunk: 110 bytes
+2026-04-24 12:16:16.019 | DEBUG    | freqtrade_gui.process          | stdout chunk: 110 bytes
+2026-04-24 12:16:16.019 | DEBUG    | freqtrade_gui.process          | stdout chunk: 110 bytes
+2026-04-24 12:16:16.019 | DEBUG    | freqtrade_gui.process          | stdout chunk: 110 bytes
+2026-04-24 12:16:16.019 | DEBUG    | freqtrade_gui.process          | stdout chunk: 110 bytes
+2026-04-24 12:16:16.020 | DEBUG    | freqtrade_gui.process          | stdout chunk: 107 bytes
+2026-04-24 12:16:16.020 | DEBUG    | freqtrade_gui.process          | stdout chunk: 107 bytes
+2026-04-24 12:16:16.020 | DEBUG    | freqtrade_gui.process          | stdout chunk: 107 bytes
+2026-04-24 12:16:16.020 | DEBUG    | freqtrade_gui.process          | stdout chunk: 107 bytes
+2026-04-24 12:16:16.020 | DEBUG    | freqtrade_gui.process          | stdout chunk: 107 bytes
+2026-04-24 12:16:16.020 | DEBUG    | freqtrade_gui.process          | stdout chunk: 107 bytes
+2026-04-24 12:16:16.021 | DEBUG    | freqtrade_gui.process          | stdout chunk: 112 bytes
+2026-04-24 12:16:16.021 | DEBUG    | freqtrade_gui.process          | stdout chunk: 112 bytes
+2026-04-24 12:16:16.021 | DEBUG    | freqtrade_gui.process          | stdout chunk: 112 bytes
+2026-04-24 12:16:16.021 | DEBUG    | freqtrade_gui.process          | stdout chunk: 112 bytes
+2026-04-24 12:16:16.021 | DEBUG    | freqtrade_gui.process          | stdout chunk: 112 bytes
+2026-04-24 12:16:16.021 | DEBUG    | freqtrade_gui.process          | stdout chunk: 112 bytes
+2026-04-24 12:16:16.021 | DEBUG    | freqtrade_gui.process          | stdout chunk: 112 bytes
+2026-04-24 12:16:16.023 | DEBUG    | freqtrade_gui.process          | stdout chunk: 112 bytes
+2026-04-24 12:16:16.023 | DEBUG    | freqtrade_gui.process          | stdout chunk: 112 bytes
+2026-04-24 12:16:16.023 | DEBUG    | freqtrade_gui.process          | stdout chunk: 112 bytes
+2026-04-24 12:16:16.023 | DEBUG    | freqtrade_gui.process          | stdout chunk: 112 bytes
+2026-04-24 12:16:16.023 | DEBUG    | freqtrade_gui.process          | stdout chunk: 112 bytes
+2026-04-24 12:16:16.023 | DEBUG    | freqtrade_gui.process          | stdout chunk: 112 bytes
+2026-04-24 12:16:16.023 | DEBUG    | freqtrade_gui.process          | stdout chunk: 112 bytes
+2026-04-24 12:16:16.023 | DEBUG    | freqtrade_gui.process          | stdout chunk: 112 bytes
+2026-04-24 12:16:16.025 | DEBUG    | freqtrade_gui.process          | stdout chunk: 125 bytes
+2026-04-24 12:16:16.027 | DEBUG    | freqtrade_gui.process          | stdout chunk: 125 bytes
+2026-04-24 12:16:16.028 | DEBUG    | freqtrade_gui.process          | stdout chunk: 125 bytes
+2026-04-24 12:16:16.028 | DEBUG    | freqtrade_gui.process          | stdout chunk: 125 bytes
+2026-04-24 12:16:16.029 | DEBUG    | freqtrade_gui.process          | stdout chunk: 125 bytes
+2026-04-24 12:16:16.032 | DEBUG    | freqtrade_gui.process          | stdout chunk: 125 bytes
+2026-04-24 12:16:16.033 | DEBUG    | freqtrade_gui.process          | stdout chunk: 125 bytes
+2026-04-24 12:16:16.033 | DEBUG    | freqtrade_gui.process          | stdout chunk: 125 bytes
+2026-04-24 12:16:16.033 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.034 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.035 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.035 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.036 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.036 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.036 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.036 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.037 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.037 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.037 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.037 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.037 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.037 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.037 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.039 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.039 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.039 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.040 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.040 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.040 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.040 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.040 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.041 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.041 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.041 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.041 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.041 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.041 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.042 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.042 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.042 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.042 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.042 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.042 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.042 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.043 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.043 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.043 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.043 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.043 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.043 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.043 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.044 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.045 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.045 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.047 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.048 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.050 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:16:16.052 | DEBUG    | freqtrade_gui.process          | stdout chunk: 1 bytes
+2026-04-24 12:16:16.053 | DEBUG    | freqtrade_gui.process          | stdout chunk: 76 bytes
+2026-04-24 12:16:16.054 | DEBUG    | freqtrade_gui.process          | stdout chunk: 133 bytes
+2026-04-24 12:16:16.056 | DEBUG    | freqtrade_gui.process          | stdout chunk: 133 bytes
+2026-04-24 12:16:16.056 | DEBUG    | freqtrade_gui.process          | stdout chunk: 133 bytes
+2026-04-24 12:16:16.056 | DEBUG    | freqtrade_gui.process          | stdout chunk: 133 bytes
+2026-04-24 12:16:16.057 | DEBUG    | freqtrade_gui.process          | stdout chunk: 133 bytes
+2026-04-24 12:16:16.057 | DEBUG    | freqtrade_gui.process          | stdout chunk: 133 bytes
+2026-04-24 12:16:16.418 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:16:16.419 | ERROR    | freqtrade_gui.services.backtest | Failed to parse and save backtest results: name 'parse_backtest_results_from_zip' is not defined
+2026-04-24 12:16:16.419 | WARNING  | freqtrade_gui.ui.backtest_page | Failed to parse or save backtest results
+2026-04-24 12:16:16.420 | DEBUG    | freqtrade_gui.ui.strategy_page | Strategy list refreshed: 14 strategies
+2026-04-24 12:16:26.151 | DEBUG    | freqtrade_gui.ui.header_bar    | HeaderBar page title set to 'Dashboard'
+2026-04-24 12:16:26.152 | DEBUG    | freqtrade_gui.ui.sidebar       | NavSidebar active page set to 'dashboard'
+2026-04-24 12:16:26.152 | DEBUG    | freqtrade_gui.ui.status_bar    | Status set [info]: Navigated to Dashboard
+2026-04-24 12:16:26.152 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to page: dashboard
+2026-04-24 12:16:27.141 | DEBUG    | freqtrade_gui.ui.header_bar    | HeaderBar page title set to 'Backtest'
+2026-04-24 12:16:27.143 | DEBUG    | freqtrade_gui.ui.sidebar       | NavSidebar active page set to 'backtest'
+2026-04-24 12:16:27.143 | DEBUG    | freqtrade_gui.ui.status_bar    | Status set [info]: Navigated to Backtest
+2026-04-24 12:16:27.143 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to page: backtest
+2026-04-24 12:16:29.304 | DEBUG    | freqtrade_gui.ui.main_window   | Geometry saved (lastPage=backtest)
+2026-04-24 12:16:29.313 | INFO     | freqtrade_gui.startup          | Application exiting — code=0
+2026-04-24 12:17:09.502 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:17:09.503 | INFO     | freqtrade_gui.startup          | ============================================================
+2026-04-24 12:17:09.503 | INFO     | freqtrade_gui.startup          | Freqtrade GUI starting
+2026-04-24 12:17:09.503 | INFO     | freqtrade_gui.startup          | Python     : 3.12.10
+2026-04-24 12:17:09.521 | INFO     | freqtrade_gui.startup          | Platform   : Windows 11
+2026-04-24 12:17:09.521 | INFO     | freqtrade_gui.startup          | PySide6    : 6.11.0
+2026-04-24 12:17:09.521 | INFO     | freqtrade_gui.startup          | user_data  : T:\ae\pyside6\user_data
+2026-04-24 12:17:09.521 | INFO     | freqtrade_gui.startup          | venv       : T:\ae\pyside6\.venv
+2026-04-24 12:17:09.521 | INFO     | freqtrade_gui.startup          | python_exe : T:\ae\pyside6\.venv\Scripts\python.exe
+2026-04-24 12:17:09.521 | INFO     | freqtrade_gui.startup          | freqtrade  : T:\ae\pyside6\.venv\Scripts\freqtrade.exe
+2026-04-24 12:17:09.521 | INFO     | freqtrade_gui.startup          | use_module : True
+2026-04-24 12:17:09.521 | INFO     | freqtrade_gui.startup          | ============================================================
+2026-04-24 12:17:09.684 | INFO     | freqtrade_gui.services.ai_service | AIService initialised
+2026-04-24 12:17:09.684 | DEBUG    | freqtrade_gui.ui.header_bar    | HeaderBar initialised
+2026-04-24 12:17:09.686 | DEBUG    | freqtrade_gui.ui.sidebar       | NavSidebar initialised
+2026-04-24 12:17:09.686 | DEBUG    | freqtrade_gui.ui.status_bar    | AppStatusBar initialised
+2026-04-24 12:17:09.687 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Last Profit' updated: value='—' trend=None
+2026-04-24 12:17:09.687 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Win Rate' updated: value='—' trend=None
+2026-04-24 12:17:09.688 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Total Trades' updated: value='—' trend=None
+2026-04-24 12:17:09.688 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Best Strategy' updated: value='—' trend=None
+2026-04-24 12:17:09.690 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Last Profit' updated: value='—' trend=None
+2026-04-24 12:17:09.690 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Win Rate' updated: value='—' trend=None
+2026-04-24 12:17:09.690 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Total Trades' updated: value='—' trend=None
+2026-04-24 12:17:09.690 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Best Strategy' updated: value='—' trend=None
+2026-04-24 12:17:09.691 | DEBUG    | freqtrade_gui.ui.dashboard_page | DashboardPage refreshed: 0 total runs
+2026-04-24 12:17:09.701 | DEBUG    | freqtrade_gui.ui.run_config_form | Refreshed strategy list: 14 strategies found
+2026-04-24 12:17:09.743 | DEBUG    | freqtrade_gui.ui.run_config_form | RunConfigForm.set_config applied: {'strategy': 'MultiMeee', 'timeframe': '5m', 'timerange': '20250422-20260417', 'pairs': ['ADA/USDT', 'ETH/USDT']}
+2026-04-24 12:17:09.744 | DEBUG    | freqtrade_gui.ui.backtest_page | Backtest preferences restored: strategy=MultiMeee timeframe=5m
+2026-04-24 12:17:09.745 | DEBUG    | freqtrade_gui.ui.run_config_form | Refreshed strategy list: 14 strategies found
+2026-04-24 12:17:09.756 | DEBUG    | freqtrade_gui.ui.run_config_form | RunConfigForm.set_config applied: {'strategy': '', 'timeframe': '5m', 'timerange': '', 'pairs': []}
+2026-04-24 12:17:09.756 | DEBUG    | freqtrade_gui.ui.optimize_page | Optimize preferences restored: strategy= timeframe=5m
+2026-04-24 12:17:11.385 | DEBUG    | freqtrade_gui.ui.run_config_form | RunConfigForm.set_config applied: {'timeframe': '5m', 'timerange': '', 'pairs': []}
+2026-04-24 12:17:11.385 | DEBUG    | freqtrade_gui.ui.download_page | Download preferences restored: timeframe=5m
+2026-04-24 12:17:11.394 | DEBUG    | freqtrade_gui.parsing.strategy | Loaded strategy JSON: MohsBaseline_v2.json
+2026-04-24 12:17:11.399 | INFO     | freqtrade_gui.strategy_config_page | Loaded: MohsBaseline_v2.json
+2026-04-24 12:17:11.411 | DEBUG    | freqtrade_gui.ui.strategy_page | Strategy list refreshed: 14 strategies
+2026-04-24 12:17:11.445 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:17:11.455 | DEBUG    | freqtrade_gui.ui.settings_page | Settings loaded into form
+2026-04-24 12:17:11.495 | DEBUG    | freqtrade_gui.ui.terminal_panel | TerminalPanel initialised
+2026-04-24 12:17:11.495 | WARNING  | freqtrade_gui.ui.ai_panel      | Failed to instantiate AIChatDock: AIChatDock.__init__() missing 1 required positional argument: 'settings_state'
+2026-04-24 12:17:11.497 | DEBUG    | freqtrade_gui.ui.header_bar    | HeaderBar page title set to 'Dashboard'
+2026-04-24 12:17:11.497 | DEBUG    | freqtrade_gui.ui.sidebar       | NavSidebar active page set to 'dashboard'
+2026-04-24 12:17:11.497 | DEBUG    | freqtrade_gui.ui.status_bar    | Status set [info]: Navigated to Dashboard
+2026-04-24 12:17:11.497 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to page: dashboard
+2026-04-24 12:17:11.498 | DEBUG    | freqtrade_gui.services.ai_service | BacktestJournalAdapter connected to BacktestService
+2026-04-24 12:17:11.498 | DEBUG    | freqtrade_gui.services.ai_service | Backtest trigger callback registered with AIService
+2026-04-24 12:17:11.498 | DEBUG    | freqtrade_gui.ui.main_window   | All signals wired
+2026-04-24 12:17:11.498 | DEBUG    | freqtrade_gui.ui.main_window   | Keyboard shortcuts registered
+2026-04-24 12:17:11.499 | DEBUG    | freqtrade_gui.ui.main_window   | CommandPalette built with 10 commands
+2026-04-24 12:17:11.582 | DEBUG    | freqtrade_gui.ui.header_bar    | HeaderBar page title set to 'Backtest'
+2026-04-24 12:17:11.582 | DEBUG    | freqtrade_gui.ui.sidebar       | NavSidebar active page set to 'backtest'
+2026-04-24 12:17:11.583 | DEBUG    | freqtrade_gui.ui.status_bar    | Status set [info]: Navigated to Backtest
+2026-04-24 12:17:11.583 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to page: backtest
+2026-04-24 12:17:11.583 | DEBUG    | freqtrade_gui.ui.main_window   | Geometry restored (lastPage=backtest)
+2026-04-24 12:17:11.600 | INFO     | freqtrade_gui.ui.main_window   | ModernMainWindow initialised
+2026-04-24 12:17:11.601 | INFO     | freqtrade_gui.startup          | Main window shown
+2026-04-24 12:17:11.604 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:17:15.065 | DEBUG    | freqtrade_gui.ui.header_bar    | HeaderBar page title set to 'Dashboard'
+2026-04-24 12:17:15.066 | DEBUG    | freqtrade_gui.ui.sidebar       | NavSidebar active page set to 'dashboard'
+2026-04-24 12:17:15.066 | DEBUG    | freqtrade_gui.ui.status_bar    | Status set [info]: Navigated to Dashboard
+2026-04-24 12:17:15.067 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to page: dashboard
+2026-04-24 12:17:15.691 | DEBUG    | freqtrade_gui.ui.header_bar    | HeaderBar page title set to 'Backtest'
+2026-04-24 12:17:15.691 | DEBUG    | freqtrade_gui.ui.sidebar       | NavSidebar active page set to 'backtest'
+2026-04-24 12:17:15.693 | DEBUG    | freqtrade_gui.ui.status_bar    | Status set [info]: Navigated to Backtest
+2026-04-24 12:17:15.693 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to page: backtest
+2026-04-24 12:17:20.174 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:17:20.174 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-24 12:17:20.175 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-24 12:17:20.179 | INFO     | freqtrade_gui.process          | Process started | cmd=T:\ae\pyside6\.venv\Scripts\python.exe -m freqtrade backtesting --user-data-dir T:\ae\pyside6\user_data --config T:\ae\pyside6\user_data\config.json --strategy-path T:\ae\pyside6\user_data\strategies --strategy MultiMeee --timeframe 5m --export trades --timerange 20250422-20260417 -p ADA/USDT ETH/USDT --max-open-trades 2 --dry-run-wallet 80.0 | cwd=(default) | pid=6072
+2026-04-24 12:17:20.179 | INFO     | freqtrade_gui.ui.backtest_page | Backtest started: strategy=MultiMeee timeframe=5m
+2026-04-24 12:17:20.313 | DEBUG    | freqtrade_gui.process          | stderr chunk: 62 bytes
+2026-04-24 12:17:21.487 | DEBUG    | freqtrade_gui.process          | stderr chunk: 125 bytes
+2026-04-24 12:17:21.488 | DEBUG    | freqtrade_gui.process          | stderr chunk: 80 bytes
+2026-04-24 12:17:21.489 | DEBUG    | freqtrade_gui.process          | stderr chunk: 72 bytes
+2026-04-24 12:17:21.489 | DEBUG    | freqtrade_gui.process          | stderr chunk: 72 bytes
+2026-04-24 12:17:21.489 | DEBUG    | freqtrade_gui.process          | stderr chunk: 147 bytes
+2026-04-24 12:17:21.489 | DEBUG    | freqtrade_gui.process          | stderr chunk: 118 bytes
+2026-04-24 12:17:21.489 | DEBUG    | freqtrade_gui.process          | stderr chunk: 135 bytes
+2026-04-24 12:17:21.489 | DEBUG    | freqtrade_gui.process          | stderr chunk: 148 bytes
+2026-04-24 12:17:21.489 | DEBUG    | freqtrade_gui.process          | stderr chunk: 149 bytes
+2026-04-24 12:17:21.490 | DEBUG    | freqtrade_gui.process          | stderr chunk: 127 bytes
+2026-04-24 12:17:21.490 | DEBUG    | freqtrade_gui.process          | stderr chunk: 128 bytes
+2026-04-24 12:17:21.492 | DEBUG    | freqtrade_gui.process          | stderr chunk: 136 bytes
+2026-04-24 12:17:21.492 | DEBUG    | freqtrade_gui.process          | stderr chunk: 113 bytes
+2026-04-24 12:17:21.492 | DEBUG    | freqtrade_gui.process          | stderr chunk: 108 bytes
+2026-04-24 12:17:21.492 | DEBUG    | freqtrade_gui.process          | stderr chunk: 110 bytes
+2026-04-24 12:17:21.493 | DEBUG    | freqtrade_gui.process          | stderr chunk: 119 bytes
+2026-04-24 12:17:21.493 | DEBUG    | freqtrade_gui.process          | stderr chunk: 90 bytes
+2026-04-24 12:17:21.497 | DEBUG    | freqtrade_gui.process          | stderr chunk: 147 bytes
+2026-04-24 12:17:21.497 | DEBUG    | freqtrade_gui.process          | stderr chunk: 106 bytes
+2026-04-24 12:17:21.499 | DEBUG    | freqtrade_gui.process          | stderr chunk: 111 bytes
+2026-04-24 12:17:21.500 | DEBUG    | freqtrade_gui.process          | stderr chunk: 104 bytes
+2026-04-24 12:17:21.500 | DEBUG    | freqtrade_gui.process          | stderr chunk: 81 bytes
+2026-04-24 12:17:21.500 | DEBUG    | freqtrade_gui.process          | stderr chunk: 141 bytes
+2026-04-24 12:17:21.505 | DEBUG    | freqtrade_gui.process          | stderr chunk: 141 bytes
+2026-04-24 12:17:21.509 | DEBUG    | freqtrade_gui.process          | stderr chunk: 88 bytes
+2026-04-24 12:17:23.267 | DEBUG    | freqtrade_gui.process          | stderr chunk: 110 bytes
+2026-04-24 12:17:23.276 | DEBUG    | freqtrade_gui.process          | stderr chunk: 157 bytes
+2026-04-24 12:17:23.276 | DEBUG    | freqtrade_gui.process          | stderr chunk: 139 bytes
+2026-04-24 12:17:23.277 | DEBUG    | freqtrade_gui.process          | stderr chunk: 142 bytes
+2026-04-24 12:17:23.277 | DEBUG    | freqtrade_gui.process          | stderr chunk: 149 bytes
+2026-04-24 12:17:23.277 | DEBUG    | freqtrade_gui.process          | stderr chunk: 152 bytes
+2026-04-24 12:17:23.277 | DEBUG    | freqtrade_gui.process          | stderr chunk: 150 bytes
+2026-04-24 12:17:23.277 | DEBUG    | freqtrade_gui.process          | stderr chunk: 147 bytes
+2026-04-24 12:17:23.277 | DEBUG    | freqtrade_gui.process          | stderr chunk: 150 bytes
+2026-04-24 12:17:23.277 | DEBUG    | freqtrade_gui.process          | stderr chunk: 102 bytes
+2026-04-24 12:17:23.278 | DEBUG    | freqtrade_gui.process          | stderr chunk: 105 bytes
+2026-04-24 12:17:23.279 | DEBUG    | freqtrade_gui.process          | stderr chunk: 108 bytes
+2026-04-24 12:17:23.279 | DEBUG    | freqtrade_gui.process          | stderr chunk: 118 bytes
+2026-04-24 12:17:23.279 | DEBUG    | freqtrade_gui.process          | stderr chunk: 125 bytes
+2026-04-24 12:17:23.280 | DEBUG    | freqtrade_gui.process          | stderr chunk: 127 bytes
+2026-04-24 12:17:23.280 | DEBUG    | freqtrade_gui.process          | stderr chunk: 115 bytes
+2026-04-24 12:17:23.280 | DEBUG    | freqtrade_gui.process          | stderr chunk: 119 bytes
+2026-04-24 12:17:23.280 | DEBUG    | freqtrade_gui.process          | stderr chunk: 190 bytes
+2026-04-24 12:17:23.280 | DEBUG    | freqtrade_gui.process          | stderr chunk: 37 bytes
+2026-04-24 12:17:23.280 | DEBUG    | freqtrade_gui.process          | stderr chunk: 141 bytes
+2026-04-24 12:17:23.280 | DEBUG    | freqtrade_gui.process          | stderr chunk: 109 bytes
+2026-04-24 12:17:23.280 | DEBUG    | freqtrade_gui.process          | stderr chunk: 112 bytes
+2026-04-24 12:17:23.280 | DEBUG    | freqtrade_gui.process          | stderr chunk: 112 bytes
+2026-04-24 12:17:23.280 | DEBUG    | freqtrade_gui.process          | stderr chunk: 110 bytes
+2026-04-24 12:17:23.280 | DEBUG    | freqtrade_gui.process          | stderr chunk: 112 bytes
+2026-04-24 12:17:23.280 | DEBUG    | freqtrade_gui.process          | stderr chunk: 122 bytes
+2026-04-24 12:17:23.281 | DEBUG    | freqtrade_gui.process          | stderr chunk: 112 bytes
+2026-04-24 12:17:23.281 | DEBUG    | freqtrade_gui.process          | stderr chunk: 120 bytes
+2026-04-24 12:17:23.281 | DEBUG    | freqtrade_gui.process          | stderr chunk: 126 bytes
+2026-04-24 12:17:23.281 | DEBUG    | freqtrade_gui.process          | stderr chunk: 122 bytes
+2026-04-24 12:17:23.282 | DEBUG    | freqtrade_gui.process          | stderr chunk: 122 bytes
+2026-04-24 12:17:23.283 | DEBUG    | freqtrade_gui.process          | stderr chunk: 107 bytes
+2026-04-24 12:17:23.287 | DEBUG    | freqtrade_gui.process          | stderr chunk: 106 bytes
+2026-04-24 12:17:23.287 | DEBUG    | freqtrade_gui.process          | stderr chunk: 197 bytes
+2026-04-24 12:17:23.292 | DEBUG    | freqtrade_gui.process          | stderr chunk: 130 bytes
+2026-04-24 12:17:23.385 | DEBUG    | freqtrade_gui.process          | stderr chunk: 140 bytes
+2026-04-24 12:17:23.504 | DEBUG    | freqtrade_gui.process          | stderr chunk: 140 bytes
+2026-04-24 12:17:23.533 | DEBUG    | freqtrade_gui.process          | stderr chunk: 142 bytes
+2026-04-24 12:17:24.349 | DEBUG    | freqtrade_gui.process          | stderr chunk: 108 bytes
+2026-04-24 12:17:24.351 | DEBUG    | freqtrade_gui.process          | stderr chunk: 184 bytes
+2026-04-24 12:17:24.357 | DEBUG    | freqtrade_gui.process          | stderr chunk: 116 bytes
+2026-04-24 12:17:24.361 | DEBUG    | freqtrade_gui.process          | stdout chunk: 30 bytes
+2026-04-24 12:17:24.361 | DEBUG    | freqtrade_gui.process          | stdout chunk: 110 bytes
+2026-04-24 12:17:24.361 | DEBUG    | freqtrade_gui.process          | stdout chunk: 110 bytes
+2026-04-24 12:17:24.361 | DEBUG    | freqtrade_gui.process          | stdout chunk: 110 bytes
+2026-04-24 12:17:24.362 | DEBUG    | freqtrade_gui.process          | stdout chunk: 110 bytes
+2026-04-24 12:17:24.363 | DEBUG    | freqtrade_gui.process          | stdout chunk: 110 bytes
+2026-04-24 12:17:24.363 | DEBUG    | freqtrade_gui.process          | stdout chunk: 110 bytes
+2026-04-24 12:17:24.363 | DEBUG    | freqtrade_gui.process          | stdout chunk: 110 bytes
+2026-04-24 12:17:24.363 | DEBUG    | freqtrade_gui.process          | stdout chunk: 110 bytes
+2026-04-24 12:17:24.363 | DEBUG    | freqtrade_gui.process          | stdout chunk: 107 bytes
+2026-04-24 12:17:24.363 | DEBUG    | freqtrade_gui.process          | stdout chunk: 107 bytes
+2026-04-24 12:17:24.363 | DEBUG    | freqtrade_gui.process          | stdout chunk: 107 bytes
+2026-04-24 12:17:24.363 | DEBUG    | freqtrade_gui.process          | stdout chunk: 107 bytes
+2026-04-24 12:17:24.364 | DEBUG    | freqtrade_gui.process          | stdout chunk: 107 bytes
+2026-04-24 12:17:24.364 | DEBUG    | freqtrade_gui.process          | stdout chunk: 107 bytes
+2026-04-24 12:17:24.364 | DEBUG    | freqtrade_gui.process          | stdout chunk: 112 bytes
+2026-04-24 12:17:24.364 | DEBUG    | freqtrade_gui.process          | stdout chunk: 112 bytes
+2026-04-24 12:17:24.364 | DEBUG    | freqtrade_gui.process          | stdout chunk: 112 bytes
+2026-04-24 12:17:24.364 | DEBUG    | freqtrade_gui.process          | stdout chunk: 112 bytes
+2026-04-24 12:17:24.364 | DEBUG    | freqtrade_gui.process          | stdout chunk: 112 bytes
+2026-04-24 12:17:24.365 | DEBUG    | freqtrade_gui.process          | stdout chunk: 112 bytes
+2026-04-24 12:17:24.365 | DEBUG    | freqtrade_gui.process          | stdout chunk: 112 bytes
+2026-04-24 12:17:24.366 | DEBUG    | freqtrade_gui.process          | stdout chunk: 112 bytes
+2026-04-24 12:17:24.366 | DEBUG    | freqtrade_gui.process          | stdout chunk: 112 bytes
+2026-04-24 12:17:24.366 | DEBUG    | freqtrade_gui.process          | stdout chunk: 112 bytes
+2026-04-24 12:17:24.367 | DEBUG    | freqtrade_gui.process          | stdout chunk: 112 bytes
+2026-04-24 12:17:24.367 | DEBUG    | freqtrade_gui.process          | stdout chunk: 112 bytes
+2026-04-24 12:17:24.367 | DEBUG    | freqtrade_gui.process          | stdout chunk: 112 bytes
+2026-04-24 12:17:24.367 | DEBUG    | freqtrade_gui.process          | stdout chunk: 112 bytes
+2026-04-24 12:17:24.367 | DEBUG    | freqtrade_gui.process          | stdout chunk: 112 bytes
+2026-04-24 12:17:24.369 | DEBUG    | freqtrade_gui.process          | stdout chunk: 125 bytes
+2026-04-24 12:17:24.369 | DEBUG    | freqtrade_gui.process          | stdout chunk: 125 bytes
+2026-04-24 12:17:24.369 | DEBUG    | freqtrade_gui.process          | stdout chunk: 125 bytes
+2026-04-24 12:17:24.369 | DEBUG    | freqtrade_gui.process          | stdout chunk: 125 bytes
+2026-04-24 12:17:24.369 | DEBUG    | freqtrade_gui.process          | stdout chunk: 125 bytes
+2026-04-24 12:17:24.369 | DEBUG    | freqtrade_gui.process          | stdout chunk: 125 bytes
+2026-04-24 12:17:24.369 | DEBUG    | freqtrade_gui.process          | stdout chunk: 125 bytes
+2026-04-24 12:17:24.370 | DEBUG    | freqtrade_gui.process          | stdout chunk: 125 bytes
+2026-04-24 12:17:24.374 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.375 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.378 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.378 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.379 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.379 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.379 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.379 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.379 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.379 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.380 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.381 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.381 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.381 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.381 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.381 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.381 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.382 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.382 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.382 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.382 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.382 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.382 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.382 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.382 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.382 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.382 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.382 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.383 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.383 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.383 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.383 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.383 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.383 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.383 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.383 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.383 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.384 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.384 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.384 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.384 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.384 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.384 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.384 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.384 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.384 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.384 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.384 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.384 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:17:24.385 | DEBUG    | freqtrade_gui.process          | stdout chunk: 1 bytes
+2026-04-24 12:17:24.385 | DEBUG    | freqtrade_gui.process          | stdout chunk: 76 bytes
+2026-04-24 12:17:24.385 | DEBUG    | freqtrade_gui.process          | stdout chunk: 133 bytes
+2026-04-24 12:17:24.385 | DEBUG    | freqtrade_gui.process          | stdout chunk: 133 bytes
+2026-04-24 12:17:24.385 | DEBUG    | freqtrade_gui.process          | stdout chunk: 133 bytes
+2026-04-24 12:17:24.385 | DEBUG    | freqtrade_gui.process          | stdout chunk: 133 bytes
+2026-04-24 12:17:24.385 | DEBUG    | freqtrade_gui.process          | stdout chunk: 133 bytes
+2026-04-24 12:17:24.385 | DEBUG    | freqtrade_gui.process          | stdout chunk: 133 bytes
+2026-04-24 12:17:24.741 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:17:24.742 | DEBUG    | freqtrade_gui.parsing.backtest | Parsing zip: backtest-result-2026-04-24_12-16-15.zip | entry=backtest-result-2026-04-24_12-16-15.json
+2026-04-24 12:17:24.748 | INFO     | freqtrade_gui.parsing.backtest | Parsed | strategy=MultiMeee | trades=542 | profit=-21.4398%
+2026-04-24 12:17:24.748 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-24 12:17:24.748 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-24_12-17-24_02705c | strategy=MultiMeee | trades=542 | profit=-21.4398%
+2026-04-24 12:17:24.754 | ERROR    | freqtrade_gui.services.backtest | Failed to parse and save backtest results: name 'write_json_file_atomic' is not defined
+2026-04-24 12:17:24.754 | WARNING  | freqtrade_gui.ui.backtest_page | Failed to parse or save backtest results
+2026-04-24 12:17:24.755 | DEBUG    | freqtrade_gui.ui.strategy_page | Strategy list refreshed: 14 strategies
+2026-04-24 12:17:25.701 | DEBUG    | freqtrade_gui.ui.status_bar    | Status bar cleared
+2026-04-24 12:17:30.790 | DEBUG    | freqtrade_gui.ui.header_bar    | HeaderBar page title set to 'Dashboard'
+2026-04-24 12:17:30.791 | DEBUG    | freqtrade_gui.ui.sidebar       | NavSidebar active page set to 'dashboard'
+2026-04-24 12:17:30.791 | DEBUG    | freqtrade_gui.ui.status_bar    | Status set [info]: Navigated to Dashboard
+2026-04-24 12:17:30.791 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to page: dashboard
+2026-04-24 12:17:32.701 | DEBUG    | freqtrade_gui.ui.header_bar    | HeaderBar page title set to 'Backtest'
+2026-04-24 12:17:32.702 | DEBUG    | freqtrade_gui.ui.sidebar       | NavSidebar active page set to 'backtest'
+2026-04-24 12:17:32.702 | DEBUG    | freqtrade_gui.ui.status_bar    | Status set [info]: Navigated to Backtest
+2026-04-24 12:17:32.702 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to page: backtest
+2026-04-24 12:17:34.728 | DEBUG    | freqtrade_gui.ui.main_window   | Geometry saved (lastPage=backtest)
+2026-04-24 12:17:34.736 | INFO     | freqtrade_gui.startup          | Application exiting — code=0
+2026-04-24 12:17:49.270 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:17:49.270 | INFO     | freqtrade_gui.startup          | ============================================================
+2026-04-24 12:17:49.270 | INFO     | freqtrade_gui.startup          | Freqtrade GUI starting
+2026-04-24 12:17:49.271 | INFO     | freqtrade_gui.startup          | Python     : 3.12.10
+2026-04-24 12:17:49.293 | INFO     | freqtrade_gui.startup          | Platform   : Windows 11
+2026-04-24 12:17:49.293 | INFO     | freqtrade_gui.startup          | PySide6    : 6.11.0
+2026-04-24 12:17:49.293 | INFO     | freqtrade_gui.startup          | user_data  : T:\ae\pyside6\user_data
+2026-04-24 12:17:49.293 | INFO     | freqtrade_gui.startup          | venv       : T:\ae\pyside6\.venv
+2026-04-24 12:17:49.293 | INFO     | freqtrade_gui.startup          | python_exe : T:\ae\pyside6\.venv\Scripts\python.exe
+2026-04-24 12:17:49.293 | INFO     | freqtrade_gui.startup          | freqtrade  : T:\ae\pyside6\.venv\Scripts\freqtrade.exe
+2026-04-24 12:17:49.293 | INFO     | freqtrade_gui.startup          | use_module : True
+2026-04-24 12:17:49.293 | INFO     | freqtrade_gui.startup          | ============================================================
+2026-04-24 12:17:49.457 | INFO     | freqtrade_gui.services.ai_service | AIService initialised
+2026-04-24 12:17:49.458 | DEBUG    | freqtrade_gui.ui.header_bar    | HeaderBar initialised
+2026-04-24 12:17:49.459 | DEBUG    | freqtrade_gui.ui.sidebar       | NavSidebar initialised
+2026-04-24 12:17:49.460 | DEBUG    | freqtrade_gui.ui.status_bar    | AppStatusBar initialised
+2026-04-24 12:17:49.461 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Last Profit' updated: value='—' trend=None
+2026-04-24 12:17:49.461 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Win Rate' updated: value='—' trend=None
+2026-04-24 12:17:49.461 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Total Trades' updated: value='—' trend=None
+2026-04-24 12:17:49.462 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Best Strategy' updated: value='—' trend=None
+2026-04-24 12:17:49.464 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Last Profit' updated: value='-8.96%' trend=-8.9597
+2026-04-24 12:17:49.464 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Win Rate' updated: value='29.1%' trend=None
+2026-04-24 12:17:49.464 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Total Trades' updated: value='151' trend=None
+2026-04-24 12:17:49.464 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Best Strategy' updated: value='MultiMeee' trend=None
+2026-04-24 12:17:49.464 | DEBUG    | freqtrade_gui.ui.dashboard_page | DashboardPage refreshed: 25 total runs
+2026-04-24 12:17:49.475 | DEBUG    | freqtrade_gui.ui.run_config_form | Refreshed strategy list: 14 strategies found
+2026-04-24 12:17:49.517 | DEBUG    | freqtrade_gui.ui.run_config_form | RunConfigForm.set_config applied: {'strategy': 'MultiMeee', 'timeframe': '5m', 'timerange': '20250422-20260417', 'pairs': ['ADA/USDT', 'ETH/USDT']}
+2026-04-24 12:17:49.518 | DEBUG    | freqtrade_gui.ui.backtest_page | Backtest preferences restored: strategy=MultiMeee timeframe=5m
+2026-04-24 12:17:49.520 | DEBUG    | freqtrade_gui.ui.run_config_form | Refreshed strategy list: 14 strategies found
+2026-04-24 12:17:49.531 | DEBUG    | freqtrade_gui.ui.run_config_form | RunConfigForm.set_config applied: {'strategy': '', 'timeframe': '5m', 'timerange': '', 'pairs': []}
+2026-04-24 12:17:49.531 | DEBUG    | freqtrade_gui.ui.optimize_page | Optimize preferences restored: strategy= timeframe=5m
+2026-04-24 12:17:51.144 | DEBUG    | freqtrade_gui.ui.run_config_form | RunConfigForm.set_config applied: {'timeframe': '5m', 'timerange': '', 'pairs': []}
+2026-04-24 12:17:51.144 | DEBUG    | freqtrade_gui.ui.download_page | Download preferences restored: timeframe=5m
+2026-04-24 12:17:51.153 | DEBUG    | freqtrade_gui.parsing.strategy | Loaded strategy JSON: MohsBaseline_v2.json
+2026-04-24 12:17:51.157 | INFO     | freqtrade_gui.strategy_config_page | Loaded: MohsBaseline_v2.json
+2026-04-24 12:17:51.170 | DEBUG    | freqtrade_gui.ui.strategy_page | Strategy list refreshed: 14 strategies
+2026-04-24 12:17:51.204 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:17:51.214 | DEBUG    | freqtrade_gui.ui.settings_page | Settings loaded into form
+2026-04-24 12:17:51.259 | DEBUG    | freqtrade_gui.ui.terminal_panel | TerminalPanel initialised
+2026-04-24 12:17:51.260 | WARNING  | freqtrade_gui.ui.ai_panel      | Failed to instantiate AIChatDock: AIChatDock.__init__() missing 1 required positional argument: 'settings_state'
+2026-04-24 12:17:51.260 | DEBUG    | freqtrade_gui.ui.header_bar    | HeaderBar page title set to 'Dashboard'
+2026-04-24 12:17:51.261 | DEBUG    | freqtrade_gui.ui.sidebar       | NavSidebar active page set to 'dashboard'
+2026-04-24 12:17:51.261 | DEBUG    | freqtrade_gui.ui.status_bar    | Status set [info]: Navigated to Dashboard
+2026-04-24 12:17:51.261 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to page: dashboard
+2026-04-24 12:17:51.261 | DEBUG    | freqtrade_gui.services.ai_service | BacktestJournalAdapter connected to BacktestService
+2026-04-24 12:17:51.261 | DEBUG    | freqtrade_gui.services.ai_service | Backtest trigger callback registered with AIService
+2026-04-24 12:17:51.262 | DEBUG    | freqtrade_gui.ui.main_window   | All signals wired
+2026-04-24 12:17:51.262 | DEBUG    | freqtrade_gui.ui.main_window   | Keyboard shortcuts registered
+2026-04-24 12:17:51.263 | DEBUG    | freqtrade_gui.ui.main_window   | CommandPalette built with 10 commands
+2026-04-24 12:17:51.344 | DEBUG    | freqtrade_gui.ui.header_bar    | HeaderBar page title set to 'Backtest'
+2026-04-24 12:17:51.345 | DEBUG    | freqtrade_gui.ui.sidebar       | NavSidebar active page set to 'backtest'
+2026-04-24 12:17:51.345 | DEBUG    | freqtrade_gui.ui.status_bar    | Status set [info]: Navigated to Backtest
+2026-04-24 12:17:51.345 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to page: backtest
+2026-04-24 12:17:51.345 | DEBUG    | freqtrade_gui.ui.main_window   | Geometry restored (lastPage=backtest)
+2026-04-24 12:17:51.358 | INFO     | freqtrade_gui.ui.main_window   | ModernMainWindow initialised
+2026-04-24 12:17:51.358 | INFO     | freqtrade_gui.startup          | Main window shown
+2026-04-24 12:17:51.361 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:17:56.862 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:17:56.863 | DEBUG    | freqtrade_gui.resolvers.strategy | Strategy resolved: T:\ae\pyside6\user_data\strategies\MultiMeee.py
+2026-04-24 12:17:56.863 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-24 12:17:56.866 | INFO     | freqtrade_gui.process          | Process started | cmd=T:\ae\pyside6\.venv\Scripts\python.exe -m freqtrade backtesting --user-data-dir T:\ae\pyside6\user_data --config T:\ae\pyside6\user_data\config.json --strategy-path T:\ae\pyside6\user_data\strategies --strategy MultiMeee --timeframe 5m --export trades --timerange 20250422-20260417 -p ADA/USDT ETH/USDT --max-open-trades 2 --dry-run-wallet 80.0 | cwd=(default) | pid=26120
+2026-04-24 12:17:56.867 | INFO     | freqtrade_gui.ui.backtest_page | Backtest started: strategy=MultiMeee timeframe=5m
+2026-04-24 12:17:57.005 | DEBUG    | freqtrade_gui.process          | stderr chunk: 62 bytes
+2026-04-24 12:17:58.202 | DEBUG    | freqtrade_gui.process          | stderr chunk: 125 bytes
+2026-04-24 12:17:58.204 | DEBUG    | freqtrade_gui.process          | stderr chunk: 80 bytes
+2026-04-24 12:17:58.204 | DEBUG    | freqtrade_gui.process          | stderr chunk: 72 bytes
+2026-04-24 12:17:58.205 | DEBUG    | freqtrade_gui.process          | stderr chunk: 72 bytes
+2026-04-24 12:17:58.205 | DEBUG    | freqtrade_gui.process          | stderr chunk: 147 bytes
+2026-04-24 12:17:58.205 | DEBUG    | freqtrade_gui.process          | stderr chunk: 118 bytes
+2026-04-24 12:17:58.206 | DEBUG    | freqtrade_gui.process          | stderr chunk: 135 bytes
+2026-04-24 12:17:58.206 | DEBUG    | freqtrade_gui.process          | stderr chunk: 148 bytes
+2026-04-24 12:17:58.206 | DEBUG    | freqtrade_gui.process          | stderr chunk: 149 bytes
+2026-04-24 12:17:58.207 | DEBUG    | freqtrade_gui.process          | stderr chunk: 127 bytes
+2026-04-24 12:17:58.207 | DEBUG    | freqtrade_gui.process          | stderr chunk: 128 bytes
+2026-04-24 12:17:58.207 | DEBUG    | freqtrade_gui.process          | stderr chunk: 136 bytes
+2026-04-24 12:17:58.207 | DEBUG    | freqtrade_gui.process          | stderr chunk: 113 bytes
+2026-04-24 12:17:58.207 | DEBUG    | freqtrade_gui.process          | stderr chunk: 108 bytes
+2026-04-24 12:17:58.207 | DEBUG    | freqtrade_gui.process          | stderr chunk: 110 bytes
+2026-04-24 12:17:58.207 | DEBUG    | freqtrade_gui.process          | stderr chunk: 119 bytes
+2026-04-24 12:17:58.208 | DEBUG    | freqtrade_gui.process          | stderr chunk: 90 bytes
+2026-04-24 12:17:58.213 | DEBUG    | freqtrade_gui.process          | stderr chunk: 147 bytes
+2026-04-24 12:17:58.213 | DEBUG    | freqtrade_gui.process          | stderr chunk: 106 bytes
+2026-04-24 12:17:58.214 | DEBUG    | freqtrade_gui.process          | stderr chunk: 111 bytes
+2026-04-24 12:17:58.214 | DEBUG    | freqtrade_gui.process          | stderr chunk: 104 bytes
+2026-04-24 12:17:58.215 | DEBUG    | freqtrade_gui.process          | stderr chunk: 81 bytes
+2026-04-24 12:17:58.215 | DEBUG    | freqtrade_gui.process          | stderr chunk: 141 bytes
+2026-04-24 12:17:58.220 | DEBUG    | freqtrade_gui.process          | stderr chunk: 141 bytes
+2026-04-24 12:17:58.223 | DEBUG    | freqtrade_gui.process          | stderr chunk: 88 bytes
+2026-04-24 12:17:59.305 | DEBUG    | freqtrade_gui.process          | stderr chunk: 110 bytes
+2026-04-24 12:17:59.313 | DEBUG    | freqtrade_gui.process          | stderr chunk: 157 bytes
+2026-04-24 12:17:59.313 | DEBUG    | freqtrade_gui.process          | stderr chunk: 139 bytes
+2026-04-24 12:17:59.313 | DEBUG    | freqtrade_gui.process          | stderr chunk: 142 bytes
+2026-04-24 12:17:59.314 | DEBUG    | freqtrade_gui.process          | stderr chunk: 149 bytes
+2026-04-24 12:17:59.314 | DEBUG    | freqtrade_gui.process          | stderr chunk: 152 bytes
+2026-04-24 12:17:59.314 | DEBUG    | freqtrade_gui.process          | stderr chunk: 150 bytes
+2026-04-24 12:17:59.314 | DEBUG    | freqtrade_gui.process          | stderr chunk: 147 bytes
+2026-04-24 12:17:59.314 | DEBUG    | freqtrade_gui.process          | stderr chunk: 150 bytes
+2026-04-24 12:17:59.314 | DEBUG    | freqtrade_gui.process          | stderr chunk: 102 bytes
+2026-04-24 12:17:59.315 | DEBUG    | freqtrade_gui.process          | stderr chunk: 105 bytes
+2026-04-24 12:17:59.316 | DEBUG    | freqtrade_gui.process          | stderr chunk: 108 bytes
+2026-04-24 12:17:59.316 | DEBUG    | freqtrade_gui.process          | stderr chunk: 118 bytes
+2026-04-24 12:17:59.316 | DEBUG    | freqtrade_gui.process          | stderr chunk: 125 bytes
+2026-04-24 12:17:59.316 | DEBUG    | freqtrade_gui.process          | stderr chunk: 127 bytes
+2026-04-24 12:17:59.316 | DEBUG    | freqtrade_gui.process          | stderr chunk: 115 bytes
+2026-04-24 12:17:59.316 | DEBUG    | freqtrade_gui.process          | stderr chunk: 119 bytes
+2026-04-24 12:17:59.316 | DEBUG    | freqtrade_gui.process          | stderr chunk: 190 bytes
+2026-04-24 12:17:59.317 | DEBUG    | freqtrade_gui.process          | stderr chunk: 37 bytes
+2026-04-24 12:17:59.317 | DEBUG    | freqtrade_gui.process          | stderr chunk: 141 bytes
+2026-04-24 12:17:59.317 | DEBUG    | freqtrade_gui.process          | stderr chunk: 109 bytes
+2026-04-24 12:17:59.317 | DEBUG    | freqtrade_gui.process          | stderr chunk: 112 bytes
+2026-04-24 12:17:59.317 | DEBUG    | freqtrade_gui.process          | stderr chunk: 112 bytes
+2026-04-24 12:17:59.317 | DEBUG    | freqtrade_gui.process          | stderr chunk: 110 bytes
+2026-04-24 12:17:59.317 | DEBUG    | freqtrade_gui.process          | stderr chunk: 112 bytes
+2026-04-24 12:17:59.317 | DEBUG    | freqtrade_gui.process          | stderr chunk: 122 bytes
+2026-04-24 12:17:59.317 | DEBUG    | freqtrade_gui.process          | stderr chunk: 112 bytes
+2026-04-24 12:17:59.317 | DEBUG    | freqtrade_gui.process          | stderr chunk: 120 bytes
+2026-04-24 12:17:59.317 | DEBUG    | freqtrade_gui.process          | stderr chunk: 126 bytes
+2026-04-24 12:17:59.318 | DEBUG    | freqtrade_gui.process          | stderr chunk: 122 bytes
+2026-04-24 12:17:59.319 | DEBUG    | freqtrade_gui.process          | stderr chunk: 122 bytes
+2026-04-24 12:17:59.319 | DEBUG    | freqtrade_gui.process          | stderr chunk: 107 bytes
+2026-04-24 12:17:59.320 | DEBUG    | freqtrade_gui.process          | stderr chunk: 106 bytes
+2026-04-24 12:17:59.324 | DEBUG    | freqtrade_gui.process          | stderr chunk: 197 bytes
+2026-04-24 12:17:59.329 | DEBUG    | freqtrade_gui.process          | stderr chunk: 130 bytes
+2026-04-24 12:17:59.421 | DEBUG    | freqtrade_gui.process          | stderr chunk: 140 bytes
+2026-04-24 12:17:59.540 | DEBUG    | freqtrade_gui.process          | stderr chunk: 140 bytes
+2026-04-24 12:17:59.571 | DEBUG    | freqtrade_gui.process          | stderr chunk: 142 bytes
+2026-04-24 12:18:00.380 | DEBUG    | freqtrade_gui.process          | stderr chunk: 108 bytes
+2026-04-24 12:18:00.382 | DEBUG    | freqtrade_gui.process          | stderr chunk: 184 bytes
+2026-04-24 12:18:00.387 | DEBUG    | freqtrade_gui.process          | stderr chunk: 116 bytes
+2026-04-24 12:18:00.391 | DEBUG    | freqtrade_gui.process          | stdout chunk: 30 bytes
+2026-04-24 12:18:00.391 | DEBUG    | freqtrade_gui.process          | stdout chunk: 110 bytes
+2026-04-24 12:18:00.393 | DEBUG    | freqtrade_gui.process          | stdout chunk: 110 bytes
+2026-04-24 12:18:00.393 | DEBUG    | freqtrade_gui.process          | stdout chunk: 110 bytes
+2026-04-24 12:18:00.393 | DEBUG    | freqtrade_gui.process          | stdout chunk: 110 bytes
+2026-04-24 12:18:00.393 | DEBUG    | freqtrade_gui.process          | stdout chunk: 110 bytes
+2026-04-24 12:18:00.393 | DEBUG    | freqtrade_gui.process          | stdout chunk: 110 bytes
+2026-04-24 12:18:00.393 | DEBUG    | freqtrade_gui.process          | stdout chunk: 110 bytes
+2026-04-24 12:18:00.393 | DEBUG    | freqtrade_gui.process          | stdout chunk: 110 bytes
+2026-04-24 12:18:00.394 | DEBUG    | freqtrade_gui.process          | stdout chunk: 107 bytes
+2026-04-24 12:18:00.395 | DEBUG    | freqtrade_gui.process          | stdout chunk: 107 bytes
+2026-04-24 12:18:00.396 | DEBUG    | freqtrade_gui.process          | stdout chunk: 107 bytes
+2026-04-24 12:18:00.397 | DEBUG    | freqtrade_gui.process          | stdout chunk: 107 bytes
+2026-04-24 12:18:00.397 | DEBUG    | freqtrade_gui.process          | stdout chunk: 107 bytes
+2026-04-24 12:18:00.397 | DEBUG    | freqtrade_gui.process          | stdout chunk: 107 bytes
+2026-04-24 12:18:00.397 | DEBUG    | freqtrade_gui.process          | stdout chunk: 112 bytes
+2026-04-24 12:18:00.397 | DEBUG    | freqtrade_gui.process          | stdout chunk: 112 bytes
+2026-04-24 12:18:00.397 | DEBUG    | freqtrade_gui.process          | stdout chunk: 112 bytes
+2026-04-24 12:18:00.397 | DEBUG    | freqtrade_gui.process          | stdout chunk: 112 bytes
+2026-04-24 12:18:00.397 | DEBUG    | freqtrade_gui.process          | stdout chunk: 112 bytes
+2026-04-24 12:18:00.397 | DEBUG    | freqtrade_gui.process          | stdout chunk: 112 bytes
+2026-04-24 12:18:00.399 | DEBUG    | freqtrade_gui.process          | stdout chunk: 112 bytes
+2026-04-24 12:18:00.399 | DEBUG    | freqtrade_gui.process          | stdout chunk: 112 bytes
+2026-04-24 12:18:00.399 | DEBUG    | freqtrade_gui.process          | stdout chunk: 112 bytes
+2026-04-24 12:18:00.399 | DEBUG    | freqtrade_gui.process          | stdout chunk: 112 bytes
+2026-04-24 12:18:00.399 | DEBUG    | freqtrade_gui.process          | stdout chunk: 112 bytes
+2026-04-24 12:18:00.399 | DEBUG    | freqtrade_gui.process          | stdout chunk: 112 bytes
+2026-04-24 12:18:00.399 | DEBUG    | freqtrade_gui.process          | stdout chunk: 112 bytes
+2026-04-24 12:18:00.399 | DEBUG    | freqtrade_gui.process          | stdout chunk: 112 bytes
+2026-04-24 12:18:00.399 | DEBUG    | freqtrade_gui.process          | stdout chunk: 112 bytes
+2026-04-24 12:18:00.399 | DEBUG    | freqtrade_gui.process          | stdout chunk: 125 bytes
+2026-04-24 12:18:00.399 | DEBUG    | freqtrade_gui.process          | stdout chunk: 125 bytes
+2026-04-24 12:18:00.399 | DEBUG    | freqtrade_gui.process          | stdout chunk: 125 bytes
+2026-04-24 12:18:00.399 | DEBUG    | freqtrade_gui.process          | stdout chunk: 125 bytes
+2026-04-24 12:18:00.399 | DEBUG    | freqtrade_gui.process          | stdout chunk: 125 bytes
+2026-04-24 12:18:00.400 | DEBUG    | freqtrade_gui.process          | stdout chunk: 125 bytes
+2026-04-24 12:18:00.400 | DEBUG    | freqtrade_gui.process          | stdout chunk: 125 bytes
+2026-04-24 12:18:00.400 | DEBUG    | freqtrade_gui.process          | stdout chunk: 125 bytes
+2026-04-24 12:18:00.405 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.407 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.407 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.409 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.410 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.410 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.411 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.411 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.412 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.412 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.412 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.412 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.412 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.412 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.412 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.413 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.413 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.413 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.413 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.413 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.413 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.414 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.414 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.414 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.414 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.414 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.414 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.414 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.414 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.414 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.415 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.415 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.415 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.415 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.415 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.415 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.415 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.415 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.415 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.416 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.416 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.416 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.416 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.416 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.416 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.416 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.416 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.416 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.416 | DEBUG    | freqtrade_gui.process          | stdout chunk: 67 bytes
+2026-04-24 12:18:00.416 | DEBUG    | freqtrade_gui.process          | stdout chunk: 1 bytes
+2026-04-24 12:18:00.416 | DEBUG    | freqtrade_gui.process          | stdout chunk: 76 bytes
+2026-04-24 12:18:00.416 | DEBUG    | freqtrade_gui.process          | stdout chunk: 133 bytes
+2026-04-24 12:18:00.416 | DEBUG    | freqtrade_gui.process          | stdout chunk: 133 bytes
+2026-04-24 12:18:00.417 | DEBUG    | freqtrade_gui.process          | stdout chunk: 133 bytes
+2026-04-24 12:18:00.417 | DEBUG    | freqtrade_gui.process          | stdout chunk: 133 bytes
+2026-04-24 12:18:00.417 | DEBUG    | freqtrade_gui.process          | stdout chunk: 133 bytes
+2026-04-24 12:18:00.418 | DEBUG    | freqtrade_gui.process          | stdout chunk: 133 bytes
+2026-04-24 12:18:00.754 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:18:00.755 | DEBUG    | freqtrade_gui.parsing.backtest | Parsing zip: backtest-result-2026-04-24_12-16-15.zip | entry=backtest-result-2026-04-24_12-16-15.json
+2026-04-24 12:18:00.761 | INFO     | freqtrade_gui.parsing.backtest | Parsed | strategy=MultiMeee | trades=542 | profit=-21.4398%
+2026-04-24 12:18:00.761 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-24 12:18:00.761 | INFO     | freqtrade_gui.backtests.store  | Saving run | id=run_2026-04-24_12-18-00_3a3aaf | strategy=MultiMeee | trades=542 | profit=-21.4398%
+2026-04-24 12:18:00.768 | DEBUG    | freqtrade_gui.backtests.index  | Global index updated | strategy=MultiMeee | run_id=run_2026-04-24_12-18-00_3a3aaf
+2026-04-24 12:18:00.769 | DEBUG    | freqtrade_gui.backtests.index  | Strategy index updated | strategy=MultiMeee | run_id=run_2026-04-24_12-18-00_3a3aaf
+2026-04-24 12:18:00.769 | INFO     | freqtrade_gui.backtests.store  | Run saved → T:\ae\pyside6\user_data\backtest_results\MultiMeee\run_2026-04-24_12-18-00_3a3aaf
+2026-04-24 12:18:00.769 | INFO     | freqtrade_gui.services.backtest | Backtest results saved: strategy=MultiMeee run_id=run_2026-04-24_12-18-00_3a3aaf
+2026-04-24 12:18:00.848 | INFO     | freqtrade_gui.ui.backtest_page | Backtest results loaded: strategy=MultiMeee run_id=run_2026-04-24_12-18-00_3a3aaf
+2026-04-24 12:18:00.849 | DEBUG    | freqtrade_gui.ui.strategy_page | Strategy list refreshed: 14 strategies
+2026-04-24 12:18:01.336 | DEBUG    | freqtrade_gui.ui.status_bar    | Status bar cleared
+2026-04-24 12:18:11.663 | DEBUG    | freqtrade_gui.ui.header_bar    | HeaderBar page title set to 'Dashboard'
+2026-04-24 12:18:11.663 | DEBUG    | freqtrade_gui.ui.sidebar       | NavSidebar active page set to 'dashboard'
+2026-04-24 12:18:11.665 | DEBUG    | freqtrade_gui.ui.status_bar    | Status set [info]: Navigated to Dashboard
+2026-04-24 12:18:11.665 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to page: dashboard
+2026-04-24 12:18:19.970 | DEBUG    | freqtrade_gui.ui.header_bar    | HeaderBar page title set to 'Backtest'
+2026-04-24 12:18:19.971 | DEBUG    | freqtrade_gui.ui.sidebar       | NavSidebar active page set to 'backtest'
+2026-04-24 12:18:19.971 | DEBUG    | freqtrade_gui.ui.status_bar    | Status set [info]: Navigated to Backtest
+2026-04-24 12:18:19.971 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to page: backtest
+2026-04-24 12:18:22.444 | DEBUG    | freqtrade_gui.ui.header_bar    | HeaderBar page title set to 'Download Data'
+2026-04-24 12:18:22.444 | DEBUG    | freqtrade_gui.ui.sidebar       | NavSidebar active page set to 'download'
+2026-04-24 12:18:22.445 | DEBUG    | freqtrade_gui.ui.status_bar    | Status set [info]: Navigated to Download Data
+2026-04-24 12:18:22.445 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to page: download
+2026-04-24 12:18:25.649 | INFO     | freqtrade_gui.settings         | Settings saved to T:\ae\pyside6\data\settings.json
+2026-04-24 12:18:25.649 | DEBUG    | freqtrade_gui.settings         | Saved: python=T:\ae\pyside6\.venv\Scripts\python.exe venv=T:\ae\pyside6\.venv user_data=T:\ae\pyside6\user_data
+2026-04-24 12:18:25.649 | DEBUG    | freqtrade_gui.services.settings_adapter | Recording settings_saved
+2026-04-24 12:18:25.650 | DEBUG    | freqtrade_gui.ui.status_bar    | Status set [success]: Settings saved
+2026-04-24 12:18:25.650 | INFO     | freqtrade_gui.ui.main_window   | Settings saved — theme=dark
+2026-04-24 12:18:25.650 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Last Profit' updated: value='-21.44%' trend=-21.4398
+2026-04-24 12:18:25.651 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Win Rate' updated: value='34.7%' trend=None
+2026-04-24 12:18:25.651 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Total Trades' updated: value='542' trend=None
+2026-04-24 12:18:25.651 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Best Strategy' updated: value='MultiMeee' trend=None
+2026-04-24 12:18:25.651 | DEBUG    | freqtrade_gui.ui.dashboard_page | DashboardPage refreshed: 26 total runs
+2026-04-24 12:18:25.651 | DEBUG    | freqtrade_gui.ui.run_config_form | Refreshed strategy list: 14 strategies found
+2026-04-24 12:18:25.652 | DEBUG    | freqtrade_gui.ui.run_config_form | Refreshed strategy list: 14 strategies found
+2026-04-24 12:18:27.187 | DEBUG    | freqtrade_gui.parsing.strategy | Loaded strategy JSON: MohsBaseline_v2.json
+2026-04-24 12:18:27.188 | INFO     | freqtrade_gui.strategy_config_page | Loaded: MohsBaseline_v2.json
+2026-04-24 12:18:27.188 | DEBUG    | freqtrade_gui.ui.strategy_page | Strategy list refreshed: 14 strategies
+2026-04-24 12:18:27.196 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:18:27.196 | DEBUG    | freqtrade_gui.ui.download_page | Download preferences saved
+2026-04-24 12:18:32.225 | INFO     | freqtrade_gui.settings         | Settings saved to T:\ae\pyside6\data\settings.json
+2026-04-24 12:18:32.226 | DEBUG    | freqtrade_gui.settings         | Saved: python=T:\ae\pyside6\.venv\Scripts\python.exe venv=T:\ae\pyside6\.venv user_data=T:\ae\pyside6\user_data
+2026-04-24 12:18:32.226 | DEBUG    | freqtrade_gui.services.settings_adapter | Recording settings_saved
+2026-04-24 12:18:32.226 | DEBUG    | freqtrade_gui.ui.status_bar    | Status set [success]: Settings saved
+2026-04-24 12:18:32.226 | INFO     | freqtrade_gui.ui.main_window   | Settings saved — theme=dark
+2026-04-24 12:18:32.227 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Last Profit' updated: value='-21.44%' trend=-21.4398
+2026-04-24 12:18:32.227 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Win Rate' updated: value='34.7%' trend=None
+2026-04-24 12:18:32.227 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Total Trades' updated: value='542' trend=None
+2026-04-24 12:18:32.227 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Best Strategy' updated: value='MultiMeee' trend=None
+2026-04-24 12:18:32.227 | DEBUG    | freqtrade_gui.ui.dashboard_page | DashboardPage refreshed: 26 total runs
+2026-04-24 12:18:32.227 | DEBUG    | freqtrade_gui.ui.run_config_form | Refreshed strategy list: 14 strategies found
+2026-04-24 12:18:32.228 | DEBUG    | freqtrade_gui.ui.run_config_form | Refreshed strategy list: 14 strategies found
+2026-04-24 12:18:33.760 | DEBUG    | freqtrade_gui.parsing.strategy | Loaded strategy JSON: MohsBaseline_v2.json
+2026-04-24 12:18:33.761 | INFO     | freqtrade_gui.strategy_config_page | Loaded: MohsBaseline_v2.json
+2026-04-24 12:18:33.762 | DEBUG    | freqtrade_gui.ui.strategy_page | Strategy list refreshed: 14 strategies
+2026-04-24 12:18:33.767 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:18:33.768 | DEBUG    | freqtrade_gui.ui.download_page | Download preferences saved
+2026-04-24 12:18:33.779 | INFO     | freqtrade_gui.settings         | Settings saved to T:\ae\pyside6\data\settings.json
+2026-04-24 12:18:33.779 | DEBUG    | freqtrade_gui.settings         | Saved: python=T:\ae\pyside6\.venv\Scripts\python.exe venv=T:\ae\pyside6\.venv user_data=T:\ae\pyside6\user_data
+2026-04-24 12:18:33.780 | DEBUG    | freqtrade_gui.services.settings_adapter | Recording settings_saved
+2026-04-24 12:18:33.780 | DEBUG    | freqtrade_gui.ui.status_bar    | Status set [success]: Settings saved
+2026-04-24 12:18:33.780 | INFO     | freqtrade_gui.ui.main_window   | Settings saved — theme=dark
+2026-04-24 12:18:33.781 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Last Profit' updated: value='-21.44%' trend=-21.4398
+2026-04-24 12:18:33.781 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Win Rate' updated: value='34.7%' trend=None
+2026-04-24 12:18:33.781 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Total Trades' updated: value='542' trend=None
+2026-04-24 12:18:33.781 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Best Strategy' updated: value='MultiMeee' trend=None
+2026-04-24 12:18:33.781 | DEBUG    | freqtrade_gui.ui.dashboard_page | DashboardPage refreshed: 26 total runs
+2026-04-24 12:18:33.782 | DEBUG    | freqtrade_gui.ui.run_config_form | Refreshed strategy list: 14 strategies found
+2026-04-24 12:18:33.782 | DEBUG    | freqtrade_gui.ui.run_config_form | Refreshed strategy list: 14 strategies found
+2026-04-24 12:18:35.334 | DEBUG    | freqtrade_gui.parsing.strategy | Loaded strategy JSON: MohsBaseline_v2.json
+2026-04-24 12:18:35.335 | INFO     | freqtrade_gui.strategy_config_page | Loaded: MohsBaseline_v2.json
+2026-04-24 12:18:35.336 | DEBUG    | freqtrade_gui.ui.strategy_page | Strategy list refreshed: 14 strategies
+2026-04-24 12:18:35.341 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:18:35.343 | DEBUG    | freqtrade_gui.ui.download_page | Download preferences saved
+2026-04-24 12:18:43.774 | DEBUG    | freqtrade_gui.ui.status_bar    | Status bar cleared
+2026-04-24 12:18:49.185 | INFO     | freqtrade_gui.settings         | Settings saved to T:\ae\pyside6\data\settings.json
+2026-04-24 12:18:49.185 | DEBUG    | freqtrade_gui.settings         | Saved: python=T:\ae\pyside6\.venv\Scripts\python.exe venv=T:\ae\pyside6\.venv user_data=T:\ae\pyside6\user_data
+2026-04-24 12:18:49.185 | DEBUG    | freqtrade_gui.services.settings_adapter | Recording settings_saved
+2026-04-24 12:18:49.186 | DEBUG    | freqtrade_gui.ui.status_bar    | Status set [success]: Settings saved
+2026-04-24 12:18:49.186 | INFO     | freqtrade_gui.ui.main_window   | Settings saved — theme=dark
+2026-04-24 12:18:49.186 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Last Profit' updated: value='-21.44%' trend=-21.4398
+2026-04-24 12:18:49.186 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Win Rate' updated: value='34.7%' trend=None
+2026-04-24 12:18:49.186 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Total Trades' updated: value='542' trend=None
+2026-04-24 12:18:49.186 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Best Strategy' updated: value='MultiMeee' trend=None
+2026-04-24 12:18:49.187 | DEBUG    | freqtrade_gui.ui.dashboard_page | DashboardPage refreshed: 26 total runs
+2026-04-24 12:18:49.187 | DEBUG    | freqtrade_gui.ui.run_config_form | Refreshed strategy list: 14 strategies found
+2026-04-24 12:18:49.188 | DEBUG    | freqtrade_gui.ui.run_config_form | Refreshed strategy list: 14 strategies found
+2026-04-24 12:18:50.720 | DEBUG    | freqtrade_gui.parsing.strategy | Loaded strategy JSON: MohsBaseline_v2.json
+2026-04-24 12:18:50.722 | INFO     | freqtrade_gui.strategy_config_page | Loaded: MohsBaseline_v2.json
+2026-04-24 12:18:50.722 | DEBUG    | freqtrade_gui.ui.strategy_page | Strategy list refreshed: 14 strategies
+2026-04-24 12:18:50.730 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:18:50.730 | DEBUG    | freqtrade_gui.ui.download_page | Download preferences saved
+2026-04-24 12:18:51.004 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:18:51.005 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-24 12:18:51.009 | INFO     | freqtrade_gui.process          | Process started | cmd=T:\ae\pyside6\.venv\Scripts\python.exe -m freqtrade download-data --user-data-dir T:\ae\pyside6\user_data --config T:\ae\pyside6\user_data\config.json --timeframe 5m --prepend --timerange 20240101-20260424 -p ADA/USDT ETH/USDT | cwd=(default) | pid=29676
+2026-04-24 12:18:51.010 | INFO     | freqtrade_gui.ui.download_page | Download started: timeframe=5m pairs=['ADA/USDT', 'ETH/USDT']
+2026-04-24 12:18:51.145 | DEBUG    | freqtrade_gui.process          | stderr chunk: 62 bytes
+2026-04-24 12:18:52.105 | DEBUG    | freqtrade_gui.process          | stderr chunk: 125 bytes
+2026-04-24 12:18:52.106 | DEBUG    | freqtrade_gui.process          | stderr chunk: 80 bytes
+2026-04-24 12:18:52.107 | DEBUG    | freqtrade_gui.process          | stderr chunk: 72 bytes
+2026-04-24 12:18:52.107 | DEBUG    | freqtrade_gui.process          | stderr chunk: 72 bytes
+2026-04-24 12:18:52.107 | DEBUG    | freqtrade_gui.process          | stderr chunk: 118 bytes
+2026-04-24 12:18:52.107 | DEBUG    | freqtrade_gui.process          | stderr chunk: 127 bytes
+2026-04-24 12:18:52.107 | DEBUG    | freqtrade_gui.process          | stderr chunk: 128 bytes
+2026-04-24 12:18:52.108 | DEBUG    | freqtrade_gui.process          | stderr chunk: 136 bytes
+2026-04-24 12:18:52.109 | DEBUG    | freqtrade_gui.process          | stderr chunk: 110 bytes
+2026-04-24 12:18:52.109 | DEBUG    | freqtrade_gui.process          | stderr chunk: 117 bytes
+2026-04-24 12:18:52.109 | DEBUG    | freqtrade_gui.process          | stderr chunk: 105 bytes
+2026-04-24 12:18:52.109 | DEBUG    | freqtrade_gui.process          | stderr chunk: 119 bytes
+2026-04-24 12:18:52.110 | DEBUG    | freqtrade_gui.process          | stderr chunk: 90 bytes
+2026-04-24 12:18:52.114 | DEBUG    | freqtrade_gui.process          | stderr chunk: 147 bytes
+2026-04-24 12:18:52.114 | DEBUG    | freqtrade_gui.process          | stderr chunk: 106 bytes
+2026-04-24 12:18:52.314 | DEBUG    | freqtrade_gui.process          | stderr chunk: 104 bytes
+2026-04-24 12:18:52.314 | DEBUG    | freqtrade_gui.process          | stderr chunk: 81 bytes
+2026-04-24 12:18:52.314 | DEBUG    | freqtrade_gui.process          | stderr chunk: 141 bytes
+2026-04-24 12:18:52.319 | DEBUG    | freqtrade_gui.process          | stderr chunk: 141 bytes
+2026-04-24 12:18:52.323 | DEBUG    | freqtrade_gui.process          | stderr chunk: 88 bytes
+2026-04-24 12:18:52.323 | DEBUG    | freqtrade_gui.process          | stderr chunk: 110 bytes
+2026-04-24 12:18:52.323 | DEBUG    | freqtrade_gui.process          | stderr chunk: 107 bytes
+2026-04-24 12:18:54.260 | DEBUG    | freqtrade_gui.process          | stderr chunk: 181 bytes
+2026-04-24 12:18:54.375 | DEBUG    | freqtrade_gui.process          | stderr chunk: 199 bytes
+2026-04-24 12:18:54.375 | DEBUG    | freqtrade_gui.process          | stderr chunk: 20 bytes
+2026-04-24 12:18:57.343 | DEBUG    | freqtrade_gui.process          | stderr chunk: 131 bytes
+2026-04-24 12:18:57.605 | DEBUG    | freqtrade_gui.process          | stderr chunk: 199 bytes
+2026-04-24 12:18:57.605 | DEBUG    | freqtrade_gui.process          | stderr chunk: 20 bytes
+2026-04-24 12:18:59.209 | DEBUG    | freqtrade_gui.ui.status_bar    | Status bar cleared
+2026-04-24 12:18:59.894 | DEBUG    | freqtrade_gui.process          | stderr chunk: 131 bytes
+2026-04-24 12:19:00.057 | DEBUG    | freqtrade_gui.process          | stderr chunk: 201 bytes
+2026-04-24 12:19:00.058 | DEBUG    | freqtrade_gui.process          | stderr chunk: 201 bytes
+2026-04-24 12:19:00.616 | INFO     | freqtrade_gui.ui.download_page | Download completed successfully
+2026-04-24 12:19:34.380 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:19:34.380 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-24 12:19:34.383 | INFO     | freqtrade_gui.process          | Process started | cmd=T:\ae\pyside6\.venv\Scripts\python.exe -m freqtrade download-data --user-data-dir T:\ae\pyside6\user_data --config T:\ae\pyside6\user_data\config.json --timeframe 5m --prepend --timerange 20240101-20260424 -p ADA/USDT ETH/USDT | cwd=(default) | pid=15804
+2026-04-24 12:19:34.384 | INFO     | freqtrade_gui.ui.download_page | Download started: timeframe=5m pairs=['ADA/USDT', 'ETH/USDT']
+2026-04-24 12:19:34.519 | DEBUG    | freqtrade_gui.process          | stderr chunk: 62 bytes
+2026-04-24 12:19:35.485 | DEBUG    | freqtrade_gui.process          | stderr chunk: 125 bytes
+2026-04-24 12:19:35.486 | DEBUG    | freqtrade_gui.process          | stderr chunk: 80 bytes
+2026-04-24 12:19:35.486 | DEBUG    | freqtrade_gui.process          | stderr chunk: 72 bytes
+2026-04-24 12:19:35.487 | DEBUG    | freqtrade_gui.process          | stderr chunk: 72 bytes
+2026-04-24 12:19:35.487 | DEBUG    | freqtrade_gui.process          | stderr chunk: 118 bytes
+2026-04-24 12:19:35.487 | DEBUG    | freqtrade_gui.process          | stderr chunk: 127 bytes
+2026-04-24 12:19:35.487 | DEBUG    | freqtrade_gui.process          | stderr chunk: 128 bytes
+2026-04-24 12:19:35.489 | DEBUG    | freqtrade_gui.process          | stderr chunk: 136 bytes
+2026-04-24 12:19:35.489 | DEBUG    | freqtrade_gui.process          | stderr chunk: 110 bytes
+2026-04-24 12:19:35.489 | DEBUG    | freqtrade_gui.process          | stderr chunk: 117 bytes
+2026-04-24 12:19:35.490 | DEBUG    | freqtrade_gui.process          | stderr chunk: 105 bytes
+2026-04-24 12:19:35.490 | DEBUG    | freqtrade_gui.process          | stderr chunk: 119 bytes
+2026-04-24 12:19:35.490 | DEBUG    | freqtrade_gui.process          | stderr chunk: 90 bytes
+2026-04-24 12:19:35.494 | DEBUG    | freqtrade_gui.process          | stderr chunk: 147 bytes
+2026-04-24 12:19:35.495 | DEBUG    | freqtrade_gui.process          | stderr chunk: 106 bytes
+2026-04-24 12:19:35.709 | DEBUG    | freqtrade_gui.process          | stderr chunk: 104 bytes
+2026-04-24 12:19:35.709 | DEBUG    | freqtrade_gui.process          | stderr chunk: 81 bytes
+2026-04-24 12:19:35.710 | DEBUG    | freqtrade_gui.process          | stderr chunk: 141 bytes
+2026-04-24 12:19:35.713 | DEBUG    | freqtrade_gui.process          | stderr chunk: 141 bytes
+2026-04-24 12:19:35.718 | DEBUG    | freqtrade_gui.process          | stderr chunk: 88 bytes
+2026-04-24 12:19:35.718 | DEBUG    | freqtrade_gui.process          | stderr chunk: 110 bytes
+2026-04-24 12:19:35.719 | DEBUG    | freqtrade_gui.process          | stderr chunk: 107 bytes
+2026-04-24 12:19:36.825 | DEBUG    | freqtrade_gui.process          | stderr chunk: 181 bytes
+2026-04-24 12:19:37.023 | DEBUG    | freqtrade_gui.process          | stderr chunk: 199 bytes
+2026-04-24 12:19:37.023 | DEBUG    | freqtrade_gui.process          | stderr chunk: 20 bytes
+2026-04-24 12:19:37.027 | DEBUG    | freqtrade_gui.process          | stderr chunk: 126 bytes
+2026-04-24 12:19:37.373 | DEBUG    | freqtrade_gui.process          | stderr chunk: 199 bytes
+2026-04-24 12:19:37.374 | DEBUG    | freqtrade_gui.process          | stderr chunk: 20 bytes
+2026-04-24 12:19:37.377 | DEBUG    | freqtrade_gui.process          | stderr chunk: 126 bytes
+2026-04-24 12:19:37.538 | DEBUG    | freqtrade_gui.process          | stderr chunk: 201 bytes
+2026-04-24 12:19:37.539 | DEBUG    | freqtrade_gui.process          | stderr chunk: 201 bytes
+2026-04-24 12:19:38.103 | INFO     | freqtrade_gui.ui.download_page | Download completed successfully
+2026-04-24 12:19:50.977 | INFO     | freqtrade_gui.settings         | Settings saved to T:\ae\pyside6\data\settings.json
+2026-04-24 12:19:50.977 | DEBUG    | freqtrade_gui.settings         | Saved: python=T:\ae\pyside6\.venv\Scripts\python.exe venv=T:\ae\pyside6\.venv user_data=T:\ae\pyside6\user_data
+2026-04-24 12:19:50.977 | DEBUG    | freqtrade_gui.services.settings_adapter | Recording settings_saved
+2026-04-24 12:19:50.978 | DEBUG    | freqtrade_gui.ui.status_bar    | Status set [success]: Settings saved
+2026-04-24 12:19:50.978 | INFO     | freqtrade_gui.ui.main_window   | Settings saved — theme=dark
+2026-04-24 12:19:50.979 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Last Profit' updated: value='-21.44%' trend=-21.4398
+2026-04-24 12:19:50.979 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Win Rate' updated: value='34.7%' trend=None
+2026-04-24 12:19:50.979 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Total Trades' updated: value='542' trend=None
+2026-04-24 12:19:50.979 | DEBUG    | freqtrade_gui.ui.metric_card   | MetricCard 'Best Strategy' updated: value='MultiMeee' trend=None
+2026-04-24 12:19:50.979 | DEBUG    | freqtrade_gui.ui.dashboard_page | DashboardPage refreshed: 26 total runs
+2026-04-24 12:19:50.979 | DEBUG    | freqtrade_gui.ui.run_config_form | Refreshed strategy list: 14 strategies found
+2026-04-24 12:19:50.980 | DEBUG    | freqtrade_gui.ui.run_config_form | Refreshed strategy list: 14 strategies found
+2026-04-24 12:19:52.644 | DEBUG    | freqtrade_gui.parsing.strategy | Loaded strategy JSON: MohsBaseline_v2.json
+2026-04-24 12:19:52.645 | INFO     | freqtrade_gui.strategy_config_page | Loaded: MohsBaseline_v2.json
+2026-04-24 12:19:52.645 | DEBUG    | freqtrade_gui.ui.strategy_page | Strategy list refreshed: 14 strategies
+2026-04-24 12:19:52.653 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:19:52.653 | DEBUG    | freqtrade_gui.ui.download_page | Download preferences saved
+2026-04-24 12:19:53.296 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:19:53.297 | DEBUG    | freqtrade_gui.resolvers.config | Using default config: T:\ae\pyside6\user_data\config.json
+2026-04-24 12:19:53.302 | INFO     | freqtrade_gui.process          | Process started | cmd=T:\ae\pyside6\.venv\Scripts\python.exe -m freqtrade download-data --user-data-dir T:\ae\pyside6\user_data --config T:\ae\pyside6\user_data\config.json --timeframe 5m --prepend --timerange 20260325-20260424 -p ADA/USDT ETH/USDT | cwd=(default) | pid=12304
+2026-04-24 12:19:53.302 | INFO     | freqtrade_gui.ui.download_page | Download started: timeframe=5m pairs=['ADA/USDT', 'ETH/USDT']
+2026-04-24 12:19:53.436 | DEBUG    | freqtrade_gui.process          | stderr chunk: 62 bytes
+2026-04-24 12:19:54.397 | DEBUG    | freqtrade_gui.process          | stderr chunk: 125 bytes
+2026-04-24 12:19:54.399 | DEBUG    | freqtrade_gui.process          | stderr chunk: 80 bytes
+2026-04-24 12:19:54.399 | DEBUG    | freqtrade_gui.process          | stderr chunk: 72 bytes
+2026-04-24 12:19:54.399 | DEBUG    | freqtrade_gui.process          | stderr chunk: 72 bytes
+2026-04-24 12:19:54.399 | DEBUG    | freqtrade_gui.process          | stderr chunk: 118 bytes
+2026-04-24 12:19:54.400 | DEBUG    | freqtrade_gui.process          | stderr chunk: 127 bytes
+2026-04-24 12:19:54.400 | DEBUG    | freqtrade_gui.process          | stderr chunk: 128 bytes
+2026-04-24 12:19:54.400 | DEBUG    | freqtrade_gui.process          | stderr chunk: 136 bytes
+2026-04-24 12:19:54.401 | DEBUG    | freqtrade_gui.process          | stderr chunk: 110 bytes
+2026-04-24 12:19:54.401 | DEBUG    | freqtrade_gui.process          | stderr chunk: 117 bytes
+2026-04-24 12:19:54.401 | DEBUG    | freqtrade_gui.process          | stderr chunk: 105 bytes
+2026-04-24 12:19:54.402 | DEBUG    | freqtrade_gui.process          | stderr chunk: 119 bytes
+2026-04-24 12:19:54.402 | DEBUG    | freqtrade_gui.process          | stderr chunk: 90 bytes
+2026-04-24 12:19:54.406 | DEBUG    | freqtrade_gui.process          | stderr chunk: 147 bytes
+2026-04-24 12:19:54.406 | DEBUG    | freqtrade_gui.process          | stderr chunk: 106 bytes
+2026-04-24 12:19:54.608 | DEBUG    | freqtrade_gui.process          | stderr chunk: 104 bytes
+2026-04-24 12:19:54.608 | DEBUG    | freqtrade_gui.process          | stderr chunk: 81 bytes
+2026-04-24 12:19:54.609 | DEBUG    | freqtrade_gui.process          | stderr chunk: 141 bytes
+2026-04-24 12:19:54.612 | DEBUG    | freqtrade_gui.process          | stderr chunk: 141 bytes
+2026-04-24 12:19:54.617 | DEBUG    | freqtrade_gui.process          | stderr chunk: 88 bytes
+2026-04-24 12:19:54.618 | DEBUG    | freqtrade_gui.process          | stderr chunk: 110 bytes
+2026-04-24 12:19:54.618 | DEBUG    | freqtrade_gui.process          | stderr chunk: 107 bytes
+2026-04-24 12:19:55.701 | DEBUG    | freqtrade_gui.process          | stderr chunk: 181 bytes
+2026-04-24 12:19:55.900 | DEBUG    | freqtrade_gui.process          | stderr chunk: 199 bytes
+2026-04-24 12:19:55.901 | DEBUG    | freqtrade_gui.process          | stderr chunk: 20 bytes
+2026-04-24 12:19:55.901 | DEBUG    | freqtrade_gui.process          | stderr chunk: 126 bytes
+2026-04-24 12:19:56.243 | DEBUG    | freqtrade_gui.process          | stderr chunk: 199 bytes
+2026-04-24 12:19:56.243 | DEBUG    | freqtrade_gui.process          | stderr chunk: 20 bytes
+2026-04-24 12:19:56.243 | DEBUG    | freqtrade_gui.process          | stderr chunk: 126 bytes
+2026-04-24 12:19:56.403 | DEBUG    | freqtrade_gui.process          | stderr chunk: 201 bytes
+2026-04-24 12:19:56.403 | DEBUG    | freqtrade_gui.process          | stderr chunk: 201 bytes
+2026-04-24 12:19:56.956 | INFO     | freqtrade_gui.ui.download_page | Download completed successfully
+2026-04-24 12:20:00.976 | DEBUG    | freqtrade_gui.ui.status_bar    | Status bar cleared
+2026-04-24 12:20:07.195 | DEBUG    | freqtrade_gui.ui.main_window   | Geometry saved (lastPage=download)
+2026-04-24 12:20:07.206 | INFO     | freqtrade_gui.startup          | Application exiting — code=0

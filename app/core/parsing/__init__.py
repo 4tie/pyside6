@@ -11,6 +11,7 @@ from app.core.parsing.json_parser import (
     parse_json_file,
     parse_json_string,
     write_json_file_atomic,
+    json_dumps,
     ParseError,
 )
 
@@ -29,6 +30,7 @@ __all__ = [
     "parse_json_file",
     "parse_json_string",
     "write_json_file_atomic",
+    "json_dumps",
     "ParseError",
     # Backtest parsing
     "parse_backtest_results_from_zip",

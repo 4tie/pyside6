@@ -5,7 +5,6 @@ Tracks which patterns work and provides recommendations based on historical succ
 """
 from __future__ import annotations
 
-import json
 from pathlib import Path
 from typing import List, Optional
 
