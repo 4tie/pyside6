@@ -46,6 +46,7 @@ class DownloadPage(QWidget):
         super().__init__(parent)
         self._settings_state = settings_state
         self._download_service = DownloadDataService(settings_state.settings_service)
+        self._restoring: bool = False  # guard against save-during-restore
         self._build_ui()
         self._connect_signals()
         self._restore_state()
@@ -219,7 +220,8 @@ class DownloadPage(QWidget):
 
     def _on_config_changed(self, _cfg: dict) -> None:
         """Persist preferences when form config changes."""
-        self._save_preferences()
+        if not self._restoring:
+            self._save_preferences()
 
     # ------------------------------------------------------------------
     # Private helpers
@@ -248,6 +250,8 @@ class DownloadPage(QWidget):
 
     def _save_preferences(self) -> None:
         """Persist current form values to AppSettings.download_preferences."""
+        if self._restoring:
+            return
         settings = self._settings_state.current_settings
         if settings is None:
             return
@@ -258,7 +262,11 @@ class DownloadPage(QWidget):
             "default_pairs": ",".join(cfg.get("pairs", [])),
         })
         updated = settings.model_copy(update={"download_preferences": prefs})
-        self._settings_state.save_settings(updated)
+        self._restoring = True
+        try:
+            self._settings_state.save_settings(updated)
+        finally:
+            self._restoring = False
         _log.debug("Download preferences saved")
 
     def _restore_preferences(self) -> None:
@@ -266,14 +274,18 @@ class DownloadPage(QWidget):
         settings = self._settings_state.current_settings
         if settings is None:
             return
-        prefs = settings.download_preferences
-        pairs = [p.strip() for p in prefs.default_pairs.split(",") if p.strip()]
-        self.run_config_form.set_config({
-            "timeframe": prefs.default_timeframe,
-            "timerange": prefs.default_timerange,
-            "pairs": pairs,
-        })
-        _log.debug("Download preferences restored: timeframe=%s", prefs.default_timeframe)
+        self._restoring = True
+        try:
+            prefs = settings.download_preferences
+            pairs = [p.strip() for p in prefs.default_pairs.split(",") if p.strip()]
+            self.run_config_form.set_config({
+                "timeframe": prefs.default_timeframe,
+                "timerange": prefs.default_timerange,
+                "pairs": pairs,
+            })
+            _log.debug("Download preferences restored: timeframe=%s", prefs.default_timeframe)
+        finally:
+            self._restoring = False
 
     def _sync_data_status_path(self) -> None:
         """Update DataStatusWidget with the current user_data path."""

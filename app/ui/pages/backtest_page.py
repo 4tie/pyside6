@@ -69,7 +69,6 @@ class BacktestPage(QWidget):
         self._restoring: bool = False  # guard against save-during-restore
         self._build_ui()
         self._connect_signals()
-        self._refresh_run_picker()
         self._restore_state()
         self._restore_preferences()  # load saved strategy/timeframe/pairs/timerange
 
@@ -245,6 +244,8 @@ class BacktestPage(QWidget):
         self._load_btn.clicked.connect(self._on_load_clicked)
         self._terminal.process_finished.connect(self._on_process_finished)
         self.run_config_form.config_changed.connect(self._on_config_changed)
+        self._wallet_spin.valueChanged.connect(self._on_advanced_changed)
+        self._max_trades_spin.valueChanged.connect(self._on_advanced_changed)
         self._settings_state.settings_changed.connect(self._on_settings_changed)
 
     # ------------------------------------------------------------------
@@ -371,9 +372,15 @@ class BacktestPage(QWidget):
         if not self._restoring:
             self._save_preferences()
 
+    def _on_advanced_changed(self, _=None) -> None:
+        """Persist preferences when wallet or max-trades changes."""
+        if not self._restoring:
+            self._save_preferences()
+
     def _on_settings_changed(self, _=None) -> None:
-        """Refresh run picker when settings change."""
-        self._refresh_run_picker()
+        """Refresh run picker when settings change (skip if we triggered the save)."""
+        if not self._restoring:
+            self._refresh_run_picker()
 
     # ------------------------------------------------------------------
     # Public API
@@ -410,16 +417,10 @@ class BacktestPage(QWidget):
             new_pairs = dlg.get_selected_pairs()
             self.run_config_form.set_config({"pairs": new_pairs})
 
-    def _save_preferences_to_settings(self) -> None:
-        """Persist current form values to backtest preferences (no-op stub).
-
-        The new design persists preferences via settings_state.save_settings().
-        This method exists for backward compatibility with tests.
-        """
-        _log.debug("_save_preferences_to_settings called (no-op in new design)")
-
     def _save_preferences(self) -> None:
         """Persist current form values to AppSettings.backtest_preferences."""
+        if self._restoring:
+            return
         settings = self._settings_state.current_settings
         if settings is None:
             return
@@ -433,8 +434,16 @@ class BacktestPage(QWidget):
             "max_open_trades": self._max_trades_spin.value(),
         })
         updated = settings.model_copy(update={"backtest_preferences": prefs})
-        self._settings_state.save_settings(updated)
+        # Block settings_changed from triggering another save cycle
+        self._restoring = True
+        try:
+            self._settings_state.save_settings(updated)
+        finally:
+            self._restoring = False
         _log.debug("Backtest preferences saved")
+
+    # Backward-compatibility alias used by tests
+    _save_preferences_to_settings = _save_preferences
 
     def _restore_preferences(self) -> None:
         """Restore form values from AppSettings.backtest_preferences."""

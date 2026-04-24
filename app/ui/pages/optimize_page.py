@@ -58,6 +58,7 @@ class OptimizePage(QWidget):
         super().__init__(parent)
         self._settings_state = settings_state
         self._optimize_service = OptimizeService(settings_state.settings_service)
+        self._restoring: bool = False  # guard against save-during-restore
         self._build_ui()
         self._connect_signals()
         self._restore_state()
@@ -265,11 +266,13 @@ class OptimizePage(QWidget):
 
     def _on_config_changed(self, _cfg: dict) -> None:
         """Persist preferences when form config changes."""
-        self._save_preferences()
+        if not self._restoring:
+            self._save_preferences()
 
     def _on_hyperopt_options_changed(self, _=None) -> None:
         """Persist preferences when hyperopt options change."""
-        self._save_preferences()
+        if not self._restoring:
+            self._save_preferences()
 
     # ------------------------------------------------------------------
     # Public API
@@ -307,6 +310,8 @@ class OptimizePage(QWidget):
 
     def _save_preferences(self) -> None:
         """Persist current form values to AppSettings.optimize_preferences."""
+        if self._restoring:
+            return
         settings = self._settings_state.current_settings
         if settings is None:
             return
@@ -331,7 +336,11 @@ class OptimizePage(QWidget):
             "spaces": ",".join(spaces),
         })
         updated = settings.model_copy(update={"optimize_preferences": prefs})
-        self._settings_state.save_settings(updated)
+        self._restoring = True
+        try:
+            self._settings_state.save_settings(updated)
+        finally:
+            self._restoring = False
         _log.debug("Optimize preferences saved")
 
     def _restore_preferences(self) -> None:
@@ -339,28 +348,32 @@ class OptimizePage(QWidget):
         settings = self._settings_state.current_settings
         if settings is None:
             return
-        prefs = settings.optimize_preferences
-        pairs = [p.strip() for p in prefs.default_pairs.split(",") if p.strip()]
-        self.run_config_form.set_config({
-            "strategy": prefs.last_strategy,
-            "timeframe": prefs.default_timeframe,
-            "timerange": prefs.default_timerange,
-            "pairs": pairs,
-        })
-        self._epochs_spin.setValue(prefs.epochs)
-        idx = self._loss_combo.findText(prefs.hyperopt_loss)
-        if idx >= 0:
-            self._loss_combo.setCurrentIndex(idx)
-        # Restore spaces checkboxes
-        saved_spaces = {s.strip() for s in prefs.spaces.split(",") if s.strip()}
-        if saved_spaces:
-            self._space_buy.setChecked("buy" in saved_spaces)
-            self._space_sell.setChecked("sell" in saved_spaces)
-            self._space_roi.setChecked("roi" in saved_spaces)
-            self._space_stoploss.setChecked("stoploss" in saved_spaces)
-            self._space_trailing.setChecked("trailing" in saved_spaces)
-        _log.debug("Optimize preferences restored: strategy=%s timeframe=%s",
-                   prefs.last_strategy, prefs.default_timeframe)
+        self._restoring = True
+        try:
+            prefs = settings.optimize_preferences
+            pairs = [p.strip() for p in prefs.default_pairs.split(",") if p.strip()]
+            self.run_config_form.set_config({
+                "strategy": prefs.last_strategy,
+                "timeframe": prefs.default_timeframe,
+                "timerange": prefs.default_timerange,
+                "pairs": pairs,
+            })
+            self._epochs_spin.setValue(prefs.epochs)
+            idx = self._loss_combo.findText(prefs.hyperopt_loss)
+            if idx >= 0:
+                self._loss_combo.setCurrentIndex(idx)
+            # Restore spaces checkboxes
+            saved_spaces = {s.strip() for s in prefs.spaces.split(",") if s.strip()}
+            if saved_spaces:
+                self._space_buy.setChecked("buy" in saved_spaces)
+                self._space_sell.setChecked("sell" in saved_spaces)
+                self._space_roi.setChecked("roi" in saved_spaces)
+                self._space_stoploss.setChecked("stoploss" in saved_spaces)
+                self._space_trailing.setChecked("trailing" in saved_spaces)
+            _log.debug("Optimize preferences restored: strategy=%s timeframe=%s",
+                       prefs.last_strategy, prefs.default_timeframe)
+        finally:
+            self._restoring = False
 
     # ------------------------------------------------------------------
     # Private helpers
