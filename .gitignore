@@ -23,3 +23,5 @@ settings.json
 data/settings.json
 # Test pollution — MagicMock directories created by broken test mocks
 MagicMock/
+# Runtime log files
+data/log/
