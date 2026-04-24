@@ -1,0 +1,1 @@
+# Design: freqtrade-gui-architecture
