@@ -49,6 +49,7 @@ class DownloadPage(QWidget):
         self._build_ui()
         self._connect_signals()
         self._restore_state()
+        self._restore_preferences()  # load saved timeframe/pairs/timerange
 
     # ------------------------------------------------------------------
     # UI construction
@@ -148,6 +149,7 @@ class DownloadPage(QWidget):
         self._stop_btn.clicked.connect(self._on_stop_clicked)
         self._terminal.process_finished.connect(self._on_process_finished)
         self._settings_state.settings_changed.connect(self._on_settings_changed)
+        self.run_config_form.config_changed.connect(self._on_config_changed)
 
     # ------------------------------------------------------------------
     # Slots
@@ -215,6 +217,10 @@ class DownloadPage(QWidget):
         """Sync data status widget path when settings change."""
         self._sync_data_status_path()
 
+    def _on_config_changed(self, _cfg: dict) -> None:
+        """Persist preferences when form config changes."""
+        self._save_preferences()
+
     # ------------------------------------------------------------------
     # Private helpers
     # ------------------------------------------------------------------
@@ -241,12 +247,33 @@ class DownloadPage(QWidget):
             self.run_config_form.set_config({"pairs": new_pairs})
 
     def _save_preferences(self) -> None:
-        """Persist current form values to download preferences (no-op stub).
+        """Persist current form values to AppSettings.download_preferences."""
+        settings = self._settings_state.current_settings
+        if settings is None:
+            return
+        cfg = self.run_config_form.get_config()
+        prefs = settings.download_preferences.model_copy(update={
+            "default_timeframe": cfg.get("timeframe", ""),
+            "default_timerange": cfg.get("timerange", ""),
+            "default_pairs": ",".join(cfg.get("pairs", [])),
+        })
+        updated = settings.model_copy(update={"download_preferences": prefs})
+        self._settings_state.save_settings(updated)
+        _log.debug("Download preferences saved")
 
-        The new design persists preferences via settings_state.save_settings().
-        This method exists for backward compatibility with tests.
-        """
-        _log.debug("_save_preferences called (no-op in new design)")
+    def _restore_preferences(self) -> None:
+        """Restore form values from AppSettings.download_preferences."""
+        settings = self._settings_state.current_settings
+        if settings is None:
+            return
+        prefs = settings.download_preferences
+        pairs = [p.strip() for p in prefs.default_pairs.split(",") if p.strip()]
+        self.run_config_form.set_config({
+            "timeframe": prefs.default_timeframe,
+            "timerange": prefs.default_timerange,
+            "pairs": pairs,
+        })
+        _log.debug("Download preferences restored: timeframe=%s", prefs.default_timeframe)
 
     def _sync_data_status_path(self) -> None:
         """Update DataStatusWidget with the current user_data path."""

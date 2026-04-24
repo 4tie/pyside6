@@ -3,10 +3,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
-from PySide6.QtCore import Qt
 from PySide6.QtGui import QColor, QFont
 from PySide6.QtWidgets import (
-    QGroupBox,
     QHBoxLayout,
     QHeaderView,
     QLabel,
@@ -206,7 +204,6 @@ class DataStatusWidget(QWidget):
                 pair_item = QTreeWidgetItem([pair, "", "", "", "", "", ""])
                 pair_item.setFont(0, bold)
 
-                pair_ok = True
                 for f in sorted(files):
                     parts = f.stem.rsplit("-", 1)
                     tf = parts[1] if len(parts) == 2 else ""
@@ -224,7 +221,6 @@ class DataStatusWidget(QWidget):
                         if has_gaps:
                             status = "⚠ Has gaps"
                             color  = _RED
-                            pair_ok = False
                             gap_count += 1
                         elif stale:
                             status = f"⚠ Stale ({int(_days_ago(meta['last_ts']))}d ago)"
@@ -239,7 +235,6 @@ class DataStatusWidget(QWidget):
                         from_str = to_str = candles = gaps_str = "—"
                         status = "No data"
                         color  = _GRAY
-                        pair_ok = False
 
                     row = QTreeWidgetItem(["", tf, from_str, to_str, candles, gaps_str, status])
                     row.setForeground(6, color)

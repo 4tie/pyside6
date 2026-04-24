@@ -66,10 +66,12 @@ class BacktestPage(QWidget):
         self._settings_state = settings_state
         self._backtest_service = BacktestService(settings_state.settings_service)
         self._run_start_time: Optional[float] = None
+        self._restoring: bool = False  # guard against save-during-restore
         self._build_ui()
         self._connect_signals()
         self._refresh_run_picker()
         self._restore_state()
+        self._restore_preferences()  # load saved strategy/timeframe/pairs/timerange
 
     # ------------------------------------------------------------------
     # UI construction
@@ -363,10 +365,11 @@ class BacktestPage(QWidget):
             _log.error("Failed to load run: %s", e)
 
     def _on_config_changed(self, cfg: dict) -> None:
-        """Update command preview when config changes."""
+        """Update command preview when config changes and persist preferences."""
         self._update_command_preview(cfg)
-        # Refresh run picker when strategy changes
         self._refresh_run_picker()
+        if not self._restoring:
+            self._save_preferences()
 
     def _on_settings_changed(self, _=None) -> None:
         """Refresh run picker when settings change."""
@@ -414,6 +417,47 @@ class BacktestPage(QWidget):
         This method exists for backward compatibility with tests.
         """
         _log.debug("_save_preferences_to_settings called (no-op in new design)")
+
+    def _save_preferences(self) -> None:
+        """Persist current form values to AppSettings.backtest_preferences."""
+        settings = self._settings_state.current_settings
+        if settings is None:
+            return
+        cfg = self.run_config_form.get_config()
+        prefs = settings.backtest_preferences.model_copy(update={
+            "last_strategy": cfg.get("strategy", ""),
+            "default_timeframe": cfg.get("timeframe", ""),
+            "default_timerange": cfg.get("timerange", ""),
+            "default_pairs": ",".join(cfg.get("pairs", [])),
+            "dry_run_wallet": self._wallet_spin.value(),
+            "max_open_trades": self._max_trades_spin.value(),
+        })
+        updated = settings.model_copy(update={"backtest_preferences": prefs})
+        self._settings_state.save_settings(updated)
+        _log.debug("Backtest preferences saved")
+
+    def _restore_preferences(self) -> None:
+        """Restore form values from AppSettings.backtest_preferences."""
+        settings = self._settings_state.current_settings
+        if settings is None:
+            return
+        self._restoring = True
+        try:
+            prefs = settings.backtest_preferences
+            pairs = [p.strip() for p in prefs.default_pairs.split(",") if p.strip()]
+            self.run_config_form.set_config({
+                "strategy": prefs.last_strategy,
+                "timeframe": prefs.default_timeframe,
+                "timerange": prefs.default_timerange,
+                "pairs": pairs,
+            })
+            self._wallet_spin.setValue(prefs.dry_run_wallet)
+            self._max_trades_spin.setValue(prefs.max_open_trades)
+            self._refresh_run_picker()
+            _log.debug("Backtest preferences restored: strategy=%s timeframe=%s",
+                       prefs.last_strategy, prefs.default_timeframe)
+        finally:
+            self._restoring = False
 
     # ------------------------------------------------------------------
     # Private helpers

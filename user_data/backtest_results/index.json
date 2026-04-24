@@ -1,8 +1,67 @@
 {
-  "updated_at": "2026-04-24T09:53:09.647775",
+  "updated_at": "2026-04-24T10:58:25.644886",
   "strategies": {
     "MultiMeee": {
       "runs": [
+        {
+          "run_id": "run_2026-04-24_10-58-25_d5b346",
+          "version_id": null,
+          "run_dir": "MultiMeee\\run_2026-04-24_10-58-25_d5b346",
+          "strategy": "MultiMeee",
+          "timeframe": "5m",
+          "pairs": [
+            "ADA/USDT",
+            "ETH/USDT"
+          ],
+          "timerange": "20260101-20260424",
+          "backtest_start": "2026-01-01 00:00:00",
+          "backtest_end": "2026-04-11 00:35:00",
+          "saved_at": "2026-04-24T10:58:25.644886",
+          "profit_total_pct": -8.9597,
+          "profit_total_abs": -8.9597,
+          "starting_balance": 100.0,
+          "final_balance": 91.0403,
+          "max_drawdown_pct": 9.8986,
+          "max_drawdown_abs": 10.0017,
+          "trades_count": 151,
+          "wins": 44,
+          "losses": 107,
+          "win_rate_pct": 29.14,
+          "sharpe": -3.2481,
+          "sortino": -6.4195,
+          "calmar": -17.2929,
+          "profit_factor": 0.7353,
+          "expectancy": -0.0593
+        },
+        {
+          "run_id": "run_2026-04-24_10-58-04_e93f5a",
+          "version_id": null,
+          "run_dir": "MultiMeee\\run_2026-04-24_10-58-04_e93f5a",
+          "strategy": "MultiMeee",
+          "timeframe": "1m",
+          "pairs": [
+            "ETH/USDT"
+          ],
+          "timerange": "20260101-20260424",
+          "backtest_start": "2026-01-01 00:00:00",
+          "backtest_end": "2026-04-15 13:29:00",
+          "saved_at": "2026-04-24T10:58:04.390530",
+          "profit_total_pct": -27.6434,
+          "profit_total_abs": -27.6434,
+          "starting_balance": 100.0,
+          "final_balance": 72.3566,
+          "max_drawdown_pct": 27.7974,
+          "max_drawdown_abs": 27.7974,
+          "trades_count": 353,
+          "wins": 64,
+          "losses": 289,
+          "win_rate_pct": 18.13,
+          "sharpe": -24.746,
+          "sortino": -52.1078,
+          "calmar": -18.2684,
+          "profit_factor": 0.3562,
+          "expectancy": -0.0783
+        },
         {
           "run_id": "run_2026-04-24_09-53-09_e7f703",
           "version_id": null,

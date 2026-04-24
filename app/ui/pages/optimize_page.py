@@ -61,6 +61,7 @@ class OptimizePage(QWidget):
         self._build_ui()
         self._connect_signals()
         self._restore_state()
+        self._restore_preferences()  # load saved strategy/timeframe/pairs/timerange
 
     # ------------------------------------------------------------------
     # UI construction
@@ -192,6 +193,9 @@ class OptimizePage(QWidget):
         self._run_btn.clicked.connect(self._on_run_clicked)
         self._stop_btn.clicked.connect(self._on_stop_clicked)
         self._terminal.process_finished.connect(self._on_process_finished)
+        self.run_config_form.config_changed.connect(self._on_config_changed)
+        self._epochs_spin.valueChanged.connect(self._on_hyperopt_options_changed)
+        self._loss_combo.currentIndexChanged.connect(self._on_hyperopt_options_changed)
 
     # ------------------------------------------------------------------
     # Slots
@@ -259,6 +263,14 @@ class OptimizePage(QWidget):
         else:
             _log.warning("Hyperopt exited with code %d", exit_code)
 
+    def _on_config_changed(self, _cfg: dict) -> None:
+        """Persist preferences when form config changes."""
+        self._save_preferences()
+
+    def _on_hyperopt_options_changed(self, _=None) -> None:
+        """Persist preferences when hyperopt options change."""
+        self._save_preferences()
+
     # ------------------------------------------------------------------
     # Public API
     # ------------------------------------------------------------------
@@ -294,12 +306,61 @@ class OptimizePage(QWidget):
             self.run_config_form.set_config({"pairs": new_pairs})
 
     def _save_preferences(self) -> None:
-        """Persist current form values to optimize preferences (no-op stub).
+        """Persist current form values to AppSettings.optimize_preferences."""
+        settings = self._settings_state.current_settings
+        if settings is None:
+            return
+        cfg = self.run_config_form.get_config()
+        spaces = []
+        for chk, name in [
+            (self._space_buy, "buy"),
+            (self._space_sell, "sell"),
+            (self._space_roi, "roi"),
+            (self._space_stoploss, "stoploss"),
+            (self._space_trailing, "trailing"),
+        ]:
+            if chk.isChecked():
+                spaces.append(name)
+        prefs = settings.optimize_preferences.model_copy(update={
+            "last_strategy": cfg.get("strategy", ""),
+            "default_timeframe": cfg.get("timeframe", ""),
+            "default_timerange": cfg.get("timerange", ""),
+            "default_pairs": ",".join(cfg.get("pairs", [])),
+            "epochs": self._epochs_spin.value(),
+            "hyperopt_loss": self._loss_combo.currentText(),
+            "spaces": ",".join(spaces),
+        })
+        updated = settings.model_copy(update={"optimize_preferences": prefs})
+        self._settings_state.save_settings(updated)
+        _log.debug("Optimize preferences saved")
 
-        The new design persists preferences via settings_state.save_settings().
-        This method exists for backward compatibility with tests.
-        """
-        _log.debug("_save_preferences called (no-op in new design)")
+    def _restore_preferences(self) -> None:
+        """Restore form values from AppSettings.optimize_preferences."""
+        settings = self._settings_state.current_settings
+        if settings is None:
+            return
+        prefs = settings.optimize_preferences
+        pairs = [p.strip() for p in prefs.default_pairs.split(",") if p.strip()]
+        self.run_config_form.set_config({
+            "strategy": prefs.last_strategy,
+            "timeframe": prefs.default_timeframe,
+            "timerange": prefs.default_timerange,
+            "pairs": pairs,
+        })
+        self._epochs_spin.setValue(prefs.epochs)
+        idx = self._loss_combo.findText(prefs.hyperopt_loss)
+        if idx >= 0:
+            self._loss_combo.setCurrentIndex(idx)
+        # Restore spaces checkboxes
+        saved_spaces = {s.strip() for s in prefs.spaces.split(",") if s.strip()}
+        if saved_spaces:
+            self._space_buy.setChecked("buy" in saved_spaces)
+            self._space_sell.setChecked("sell" in saved_spaces)
+            self._space_roi.setChecked("roi" in saved_spaces)
+            self._space_stoploss.setChecked("stoploss" in saved_spaces)
+            self._space_trailing.setChecked("trailing" in saved_spaces)
+        _log.debug("Optimize preferences restored: strategy=%s timeframe=%s",
+                   prefs.last_strategy, prefs.default_timeframe)
 
     # ------------------------------------------------------------------
     # Private helpers
