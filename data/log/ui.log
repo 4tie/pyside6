@@ -4719,3 +4719,16 @@
 2026-04-24 18:07:23.586 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-24_18-04-29_1df3eb  (exists=True)
 2026-04-24 18:07:23.588 | DEBUG    | freqtrade_gui.ui.results       | Loaded 532 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-24_18-04-29_1df3eb/trades.json
 2026-04-24 18:07:24.692 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to backtest
+2026-04-24 18:28:06.837 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to dashboard
+2026-04-24 18:28:06.867 | INFO     | freqtrade_gui.ui.main_window   | ModernMainWindow initialised
+2026-04-24 18:28:07.057 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-24_18-04-29_1df3eb  (exists=True)
+2026-04-24 18:28:07.059 | DEBUG    | freqtrade_gui.ui.results       | Loaded 532 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-24_18-04-29_1df3eb/trades.json
+2026-04-24 18:28:07.124 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-24_18-04-29_1df3eb  (exists=True)
+2026-04-24 18:28:07.126 | DEBUG    | freqtrade_gui.ui.results       | Loaded 532 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-24_18-04-29_1df3eb/trades.json
+2026-04-24 18:28:11.911 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to backtest
+2026-04-24 18:28:12.627 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to results
+2026-04-24 18:29:09.205 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to compare
+2026-04-24 18:29:29.726 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to optimize
+2026-04-24 18:29:31.276 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to download
+2026-04-24 18:29:31.896 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to settings
+2026-04-24 18:29:41.465 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to dashboard
