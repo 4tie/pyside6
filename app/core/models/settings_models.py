@@ -25,6 +25,8 @@ class DownloadPreferences(BaseModel):
         description="Favorite pairs",
     )
     last_timerange_preset: str = Field("30d", description="Last used timerange preset")
+    prepend: bool = Field(False, description="Include --prepend flag in download command")
+    erase: bool = Field(False, description="Include --erase flag in download command")
 
 
 class BacktestPreferences(BaseModel):

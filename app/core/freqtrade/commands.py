@@ -37,19 +37,38 @@ def create_optimize_command(
     settings,
     strategy_name: str,
     timeframe: str,
-    timerange: str,
-    pairs: list[str] | None,
-    extra_flags: list[str],
+    epochs: int,
+    timerange: str | None = None,
+    pairs: list[str] | None = None,
+    spaces: list[str] | None = None,
+    hyperopt_loss: str | None = None,
+    extra_flags: list[str] | None = None,
 ):
-    """Build optimize command with explicit parameters, logging and validation."""
+    """Build optimize command with explicit parameters, logging and validation.
+
+    Args:
+        settings: AppSettings with paths configured.
+        strategy_name: Name of the strategy class to optimise.
+        timeframe: Candle timeframe e.g. '5m', '1h'.
+        epochs: Number of hyperopt epochs to run.
+        timerange: Optional timerange e.g. '20240101-20241231'.
+        pairs: Optional list of trading pairs.
+        spaces: Optional list of hyperopt spaces e.g. ['roi', 'stoploss'].
+        hyperopt_loss: Optional hyperopt loss function name
+            e.g. 'SharpeHyperOptLoss'.
+        extra_flags: Optional additional freqtrade CLI flags.
+    """
     _log.debug("Building optimize command: %s", strategy_name)
     try:
         return _create_optimize(
             settings=settings,
             strategy_name=strategy_name,
             timeframe=timeframe,
+            epochs=epochs,
             timerange=timerange,
             pairs=pairs,
+            spaces=spaces,
+            hyperopt_loss=hyperopt_loss,
             extra_flags=extra_flags,
         )
     except Exception as e:
@@ -62,8 +81,20 @@ def create_download_data_command(
     timerange: str | None = None,
     pairs: list[str] | None = None,
     extra_flags: list[str] | None = None,
+    prepend: bool = False,
+    erase: bool = False,
 ):
-    """Build download data command with explicit parameters, logging and validation."""
+    """Build download data command with explicit parameters, logging and validation.
+
+    Args:
+        settings: AppSettings with paths configured.
+        timeframe: Candle timeframe e.g. '5m', '1h'.
+        timerange: Optional timerange e.g. '20240101-20241231'.
+        pairs: Optional list of trading pairs.
+        extra_flags: Unused; reserved for future extension.
+        prepend: When True, include --prepend flag in the command.
+        erase: When True, include --erase flag in the command.
+    """
     _log.debug("Building download data command")
     try:
         return _create_download(
@@ -71,6 +102,8 @@ def create_download_data_command(
             timeframe=timeframe,
             timerange=timerange,
             pairs=pairs,
+            prepend=prepend,
+            erase=erase,
         )
     except Exception as e:
         _log.error("Failed to build download data command: %s", e)

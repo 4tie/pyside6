@@ -64,4 +64,4 @@ class OptimizeRunCommand(RunCommand):
 class DownloadDataRunCommand(RunCommand):
     """RunCommand extended with download-data-specific paths."""
     config_file: str
-    strategy_file: str
+    strategy_file: Optional[str] = None

@@ -9,7 +9,10 @@ python-dotenv>=1.0.0
 fastapi>=0.104.0
 uvicorn[standard]>=0.24.0
 python-multipart
-
+sse_starlette
+numpy
+pyqtgraph
+requests
 
 # ── Dev / Test ─────────────────────────────────────────────────────────────────
 pytest>=7.4.0

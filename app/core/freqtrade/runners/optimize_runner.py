@@ -3,7 +3,7 @@ from typing import List, Optional
 from app.core.freqtrade.resolvers.runtime_resolver import find_run_paths
 from app.core.freqtrade.runners.base_runner import create_command
 from app.core.models.settings_models import AppSettings
-from app.core.models.command_models import OptimizeRunCommand, RunCommand
+from app.core.models.command_models import OptimizeRunCommand
 
 
 def create_optimize_command(
@@ -40,11 +40,15 @@ def create_optimize_command(
     if extra_flags:
         ft_args += list(extra_flags)
 
+    export_dir = paths.user_data_dir / "hyperopt_results"
+    export_dir.mkdir(parents=True, exist_ok=True)
+
     base = create_command(settings, *ft_args)
     return OptimizeRunCommand(
         program=base.program,
         args=base.args,
         cwd=base.cwd,
+        export_dir=str(export_dir),
         config_file=str(paths.config_file),
         strategy_file=str(paths.strategy_file),
     )

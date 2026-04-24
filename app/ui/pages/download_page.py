@@ -2,7 +2,8 @@
 from __future__ import annotations
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
-    QComboBox, QLineEdit, QFormLayout, QFrame, QSplitter, QListWidget
+    QComboBox, QLineEdit, QFormLayout, QFrame, QSplitter, QListWidget,
+    QCheckBox,
 )
 from PySide6.QtCore import Qt, Signal, Slot
 
@@ -106,6 +107,11 @@ class DownloadPage(QWidget):
 
         cl.addLayout(form)
 
+        self._prepend_cb = QCheckBox("Prepend data")
+        self._erase_cb = QCheckBox("Erase existing data")
+        cl.addWidget(self._prepend_cb)
+        cl.addWidget(self._erase_cb)
+
         cl.addWidget(self._section("Pairs"))
 
         pair_row = QHBoxLayout()
@@ -167,6 +173,8 @@ class DownloadPage(QWidget):
         splitter.setSizes([320, 680])
         root.addWidget(splitter, 1)
 
+        self._restore_preferences()
+
     def _section(self, text: str) -> QLabel:
         lbl = QLabel(text)
         lbl.setStyleSheet(
@@ -222,10 +230,14 @@ class DownloadPage(QWidget):
                 timeframe=self._tf_combo.currentText(),
                 timerange=timerange,
                 pairs=pairs,
+                prepend=self._prepend_cb.isChecked(),
+                erase=self._erase_cb.isChecked(),
             )
         except Exception as e:
             self._terminal.append_info(f"⚠ {e}", theme.RED)
             return
+
+        self._save_preferences()
 
         self._running = True
         self._run_btn.setEnabled(False)
@@ -268,3 +280,17 @@ class DownloadPage(QWidget):
         self._running = False
         self._run_btn.setEnabled(True)
         self._stop_btn.setEnabled(False)
+
+    def _save_preferences(self) -> None:
+        """Persist current checkbox states to DownloadPreferences."""
+        settings = self._settings_svc.load_settings()
+        settings.download_preferences.prepend = self._prepend_cb.isChecked()
+        settings.download_preferences.erase = self._erase_cb.isChecked()
+        self._settings_svc.save_settings(settings)
+
+    def _restore_preferences(self) -> None:
+        """Restore checkbox states from persisted DownloadPreferences."""
+        settings = self._settings_svc.load_settings()
+        prefs = settings.download_preferences
+        self._prepend_cb.setChecked(prefs.prepend)
+        self._erase_cb.setChecked(prefs.erase)
