@@ -7,14 +7,16 @@ from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
     QComboBox, QTableWidget, QTableWidgetItem, QHeaderView,
     QSplitter, QFrame, QTabWidget, QScrollArea, QSizePolicy,
-    QAbstractItemView
+    QAbstractItemView, QDialog, QMessageBox
 )
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QColor
 
 from app.app_state.settings_state import SettingsState
 from app.core.backtests.results_index import IndexStore
+from app.core.services.rollback_service import RollbackService
 from app.ui import theme
+from app.ui.dialogs.rollback_dialog import RollbackDialog
 from app.ui.widgets.stat_card import StatCard
 from app.ui.widgets.charts import EquityCurveChart, ProfitBarChart, WinRateDonut, PairProfitChart
 from app.core.utils.app_logger import get_logger
@@ -109,6 +111,7 @@ class ResultsPage(QWidget):
         self._state = settings_state
         self._current_run: Optional[dict] = None
         self._all_runs: List[dict] = []
+        self._rollback_service = RollbackService()
         self._build()
         QTimer.singleShot(300, self.refresh)
 
@@ -138,6 +141,13 @@ class ResultsPage(QWidget):
         refresh_btn.setFixedSize(100, 32)
         refresh_btn.clicked.connect(self.refresh)
         hdr.addWidget(refresh_btn)
+
+        self._rollback_btn = QPushButton("⏪  Rollback")
+        self._rollback_btn.setFixedSize(110, 32)
+        self._rollback_btn.setVisible(False)
+        self._rollback_btn.clicked.connect(self._on_rollback_clicked)
+        hdr.addWidget(self._rollback_btn)
+
         root.addLayout(hdr)
 
         # Main splitter
@@ -417,7 +427,7 @@ class ResultsPage(QWidget):
         def _reflow(event=None):
             """Reposition badge labels in a flow-wrap pattern."""
             if event is not None:
-                super(type(container), container).resizeEvent(event)
+                QWidget.resizeEvent(container, event)
             x, y = 0, 0
             h_gap, v_gap = 6, 4
             row_height = 0
@@ -626,13 +636,109 @@ class ResultsPage(QWidget):
     # ------------------------------------------------------------------
     def _on_run_selected(self, row: int):
         if row < 0:
+            self._rollback_btn.setVisible(False)
             return
         item = self._run_table.item(row, 0)
         if not item:
+            self._rollback_btn.setVisible(False)
             return
         run = item.data(Qt.UserRole)
         if run:
             self._load_run_detail(run)
+            self._update_rollback_button(run)
+
+    # ------------------------------------------------------------------
+    def _update_rollback_button(self, run: dict) -> None:
+        """Show/enable/disable the rollback button based on run and settings state."""
+        settings = self._state.current_settings
+        br_dir = run.get("_br_dir", "")
+        run_dir = _run_dir_path(br_dir, run)
+
+        self._rollback_btn.setVisible(True)
+
+        user_data_path = settings.user_data_path if settings else None
+        if not user_data_path:
+            self._rollback_btn.setEnabled(False)
+            self._rollback_btn.setToolTip("user_data path not configured")
+            return
+
+        has_params = (run_dir / "params.json").exists()
+        has_config = (run_dir / "config.snapshot.json").exists()
+
+        if not has_params and not has_config:
+            self._rollback_btn.setEnabled(False)
+            self._rollback_btn.setToolTip("No restorable files found")
+            return
+
+        self._rollback_btn.setEnabled(True)
+        self._rollback_btn.setToolTip("")
+
+    # ------------------------------------------------------------------
+    def _on_rollback_clicked(self) -> None:
+        """Handle Rollback button click — open dialog, call service, show feedback."""
+        if self._current_run is None:
+            return
+
+        settings = self._state.current_settings
+        if not settings or not settings.user_data_path:
+            return
+
+        run = self._current_run
+        br_dir = run.get("_br_dir", "")
+        run_dir = _run_dir_path(br_dir, run)
+        strategy_name = run.get("strategy", "")
+        run_id = run.get("run_id", run_dir.name)
+        user_data_path = Path(settings.user_data_path)
+
+        has_params = (run_dir / "params.json").exists()
+        has_config = (run_dir / "config.snapshot.json").exists()
+        params_path = user_data_path / "strategies" / f"{strategy_name}.json"
+        config_path = user_data_path / "config.json"
+
+        dlg = RollbackDialog(
+            strategy_name=strategy_name,
+            run_id=run_id,
+            has_params=has_params,
+            has_config=has_config,
+            params_path=params_path,
+            config_path=config_path,
+            parent=self,
+        )
+
+        if dlg.exec() != QDialog.Accepted:
+            _log.debug("Rollback cancelled by user")
+            return
+
+        try:
+            result = self._rollback_service.rollback(
+                run_dir=run_dir,
+                user_data_path=user_data_path,
+                strategy_name=strategy_name,
+                restore_params=dlg.restore_params,
+                restore_config=dlg.restore_config,
+            )
+
+            # Build success message
+            restored_files = []
+            if result.params_restored and result.params_path:
+                restored_files.append(str(result.params_path))
+            if result.config_restored and result.config_path:
+                restored_files.append(str(result.config_path))
+
+            files_str = "\n".join(f"  • {f}" for f in restored_files)
+            msg = (
+                f"Rollback successful!\n\n"
+                f"Rolled back to: {result.rolled_back_to}\n\n"
+                f"Restored files:\n{files_str}"
+            )
+            QMessageBox.information(self, "Rollback Complete", msg)
+
+        except FileNotFoundError as exc:
+            QMessageBox.critical(self, "Rollback Failed", f"Run directory not found: {exc}")
+        except ValueError as exc:
+            QMessageBox.critical(self, "Rollback Failed", str(exc))
+        except Exception as exc:
+            QMessageBox.critical(self, "Rollback Failed", f"Unexpected error: {exc}")
 
     # ------------------------------------------------------------------
     def _load_run_detail(self, run: dict):

@@ -52,14 +52,13 @@ class TestRollbackServiceHappyPath:
         user_data = _make_user_data(tmp_path)
         svc = RollbackService()
 
-        result = svc.rollback(run_dir, user_data, "MyStrategy")
+        result = svc.rollback(run_dir, user_data, "MyStrategy",
+                              restore_params=True, restore_config=True)
 
-        assert result.success is True
         assert result.params_restored is True
         assert result.config_restored is True
         assert result.strategy_name == "MyStrategy"
         assert result.rolled_back_to == run_dir.name
-        assert result.error is None
 
         # Verify files were actually written
         assert (user_data / "strategies" / "MyStrategy.json").exists()
@@ -72,9 +71,9 @@ class TestRollbackServicePartialFiles:
         user_data = _make_user_data(tmp_path)
         svc = RollbackService()
 
-        result = svc.rollback(run_dir, user_data, "MyStrategy")
+        result = svc.rollback(run_dir, user_data, "MyStrategy",
+                              restore_params=False, restore_config=True)
 
-        assert result.success is True
         assert result.params_restored is False
         assert result.config_restored is True
         assert not (user_data / "strategies" / "MyStrategy.json").exists()
@@ -85,9 +84,9 @@ class TestRollbackServicePartialFiles:
         user_data = _make_user_data(tmp_path)
         svc = RollbackService()
 
-        result = svc.rollback(run_dir, user_data, "MyStrategy")
+        result = svc.rollback(run_dir, user_data, "MyStrategy",
+                              restore_params=True, restore_config=False)
 
-        assert result.success is True
         assert result.params_restored is True
         assert result.config_restored is False
         assert (user_data / "strategies" / "MyStrategy.json").exists()
@@ -143,9 +142,11 @@ def test_rollback_file_fidelity(params, config):
         (user_data / "strategies").mkdir(parents=True)
 
         svc = RollbackService()
-        result = svc.rollback(run_dir, user_data, "MyStrategy")
+        result = svc.rollback(run_dir, user_data, "MyStrategy",
+                              restore_params=True, restore_config=True)
 
-        assert result.success is True
+        assert result.params_restored is True
+        assert result.config_restored is True
 
         restored_params = parse_json_file(user_data / "strategies" / "MyStrategy.json")
         restored_config = parse_json_file(user_data / "config.json")
