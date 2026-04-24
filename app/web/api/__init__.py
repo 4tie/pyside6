@@ -1,1 +1,1 @@
-"""API routes and WebSocket endpoints."""
+"""API routes."""

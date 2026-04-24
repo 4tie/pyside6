@@ -36,25 +36,26 @@ from app.core.services.loop_service import (
 )
 from app.core.services.process_service import ProcessService
 from app.core.utils.app_logger import get_logger
+from app.ui.theme import PALETTE as _THEME_PALETTE
 from app.ui.widgets.iteration_history_row import IterationHistoryRow
 from app.ui.widgets.terminal_widget import TerminalWidget
 
 _log = get_logger("ui.loop_page")
 
 # ---------------------------------------------------------------------------
-# Color palette
+# Color palette — sourced from the centralised theme (dark palette)
 # ---------------------------------------------------------------------------
-_C_GREEN       = "#4ec9a0"
-_C_RED         = "#f44747"
-_C_ORANGE      = "#ce9178"
-_C_YELLOW      = "#dcdcaa"
-_C_AMBER       = "#e5a000"
-_C_DARK_BG     = "#1e1e1e"
-_C_CARD_BG     = "#252526"
-_C_ELEVATED    = "#2d2d30"
-_C_BORDER      = "#3e3e42"
-_C_TEXT        = "#d4d4d4"
-_C_TEXT_DIM    = "#9d9d9d"
+_C_GREEN       = _THEME_PALETTE["success"]
+_C_RED         = _THEME_PALETTE["danger"]
+_C_ORANGE      = _THEME_PALETTE["warning"]
+_C_YELLOW      = "#dcdcaa"   # VS Code yellow — no direct theme key, kept as-is
+_C_AMBER       = "#e5a000"   # amber accent — no direct theme key, kept as-is
+_C_DARK_BG     = _THEME_PALETTE["bg_base"]
+_C_CARD_BG     = _THEME_PALETTE["bg_surface"]
+_C_ELEVATED    = _THEME_PALETTE["bg_elevated"]
+_C_BORDER      = _THEME_PALETTE["border"]
+_C_TEXT        = _THEME_PALETTE["text_primary"]
+_C_TEXT_DIM    = _THEME_PALETTE["text_secondary"]
 
 _TIMERANGE_PRESETS = ["7d", "14d", "30d", "90d", "120d", "360d"]
 _HYPEROPT_SPACES   = ["buy", "sell", "roi", "stoploss", "trailing"]
@@ -112,7 +113,7 @@ class _StatCard(QFrame):
         lbl.setStyleSheet(f"color:{_C_TEXT_DIM};font-size:9px;font-weight:600;letter-spacing:1px;")
         lbl.setAlignment(Qt.AlignCenter)
         lay.addWidget(lbl)
-        self._val = QLabel("—")
+        self._val = QLabel("\u2014")
         self._val.setStyleSheet(f"color:{_C_TEXT};font-size:17px;font-weight:bold;")
         self._val.setAlignment(Qt.AlignCenter)
         lay.addWidget(self._val)
@@ -130,13 +131,12 @@ class _GateIndicator(QFrame):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setStyleSheet(f"background:{_C_CARD_BG}; border-radius:4px;")
         lay = QHBoxLayout(self)
         lay.setContentsMargins(4, 2, 4, 2)
         lay.setSpacing(4)
         self._slots: List[QLabel] = []
         for label in self._GATE_LABELS:
-            slot = QLabel(f"○{label}")
+            slot = QLabel(f"\u25cb{label}")
             slot.setStyleSheet(f"color:{_C_TEXT_DIM};font-size:9px;font-weight:bold;")
             slot.setAlignment(Qt.AlignCenter)
             slot.setToolTip(label)
@@ -145,26 +145,26 @@ class _GateIndicator(QFrame):
 
     def reset(self) -> None:
         for i, slot in enumerate(self._slots):
-            slot.setText(f"○{self._GATE_LABELS[i]}")
+            slot.setText(f"\u25cb{self._GATE_LABELS[i]}")
             slot.setStyleSheet(f"color:{_C_TEXT_DIM};font-size:9px;font-weight:bold;")
             slot.setToolTip(self._GATE_LABELS[i])
 
     def set_running(self, gate_name: str) -> None:
         idx = self._gate_index(gate_name)
         if idx >= 0:
-            self._slots[idx].setText(f"⟳{self._GATE_LABELS[idx]}")
+            self._slots[idx].setText(f"\u27f3{self._GATE_LABELS[idx]}")
             self._slots[idx].setStyleSheet(f"color:{_C_YELLOW};font-size:9px;font-weight:bold;")
 
     def set_passed(self, gate_name: str) -> None:
         idx = self._gate_index(gate_name)
         if idx >= 0:
-            self._slots[idx].setText(f"✓{self._GATE_LABELS[idx]}")
+            self._slots[idx].setText(f"\u2713{self._GATE_LABELS[idx]}")
             self._slots[idx].setStyleSheet(f"color:{_C_GREEN};font-size:9px;font-weight:bold;")
 
     def set_failed(self, gate_name: str, reason: str = "") -> None:
         idx = self._gate_index(gate_name)
         if idx >= 0:
-            self._slots[idx].setText(f"✗{self._GATE_LABELS[idx]}")
+            self._slots[idx].setText(f"\u2717{self._GATE_LABELS[idx]}")
             self._slots[idx].setStyleSheet(f"color:{_C_RED};font-size:9px;font-weight:bold;")
             if reason:
                 self._slots[idx].setToolTip(reason)
@@ -184,13 +184,12 @@ class _WorkflowIndicator(QFrame):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setStyleSheet(f"background:{_C_CARD_BG}; border-radius:4px;")
         lay = QHBoxLayout(self)
         lay.setContentsMargins(4, 2, 4, 2)
         lay.setSpacing(4)
         self._slots: List[QLabel] = []
         for label in self._STAGE_LABELS:
-            slot = QLabel(f"○{label}")
+            slot = QLabel(f"\u25cb{label}")
             slot.setStyleSheet(f"color:{_C_TEXT_DIM};font-size:9px;font-weight:bold;")
             slot.setAlignment(Qt.AlignCenter)
             slot.setToolTip(label)
@@ -199,20 +198,20 @@ class _WorkflowIndicator(QFrame):
 
     def reset(self) -> None:
         for i, slot in enumerate(self._slots):
-            slot.setText(f"○{self._STAGE_LABELS[i]}")
+            slot.setText(f"\u25cb{self._STAGE_LABELS[i]}")
             slot.setStyleSheet(f"color:{_C_TEXT_DIM};font-size:9px;font-weight:bold;")
             slot.setToolTip(self._STAGE_LABELS[i])
 
     def set_running(self, stage_name: str) -> None:
         idx = self._stage_index(stage_name)
         if idx >= 0:
-            self._slots[idx].setText(f"⟳{self._STAGE_LABELS[idx]}")
+            self._slots[idx].setText(f"\u27f3{self._STAGE_LABELS[idx]}")
             self._slots[idx].setStyleSheet(f"color:{_C_YELLOW};font-size:9px;font-weight:bold;")
 
     def set_completed(self, stage_name: str) -> None:
         idx = self._stage_index(stage_name)
         if idx >= 0:
-            self._slots[idx].setText(f"✓{self._STAGE_LABELS[idx]}")
+            self._slots[idx].setText(f"\u2713{self._STAGE_LABELS[idx]}")
             self._slots[idx].setStyleSheet(f"color:{_C_GREEN};font-size:9px;font-weight:bold;")
 
     def _stage_index(self, stage_name: str) -> int:
@@ -294,42 +293,8 @@ class LoopPage(QWidget):
     # ------------------------------------------------------------------
 
     def _init_ui(self) -> None:
-        self.setStyleSheet(f"""
-            QWidget {{ background:{_C_DARK_BG}; color:{_C_TEXT}; }}
-            QGroupBox {{
-                background:{_C_CARD_BG}; border:1px solid {_C_BORDER};
-                border-radius:8px; margin-top:10px;
-                font-weight:bold; font-size:12px; color:{_C_TEXT}; padding-top:6px;
-            }}
-            QGroupBox::title {{
-                subcontrol-origin:margin; left:12px; padding:0 4px;
-                color:{_C_TEXT_DIM}; font-size:11px; letter-spacing:1px;
-            }}
-            QComboBox {{
-                background:{_C_CARD_BG}; border:1px solid {_C_BORDER};
-                border-radius:4px; padding:4px 8px; color:{_C_TEXT};
-            }}
-            QComboBox:hover {{ border-color:{_C_GREEN}; }}
-            QComboBox QAbstractItemView {{
-                background:{_C_CARD_BG}; border:1px solid {_C_BORDER};
-                selection-background-color:{_C_GREEN};
-            }}
-            QSpinBox, QDoubleSpinBox, QLineEdit {{
-                background:{_C_CARD_BG}; border:1px solid {_C_BORDER};
-                border-radius:4px; padding:3px 6px; color:{_C_TEXT};
-            }}
-            QSpinBox:hover, QDoubleSpinBox:hover, QLineEdit:hover {{ border-color:{_C_GREEN}; }}
-            QCheckBox {{ color:{_C_TEXT}; font-size:11px; }}
-            QScrollArea {{ border:none; background:{_C_DARK_BG}; }}
-            QScrollBar:vertical {{
-                background:{_C_CARD_BG}; width:8px; border-radius:4px;
-            }}
-            QScrollBar::handle:vertical {{
-                background:{_C_BORDER}; border-radius:4px; min-height:20px;
-            }}
-            QScrollBar::handle:vertical:hover {{ background:{_C_GREEN}; }}
-            QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {{ height:0; }}
-        """)
+        # Note: Most styling is handled by the global QSS from theme.py.
+        # Only custom objectName-specific styles are set inline here.
 
         root = QVBoxLayout(self)
         root.setContentsMargins(8, 8, 8, 8)
@@ -337,19 +302,14 @@ class LoopPage(QWidget):
 
         # Config guard banner
         self._no_config_banner = QLabel("")
+        self._no_config_banner.setObjectName("warning_banner")
         self._no_config_banner.setWordWrap(True)
-        self._no_config_banner.setStyleSheet(f"""
-            QLabel {{
-                background:{_C_ELEVATED}; border-left:3px solid {_C_ORANGE};
-                border-radius:4px; color:{_C_TEXT}; font-size:12px; padding:8px 12px;
-            }}
-        """)
         self._no_config_banner.setVisible(False)
         root.addWidget(self._no_config_banner)
 
         # Title
         title = QLabel("Strategy Lab")
-        title.setStyleSheet(f"color:{_C_TEXT};font-size:15px;font-weight:bold;padding:2px 0;")
+        title.setObjectName("page_title")
         root.addWidget(title)
 
         # Config panel (scrollable)
@@ -358,7 +318,6 @@ class LoopPage(QWidget):
         config_scroll.setMaximumHeight(420)
         config_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         config_inner = QWidget()
-        config_inner.setStyleSheet(f"background:{_C_DARK_BG};")
         config_vlay = QVBoxLayout(config_inner)
         config_vlay.setContentsMargins(0, 0, 0, 0)
         config_vlay.setSpacing(6)
@@ -370,18 +329,11 @@ class LoopPage(QWidget):
         # Control row
         root.addLayout(self._build_control_row())
 
-        # Progress bar
+        # Progress bar — use theme accent color
         self._progress_bar = QProgressBar()
         self._progress_bar.setRange(0, 100)
         self._progress_bar.setValue(0)
         self._progress_bar.setFixedHeight(14)
-        self._progress_bar.setStyleSheet(f"""
-            QProgressBar {{
-                background:{_C_BORDER}; border-radius:7px; border:none;
-                text-align:center; font-size:9px; color:{_C_TEXT_DIM};
-            }}
-            QProgressBar::chunk {{ background:{_C_GREEN}; border-radius:7px; }}
-        """)
         root.addWidget(self._progress_bar)
 
         # Stat cards
@@ -405,7 +357,6 @@ class LoopPage(QWidget):
 
         # Splitter: history + terminal
         splitter = QSplitter(Qt.Vertical)
-        splitter.setStyleSheet(f"QSplitter::handle {{ background:{_C_BORDER}; height:4px; }}")
         splitter.addWidget(self._build_history_panel())
         splitter.addWidget(self._build_terminal_panel())
         splitter.setSizes([300, 200])
@@ -430,7 +381,7 @@ class LoopPage(QWidget):
         row.addStretch()
 
         self._status_lbl = QLabel("Idle")
-        self._status_lbl.setStyleSheet(f"color:{_C_TEXT_DIM};font-size:11px;")
+        self._status_lbl.setObjectName("hint_label")
         row.addWidget(self._status_lbl)
 
         return row
@@ -452,14 +403,13 @@ class LoopPage(QWidget):
 
     def _build_history_panel(self) -> QWidget:
         w = QWidget()
-        w.setStyleSheet(f"background:{_C_DARK_BG};")
         lay = QVBoxLayout(w)
         lay.setContentsMargins(0, 0, 0, 0)
         lay.setSpacing(4)
 
         hdr = QHBoxLayout()
         title = QLabel("Iteration History")
-        title.setStyleSheet(f"color:{_C_TEXT};font-size:12px;font-weight:bold;")
+        title.setStyleSheet("font-weight:bold;")
         hdr.addWidget(title)
         hdr.addStretch()
         lay.addLayout(hdr)
@@ -470,15 +420,12 @@ class LoopPage(QWidget):
         self._history_scroll.setMinimumHeight(180)
 
         self._history_content = QWidget()
-        self._history_content.setStyleSheet(f"background:{_C_DARK_BG};")
         self._history_vlay = QVBoxLayout(self._history_content)
         self._history_vlay.setContentsMargins(2, 2, 2, 2)
         self._history_vlay.setSpacing(4)
 
-        self._empty_history_lbl = QLabel("No iterations yet — start the loop to begin.")
-        self._empty_history_lbl.setStyleSheet(
-            f"color:{_C_TEXT_DIM};font-size:12px;font-style:italic;padding:16px;"
-        )
+        self._empty_history_lbl = QLabel("No iterations yet \u2014 start the loop to begin.")
+        self._empty_history_lbl.setObjectName("hint_label")
         self._empty_history_lbl.setAlignment(Qt.AlignCenter)
         self._history_vlay.addWidget(self._empty_history_lbl)
         self._history_vlay.addStretch()
@@ -489,12 +436,11 @@ class LoopPage(QWidget):
 
     def _build_terminal_panel(self) -> QWidget:
         w = QWidget()
-        w.setStyleSheet(f"background:{_C_DARK_BG};")
         lay = QVBoxLayout(w)
         lay.setContentsMargins(0, 0, 0, 0)
         lay.setSpacing(2)
         hdr = QLabel("Live Output")
-        hdr.setStyleSheet(f"color:{_C_TEXT};font-size:12px;font-weight:bold;padding:2px 0;")
+        hdr.setStyleSheet("font-weight:bold;")
         lay.addWidget(hdr)
         lay.addWidget(self._terminal, 1)
         return w
@@ -508,17 +454,16 @@ class LoopPage(QWidget):
 
         self._best_summary_lbl = QLabel("")
         self._best_summary_lbl.setWordWrap(True)
-        self._best_summary_lbl.setStyleSheet(f"color:{_C_TEXT};font-size:12px;")
         lay.addWidget(self._best_summary_lbl)
 
         self._best_score_lbl = QLabel("")
         self._best_score_lbl.setWordWrap(True)
-        self._best_score_lbl.setStyleSheet(f"color:{_C_TEXT_DIM};font-size:11px;")
+        self._best_score_lbl.setObjectName("hint_label")
         lay.addWidget(self._best_score_lbl)
 
         self._best_delta_lbl = QLabel("")
         self._best_delta_lbl.setWordWrap(True)
-        self._best_delta_lbl.setStyleSheet(f"color:{_C_TEXT_DIM};font-size:11px;")
+        self._best_delta_lbl.setObjectName("hint_label")
         lay.addWidget(self._best_delta_lbl)
 
         btn_row = QHBoxLayout()

@@ -118,7 +118,8 @@ async function loadDiagnosis(runId) {
     }
   } catch (error) {
     console.error('Failed to load diagnosis:', error);
-    diagnosisContent.innerHTML = '<p class="error">Failed to load diagnosis.</p>';
+    const errorMsg = error?.message || error?.toString() || 'Unknown error';
+    diagnosisContent.innerHTML = `<p class="error">Failed to load diagnosis: ${errorMsg}</p>`;
   }
 }
 

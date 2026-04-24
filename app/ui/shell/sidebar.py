@@ -6,7 +6,7 @@ and expanded (200 px) modes.
 """
 from __future__ import annotations
 
-from PySide6.QtCore import QEasingCurve, QPropertyAnimation, Qt, Signal
+from PySide6.QtCore import QEasingCurve, QPropertyAnimation, Signal
 from PySide6.QtWidgets import (
     QPushButton,
     QSizePolicy,
@@ -16,7 +16,7 @@ from PySide6.QtWidgets import (
 )
 
 from app.core.utils.app_logger import get_logger
-from app.ui.theme import FONT, PALETTE, SPACING
+from app.ui.theme import PALETTE, SPACING
 
 _log = get_logger("ui.sidebar")
 
@@ -124,11 +124,24 @@ class NavSidebar(QWidget):
         self.setMaximumWidth(_WIDTH_EXPANDED)
         self.setMinimumWidth(_WIDTH_COLLAPSED)
 
-        # Stylesheet for the sidebar background
-        self.setStyleSheet(
-            f"background-color: {PALETTE['bg_surface']};"
-            f"border-right: 1px solid {PALETTE['border']};"
-        )
+        # Scoped stylesheet — prevents child buttons from inheriting global QWidget bg
+        self.setObjectName("NavSidebar")
+        self.setStyleSheet(f"""
+            QWidget#NavSidebar {{
+                background-color: {PALETTE['bg_surface']};
+                border-right: 1px solid {PALETTE['border']};
+            }}
+            QWidget#NavSidebar QToolButton {{
+                background-color: transparent;
+                border: none;
+                color: {PALETTE['text_secondary']};
+                padding: 4px;
+            }}
+            QWidget#NavSidebar QToolButton:hover {{
+                background-color: {PALETTE['bg_elevated']};
+                border-radius: 4px;
+            }}
+        """)
 
     def _make_click_handler(self, page_id: str):
         """Return a slot that emits nav_item_clicked with *page_id*."""

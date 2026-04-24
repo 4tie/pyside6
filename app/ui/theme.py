@@ -46,16 +46,16 @@ class ThemeMode(Enum):
 
 PALETTE: Final[dict] = {
     # Backgrounds — neutral grays, no blue tint
-    "bg_base":      "#1e1e1e",
-    "bg_surface":   "#252526",
-    "bg_elevated":  "#2d2d30",
-    "bg_card":      "#333337",
+    "bg_base":      "#1a1a1a",   # slightly deeper for better contrast
+    "bg_surface":   "#242424",   # sidebar / left panels
+    "bg_elevated":  "#2c2c2c",   # inputs, raised cards
+    "bg_card":      "#323232",   # metric cards, table rows
     # Borders
-    "border":       "#3e3e42",
+    "border":       "#3a3a3a",
     "border_focus": "#4ec9a0",
     # Text
-    "text_primary":   "#d4d4d4",
-    "text_secondary": "#9d9d9d",
+    "text_primary":   "#e0e0e0",   # slightly brighter for readability
+    "text_secondary": "#9a9a9a",
     "text_disabled":  "#555558",
     # Accent — mint green, never blue
     "accent":         "#4ec9a0",
@@ -328,6 +328,7 @@ QPlainTextEdit:focus, QTextEdit:focus {{
 QLabel {{
     color: {p["text_primary"]};
     background-color: transparent;
+    border: none;
 }}
 
 QLabel#hint_label {{
@@ -571,7 +572,17 @@ QMenu::item:selected {{
 /* ── Misc ───────────────────────────────────────────────────────────── */
 QScrollArea {{
     border: none;
-    background-color: transparent;
+    background-color: {p["bg_surface"]};
+}}
+
+/* Left panel scroll areas keep surface background */
+QScrollArea#left_panel_scroll {{
+    background-color: {p["bg_surface"]};
+    border-right: 1px solid {p["border"]};
+}}
+
+QScrollArea#left_panel_scroll QWidget#left_panel_content {{
+    background-color: {p["bg_surface"]};
 }}
 
 QSplitter::handle {{

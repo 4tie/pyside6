@@ -1,6 +1,6 @@
 """FastAPI application for the web-based front-end.
 
-Provides REST API endpoints and WebSocket connections for real-time updates.
+Provides REST API endpoints for the web-based UI.
 Serves static files from app/web/static/ for the browser-based UI.
 """
 from pathlib import Path
@@ -11,7 +11,6 @@ from fastapi.middleware.cors import CORSMiddleware
 
 # Import route handlers
 from app.web.api.routes import runs, strategies, diagnosis, comparison, settings, loop, diff, backtest
-from app.web.api.websocket import backtest as backtest_ws, loop as loop_ws
 
 # Create FastAPI app
 app = FastAPI(
@@ -61,18 +60,6 @@ app.include_router(settings.router, prefix="/api", tags=["settings"])
 app.include_router(loop.router, prefix="/api", tags=["loop"])
 app.include_router(diff.router, prefix="/api", tags=["diff"])
 app.include_router(backtest.router, prefix="/api", tags=["backtest"])
-
-# Register WebSocket handlers using decorator pattern
-from app.web.api.websocket import backtest as backtest_ws, loop as loop_ws
-
-@app.websocket("/ws/backtest")
-async def backtest_websocket(websocket):
-    await backtest_ws.websocket_endpoint(websocket)
-
-@app.websocket("/ws/loop")
-async def loop_websocket(websocket):
-    await loop_ws.websocket_endpoint(websocket)
-
 
 if __name__ == "__main__":
     import uvicorn

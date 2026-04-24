@@ -102,7 +102,7 @@ class StrategyPage(QWidget):
         # Main splitter
         self._splitter = QSplitter(Qt.Horizontal)
         self._splitter.setHandleWidth(4)
-        root.addWidget(self._splitter)
+        root.addWidget(self._splitter, 1)
 
         # ── Left panel — strategy list ─────────────────────────────────
         left_widget = QWidget()
@@ -163,8 +163,9 @@ class StrategyPage(QWidget):
         self._detail_tabs.addTab(history_widget, "History")
 
         self._splitter.addWidget(self._detail_tabs)
-        self._splitter.setStretchFactor(0, 0)
-        self._splitter.setStretchFactor(1, 1)
+        self._splitter.setStretchFactor(0, 1)
+        self._splitter.setStretchFactor(1, 3)
+        self._splitter.setSizes([250, 750])
 
     # ------------------------------------------------------------------
     # Signal connections
@@ -344,11 +345,14 @@ class StrategyPage(QWidget):
             self._history_table.setItem(row, 3, QTableWidgetItem(saved))
 
     def _restore_state(self) -> None:
-        """Restore splitter state from QSettings."""
+        """Restore splitter state from QSettings, falling back to default sizes."""
         qs = QSettings(_QSETTINGS_ORG, _QSETTINGS_APP)
         state = qs.value(_SPLITTER_KEY)
         if state is not None:
-            self._splitter.restoreState(state)
+            restored = self._splitter.restoreState(state)
+            sizes = self._splitter.sizes()
+            if not restored or not sizes or sizes[0] < 100:
+                self._splitter.setSizes([250, 750])
 
     def _save_state(self) -> None:
         """Persist splitter state to QSettings."""

@@ -27,9 +27,16 @@ from app.web.models import (
     BacktestConfigRequest,
     BacktestConfigResponse,
 )
-from app.web.api.websocket.backtest import manager
-
 router = APIRouter()
+
+# Simple in-memory status tracking for polling fallback
+_backtest_status = {"status": "idle", "run_id": None, "message": ""}
+
+def update_backtest_status(status: str, run_id: str = None, message: str = ""):
+    """Update backtest status for polling."""
+    _backtest_status["status"] = status
+    _backtest_status["run_id"] = run_id
+    _backtest_status["message"] = message
 
 # Common trading pairs from Binance
 COMMON_PAIRS = [
@@ -85,36 +92,32 @@ async def download_data(
     
     # Build environment with venv
     env = ProcessService.build_environment(app_settings.venv_path)
-    
-    import asyncio
+    full_command = command.as_list()
     
     def stream_output(line: str):
-        asyncio.create_task(manager.send_log(line))
+        pass
     
     def stream_error(line: str):
-        asyncio.create_task(manager.send_log(line))
+        pass
     
     def on_finished(exit_code: int):
-        if exit_code == 0:
-            asyncio.create_task(manager.send_complete("", True))
-        else:
-            asyncio.create_task(manager.send_error("Download failed", f"Process exited with code: {exit_code}"))
+        pass
     
     # Execute command in background
     def execute_download():
         try:
             process_service.execute_command(
-                command=command.args,
+                command=full_command,
                 on_output=stream_output,
                 on_error=stream_error,
                 on_finished=on_finished,
                 working_directory=command.cwd,
                 env=env
             )
-        except FileNotFoundError as e:
-            asyncio.create_task(manager.send_error("Freqtrade not found", f"Could not execute freqtrade: {str(e)}. Please ensure freqtrade is installed in your virtual environment."))
-        except Exception as e:
-            asyncio.create_task(manager.send_error("Download failed", str(e)))
+        except FileNotFoundError:
+            pass
+        except Exception:
+            pass
     
     background_tasks.add_task(execute_download)
     
@@ -175,6 +178,9 @@ async def execute_backtest(
 ) -> dict:
     """Execute a backtest command and return run_id for redirect."""
     try:
+        # Reset status at start
+        update_backtest_status("idle", message="Starting backtest...")
+        
         app_settings = settings.load_settings()
         if not app_settings.user_data_path:
             raise HTTPException(status_code=404, detail="User data path not configured. Please configure it in settings.")
@@ -205,18 +211,17 @@ async def execute_backtest(
         
         # Build environment with venv
         env = ProcessService.build_environment(app_settings.venv_path)
+        full_command = command.as_list()
         
-        import asyncio
-        from pathlib import Path
         from app.core.backtests.results_parser import parse_backtest_zip
         from app.core.backtests.results_store import RunStore
         from app.core.freqtrade.resolvers.config_resolver import resolve_config_file
         
         def stream_output(line: str):
-            asyncio.create_task(manager.send_log(line))
+            pass
         
         def stream_error(line: str):
-            asyncio.create_task(manager.send_log(line))
+            pass
         
         def on_finished(exit_code: int):
             if exit_code == 0:
@@ -241,18 +246,19 @@ async def execute_backtest(
                             
                             # Get run_id from the saved run
                             run_id = run_dir.name
-                            asyncio.create_task(manager.send_complete(run_id, True))
+                            update_backtest_status("complete", run_id, "Backtest completed successfully")
                             return
                 except Exception as e:
-                    asyncio.create_task(manager.send_error("Failed to parse results", str(e)))
+                    update_backtest_status("error", message=f"Failed to parse results: {str(e)}")
             else:
-                asyncio.create_task(manager.send_error("Backtest failed", f"Process exited with code: {exit_code}"))
+                update_backtest_status("error", message=f"Process exited with code: {exit_code}")
         
         # Execute command in background
         def execute_backtest_task():
+            update_backtest_status("running", message="Backtest in progress...")
             try:
                 process_service.execute_command(
-                    command=command.args,
+                    command=full_command,
                     on_output=stream_output,
                     on_error=stream_error,
                     on_finished=on_finished,
@@ -260,9 +266,9 @@ async def execute_backtest(
                     env=env
                 )
             except FileNotFoundError as e:
-                asyncio.create_task(manager.send_error("Freqtrade not found", f"Could not execute freqtrade: {str(e)}. Please ensure freqtrade is installed in your virtual environment."))
+                update_backtest_status("error", message=f"Freqtrade not found: {str(e)}")
             except Exception as e:
-                asyncio.create_task(manager.send_error("Backtest execution failed", str(e)))
+                update_backtest_status("error", message=f"Backtest execution failed: {str(e)}")
         
         background_tasks.add_task(execute_backtest_task)
         
@@ -337,3 +343,9 @@ async def get_backtest_config(settings: SettingsServiceDep) -> BacktestConfigRes
         )
     except Exception:
         return BacktestConfigResponse()
+
+
+@router.get("/backtest/status")
+async def get_backtest_status() -> dict:
+    """Get current backtest status for polling fallback."""
+    return _backtest_status

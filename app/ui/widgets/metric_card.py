@@ -29,7 +29,7 @@ class MetricCard(QFrame):
     def __init__(
         self,
         title: str,
-        value: str = "—",
+        value: str = "\u2014",
         trend: Optional[float] = None,
         parent=None,
     ) -> None:
@@ -67,7 +67,7 @@ class MetricCard(QFrame):
         value_row.setSpacing(SPACING["xs"])
         value_row.setContentsMargins(0, 0, 0, 0)
 
-        self._value_label = QLabel("—")
+        self._value_label = QLabel("\u2014")
         self._value_label.setStyleSheet(
             f"color: {PALETTE['text_primary']};"
             f"font-size: {FONT['size_lg']}px;"

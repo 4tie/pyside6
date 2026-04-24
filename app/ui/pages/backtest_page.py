@@ -15,7 +15,6 @@ from PySide6.QtWidgets import (
     QComboBox,
     QDoubleSpinBox,
     QFormLayout,
-    QGroupBox,
     QHBoxLayout,
     QLabel,
     QMessageBox,
@@ -95,15 +94,18 @@ class BacktestPage(QWidget):
         # Main splitter
         self._splitter = QSplitter(Qt.Horizontal)
         self._splitter.setHandleWidth(4)
-        root.addWidget(self._splitter)
+        root.addWidget(self._splitter, 1)
 
         # ── Left panel ─────────────────────────────────────────────────
         left_scroll = QScrollArea()
         left_scroll.setWidgetResizable(True)
         left_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        left_scroll.setMaximumWidth(320)
+        left_scroll.setMinimumWidth(240)
+        left_scroll.setMaximumWidth(360)
+        left_scroll.setObjectName("left_panel_scroll")
 
         left_content = QWidget()
+        left_content.setObjectName("left_panel_content")
         left_layout = QVBoxLayout(left_content)
         left_layout.setContentsMargins(12, 12, 12, 12)
         left_layout.setSpacing(8)
@@ -123,6 +125,10 @@ class BacktestPage(QWidget):
         self._wallet_spin.setDecimals(2)
         self._wallet_spin.setAccessibleName("Dry-run wallet size")
         self._wallet_spin.setToolTip("Starting wallet balance for the dry-run simulation")
+        self._wallet_spin.setWhatsThis(
+            "The starting balance for the simulated dry-run. "
+            "Freqtrade uses this to calculate position sizes."
+        )
         advanced_form.addRow("Wallet:", self._wallet_spin)
 
         self._max_trades_spin = QSpinBox()
@@ -130,6 +136,9 @@ class BacktestPage(QWidget):
         self._max_trades_spin.setValue(3)
         self._max_trades_spin.setAccessibleName("Max open trades")
         self._max_trades_spin.setToolTip("Maximum number of simultaneously open trades")
+        self._max_trades_spin.setWhatsThis(
+            "Maximum number of trades that can be open simultaneously during the backtest."
+        )
         advanced_form.addRow("Max Trades:", self._max_trades_spin)
 
         self._advanced_section = SectionHeader(
@@ -161,6 +170,10 @@ class BacktestPage(QWidget):
         self._run_btn.setObjectName("success")
         self._run_btn.setAccessibleName("Run backtest")
         self._run_btn.setToolTip("Validate configuration and start the backtest")
+        self._run_btn.setWhatsThis(
+            "Validates the configuration and starts the backtest. "
+            "Results appear in the Results tab when complete."
+        )
 
         self._stop_btn = QPushButton("Stop")
         self._stop_btn.setObjectName("danger")
@@ -173,6 +186,11 @@ class BacktestPage(QWidget):
         btn_row.addStretch()
         left_layout.addLayout(btn_row)
         left_layout.addStretch()
+
+        # Tab order for keyboard navigation
+        QWidget.setTabOrder(self._wallet_spin, self._max_trades_spin)
+        QWidget.setTabOrder(self._max_trades_spin, self._run_btn)
+        QWidget.setTabOrder(self._run_btn, self._stop_btn)
 
         left_scroll.setWidget(left_content)
         self._splitter.addWidget(left_scroll)
@@ -210,8 +228,9 @@ class BacktestPage(QWidget):
         right_layout.addWidget(self._tabs)
 
         self._splitter.addWidget(right_widget)
-        self._splitter.setStretchFactor(0, 0)
-        self._splitter.setStretchFactor(1, 1)
+        self._splitter.setStretchFactor(0, 1)
+        self._splitter.setStretchFactor(1, 3)
+        self._splitter.setSizes([300, 900])
 
     # ------------------------------------------------------------------
     # Signal connections
@@ -266,7 +285,13 @@ class BacktestPage(QWidget):
         self._stop_btn.setEnabled(True)
         self._tabs.setCurrentWidget(self._terminal)
 
-        self._terminal.run_command(cmd.as_list())
+        settings = self._settings_state.current_settings
+        env = None
+        if settings and settings.venv_path:
+            from app.core.services.process_service import ProcessService
+            env = ProcessService.build_environment(settings.venv_path)
+
+        self._terminal.run_command(cmd.as_list(), env=env)
         _log.info("Backtest started: strategy=%s timeframe=%s", strategy, timeframe)
 
     def _on_stop_clicked(self) -> None:
@@ -450,11 +475,15 @@ class BacktestPage(QWidget):
         self._run_picker.blockSignals(False)
 
     def _restore_state(self) -> None:
-        """Restore splitter state from QSettings."""
+        """Restore splitter state from QSettings, falling back to default sizes."""
         qs = QSettings(_QSETTINGS_ORG, _QSETTINGS_APP)
         state = qs.value(_SPLITTER_KEY)
         if state is not None:
-            self._splitter.restoreState(state)
+            restored = self._splitter.restoreState(state)
+            # If restore produced a collapsed left panel, reset to defaults
+            sizes = self._splitter.sizes()
+            if not restored or not sizes or sizes[0] < 100:
+                self._splitter.setSizes([300, 900])
 
     def _save_state(self) -> None:
         """Persist splitter state to QSettings."""

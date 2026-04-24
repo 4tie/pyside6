@@ -9,49 +9,52 @@ initTheme();
 // Theme toggle handler
 document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
 
-// WebSocket connection
-let ws = null;
-
-// Connect to WebSocket for real-time logs
-function connectWebSocket() {
-  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-  ws = new WebSocket(`${protocol}//${window.location.host}/ws/backtest`);
+// Polling for status updates
+let pollingInterval = null;
+let currentRunId = null;
+// Start polling for status updates
+function startPolling() {
+  if (pollingInterval) return;
   
-  ws.onopen = () => {
-    console.log('WebSocket connected');
-  };
+  addLog('info', 'Starting polling fallback for status updates...');
   
-  ws.onmessage = (event) => {
-    const data = JSON.parse(event.data);
-    
-    if (data.type === 'log') {
-      addLog('info', data.data.line);
-    } else if (data.type === 'error') {
-      addLog('error', `${data.data.error}: ${data.data.details}`);
-    } else if (data.type === 'complete') {
-      addLog('success', 'Task completed successfully');
-      if (data.data.run_id) {
-        // Redirect to run detail page
-        setTimeout(() => {
-          window.location.href = `/static/pages/run_detail/index.html?run_id=${data.data.run_id}`;
-        }, 1000);
+  pollingInterval = setInterval(async () => {
+    try {
+      const response = await fetch('/api/backtest/status');
+      if (response.ok) {
+        const data = await response.json();
+        if (data.status === 'complete' && data.run_id) {
+          addLog('success', 'Task completed successfully (via polling)');
+          resetBacktestButton();
+          clearInterval(pollingInterval);
+          pollingInterval = null;
+          currentRunId = data.run_id;
+          setTimeout(() => {
+            window.location.href = `/static/pages/run_detail/index.html?run_id=${data.run_id}`;
+          }, 1000);
+        } else if (data.status === 'error') {
+          addLog('error', `Task failed: ${data.message}`);
+          resetBacktestButton();
+          clearInterval(pollingInterval);
+          pollingInterval = null;
+        }
       }
+    } catch (e) {
+      // Silent fail on polling errors
     }
-  };
-  
-  ws.onerror = (error) => {
-    console.error('WebSocket error:', error);
-    addLog('error', 'WebSocket connection failed. Real-time logs may not be available.');
-    // Don't auto-reconnect to prevent retry loop
-  };
-  
-  ws.onclose = () => {
-    console.log('WebSocket disconnected');
-  };
+  }, 2000); // Poll every 2 seconds
 }
 
-// Connect to WebSocket on page load
-connectWebSocket();
+// Reset backtest button state
+function resetBacktestButton() {
+  const btn = document.getElementById('run-backtest-btn');
+  if (btn) {
+    btn.disabled = false;
+    btn.textContent = 'Run Backtest';
+  }
+}
+
+
 
 // State
 let allPairs = [];
@@ -270,35 +273,37 @@ document.getElementById('run-backtest-btn').addEventListener('click', async () =
   addLog('info', `Max Open Trades: ${maxOpenTrades}`);
   addLog('info', `Dry Run Wallet: ${dryRunWallet}`);
   
-  try {
-    const response = await fetch('/api/backtest/execute', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        strategy,
-        timeframe,
-        timerange,
-        pairs: pairsArray,
-        max_open_trades: parseInt(maxOpenTrades),
-        dry_run_wallet: parseFloat(dryRunWallet),
-      }),
-    });
-    
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.detail || `HTTP ${response.status}: ${response.statusText}`);
-    }
-    
-    const result = await response.json();
-    addLog('info', result.message);
-  } catch (error) {
-    console.error('Failed to start backtest:', error);
-    addLog('error', `Failed to start backtest: ${error.message}`);
-    btn.disabled = false;
-    btn.textContent = 'Run Backtest';
-  }
+   try {
+     const response = await fetch('/api/backtest/execute', {
+       method: 'POST',
+       headers: {
+         'Content-Type': 'application/json',
+       },
+       body: JSON.stringify({
+         strategy,
+         timeframe,
+         timerange,
+         pairs: pairsArray,
+         max_open_trades: parseInt(maxOpenTrades),
+         dry_run_wallet: parseFloat(dryRunWallet),
+       }),
+     });
+     
+     if (!response.ok) {
+       const errorData = await response.json().catch(() => ({}));
+       throw new Error(errorData.detail || `HTTP ${response.status}: ${response.statusText}`);
+     }
+     
+     const result = await response.json();
+     addLog('info', result.message);
+     // Start polling for status updates after successful backtest initiation
+     startPolling();
+   } catch (error) {
+     console.error('Failed to start backtest:', error);
+     addLog('error', `Failed to start backtest: ${error.message}`);
+     btn.disabled = false;
+     btn.textContent = 'Run Backtest';
+   }
 });
 
 // Clear logs

@@ -53,7 +53,7 @@ async def get_diagnosis(
         raise HTTPException(status_code=404, detail=f"Failed to load run data: {str(e)}")
     
     # Perform pair analysis
-    pair_analysis = PairAnalysisService.analyze(results.trades)
+    pair_analysis = PairAnalysisService.analyse(results)
     
     # Perform diagnosis
     diagnosis = DiagnosisService.diagnose(pair_analysis, results.summary)

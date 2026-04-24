@@ -206,6 +206,7 @@ class ModernMainWindow(QMainWindow):
         # AiPanel in app/ui takes only parent (no settings_state or ai_service)
         self.ai_panel = AiPanel(parent=self)
         self.addDockWidget(Qt.RightDockWidgetArea, self.ai_panel)
+        self.ai_panel.hide()  # hidden by default — toggle with Ctrl+Shift+A
 
         # ── Navigate to default page ──────────────────────────────────
         self._navigate_to("dashboard")
@@ -441,6 +442,9 @@ class ModernMainWindow(QMainWindow):
         if app is not None:
             app.setStyleSheet(qss)
         self._current_theme_mode = mode
+        # Keep the header bar toggle icon in sync
+        if hasattr(self, "header_bar"):
+            self.header_bar.set_theme_mode(mode == ThemeMode.DARK)
 
     def _toggle_theme(self) -> None:
         """Toggle between DARK and LIGHT theme modes.
@@ -535,13 +539,16 @@ class ModernMainWindow(QMainWindow):
         if geometry:
             self.restoreGeometry(geometry)
 
+        # Restore dock/toolbar state — but re-hide the AI panel afterwards
+        # since it defaults to hidden and saved state may have it visible.
         window_state = qs.value("windowState")
         if window_state:
             self.restoreState(window_state)
+        self.ai_panel.hide()  # always start hidden regardless of saved state
 
         sidebar_collapsed = qs.value("sidebar/collapsed", False, type=bool)
         if sidebar_collapsed and not self.nav_sidebar.is_collapsed():
-            self.nav_sidebar._toggle_collapse()
+            self.nav_sidebar.set_collapsed(True)
 
         last_page = qs.value("lastPage", "dashboard")
         if last_page in self._pages:

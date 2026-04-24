@@ -10,7 +10,6 @@ from typing import Callable
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import (
     QDialog,
-    QLabel,
     QLineEdit,
     QListWidget,
     QListWidgetItem,
@@ -40,9 +39,9 @@ def _fuzzy_match(query: str, label: str) -> bool:
     if not query:
         return True
     q = query.lower()
-    l = label.lower()
+    label_lower = label.lower()
     # Simple case: substring containment (covers the spec requirement)
-    return q in l
+    return q in label_lower
 
 
 class CommandPalette(QDialog):
@@ -184,7 +183,6 @@ class CommandPalette(QDialog):
     def eventFilter(self, obj, event) -> bool:  # noqa: ANN001
         """Handle keyboard navigation from the search input."""
         from PySide6.QtCore import QEvent
-        from PySide6.QtGui import QKeyEvent
 
         if obj is self._search_edit and event.type() == QEvent.KeyPress:
             key = event.key()

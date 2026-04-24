@@ -56,6 +56,9 @@ class TerminalWidget(QWidget):
     process_finished = Signal(int)  # exit code
     output_received = Signal(str)   # stdout
     error_received = Signal(str)    # stderr
+    _stdout_line = Signal(str)      # internal: marshal stdout to main thread
+    _stderr_line = Signal(str)      # internal: marshal stderr to main thread
+    _finished_code = Signal(int)    # internal: marshal exit code to main thread
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -63,6 +66,9 @@ class TerminalWidget(QWidget):
         self._current_command: list[str] = []
         self.init_ui()
         self.apply_preferences(TerminalPreferences())
+        self._stdout_line.connect(self._append_output)
+        self._stderr_line.connect(self._append_error)
+        self._finished_code.connect(self._on_process_finished)
 
     def init_ui(self):
         """Initialize UI components."""
@@ -127,9 +133,9 @@ class TerminalWidget(QWidget):
             command=command,
             working_directory=working_directory,
             env=env,
-            on_output=self._append_output,
-            on_error=self._append_error,
-            on_finished=self._on_process_finished
+            on_output=self._stdout_line.emit,
+            on_error=self._stderr_line.emit,
+            on_finished=self._finished_code.emit,
         )
         self.process_started.emit()
 

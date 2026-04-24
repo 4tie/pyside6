@@ -5,7 +5,6 @@ configuration UI. Emits config_changed(dict) whenever any field changes.
 """
 from __future__ import annotations
 
-import os
 from datetime import date, timedelta
 from pathlib import Path
 from typing import Optional
@@ -129,6 +128,10 @@ class RunConfigForm(QWidget):
             self._strategy_combo.setObjectName("strategy_combo")
             self._strategy_combo.setAccessibleName("Strategy selector")
             self._strategy_combo.setToolTip("Select a strategy .py file from your strategies folder")
+            self._strategy_combo.setWhatsThis(
+                "Select the strategy .py file to use for this run. "
+                "Strategies are loaded from your user_data/strategies/ directory."
+            )
             form.addRow("Strategy:", self._strategy_combo)
         else:
             self._strategy_combo = None  # type: ignore[assignment]
@@ -139,6 +142,10 @@ class RunConfigForm(QWidget):
             self._timeframe_combo.setObjectName("timeframe_combo")
             self._timeframe_combo.setAccessibleName("Timeframe selector")
             self._timeframe_combo.setToolTip("Select the candle timeframe for the run")
+            self._timeframe_combo.setWhatsThis(
+                "The candle timeframe for the backtest. "
+                "Common choices: 5m for short-term, 1h for medium-term, 1d for long-term."
+            )
             self._timeframe_combo.addItems(_TIMEFRAMES)
             form.addRow("Timeframe:", self._timeframe_combo)
         else:
@@ -154,6 +161,11 @@ class RunConfigForm(QWidget):
             self._timerange_edit.setAccessibleName("Timerange input")
             self._timerange_edit.setToolTip(
                 "Date range in YYYYMMDD-YYYYMMDD format, or use a preset button"
+            )
+            self._timerange_edit.setWhatsThis(
+                "Date range in YYYYMMDD-YYYYMMDD format. "
+                "Leave empty to use all available data. "
+                "Use the preset buttons for common ranges."
             )
 
             preset_row = QHBoxLayout()
@@ -185,6 +197,10 @@ class RunConfigForm(QWidget):
             self._pairs_btn.setObjectName("pairs_btn")
             self._pairs_btn.setAccessibleName("Pairs selector")
             self._pairs_btn.setToolTip("Open the pairs selector dialog")
+            self._pairs_btn.setWhatsThis(
+                "Select one or more trading pairs to include in the run. "
+                "Favorites are shown at the top."
+            )
             self._pairs_btn.clicked.connect(self._on_pairs_clicked)
 
             pairs_layout = QVBoxLayout()
@@ -196,6 +212,14 @@ class RunConfigForm(QWidget):
             layout.addLayout(pairs_layout)
         else:
             self._pairs_btn = None  # type: ignore[assignment]
+
+        # Tab order for keyboard navigation
+        if self._strategy_combo and self._timeframe_combo:
+            QWidget.setTabOrder(self._strategy_combo, self._timeframe_combo)
+        if self._timeframe_combo and self._timerange_edit:
+            QWidget.setTabOrder(self._timeframe_combo, self._timerange_edit)
+        if self._timerange_edit and self._pairs_btn:
+            QWidget.setTabOrder(self._timerange_edit, self._pairs_btn)
 
         layout.addStretch()
 

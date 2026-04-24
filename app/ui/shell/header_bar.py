@@ -6,12 +6,11 @@ toggle).  Fixed height of 48 px.
 """
 from __future__ import annotations
 
-from PySide6.QtCore import Qt, Signal
+from PySide6.QtCore import Signal
 from PySide6.QtWidgets import (
     QHBoxLayout,
     QLabel,
     QPushButton,
-    QSizePolicy,
     QWidget,
 )
 
@@ -49,6 +48,17 @@ class HeaderBar(QWidget):
         self._page_title_label.setText(title)
         _log.debug("HeaderBar page title set to %r", title)
 
+    def set_theme_mode(self, dark: bool) -> None:
+        """Sync the theme toggle icon with the current theme mode.
+
+        Args:
+            dark: ``True`` if the current theme is dark (icon shows ☀ to switch to light).
+        """
+        self._dark_mode = dark
+        # Icon shows what you'll switch *to*: dark mode → ☀ (go light), light mode → 🌙 (go dark)
+        self._theme_btn.setText("\u2600" if dark else "\U0001f319")
+        _log.debug("HeaderBar theme icon synced: dark=%s", dark)
+
     # ------------------------------------------------------------------
     # Private helpers
     # ------------------------------------------------------------------
@@ -56,10 +66,27 @@ class HeaderBar(QWidget):
     def _build_ui(self) -> None:
         """Construct the header bar layout."""
         self.setFixedHeight(_HEADER_HEIGHT)
-        self.setStyleSheet(
-            f"background-color: {PALETTE['bg_surface']};"
-            f"border-bottom: 1px solid {PALETTE['border']};"
-        )
+        # Use the class name to scope the background so child widgets inherit
+        # transparent backgrounds rather than picking up the global QWidget rule.
+        self.setObjectName("HeaderBar")
+        self.setStyleSheet(f"""
+            QWidget#HeaderBar {{
+                background-color: {PALETTE['bg_surface']};
+                border-bottom: 1px solid {PALETTE['border']};
+            }}
+            QWidget#HeaderBar QLabel {{
+                background-color: transparent;
+                border: none;
+            }}
+            QWidget#HeaderBar QPushButton {{
+                background-color: transparent;
+                border: none;
+            }}
+            QWidget#HeaderBar QPushButton:hover {{
+                background-color: {PALETTE['bg_elevated']};
+                border-radius: 4px;
+            }}
+        """)
 
         layout = QHBoxLayout(self)
         layout.setContentsMargins(SPACING["md"], 0, SPACING["md"], 0)
@@ -117,8 +144,8 @@ class HeaderBar(QWidget):
         self._settings_btn.clicked.connect(self.settings_requested)
         layout.addWidget(self._settings_btn)
 
-        # Theme toggle button
-        self._theme_btn = QPushButton("☀")
+        # Theme toggle button — starts showing ☀ (dark mode active, click to go light)
+        self._theme_btn = QPushButton("\u2600")
         self._theme_btn.setFlat(True)
         self._theme_btn.setToolTip("Toggle theme (dark/light)")
         self._theme_btn.setAccessibleName("Toggle theme")
@@ -129,6 +156,6 @@ class HeaderBar(QWidget):
     def _on_theme_toggle(self) -> None:
         """Toggle the theme icon and emit the theme_toggle_requested signal."""
         self._dark_mode = not self._dark_mode
-        self._theme_btn.setText("☀" if self._dark_mode else "🌙")
+        self._theme_btn.setText("\u2600" if self._dark_mode else "\U0001f319")
         self.theme_toggle_requested.emit()
         _log.debug("Theme toggle requested; dark_mode=%s", self._dark_mode)

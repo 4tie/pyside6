@@ -182,7 +182,6 @@ async def create_run(
     # In a full implementation, this would:
     # 1. Execute the backtest command in the background
     # 2. Return a run_id for tracking
-    # 3. Emit WebSocket events for progress
     
     return {
         "status": "queued",

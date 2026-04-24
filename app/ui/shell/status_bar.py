@@ -92,10 +92,17 @@ class AppStatusBar(QWidget):
     def _build_ui(self) -> None:
         """Construct the status bar layout."""
         self.setFixedHeight(_STATUS_HEIGHT)
-        self.setStyleSheet(
-            f"background-color: {PALETTE['bg_surface']};"
-            f"border-top: 1px solid {PALETTE['border']};"
-        )
+        self.setObjectName("AppStatusBar")
+        self.setStyleSheet(f"""
+            QWidget#AppStatusBar {{
+                background-color: {PALETTE['bg_surface']};
+                border-top: 1px solid {PALETTE['border']};
+            }}
+            QWidget#AppStatusBar QLabel {{
+                background-color: transparent;
+                border: none;
+            }}
+        """)
 
         layout = QHBoxLayout(self)
         layout.setContentsMargins(SPACING["sm"], 0, SPACING["sm"], 0)

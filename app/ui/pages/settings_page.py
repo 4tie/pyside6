@@ -6,7 +6,7 @@ search filtering, path browsing, validation, and theme switching.
 """
 from __future__ import annotations
 
-from typing import Callable, Optional
+from typing import Callable
 
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import (
@@ -137,6 +137,10 @@ class SettingsPage(QWidget):
         )
         self._venv_edit.setAccessibleName("Virtual environment path")
         self._venv_edit.setToolTip("Path to the Python virtual environment directory")
+        self._venv_edit.setWhatsThis(
+            "The root directory of the Python virtual environment that contains Freqtrade. "
+            "On Windows this is typically a folder containing Scripts/python.exe."
+        )
         form.addRow("Venv Path:", venv_row)
 
         # Python executable
@@ -146,6 +150,10 @@ class SettingsPage(QWidget):
         )
         self._python_edit.setAccessibleName("Python executable path")
         self._python_edit.setToolTip("Full path to the Python interpreter executable")
+        self._python_edit.setWhatsThis(
+            "Full path to the Python interpreter. "
+            "This is auto-resolved from the venv path but can be overridden."
+        )
         form.addRow("Python Executable:", python_row)
 
         # Freqtrade executable
@@ -155,6 +163,10 @@ class SettingsPage(QWidget):
         )
         self._freqtrade_edit.setAccessibleName("Freqtrade executable path")
         self._freqtrade_edit.setToolTip("Full path to the freqtrade executable")
+        self._freqtrade_edit.setWhatsThis(
+            "Full path to the freqtrade executable. "
+            "Only needed when not using module execution mode."
+        )
         form.addRow("Freqtrade Executable:", freqtrade_row)
 
         # User data directory
@@ -164,6 +176,10 @@ class SettingsPage(QWidget):
         )
         self._user_data_edit.setAccessibleName("User data directory path")
         self._user_data_edit.setToolTip("Path to the freqtrade user_data directory")
+        self._user_data_edit.setWhatsThis(
+            "The Freqtrade user_data directory containing your strategies, "
+            "configs, and backtest results."
+        )
         form.addRow("User Data Dir:", user_data_row)
 
         layout.addWidget(group)
@@ -300,7 +316,7 @@ class SettingsPage(QWidget):
         """Wire all internal signals."""
         self._category_list.currentRowChanged.connect(self._stack.setCurrentIndex)
         self._search_edit.textChanged.connect(self._on_search_changed)
-        self._settings_state.settings_changed.connect(self._on_settings_changed)
+        self._settings_state.settings_loaded.connect(self._on_settings_changed)
 
     # ------------------------------------------------------------------
     # Slots
@@ -436,22 +452,15 @@ class SettingsPage(QWidget):
         # Theme
         theme_mode = self._theme_combo.currentText().lower()
 
-        return AppSettings(
-            venv_path=venv,
-            python_executable=python,
-            freqtrade_executable=freqtrade,
-            user_data_path=user_data,
-            use_module_execution=use_module,
-            terminal_preferences=terminal_prefs,
-            theme_mode=theme_mode,
-            # Preserve fields not shown on this page
-            backtest_preferences=current.backtest_preferences,
-            optimize_preferences=current.optimize_preferences,
-            download_preferences=current.download_preferences,
-            ai=current.ai,
-            strategy_lab=current.strategy_lab,
-            favorite_pairs=current.favorite_pairs,
-        )
+        return current.model_copy(update={
+            "venv_path": venv,
+            "python_executable": python,
+            "freqtrade_executable": freqtrade,
+            "user_data_path": user_data,
+            "use_module_execution": use_module,
+            "terminal_preferences": terminal_prefs,
+            "theme_mode": theme_mode,
+        })
 
     def _load_settings(self) -> None:
         """Populate all form fields from current settings."""

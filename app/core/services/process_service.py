@@ -100,31 +100,37 @@ class ProcessService:
         on_error: Optional[Callable[[str], None]],
         on_finished: Optional[Callable[[int], None]],
     ):
-        """Stream output from process in background thread."""
+        """Stream stdout and stderr concurrently, then fire on_finished."""
         if not self.process:
             return
 
-        # Stream stdout
-        if on_output and self.process.stdout:
-            for line in iter(self.process.stdout.readline, ""):
-                if self._stop_event.is_set():
-                    break
-                if line:
-                    self.output_buffer_stdout += line
-                    _log.debug("stdout chunk: %d bytes", len(line))
-                    on_output(line)
+        def _read_stdout():
+            if on_output and self.process.stdout:
+                for line in iter(self.process.stdout.readline, ""):
+                    if self._stop_event.is_set():
+                        break
+                    if line:
+                        self.output_buffer_stdout += line
+                        _log.debug("stdout chunk: %d bytes", len(line))
+                        on_output(line)
 
-        # Stream stderr
-        if on_error and self.process.stderr:
-            for line in iter(self.process.stderr.readline, ""):
-                if self._stop_event.is_set():
-                    break
-                if line:
-                    self.output_buffer_stderr += line
-                    _log.debug("stderr chunk: %d bytes", len(line))
-                    on_error(line)
+        def _read_stderr():
+            if on_error and self.process.stderr:
+                for line in iter(self.process.stderr.readline, ""):
+                    if self._stop_event.is_set():
+                        break
+                    if line:
+                        self.output_buffer_stderr += line
+                        _log.debug("stderr chunk: %d bytes", len(line))
+                        on_error(line)
 
-        # Wait for process completion
+        t_out = threading.Thread(target=_read_stdout, daemon=True)
+        t_err = threading.Thread(target=_read_stderr, daemon=True)
+        t_out.start()
+        t_err.start()
+        t_out.join()
+        t_err.join()
+
         if on_finished:
             self.process.wait()
             on_finished(self.process.returncode)

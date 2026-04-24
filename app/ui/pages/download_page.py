@@ -73,13 +73,14 @@ class DownloadPage(QWidget):
         # Main splitter
         self._splitter = QSplitter(Qt.Horizontal)
         self._splitter.setHandleWidth(4)
-        root.addWidget(self._splitter)
+        root.addWidget(self._splitter, 1)
 
         # ── Left panel ─────────────────────────────────────────────────
         left_scroll = QScrollArea()
         left_scroll.setWidgetResizable(True)
         left_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        left_scroll.setMaximumWidth(320)
+        left_scroll.setMinimumWidth(240)
+        left_scroll.setMaximumWidth(360)
 
         left_content = QWidget()
         left_layout = QVBoxLayout(left_content)
@@ -130,8 +131,9 @@ class DownloadPage(QWidget):
         right_layout.addWidget(self._tabs)
 
         self._splitter.addWidget(right_widget)
-        self._splitter.setStretchFactor(0, 0)
-        self._splitter.setStretchFactor(1, 1)
+        self._splitter.setStretchFactor(0, 1)
+        self._splitter.setStretchFactor(1, 3)
+        self._splitter.setSizes([300, 900])
 
         # Sync data status widget with settings
         self._sync_data_status_path()
@@ -253,11 +255,14 @@ class DownloadPage(QWidget):
         self._data_status_widget.set_user_data_path(path)
 
     def _restore_state(self) -> None:
-        """Restore splitter state from QSettings."""
+        """Restore splitter state from QSettings, falling back to default sizes."""
         qs = QSettings(_QSETTINGS_ORG, _QSETTINGS_APP)
         state = qs.value(_SPLITTER_KEY)
         if state is not None:
-            self._splitter.restoreState(state)
+            restored = self._splitter.restoreState(state)
+            sizes = self._splitter.sizes()
+            if not restored or not sizes or sizes[0] < 100:
+                self._splitter.setSizes([300, 900])
 
     def _save_state(self) -> None:
         """Persist splitter state to QSettings."""
