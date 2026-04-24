@@ -118,6 +118,12 @@ def list_recent_application_events(event_journal=None, n: int = 20) -> str:
         return "[]"
 
 
+# Aliases used by tests
+get_app_status = get_application_status
+read_recent_logs = read_recent_log_lines
+list_recent_events = list_recent_application_events
+
+
 def register_app_tools(
     registry: ToolRegistry,
     settings=None,

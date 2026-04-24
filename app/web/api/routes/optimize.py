@@ -27,10 +27,10 @@ async def run_optimize(
     pairs: Optional[list[str]] = None,
     spaces: Optional[list[str]] = None,
     hyperopt_loss: Optional[str] = None,
-    settings: SettingsServiceDep = Depends(),
-    optimize_service: OptimizeServiceDep = Depends(),
-    process_service: ProcessServiceDep = Depends(),
-    background_tasks: BackgroundTasks = Depends(),
+    settings: SettingsServiceDep = None,
+    optimize_service: OptimizeServiceDep = None,
+    process_service: ProcessServiceDep = None,
+    background_tasks: BackgroundTasks = None,
 ) -> dict:
     """Run hyperopt optimization."""
     app_settings = settings.load_settings()

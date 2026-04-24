@@ -13,6 +13,8 @@ def create_backtest_command(
     timerange: str,
     pairs: list[str] | None,
     extra_flags: list[str],
+    max_open_trades: int | None = None,
+    dry_run_wallet: float | None = None,
 ):
     """Build backtest command with explicit parameters, logging and validation."""
     _log.debug("Building backtest command: %s", strategy_name)
@@ -24,6 +26,8 @@ def create_backtest_command(
             timerange=timerange,
             pairs=pairs,
             extra_flags=extra_flags,
+            max_open_trades=max_open_trades,
+            dry_run_wallet=dry_run_wallet,
         )
     except Exception as e:
         _log.error("Failed to build backtest command: %s", e)

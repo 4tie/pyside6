@@ -5,11 +5,12 @@ with search filtering, right panel shows parameters and run history tabs.
 """
 from __future__ import annotations
 
+import json
 from pathlib import Path
 from typing import Optional
 
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtGui import QAction
+from PySide6.QtGui import QAction, QFont
 from PySide6.QtWidgets import (
     QAbstractItemView,
     QHBoxLayout,
@@ -19,6 +20,7 @@ from PySide6.QtWidgets import (
     QListWidget,
     QListWidgetItem,
     QMenu,
+    QPlainTextEdit,
     QPushButton,
     QSplitter,
     QTabWidget,
@@ -27,21 +29,19 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
-from PySide6.QtCore import QSettings
 
 from app.app_state.settings_state import SettingsState
 from app.core.services.backtest_service import BacktestService
 from app.core.utils.app_logger import get_logger
 from app.ui.pages.strategy_config_page import StrategyConfigPage
+from app.ui.utils import SplitterStateMixin
 
 _log = get_logger("ui.strategy_page")
 
-_QSETTINGS_ORG = "FreqtradeGUI"
-_QSETTINGS_APP = "ModernUI"
 _SPLITTER_KEY = "splitter/strategy"
 
 
-class StrategyPage(QWidget):
+class StrategyPage(QWidget, SplitterStateMixin):
     """Strategy management page with list, parameters, and history.
 
     Args:
@@ -103,6 +103,8 @@ class StrategyPage(QWidget):
         # Main splitter
         self._splitter = QSplitter(Qt.Horizontal)
         self._splitter.setHandleWidth(4)
+        self._splitter_key = _SPLITTER_KEY
+        self._splitter_default_sizes = [250, 750]
         root.addWidget(self._splitter, 1)
 
         # ── Left panel — strategy list ─────────────────────────────────
@@ -133,6 +135,22 @@ class StrategyPage(QWidget):
         # Parameters tab — reuse StrategyConfigPage
         self._strategy_config = StrategyConfigPage(self._settings_state)
         self._detail_tabs.addTab(self._strategy_config, "Parameters")
+
+        # Code tab — read-only .py viewer
+        self._code_viewer = QPlainTextEdit()
+        self._code_viewer.setReadOnly(True)
+        self._code_viewer.setPlaceholderText("Select a strategy to view its code…")
+        self._code_viewer.setFont(QFont("Courier New", 10))
+        self._code_viewer.setLineWrapMode(QPlainTextEdit.NoWrap)
+        self._detail_tabs.addTab(self._code_viewer, "Code")
+
+        # JSON tab — read-only raw JSON viewer
+        self._json_viewer = QPlainTextEdit()
+        self._json_viewer.setReadOnly(True)
+        self._json_viewer.setPlaceholderText("Select a strategy to view its JSON…")
+        self._json_viewer.setFont(QFont("Courier New", 10))
+        self._json_viewer.setLineWrapMode(QPlainTextEdit.NoWrap)
+        self._detail_tabs.addTab(self._json_viewer, "JSON")
 
         # History tab
         history_widget = QWidget()
@@ -199,6 +217,8 @@ class StrategyPage(QWidget):
             return
 
         self._refresh_history(strategy_name)
+        self._refresh_code_viewer(strategy_name)
+        self._refresh_json_viewer(strategy_name)
         _log.debug("Strategy selected: %s", strategy_name)
 
     def _on_context_menu(self, pos) -> None:
@@ -313,6 +333,39 @@ class StrategyPage(QWidget):
             return item.data(Qt.UserRole)
         return None
 
+    def _refresh_code_viewer(self, strategy_name: str) -> None:
+        """Load the .py source file for the given strategy into the code viewer."""
+        settings = self._settings_state.current_settings
+        if not settings or not settings.user_data_path:
+            self._code_viewer.setPlainText("")
+            return
+
+        py_path = Path(settings.user_data_path) / "strategies" / f"{strategy_name}.py"
+        try:
+            self._code_viewer.setPlainText(py_path.read_text(encoding="utf-8"))
+        except Exception as e:
+            self._code_viewer.setPlainText(f"# Could not load {py_path.name}\n# {e}")
+            _log.warning("Failed to load code for %s: %s", strategy_name, e)
+
+    def _refresh_json_viewer(self, strategy_name: str) -> None:
+        """Load the .json parameter file for the given strategy into the JSON viewer."""
+        settings = self._settings_state.current_settings
+        if not settings or not settings.user_data_path:
+            self._json_viewer.setPlainText("")
+            return
+
+        json_path = Path(settings.user_data_path) / "strategies" / f"{strategy_name}.json"
+        if not json_path.exists():
+            self._json_viewer.setPlainText(f"// No JSON file found for {strategy_name}")
+            return
+
+        try:
+            raw = json.loads(json_path.read_text(encoding="utf-8"))
+            self._json_viewer.setPlainText(json.dumps(raw, indent=2))
+        except Exception as e:
+            self._json_viewer.setPlainText(f"// Could not load {json_path.name}\n// {e}")
+            _log.warning("Failed to load JSON for %s: %s", strategy_name, e)
+
     def _refresh_history(self, strategy_name: str) -> None:
         """Populate the history table for the given strategy."""
         self._history_table.setRowCount(0)
@@ -344,23 +397,3 @@ class StrategyPage(QWidget):
             self._history_table.setItem(row, 1, QTableWidgetItem(f"{profit:+.2f}%"))
             self._history_table.setItem(row, 2, QTableWidgetItem(str(trades)))
             self._history_table.setItem(row, 3, QTableWidgetItem(saved))
-
-    def _restore_state(self) -> None:
-        """Restore splitter state from QSettings, falling back to default sizes."""
-        qs = QSettings(_QSETTINGS_ORG, _QSETTINGS_APP)
-        state = qs.value(_SPLITTER_KEY)
-        if state is not None:
-            restored = self._splitter.restoreState(state)
-            sizes = self._splitter.sizes()
-            if not restored or not sizes or sizes[0] < 100:
-                self._splitter.setSizes([250, 750])
-
-    def _save_state(self) -> None:
-        """Persist splitter state to QSettings."""
-        qs = QSettings(_QSETTINGS_ORG, _QSETTINGS_APP)
-        qs.setValue(_SPLITTER_KEY, self._splitter.saveState())
-
-    def hideEvent(self, event) -> None:  # noqa: N802
-        """Save splitter state when page is hidden."""
-        self._save_state()
-        super().hideEvent(event)

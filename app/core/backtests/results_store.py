@@ -223,7 +223,9 @@ def _write_trades_data(run_dir: Path, results: BacktestResults) -> None:
     write_json_file_atomic(run_dir / "trades.json", trades_out)
 
 
-def _write_configuration_snapshot(run_dir: Path, config_path: Optional[str]) -> None:
+# Alias used by tests
+_write_trades = _write_trades_data
+
     """Copy the config used for the run into the run folder when available."""
     if not config_path:
         return

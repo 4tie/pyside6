@@ -27,12 +27,12 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from PySide6.QtCore import QSettings
-
 from app.app_state.settings_state import SettingsState
+from app.core.backtests.results_store import RunStore
 from app.core.services.backtest_service import BacktestService
 from app.core.utils.app_logger import get_logger
 from app.ui.dialogs.pairs_selector_dialog import PairsSelectorDialog
+from app.ui.utils import SplitterStateMixin
 from app.ui.widgets.backtest_results_widget import BacktestResultsWidget
 from app.ui.widgets.run_config_form import RunConfigForm
 from app.ui.widgets.section_header import SectionHeader
@@ -40,12 +40,10 @@ from app.ui.widgets.terminal_widget import TerminalWidget
 
 _log = get_logger("ui.backtest_page")
 
-_QSETTINGS_ORG = "FreqtradeGUI"
-_QSETTINGS_APP = "ModernUI"
 _SPLITTER_KEY = "splitter/backtest"
 
 
-class BacktestPage(QWidget):
+class BacktestPage(QWidget, SplitterStateMixin):
     """Backtest configuration and execution page.
 
     Args:
@@ -92,6 +90,8 @@ class BacktestPage(QWidget):
         # Main splitter
         self._splitter = QSplitter(Qt.Horizontal)
         self._splitter.setHandleWidth(4)
+        self._splitter_key = _SPLITTER_KEY
+        self._splitter_default_sizes = [300, 900]
         root.addWidget(self._splitter, 1)
 
         # ── Left panel ─────────────────────────────────────────────────
@@ -359,7 +359,8 @@ class BacktestPage(QWidget):
             self._save_preferences()
 
     def _on_advanced_changed(self, _=None) -> None:
-        """Persist preferences when wallet or max-trades changes."""
+        """Update command preview and persist preferences when wallet or max-trades changes."""
+        self._update_command_preview()
         if not self._restoring:
             self._save_preferences()
 
@@ -371,6 +372,13 @@ class BacktestPage(QWidget):
     # ------------------------------------------------------------------
     # Public API
     # ------------------------------------------------------------------
+
+    def get_current_config(self) -> dict:
+        """Return the current run configuration including wallet and max trades."""
+        cfg = self.run_config_form.get_config()
+        cfg["dry_run_wallet"] = self._wallet_spin.value()
+        cfg["max_open_trades"] = self._max_trades_spin.value()
+        return cfg
 
     def set_strategy(self, strategy_name: str) -> None:
         """Pre-select a strategy (called from StrategyPage).
@@ -479,7 +487,8 @@ class BacktestPage(QWidget):
                 dry_run_wallet=self._wallet_spin.value(),
             )
             self._cmd_preview_label.setText(" ".join(cmd.as_list()))
-        except Exception:
+        except Exception as e:
+            _log.debug("Command preview unavailable: %s", e)
             self._cmd_preview_label.setText("(unable to build preview)")
 
     def _refresh_run_picker(self) -> None:
@@ -513,23 +522,3 @@ class BacktestPage(QWidget):
 
         self._run_picker.blockSignals(False)
 
-    def _restore_state(self) -> None:
-        """Restore splitter state from QSettings, falling back to default sizes."""
-        qs = QSettings(_QSETTINGS_ORG, _QSETTINGS_APP)
-        state = qs.value(_SPLITTER_KEY)
-        if state is not None:
-            restored = self._splitter.restoreState(state)
-            # If restore produced a collapsed left panel, reset to defaults
-            sizes = self._splitter.sizes()
-            if not restored or not sizes or sizes[0] < 100:
-                self._splitter.setSizes([300, 900])
-
-    def _save_state(self) -> None:
-        """Persist splitter state to QSettings."""
-        qs = QSettings(_QSETTINGS_ORG, _QSETTINGS_APP)
-        qs.setValue(_SPLITTER_KEY, self._splitter.saveState())
-
-    def hideEvent(self, event) -> None:  # noqa: N802
-        """Save splitter state when page is hidden."""
-        self._save_state()
-        super().hideEvent(event)

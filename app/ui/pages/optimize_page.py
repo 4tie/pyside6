@@ -21,19 +21,17 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
-from PySide6.QtCore import QSettings
 
 from app.app_state.settings_state import SettingsState
 from app.core.services.optimize_service import OptimizeService
 from app.core.utils.app_logger import get_logger
 from app.ui.dialogs.pairs_selector_dialog import PairsSelectorDialog
+from app.ui.utils import SplitterStateMixin
 from app.ui.widgets.run_config_form import RunConfigForm
 from app.ui.widgets.terminal_widget import TerminalWidget
 
 _log = get_logger("ui.optimize_page")
 
-_QSETTINGS_ORG = "FreqtradeGUI"
-_QSETTINGS_APP = "ModernUI"
 _SPLITTER_KEY = "splitter/optimize"
 
 _LOSS_FUNCTIONS = [
@@ -46,7 +44,7 @@ _LOSS_FUNCTIONS = [
 ]
 
 
-class OptimizePage(QWidget):
+class OptimizePage(QWidget, SplitterStateMixin):
     """Hyperopt configuration and execution page.
 
     Args:
@@ -87,6 +85,8 @@ class OptimizePage(QWidget):
         # Main splitter
         self._splitter = QSplitter(Qt.Horizontal)
         self._splitter.setHandleWidth(4)
+        self._splitter_key = _SPLITTER_KEY
+        self._splitter_default_sizes = [300, 900]
         root.addWidget(self._splitter, 1)
 
         # ── Left panel ─────────────────────────────────────────────────
@@ -183,7 +183,6 @@ class OptimizePage(QWidget):
 
         self._splitter.setStretchFactor(0, 1)
         self._splitter.setStretchFactor(1, 3)
-        self._splitter.setSizes([300, 900])
 
     # ------------------------------------------------------------------
     # Signal connections
@@ -375,26 +374,3 @@ class OptimizePage(QWidget):
         finally:
             self._restoring = False
 
-    # ------------------------------------------------------------------
-    # Private helpers
-    # ------------------------------------------------------------------
-
-    def _restore_state(self) -> None:
-        """Restore splitter state from QSettings, falling back to default sizes."""
-        qs = QSettings(_QSETTINGS_ORG, _QSETTINGS_APP)
-        state = qs.value(_SPLITTER_KEY)
-        if state is not None:
-            restored = self._splitter.restoreState(state)
-            sizes = self._splitter.sizes()
-            if not restored or not sizes or sizes[0] < 100:
-                self._splitter.setSizes([300, 900])
-
-    def _save_state(self) -> None:
-        """Persist splitter state to QSettings."""
-        qs = QSettings(_QSETTINGS_ORG, _QSETTINGS_APP)
-        qs.setValue(_SPLITTER_KEY, self._splitter.saveState())
-
-    def hideEvent(self, event) -> None:  # noqa: N802
-        """Save splitter state when page is hidden."""
-        self._save_state()
-        super().hideEvent(event)
