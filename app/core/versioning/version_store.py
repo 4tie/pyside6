@@ -6,12 +6,12 @@ All methods are static — no instance state required.
 
 from __future__ import annotations
 
-import json
 import shutil
 from datetime import datetime
 from pathlib import Path
 
 from app.core.utils.app_logger import get_logger
+from app.core.parsing.json_parser import parse_json_file, write_json_file_atomic, ParseError
 from app.core.versioning.version_models import (
     StrategyVersion,
     VersionStatus,
@@ -110,7 +110,7 @@ class VersionStore:
                 f"version.json not found in version directory: {version_dir}"
             )
 
-        data = json.loads(version_json_path.read_text(encoding="utf-8"))
+        data = parse_json_file(version_json_path)
         version = version_from_dict(data)
         _log.debug("Loaded version %s from %s", version.version_id, version_dir)
         return version
@@ -139,29 +139,14 @@ class VersionStore:
         # Validate the new status value
         VersionStatus(new_status)
 
-        data = json.loads(version_json_path.read_text(encoding="utf-8"))
+        data = parse_json_file(version_json_path)
         data["status"] = new_status
         data["updated_at"] = datetime.now().isoformat()
 
-        VersionStore._write_atomic(version_json_path, data)
+        write_json_file_atomic(version_json_path, data)
         _log.info(
             "Updated status to '%s' for version %s",
             new_status,
             data.get("version_id", "unknown"),
         )
 
-    # ------------------------------------------------------------------
-    # Internal helpers
-    # ------------------------------------------------------------------
-
-    @staticmethod
-    def _write_atomic(path: Path, data: dict) -> None:
-        """Write a dict as JSON to ``path`` atomically via a temp file + rename.
-
-        Args:
-            path: Target file path.
-            data: Dict to serialize as JSON.
-        """
-        tmp = path.with_suffix(".tmp")
-        tmp.write_text(json.dumps(data, indent=2), encoding="utf-8")
-        tmp.replace(path)

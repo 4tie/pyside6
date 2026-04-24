@@ -181,13 +181,13 @@ class TestBugCondition3_BuildBacktestCommandParameterMismatch:
     **NOTE**: After fix, this test verifies that the function works with correct parameters.
     """
     
-    def test_build_backtest_command_works_with_supported_params(self, tmp_path):
+    def test_create_backtest_command_works_with_supported_params(self, tmp_path):
         """Test that build_backtest_command works with supported parameters only.
         
         Expected on UNFIXED code: Would fail if called with unsupported kwargs
         Expected on FIXED code: PASS (call succeeds with only supported parameters)
         """
-        from app.core.freqtrade.runners.backtest_runner import build_backtest_command
+        from app.core.freqtrade.runners.backtest_runner import create_backtest_command
         from app.core.models.settings_models import AppSettings
         import json
         
@@ -215,7 +215,7 @@ class TestBugCondition3_BuildBacktestCommandParameterMismatch:
         
         # This should work with supported parameters only (after fix)
         try:
-            cmd = build_backtest_command(
+            cmd = create_backtest_command(
                 settings=settings,
                 strategy_name="TestStrategy",
                 timeframe="5m",
@@ -225,15 +225,15 @@ class TestBugCondition3_BuildBacktestCommandParameterMismatch:
             )
             
             # Verify the command was built successfully
-            assert cmd is not None, "build_backtest_command returned None"
+            assert cmd is not None, "create_backtest_command returned None"
             assert hasattr(cmd, "as_list"), "Command missing as_list method"
             assert hasattr(cmd, "export_dir"), "Command missing export_dir attribute"
             assert hasattr(cmd, "config_file"), "Command missing config_file attribute"
             assert hasattr(cmd, "strategy_file"), "Command missing strategy_file attribute"
             
-            _log.info("build_backtest_command works with supported parameters (bug fixed)")
+            _log.info("create_backtest_command works with supported parameters (bug fixed)")
         except TypeError as e:
-            pytest.fail(f"build_backtest_command failed with supported parameters: {e}")
+            pytest.fail(f"create_backtest_command failed with supported parameters: {e}")
 
 
 class TestBugCondition4_ExecuteCommandParameterMismatch:

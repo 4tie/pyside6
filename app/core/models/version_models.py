@@ -7,10 +7,11 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass, field, asdict
-from datetime import datetime, timezone
+from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import List, Optional
 
+from app.core.parsing.json_parser import parse_json_file, write_json_file_atomic
 from app.core.utils.app_logger import get_logger
 
 _log = get_logger("models.version")
@@ -174,7 +175,7 @@ class StrategyVersion:
             StrategyVersion instance.
         """
         try:
-            data = json.loads(file_path.read_text(encoding="utf-8"))
+            data = parse_json_file(file_path)
             return cls.from_dict(data)
         except Exception as e:
             _log.error("Failed to load version from %s: %s", file_path, e)

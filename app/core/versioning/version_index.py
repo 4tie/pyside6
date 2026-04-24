@@ -7,12 +7,12 @@ All methods are static — no instance state required.
 
 from __future__ import annotations
 
-import json
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
 
 from app.core.utils.app_logger import get_logger
+from app.core.parsing.json_parser import parse_json_with_default, write_json_file_atomic
 from app.core.versioning.version_models import (
     StrategyVersion,
     VersionStatus,
@@ -267,13 +267,7 @@ class VersionIndex:
         Returns:
             Parsed dict, or ``{"versions": []}`` if the file does not exist.
         """
-        if not index_path.exists():
-            return {"versions": []}
-        try:
-            return json.loads(index_path.read_text(encoding="utf-8"))
-        except Exception as exc:  # noqa: BLE001
-            _log.warning("Failed to parse %s: %s — treating as empty index", index_path, exc)
-            return {"versions": []}
+        return parse_json_with_default(index_path, {"versions": []})
 
     @staticmethod
     def _write_atomic(path: Path, data: Dict) -> None:
@@ -283,6 +277,4 @@ class VersionIndex:
             path: Target file path.
             data: Dict to serialize as JSON.
         """
-        tmp = path.with_suffix(".tmp")
-        tmp.write_text(json.dumps(data, indent=2), encoding="utf-8")
-        tmp.replace(path)
+        write_json_file_atomic(path, data)

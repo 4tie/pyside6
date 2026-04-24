@@ -1,17 +1,23 @@
-import json
-import os
 from pathlib import Path
 from typing import Dict, List, Tuple
 
+from app.core.parsing.strategy_parser import (
+    parse_strategy_config,
+    write_strategy_config,
+    get_strategy_json_files,
+    get_known_sections,
+)
 from app.core.utils.app_logger import get_logger
 
 _log = get_logger("strategy_config")
 
-_KNOWN_SECTIONS = {"roi", "stoploss", "trailing", "buy", "sell"}
-
 
 class StrategyConfigService:
-    """Stateless service for reading and writing strategy parameter JSON files."""
+    """Stateless service for reading and writing strategy parameter JSON files.
+    
+    DEPRECATED: Use app.core.parsing.strategy_parser functions directly.
+    This service is kept for backward compatibility.
+    """
 
     @staticmethod
     def get_strategy_json_files(strategies_dir: str) -> List[Path]:
@@ -23,13 +29,7 @@ class StrategyConfigService:
         Returns:
             Sorted list of Path objects for valid strategy JSON files
         """
-        root = Path(strategies_dir)
-        if not root.exists():
-            return []
-        return sorted(
-            p for p in root.glob("*.json")
-            if (root / f"{p.stem}.py").exists()
-        )
+        return get_strategy_json_files(strategies_dir)
 
     @staticmethod
     def load(json_path: Path) -> dict:
@@ -45,18 +45,7 @@ class StrategyConfigService:
             FileNotFoundError: If the file does not exist
             ValueError: If the file cannot be parsed
         """
-        if not json_path.exists():
-            raise FileNotFoundError(f"Strategy JSON not found: {json_path}")
-        try:
-            data = json.loads(json_path.read_text(encoding="utf-8"))
-            _log.debug("Loaded strategy JSON: %s", json_path.name)
-            return data
-        except json.JSONDecodeError as e:
-            _log.error("JSON decode error in %s: %s", json_path.name, e)
-            raise ValueError(f"Failed to parse {json_path.name}: {e}")
-        except Exception as e:
-            _log.error("Failed to load %s: %s", json_path.name, e)
-            raise ValueError(f"Failed to load {json_path.name}: {e}")
+        return parse_strategy_config(json_path)
 
     @staticmethod
     def save(json_path: Path, data: dict) -> None:
@@ -69,15 +58,7 @@ class StrategyConfigService:
         Raises:
             ValueError: If the write fails
         """
-        tmp = json_path.with_suffix(".tmp")
-        try:
-            tmp.write_text(json.dumps(data, indent=2), encoding="utf-8")
-            os.replace(tmp, json_path)
-            _log.info("Saved strategy JSON: %s", json_path.name)
-        except Exception as e:
-            tmp.unlink(missing_ok=True)
-            _log.error("Failed to save %s: %s", json_path.name, e)
-            raise ValueError(f"Failed to save {json_path.name}: {e}")
+        write_strategy_config(json_path, data)
 
     @staticmethod
     def get_known_sections(params: dict) -> Tuple[Dict, Dict]:
@@ -89,6 +70,4 @@ class StrategyConfigService:
         Returns:
             Tuple of (known_sections, unknown_sections)
         """
-        known = {k: v for k, v in params.items() if k in _KNOWN_SECTIONS}
-        unknown = {k: v for k, v in params.items() if k not in _KNOWN_SECTIONS}
-        return known, unknown
+        return get_known_sections(params)

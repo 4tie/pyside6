@@ -147,13 +147,13 @@ def test_bug_condition_hardcoded_timeframe_detection(qapp, tmp_path, strategy_na
     # Set up the loop service with this config
     page._loop_service._config = config
     
-    # Mock the build_backtest_command to capture the timeframe parameter
-    from app.core.freqtrade.runners.backtest_runner import build_backtest_command
+    # Mock the create_backtest_command to capture the timeframe parameter
+    from app.core.freqtrade.runners.backtest_runner import create_backtest_command
     mock_cmd = MagicMock()
     mock_cmd.as_list.return_value = ["python", "-m", "freqtrade", "backtesting"]
     mock_cmd.cwd = tmp_path
     
-    with patch("app.core.freqtrade.runners.backtest_runner.build_backtest_command", return_value=mock_cmd) as mock_build:
+    with patch("app.core.freqtrade.runners.backtest_runner.create_backtest_command", return_value=mock_cmd) as mock_build:
         # Mock process execution to avoid actual backtest
         with patch.object(page._process_service, "execute_command"):
             # Set up minimal runtime state
@@ -227,13 +227,13 @@ def test_bug_condition_hardcoded_timeframe_simple(qapp, tmp_path):
     # Set up the loop service with this config
     page._loop_service._config = config
     
-    # Mock the build_backtest_command to capture the timeframe parameter
-    from app.core.freqtrade.runners.backtest_runner import build_backtest_command
+    # Mock the create_backtest_command to capture the timeframe parameter
+    from app.core.freqtrade.runners.backtest_runner import create_backtest_command
     mock_cmd = MagicMock()
     mock_cmd.as_list.return_value = ["python", "-m", "freqtrade", "backtesting"]
     mock_cmd.cwd = tmp_path
     
-    with patch("app.core.freqtrade.runners.backtest_runner.build_backtest_command", return_value=mock_cmd) as mock_build:
+    with patch("app.core.freqtrade.runners.backtest_runner.create_backtest_command", return_value=mock_cmd) as mock_build:
         with patch.object(page._process_service, "execute_command"):
             page._current_iteration = MagicMock()
             page._sandbox_dir = tmp_path / "sandbox"

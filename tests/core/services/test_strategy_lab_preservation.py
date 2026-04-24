@@ -268,7 +268,7 @@ class TestPreservation2FiveMinuteTimeframe:
             "Config should have timeframe='5m'"
         
         # In the current implementation:
-        # - _start_gate_backtest() passes config.timeframe to build_backtest_command()
+        # - _start_gate_backtest() passes config.timeframe to create_backtest_command()
         # - For "5m" strategies, this means all gates use "5m"
         
         # After the fix:

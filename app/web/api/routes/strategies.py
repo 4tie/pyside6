@@ -9,7 +9,7 @@ from fastapi import APIRouter, HTTPException, Depends
 from app.core.services.backtest_service import BacktestService
 from app.core.services.settings_service import SettingsService
 from app.core.services.strategy_config_service import StrategyConfigService
-from app.core.freqtrade.resolvers.config_resolver import resolve_config_file
+from app.core.freqtrade.resolvers.config_resolver import find_config_file_path
 from app.web.dependencies import (
     SettingsServiceDep,
     BacktestServiceDep,
@@ -49,14 +49,14 @@ async def get_strategy(
     user_data_dir = Path(app_settings.user_data_path).expanduser().resolve()
     
     try:
-        config_path = resolve_config_file(user_data_dir, strategy_name=strategy_name)
+        config_path = find_config_file_path(user_data_dir, strategy_name=strategy_name)
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail=f"Strategy {strategy_name} not found")
     
     # Load strategy configuration
     config = {}
     if config_path and Path(config_path).exists():
-        config = json.loads(Path(config_path).read_text(encoding="utf-8"))
+        config = parse_json_file(Path(config_path))
     
     return StrategyResponse(
         name=strategy_name,

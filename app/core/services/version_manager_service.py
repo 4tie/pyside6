@@ -380,7 +380,7 @@ class VersionManagerService:
         try:
             # Load existing strategy JSON if present
             if strategy_json.exists():
-                data = json.loads(strategy_json.read_text(encoding="utf-8"))
+                data = parse_json_file(strategy_json)
             else:
                 data = {
                     "strategy_name": strategy_name,

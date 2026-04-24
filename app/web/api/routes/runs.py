@@ -12,6 +12,7 @@ from app.core.backtests.results_index import IndexStore
 from app.core.backtests.results_store import RunStore
 from app.core.services.backtest_service import BacktestService
 from app.core.services.settings_service import SettingsService
+from app.core.parsing.json_parser import parse_json_file
 from app.web.dependencies import (
     SettingsServiceDep,
     BacktestServiceDep,
@@ -163,8 +164,7 @@ async def get_strategy_run(
     params_file = run_dir / "params.json"
     params = {}
     if params_file.exists():
-        import json
-        params = json.loads(params_file.read_text(encoding="utf-8"))
+        params = parse_json_file(params_file)
 
     return RunDetailResponse(
         run_id=run_entry.get("run_id", ""),
@@ -244,8 +244,7 @@ async def get_run(
     params_file = run_dir / "params.json"
     params = {}
     if params_file.exists():
-        import json
-        params = json.loads(params_file.read_text(encoding="utf-8"))
+        params = parse_json_file(params_file)
 
     return RunDetailResponse(
         run_id=run_entry.get("run_id", ""),

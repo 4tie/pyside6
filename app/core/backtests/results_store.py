@@ -3,14 +3,14 @@ results_store.py — RunStore: saves a single backtest run as a structured folde
 Also provides load_run() for reconstructing BacktestResults from disk.
 """
 import hashlib
-import json
 import shutil
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
+from typing import Dict, Optional
 
 from app.core.backtests.results_models import BacktestResults, BacktestSummary, BacktestTrade
 from app.core.backtests.results_index import IndexStore, StrategyIndexStore
+from app.core.parsing.json_parser import parse_json_file, write_json_file_atomic, ParseError
 from app.core.utils.app_logger import get_logger
 
 _log = get_logger("backtests.store")
@@ -75,9 +75,9 @@ class RunStore:
             raise FileNotFoundError(f"trades.json not found in {run_dir}")
 
         try:
-            r = json.loads(results_file.read_text(encoding="utf-8"))
-            t_data = json.loads(trades_file.read_text(encoding="utf-8"))
-        except json.JSONDecodeError as e:
+            r = parse_json_file(results_file)
+            t_data = parse_json_file(trades_file)
+        except ParseError as e:
             raise ValueError(f"Failed to parse run files: {e}")
 
         summary = BacktestSummary(
@@ -167,9 +167,7 @@ def _write_metadata(run_dir: Path, run_id: str, results: BacktestResults, versio
         "profit_factor":    round(s.profit_factor, 4),
         "expectancy":       round(s.expectancy, 4),
     }
-    (run_dir / "meta.json").write_text(
-        json.dumps(meta, indent=2, ensure_ascii=False), encoding="utf-8"
-    )
+    write_json_file_atomic(run_dir / "meta.json", meta)
 
 
 def _write_results_data(run_dir: Path, results: BacktestResults) -> None:
@@ -202,9 +200,7 @@ def _write_results_data(run_dir: Path, results: BacktestResults) -> None:
         "profit_factor":          round(s.profit_factor, 4),
         "expectancy":             round(s.expectancy, 4),
     }
-    (run_dir / "results.json").write_text(
-        json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8"
-    )
+    write_json_file_atomic(run_dir / "results.json", data)
 
 
 def _write_trades_data(run_dir: Path, results: BacktestResults) -> None:
@@ -224,9 +220,7 @@ def _write_trades_data(run_dir: Path, results: BacktestResults) -> None:
         }
         for t in results.trades
     ]
-    (run_dir / "trades.json").write_text(
-        json.dumps(trades_out, indent=2, ensure_ascii=False), encoding="utf-8"
-    )
+    write_json_file_atomic(run_dir / "trades.json", trades_out)
 
 
 def _write_configuration_snapshot(run_dir: Path, config_path: Optional[str]) -> None:
@@ -257,6 +251,4 @@ def _write_parameters(run_dir: Path, run_params: Optional[dict],
             "minimal_roi": sd.get("minimal_roi", {}),
             "stoploss":    sd.get("stoploss"),
         }
-    (run_dir / "params.json").write_text(
-        json.dumps(params, indent=2, ensure_ascii=False), encoding="utf-8"
-    )
+    write_json_file_atomic(run_dir / "params.json", params)

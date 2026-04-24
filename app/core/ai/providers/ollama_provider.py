@@ -1,7 +1,8 @@
 import json
 import threading
-import time
-from typing import Iterator, Optional
+from typing import AsyncGenerator, Optional
+
+from app.core.parsing.json_parser import parse_json_string
 
 import requests
 
@@ -95,7 +96,7 @@ class OllamaProvider(AIProvider):
             if not line:
                 continue
 
-            chunk = json.loads(line)
+            chunk = parse_json_string(line)
             done = chunk.get("done", False)
             yield StreamToken(
                 delta=chunk["message"]["content"],

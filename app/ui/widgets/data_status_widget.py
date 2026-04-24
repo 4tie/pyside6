@@ -3,6 +3,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel
+
+from app.core.parsing.json_parser import parse_json_file
 from PySide6.QtGui import QColor, QFont
 from PySide6.QtWidgets import (
     QHBoxLayout,
@@ -62,7 +65,7 @@ def _read_candle_meta(path: Path, tf: str) -> Optional[dict]:
     Returns None if file is unreadable or empty.
     """
     try:
-        raw = json.loads(path.read_text(encoding="utf-8"))
+        raw = parse_json_file(path)
         if not raw or not isinstance(raw, list):
             return None
 

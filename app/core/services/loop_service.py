@@ -1126,8 +1126,8 @@ class LoopService:
                 if not line:
                     continue
                 try:
-                    entry = _json.loads(line)
-                except _json.JSONDecodeError:
+                    entry = parse_json_string(line)
+                except Exception:
                     continue
                 # Each line is a hyperopt result; find the one with the best (lowest) loss
                 loss = entry.get("loss")

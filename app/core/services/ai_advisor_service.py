@@ -6,10 +6,11 @@ AI model via AIService, and returns a parameter suggestion dict.
 """
 from __future__ import annotations
 
-import json
-from typing import Any, Dict, List, Optional
+import re
+from typing import Dict, Optional
 
 from app.core.utils.app_logger import get_logger
+from app.core.parsing.json_parser import parse_json_string
 
 _log = get_logger("services.ai_advisor")
 
@@ -180,8 +181,8 @@ class AIAdvisorService:
             return None
 
         try:
-            suggestion = json.loads(match.group())
-        except json.JSONDecodeError as exc:
+            suggestion = parse_json_string(match.group())
+        except Exception as exc:
             _log.warning("AIAdvisorService: JSON parse error: %s", exc)
             return None
 

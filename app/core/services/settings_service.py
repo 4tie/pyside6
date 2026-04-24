@@ -1,10 +1,9 @@
-import json
-import os
 import subprocess
 from pathlib import Path
 from typing import Optional
 
 from app.core.models.settings_models import AppSettings, SettingsValidationResult
+from app.core.parsing.json_parser import parse_json_file, write_json_file_atomic, ParseError
 from app.core.utils.app_logger import get_logger
 
 _log = get_logger("settings")
@@ -25,12 +24,11 @@ class SettingsService:
         """Load settings from file or return defaults."""
         if self.settings_file.exists():
             try:
-                with open(self.settings_file, "r") as f:
-                    data = json.load(f)
-                    self.settings = AppSettings(**data)
-                    _log.debug("Settings loaded from %s", self.settings_file)
-                    return self.settings
-            except Exception as e:
+                data = parse_json_file(self.settings_file)
+                self.settings = AppSettings(**data)
+                _log.debug("Settings loaded from %s", self.settings_file)
+                return self.settings
+            except ParseError as e:
                 _log.error("Failed to load settings from %s: %s", self.settings_file, e)
                 print(f"Failed to load settings: {e}")
         else:
@@ -42,15 +40,13 @@ class SettingsService:
     def save_settings(self, settings: AppSettings) -> bool:
         """Save settings to file."""
         try:
-            self.settings_file.parent.mkdir(parents=True, exist_ok=True)
-            with open(self.settings_file, "w") as f:
-                json.dump(settings.model_dump(), f, indent=2)
+            write_json_file_atomic(self.settings_file, settings.model_dump())
             self.settings = settings
             _log.info("Settings saved to %s", self.settings_file)
             _log.debug("Saved: python=%s venv=%s user_data=%s",
                        settings.python_executable, settings.venv_path, settings.user_data_path)
             return True
-        except Exception as e:
+        except ParseError as e:
             _log.error("Failed to save settings to %s: %s", self.settings_file, e)
             print(f"Failed to save settings: {e}")
             return False

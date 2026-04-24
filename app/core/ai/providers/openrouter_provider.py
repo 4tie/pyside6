@@ -1,7 +1,8 @@
 import json
 import threading
-import time
-from typing import Iterator, Optional
+from typing import AsyncGenerator
+
+from app.core.parsing.json_parser import parse_json_string, Optional
 
 import requests
 
@@ -241,8 +242,8 @@ class OpenRouterProvider(AIProvider):
                 return
 
             try:
-                chunk = json.loads(data)
-            except json.JSONDecodeError:
+                chunk = parse_json_string(data)
+            except Exception:
                 _log.warning("stream_chat() failed to parse SSE line: %s", data)
                 continue
 

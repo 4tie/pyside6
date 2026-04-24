@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from app.core.utils.app_logger import get_logger, setup_logging
+from app.core.utils.app_logger import get_logger, configure_logging
 
 
 def test_get_logger_returns_logger():
@@ -22,22 +22,22 @@ def test_get_logger_none_returns_root_child():
     assert log is not None
 
 
-def test_setup_logging_creates_log_dir(tmp_path):
+def test_configure_logging_creates_log_dir(tmp_path):
     log_dir = tmp_path / "logs"
-    setup_logging(str(log_dir))
+    configure_logging(str(log_dir))
     assert log_dir.exists()
 
 
-def test_setup_logging_idempotent(tmp_path):
+def test_configure_logging_idempotent(tmp_path):
     """Calling setup_logging twice should not raise."""
     log_dir = tmp_path / "logs2"
-    setup_logging(str(log_dir))
-    setup_logging(str(log_dir))
+    configure_logging(str(log_dir))
+    configure_logging(str(log_dir))
 
 
 def test_logger_levels_work(tmp_path):
     log_dir = tmp_path / "logs"
-    setup_logging(str(log_dir))
+    configure_logging(str(log_dir))
     log = get_logger("test.levels")
     # Should not raise
     log.debug("debug message")

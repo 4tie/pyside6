@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import List, Optional
 
 from app.core.backtests.results_index import IndexStore
-from app.core.backtests.results_parser import parse_backtest_results_from_zip
+from app.core.parsing.backtest_parser import parse_backtest_results_from_zip as parse_backtest_zip
 from app.core.backtests.results_store import RunStore
 from app.core.freqtrade.resolvers.config_resolver import find_config_file_path
 from app.core.freqtrade.resolvers.strategy_resolver import list_available_strategies
@@ -84,7 +84,7 @@ class BacktestService:
                 if user_data_dir:
                     try:
                         config_path = str(
-                            resolve_config_file(user_data_dir, strategy_name=strategy)
+                            find_config_file_path(user_data_dir, strategy_name=strategy)
                         )
                     except FileNotFoundError:
                         config_path = None

@@ -26683,3 +26683,15 @@ Freqtrade Version:	freqtrade 2026.3
 2026-04-24 10:58:25.688 | INFO     | freqtrade_gui.ui.backtest_page | Backtest results loaded: strategy=MultiMeee
 2026-04-24 11:03:12.603 | DEBUG    | freqtrade_gui.ui.main_window   | Geometry saved (lastPage=backtest)
 2026-04-24 11:03:12.613 | INFO     | freqtrade_gui.startup          | Application exiting — code=0
+2026-04-24 12:05:24.284 | DEBUG    | freqtrade_gui.settings         | Settings loaded from T:\ae\pyside6\data\settings.json
+2026-04-24 12:05:24.284 | INFO     | freqtrade_gui.startup          | ============================================================
+2026-04-24 12:05:24.285 | INFO     | freqtrade_gui.startup          | Freqtrade GUI starting
+2026-04-24 12:05:24.285 | INFO     | freqtrade_gui.startup          | Python     : 3.12.10
+2026-04-24 12:05:24.314 | INFO     | freqtrade_gui.startup          | Platform   : Windows 11
+2026-04-24 12:05:24.314 | INFO     | freqtrade_gui.startup          | PySide6    : 6.11.0
+2026-04-24 12:05:24.314 | INFO     | freqtrade_gui.startup          | user_data  : T:\ae\pyside6\user_data
+2026-04-24 12:05:24.314 | INFO     | freqtrade_gui.startup          | venv       : T:\ae\pyside6\.venv
+2026-04-24 12:05:24.314 | INFO     | freqtrade_gui.startup          | python_exe : T:\ae\pyside6\.venv\Scripts\python.exe
+2026-04-24 12:05:24.314 | INFO     | freqtrade_gui.startup          | freqtrade  : T:\ae\pyside6\.venv\Scripts\freqtrade.exe
+2026-04-24 12:05:24.314 | INFO     | freqtrade_gui.startup          | use_module : True
+2026-04-24 12:05:24.315 | INFO     | freqtrade_gui.startup          | ============================================================

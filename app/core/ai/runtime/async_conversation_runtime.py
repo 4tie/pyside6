@@ -9,8 +9,9 @@ from __future__ import annotations
 import asyncio
 import re
 from dataclasses import dataclass, field
-from typing import Callable, List, Optional
+from typing import Any, Optional, Callable, List
 
+from app.core.parsing.json_parser import parse_json_string
 from app.core.ai.providers.provider_base import AIProvider, AIResponse, StreamToken
 from app.core.ai.providers.provider_factory import ProviderFactory
 from app.core.ai.runtime.agent_policy import AgentPolicy, default_policy
@@ -362,7 +363,7 @@ class AsyncConversationRuntime(AsyncRuntimeBase):
                         arguments = tool_call.get("function", {}).get("arguments", {})
                         if isinstance(arguments, str):
                             try:
-                                arguments = json.loads(arguments)
+                                arguments = parse_json_string(arguments)
                             except Exception:
                                 arguments = {}
 

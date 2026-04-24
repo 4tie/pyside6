@@ -197,12 +197,12 @@ class TestGateBacktestCallbacksPreserved:
             captured_kwargs.update(kwargs)
 
         with patch.object(page._process_service, "execute_command", side_effect=fake_execute_command):
-            with patch("app.core.freqtrade.runners.backtest_runner.build_backtest_command") as mock_build:
+            with patch("app.core.freqtrade.runners.backtest_runner.create_backtest_command") as mock_build:
                 mock_cmd = MagicMock()
                 mock_cmd.as_list.return_value = ["python", "-m", "freqtrade", "backtesting"]
                 mock_cmd.cwd = str(tmp_path)
                 mock_build.return_value = mock_cmd
-                with patch("app.core.freqtrade.resolvers.config_resolver.resolve_config_file", return_value=tmp_path / "config.json"):
+                with patch("app.core.freqtrade.resolvers.config_resolver.find_config_file_path", return_value=tmp_path / "config.json"):
                     page._start_gate_backtest("in_sample", "20240101-20240115", "Gate 1")
 
         assert "on_output" in captured_kwargs, "execute_command was not called with on_output kwarg"
@@ -254,12 +254,12 @@ def test_pbt_gate_backtest_always_uses_terminal_callbacks(qapp, tmp_path, strate
         captured_on_error.append(kwargs.get("on_error"))
 
     with patch.object(page._process_service, "execute_command", side_effect=fake_execute_command):
-        with patch("app.core.freqtrade.runners.backtest_runner.build_backtest_command") as mock_build:
+        with patch("app.core.freqtrade.runners.backtest_runner.create_backtest_command") as mock_build:
             mock_cmd = MagicMock()
             mock_cmd.as_list.return_value = ["python", "-m", "freqtrade", "backtesting"]
             mock_cmd.cwd = str(tmp_path)
             mock_build.return_value = mock_cmd
-            with patch("app.core.freqtrade.resolvers.config_resolver.resolve_config_file", return_value=tmp_path / "config.json"):
+            with patch("app.core.freqtrade.resolvers.config_resolver.find_config_file_path", return_value=tmp_path / "config.json"):
                 page._start_gate_backtest(gate_name, timerange, f"Gate {gate_name}")
 
     assert len(captured_on_output) == 1, "execute_command should have been called once"

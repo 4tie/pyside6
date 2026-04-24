@@ -160,7 +160,7 @@ class TestRunBaselineBacktestMockedServices:
         mock_cmd.cwd = str(tmp_path)
 
         with patch.object(page._improve_service, "prepare_sandbox", side_effect=fake_prepare_sandbox):
-            with patch("app.core.freqtrade.runners.backtest_runner.build_backtest_command", return_value=mock_cmd):
+            with patch("app.core.freqtrade.runners.backtest_runner.create_backtest_command", return_value=mock_cmd):
                 with patch.object(page._loop_service, "compute_in_sample_timerange", return_value="20240101-20240115"):
                     with patch.object(page._process_service, "execute_command"):
                         page._run_baseline_backtest(config, strategy, settings)
@@ -218,7 +218,7 @@ class TestRunBaselineBacktestMockedServices:
         mock_cmd.cwd = str(tmp_path)
 
         with patch.object(page._improve_service, "prepare_sandbox", side_effect=fake_prepare_sandbox):
-            with patch("app.core.freqtrade.runners.backtest_runner.build_backtest_command", return_value=mock_cmd):
+            with patch("app.core.freqtrade.runners.backtest_runner.create_backtest_command", return_value=mock_cmd):
                 with patch.object(page._loop_service, "compute_in_sample_timerange", return_value="20240101-20240115"):
                     with patch.object(page._process_service, "execute_command", side_effect=fake_execute_command):
                         page._run_baseline_backtest(config, strategy, settings)
@@ -269,7 +269,7 @@ class TestRunBaselineBacktestMockedServices:
         mock_cmd.cwd = str(tmp_path)
 
         with patch.object(page._improve_service, "prepare_sandbox", side_effect=fake_prepare_sandbox):
-            with patch("app.core.freqtrade.runners.backtest_runner.build_backtest_command", return_value=mock_cmd):
+            with patch("app.core.freqtrade.runners.backtest_runner.create_backtest_command", return_value=mock_cmd):
                 with patch.object(page._loop_service, "compute_in_sample_timerange", return_value="20240101-20240115"):
                     with patch.object(page._process_service, "execute_command", side_effect=fake_execute_command):
                         page._run_baseline_backtest(config, strategy, settings)

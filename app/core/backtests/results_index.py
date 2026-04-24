@@ -24,14 +24,14 @@ _INDEX_FILE = "index.json"
 def _load_json_file(path: Path, default: dict) -> dict:
     if path.exists():
         try:
-            return json.loads(path.read_text(encoding="utf-8"))
+            return parse_json_file(path)
         except Exception:
             pass
     return default
 
 
 def _save_json_file(path: Path, data: dict) -> None:
-    path.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
+    write_json_file_atomic(path, data)
 
 
 def _create_index_entry_from_results(run_id: str, run_dir: Path, results: BacktestResults,
@@ -134,7 +134,7 @@ class IndexStore:
                 if not run_dir.is_dir() or not meta_path.exists():
                     continue
                 try:
-                    meta = json.loads(meta_path.read_text(encoding="utf-8"))
+                    meta = parse_json_file(meta_path)
                     meta["run_dir"] = str(run_dir.relative_to(root))
                     runs.append(meta)
                 except Exception:
@@ -189,7 +189,7 @@ class StrategyIndexStore:
             if not run_dir.is_dir() or not meta_path.exists():
                 continue
             try:
-                meta = json.loads(meta_path.read_text(encoding="utf-8"))
+                meta = parse_json_file(meta_path)
                 entry = {k: meta.get(k) for k in (
                     "run_id", "timeframe", "pairs", "timerange",
                     "backtest_start", "backtest_end", "profit_total_pct",

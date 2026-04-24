@@ -5,7 +5,6 @@ Loads 100 failure patterns from JSON and provides access.
 """
 from __future__ import annotations
 
-import json
 from pathlib import Path
 from typing import List, Optional
 
@@ -14,6 +13,7 @@ from app.core.models.pattern_models import (
     PatternCondition,
     PatternAction,
 )
+from app.core.parsing.json_parser import parse_json_file, ParseError
 from app.core.utils.app_logger import get_logger
 
 _log = get_logger("services.pattern_database")
@@ -50,8 +50,7 @@ class PatternDatabase:
             True if successful, False otherwise.
         """
         try:
-            with open(json_path, 'r') as f:
-                data = json.load(f)
+            data = parse_json_file(json_path)
             
             # Parse patterns from JSON
             patterns = []
@@ -66,7 +65,7 @@ class PatternDatabase:
             _log.info("Loaded %d patterns from %s", len(patterns), json_path)
             return True
             
-        except Exception as e:
+        except ParseError as e:
             _log.error("Failed to load patterns from %s: %s", json_path, e)
             return False
 

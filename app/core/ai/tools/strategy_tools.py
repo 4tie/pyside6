@@ -8,11 +8,12 @@ Provides three tools:
 """
 from __future__ import annotations
 
-import json
 from pathlib import Path
-from typing import Any, Dict
+from typing import Optional
 
-from app.core.ai.tools.tool_registry import ToolDefinition, ToolRegistry
+from app.core.ai.tools.tool_executor import ToolExecutor
+from app.core.ai.tools.tool_registry import ToolRegistry
+from app.core.parsing.json_parser import parse_json_file
 from app.core.utils.app_logger import get_logger
 
 _log = get_logger("services.strategy_tools")
@@ -104,8 +105,8 @@ def read_strategy_parameters(strategy_name: str, settings=None) -> Dict[str, Any
         return {"output": f"No params file found for strategy: {strategy_name}", "error": None}
 
     try:
-        data = json.loads(params_file.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
+        data = parse_json_file(params_file)
+    except Exception as exc:
         _log.error("read_strategy_params: failed to parse %s: %s", params_file, exc)
         return {"error": f"Failed to read params file: {exc}"}
 

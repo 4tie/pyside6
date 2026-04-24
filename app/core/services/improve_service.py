@@ -4,7 +4,6 @@ improve_service.py — Service for the strategy improvement pipeline.
 Provides data-loading helpers used by the improve workflow:
 listing strategies, fetching run history, and loading baseline results.
 """
-import json
 import os
 import shutil
 from datetime import datetime, timezone
@@ -13,7 +12,7 @@ from typing import Dict, List, Optional, Tuple
 
 from app.core.backtests.results_index import IndexStore
 from app.core.backtests.results_models import BacktestResults
-from app.core.backtests.results_parser import parse_backtest_results_from_zip
+from app.core.parsing.backtest_parser import parse_backtest_results_from_zip as parse_backtest_zip
 from app.core.backtests.results_store import RunStore
 from app.core.freqtrade.runners.backtest_runner import BacktestRunCommand
 from app.core.services.backtest_service import BacktestService
@@ -125,13 +124,11 @@ class ImproveService:
         shutil.copy2(strategy_py, sandbox_dir / f"{strategy_name}.py")
 
         # Write config file as {version_id}.json (not {strategy_name}.json)
+        from app.core.parsing.json_parser import write_json_file_atomic
         config_file = sandbox_dir / f"{version_id}.json"
-        config_file.write_text(
-            json.dumps(
-                self._build_freqtrade_params_file(strategy_name, candidate_config),
-                indent=2,
-            ),
-            encoding="utf-8",
+        write_json_file_atomic(
+            config_file,
+            self._build_freqtrade_params_file(strategy_name, candidate_config),
         )
 
         _log.info("Sandbox prepared at %s", sandbox_dir)
@@ -217,8 +214,9 @@ class ImproveService:
                 return self._load_params_from_live_strategy(strategy_name)
             return {}
         try:
-            return json.loads(params_file.read_text(encoding="utf-8"))
-        except json.JSONDecodeError as e:
+            from app.core.parsing.json_parser import parse_json_file
+            return parse_json_file(params_file)
+        except Exception as e:
             _log.error("Failed to parse params.json in %s: %s", run_dir, e)
             raise ValueError(f"Failed to parse params.json: {e}")
 
@@ -246,8 +244,8 @@ class ImproveService:
             return {}
 
         try:
-            live_data = json.loads(live_json_path.read_text(encoding="utf-8"))
-        except json.JSONDecodeError as e:
+            live_data = parse_json_file(live_json_path)
+        except Exception as e:
             _log.error("Failed to parse live strategy JSON at %s: %s", live_json_path, e)
             return {}
 
@@ -303,8 +301,8 @@ class ImproveService:
 
         if live_json_path.exists():
             try:
-                base = json.loads(live_json_path.read_text(encoding="utf-8"))
-            except json.JSONDecodeError:
+                base = parse_json_file(live_json_path)
+            except Exception:
                 base = {"strategy_name": strategy_name, "params": {}, "ft_stratparam_v": 1}
         else:
             base = {"strategy_name": strategy_name, "params": {}, "ft_stratparam_v": 1}

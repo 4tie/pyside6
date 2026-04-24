@@ -8,11 +8,11 @@ from __future__ import annotations
 
 import copy
 import json
-import time
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import List, Optional, Tuple
 
+from app.core.parsing.json_parser import parse_json_file
 from PySide6.QtCore import Qt, QTimer, Signal
 from PySide6.QtWidgets import (
     QCheckBox, QComboBox, QDoubleSpinBox, QFrame, QGridLayout,
@@ -1395,7 +1395,7 @@ class LoopPage(QWidget):
         """Approximate stress by combining configured fee and slippage into `--fee`."""
         base_fee = 0.001
         try:
-            payload = json.loads(config_path.read_text(encoding="utf-8"))
+            payload = parse_json_file(config_path)
             raw_fee = payload.get("fee")
             if raw_fee is None and isinstance(payload.get("exchange"), dict):
                 raw_fee = payload["exchange"].get("fee")

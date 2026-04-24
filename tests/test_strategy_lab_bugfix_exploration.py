@@ -173,7 +173,7 @@ class TestBug2MissingExportFlags:
         )
         assert "extra_flags" in source, (
             "Bug 2 confirmed: _run_baseline_backtest does not build or pass extra_flags "
-            "to build_backtest_command. The --strategy-path and --backtest-directory flags "
+            "to create_backtest_command. The --strategy-path and --backtest-directory flags "
             "are absent from the baseline command."
         )
 
@@ -182,7 +182,7 @@ class TestBug2MissingExportFlags:
 
         **Validates: Requirements 1.3, 1.4**
         """
-        from app.core.freqtrade.runners.backtest_runner import build_backtest_command
+        from app.core.freqtrade.runners.backtest_runner import create_backtest_command
 
         settings = _make_app_settings(tmp_path)
         strategy_name = "MyStrategy"
@@ -202,7 +202,7 @@ class TestBug2MissingExportFlags:
             "--strategy-path", str(sandbox_dir),
             "--backtest-directory", str(export_dir),
         ]
-        cmd = build_backtest_command(
+        cmd = create_backtest_command(
             settings=settings,
             strategy_name=strategy_name,
             timeframe="5m",

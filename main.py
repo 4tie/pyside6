@@ -11,7 +11,7 @@ from PySide6.QtWidgets import QApplication
 from PySide6 import __version__ as pyside_version
 
 from app.app_state.settings_state import SettingsState
-from app.core.utils.app_logger import setup_logging, get_logger
+from app.core.utils.app_logger import configure_logging, get_logger
 
 
 def main():
@@ -23,7 +23,7 @@ def main():
     settings = settings_state.load_settings()
 
     _log_dir = Path(__file__).parent / "data" / "log"
-    setup_logging(str(_log_dir))
+    configure_logging(str(_log_dir))
     log = get_logger("startup")
 
     log.info("=" * 60)

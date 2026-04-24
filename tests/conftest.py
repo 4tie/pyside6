@@ -133,5 +133,5 @@ def backtest_results_dir(tmp_path: Path) -> Path:
 @pytest.fixture()
 def sample_results(backtest_zip):
     """Return parsed BacktestResults from the sample zip fixture."""
-    from app.core.backtests.results_parser import parse_backtest_zip
-    return parse_backtest_zip(str(backtest_zip))
+    from app.core.backtests.results_parser import parse_backtest_results_from_zip
+    return parse_backtest_results_from_zip(str(backtest_zip))

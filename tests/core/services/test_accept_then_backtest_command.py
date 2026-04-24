@@ -1,8 +1,8 @@
 """
-Integration test: accept_candidate() → build_backtest_command() param propagation.
+Integration test: accept_candidate() → create_backtest_command() param propagation.
 
 Validates that after ImproveService.accept_candidate() writes improved parameters
-to the live strategy JSON, a subsequent call to build_backtest_command() (as
+to the live strategy JSON, a subsequent call to create_backtest_command() (as
 triggered by the Backtest page) does NOT include --max-open-trades or
 --dry-run-wallet flags that would override those parameters.
 
@@ -12,7 +12,7 @@ This is the regression test for the bug where the Backtest page was passing
 Correctness properties tested:
   P1 — accept_candidate() writes the improved stoploss and max_open_trades to
        {strategies_dir}/{strategy_name}.json in freqtrade nested format.
-  P2 — build_backtest_command() (called without max_open_trades/dry_run_wallet)
+  P2 — create_backtest_command() (called without max_open_trades/dry_run_wallet)
        does NOT include --max-open-trades or --dry-run-wallet in its arg list.
   P3 — The written JSON is readable back via _load_params_from_live_strategy()
        and the values match what was accepted.
@@ -108,19 +108,19 @@ def test_p1_accept_candidate_writes_improved_params(tmp_path):
 
 
 # ---------------------------------------------------------------------------
-# P2 — build_backtest_command() does NOT pass --max-open-trades or
+# P2 — create_backtest_command() does NOT pass --max-open-trades or
 #       --dry-run-wallet when called without those arguments
 # ---------------------------------------------------------------------------
 
 def test_p2_backtest_command_has_no_override_flags(tmp_path):
     """
-    P2: build_backtest_command() called without max_open_trades/dry_run_wallet
+    P2: create_backtest_command() called without max_open_trades/dry_run_wallet
     must NOT include --max-open-trades or --dry-run-wallet in the command args.
 
     This is the core regression test: the Backtest page previously passed these
     flags, overriding the accepted strategy params.
     """
-    from app.core.freqtrade.runners.backtest_runner import build_backtest_command
+    from app.core.freqtrade.runners.backtest_runner import create_backtest_command
     from app.core.models.settings_models import AppSettings
 
     strategy = "MyStrategy"
@@ -135,13 +135,13 @@ def test_p2_backtest_command_has_no_override_flags(tmp_path):
     settings.use_module_execution = False
     settings.project_path = None
 
-    # Patch resolve_config_file and resolve_strategy_file to avoid real FS lookups
+    # Patch find_run_paths and create_command to avoid real FS lookups
     with (
         patch(
-            "app.core.freqtrade.runners.backtest_runner.resolve_run_paths"
+            "app.core.freqtrade.runners.backtest_runner.find_run_paths"
         ) as mock_resolve,
         patch(
-            "app.core.freqtrade.runners.backtest_runner.build_command"
+            "app.core.freqtrade.runners.backtest_runner.create_command"
         ) as mock_build,
     ):
         from app.core.freqtrade.resolvers.runtime_resolver import ResolvedRunPaths
@@ -167,7 +167,7 @@ def test_p2_backtest_command_has_no_override_flags(tmp_path):
         mock_build.side_effect = capture_build
 
         # Call WITHOUT max_open_trades and dry_run_wallet — as the fixed page does
-        build_backtest_command(
+        create_backtest_command(
             settings=settings,
             strategy_name=strategy,
             timeframe="5m",
@@ -175,11 +175,11 @@ def test_p2_backtest_command_has_no_override_flags(tmp_path):
         )
 
     assert "--max-open-trades" not in captured_args, (
-        "build_backtest_command() must NOT include --max-open-trades when "
+        "create_backtest_command() must NOT include --max-open-trades when "
         "max_open_trades is not passed. This flag overrides the strategy params file."
     )
     assert "--dry-run-wallet" not in captured_args, (
-        "build_backtest_command() must NOT include --dry-run-wallet when "
+        "create_backtest_command() must NOT include --dry-run-wallet when "
         "dry_run_wallet is not passed."
     )
 
@@ -258,12 +258,12 @@ def test_p5_old_page_would_have_overridden_params_new_page_does_not(tmp_path):
     P5: Regression test documenting the original bug.
 
     The old BacktestPage passed max_open_trades=2 (from the UI spinner) to
-    build_backtest_command(), which emitted --max-open-trades 2 and overrode
+    create_backtest_command(), which emitted --max-open-trades 2 and overrode
     the accepted value of 5 in the strategy JSON.
 
     The fixed page passes no max_open_trades, so the flag is absent.
     """
-    from app.core.freqtrade.runners.backtest_runner import build_backtest_command
+    from app.core.freqtrade.runners.backtest_runner import create_backtest_command
     from app.core.models.settings_models import AppSettings
 
     strategy = "MyStrategy"
@@ -298,11 +298,11 @@ def test_p5_old_page_would_have_overridden_params_new_page_does_not(tmp_path):
     # --- OLD page: passes max_open_trades=2 (spinner value) ---
     old_page_args = []
     with (
-        patch("app.core.freqtrade.runners.backtest_runner.resolve_run_paths", return_value=resolved),
-        patch("app.core.freqtrade.runners.backtest_runner.build_command",
+        patch("app.core.freqtrade.runners.backtest_runner.find_run_paths", return_value=resolved),
+        patch("app.core.freqtrade.runners.backtest_runner.create_command",
               side_effect=lambda s, *a: (old_page_args.extend(a), _fake_cmd(*a))[1]),
     ):
-        build_backtest_command(
+        create_backtest_command(
             settings=settings,
             strategy_name=strategy,
             timeframe="5m",
@@ -313,11 +313,11 @@ def test_p5_old_page_would_have_overridden_params_new_page_does_not(tmp_path):
     # --- NEW (fixed) page: passes nothing ---
     new_page_args = []
     with (
-        patch("app.core.freqtrade.runners.backtest_runner.resolve_run_paths", return_value=resolved),
-        patch("app.core.freqtrade.runners.backtest_runner.build_command",
+        patch("app.core.freqtrade.runners.backtest_runner.find_run_paths", return_value=resolved),
+        patch("app.core.freqtrade.runners.backtest_runner.create_command",
               side_effect=lambda s, *a: (new_page_args.extend(a), _fake_cmd(*a))[1]),
     ):
-        build_backtest_command(
+        create_backtest_command(
             settings=settings,
             strategy_name=strategy,
             timeframe="5m",

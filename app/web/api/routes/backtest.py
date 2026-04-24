@@ -2,7 +2,6 @@
 
 Provides endpoints to run backtests, download data, manage pairs, and persist configuration.
 """
-import json
 from pathlib import Path
 from typing import List, Optional
 
@@ -17,6 +16,7 @@ from app.web.dependencies import (
     ProcessServiceDep,
 )
 from app.core.services.process_service import ProcessService
+from app.core.parsing.json_parser import parse_json_file, write_json_file_atomic, ParseError
 from app.web.models import (
     BacktestRequest,
     DownloadDataRequest,
@@ -140,9 +140,8 @@ async def get_pairs(settings: SettingsServiceDep) -> PairsResponse:
     favorites = []
     if favorites_file.exists():
         try:
-            with open(favorites_file, "r") as f:
-                data = json.load(f)
-                favorites = data.get("favorites", [])
+            data = parse_json_file(favorites_file)
+            favorites = data.get("favorites", [])
         except Exception:
             pass
     
@@ -162,8 +161,7 @@ async def save_favorites(
     favorites_file = Path(app_settings.user_data_path) / "favorites.json"
     favorites_file.parent.mkdir(parents=True, exist_ok=True)
     
-    with open(favorites_file, "w") as f:
-        json.dump({"favorites": request.favorites}, f, indent=2)
+    write_json_file_atomic(favorites_file, {"favorites": request.favorites})
     
     return FavoritesResponse(favorites=request.favorites)
 
@@ -286,8 +284,7 @@ async def save_backtest_config(
         "dry_run_wallet": request.dry_run_wallet,
     }
     
-    with open(config_file, "w") as f:
-        json.dump(config, f, indent=2)
+    write_json_file_atomic(config_file, config)
     
     return BacktestConfigResponse(
         strategy=request.strategy,
@@ -311,8 +308,7 @@ async def get_backtest_config(settings: SettingsServiceDep) -> BacktestConfigRes
         return BacktestConfigResponse()
     
     try:
-        with open(config_file, "r") as f:
-            data = json.load(f)
+        data = parse_json_file(config_file)
         return BacktestConfigResponse(
             strategy=data.get("strategy"),
             timeframe=data.get("timeframe"),

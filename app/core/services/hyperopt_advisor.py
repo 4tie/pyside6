@@ -2,14 +2,13 @@
 hyperopt_advisor.py — Analyses past hyperopt/backtest runs for a strategy
 and recommends better hyperopt settings for the next run.
 """
-import json
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import List, Optional
 
 from app.core.utils.app_logger import get_logger
-
-_log = get_logger("services.hyperopt_advisor")
+from app.core.parsing.json_parser import parse_json_file, parse_json_string
+from app.core.models.loop_models import HyperoptSuggestion
 
 
 @dataclass
@@ -38,7 +37,7 @@ def _load_latest_hyperopt_result(hyperopt_results_dir: Path, strategy: str) -> O
         for line in reversed(lines):
             line = line.strip()
             if line.startswith("{"):
-                return json.loads(line)
+                return parse_json_string(line)
     except Exception as e:
         _log.warning("Could not read hyperopt result %s: %s", files[0].name, e)
     return None
@@ -57,7 +56,7 @@ def _load_latest_backtest_metadata(backtest_results_dir: Path, strategy: str) ->
     if not run_dirs:
         return None
     try:
-        return json.loads((run_dirs[0] / "meta.json").read_text(encoding="utf-8"))
+        return parse_json_file(run_dirs[0] / "meta.json")
     except Exception:
         return None
 
