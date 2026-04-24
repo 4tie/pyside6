@@ -951,6 +951,11 @@ class LoopService:
         self._best_score = float("-inf")
         self._running = True
 
+        # Auto-load patterns if not already loaded
+        if not PatternDatabase.is_loaded():
+            PatternDatabase.auto_load()
+            _log.info("Auto-loaded %d patterns from database", PatternDatabase.count())
+
         if initial_results is not None:
             # Seed the best score from the existing baseline (Training Range only)
             score = calculate_robust_score(RobustScoreInput(in_sample=initial_results.summary))

@@ -28554,3 +28554,5 @@ Freqtrade Version:	freqtrade 2026.3
 2026-04-24 13:37:37.156 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to page: backtest
 2026-04-24 13:37:41.295 | DEBUG    | freqtrade_gui.ui.main_window   | Geometry saved (lastPage=backtest)
 2026-04-24 13:37:41.303 | INFO     | freqtrade_gui.startup          | Application exiting — code=0
+2026-04-24 14:14:54.142 | ERROR    | freqtrade_gui.services.pattern_database | Failed to load patterns from T:\ae\pyside6\data\patterns.json: Invalid JSON (path: T:\ae\pyside6\data\patterns.json)
+2026-04-24 14:16:04.609 | ERROR    | freqtrade_gui.services.pattern_database | Failed to load patterns from T:\ae\pyside6\data\patterns.json: Invalid JSON (path: T:\ae\pyside6\data\patterns.json)

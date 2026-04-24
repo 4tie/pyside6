@@ -13,7 +13,7 @@ from typing import Dict, List, Optional, Tuple
 from app.core.backtests.results_index import IndexStore
 from app.core.models.backtest_models import BacktestResults
 from app.core.parsing.backtest_parser import parse_backtest_results_from_zip as parse_backtest_zip
-from app.core.parsing.json_parser import write_json_file_atomic
+from app.core.parsing.json_parser import parse_json_file, write_json_file_atomic
 from app.core.backtests.results_store import RunStore
 from app.core.freqtrade import BacktestRunCommand
 from app.core.services.backtest_service import BacktestService
@@ -125,7 +125,6 @@ class ImproveService:
         shutil.copy2(strategy_py, sandbox_dir / f"{strategy_name}.py")
 
         # Write config file as {version_id}.json (not {strategy_name}.json)
-        from app.core.parsing.json_parser import write_json_file_atomic
         config_file = sandbox_dir / f"{version_id}.json"
         write_json_file_atomic(
             config_file,
@@ -215,7 +214,6 @@ class ImproveService:
                 return self._load_params_from_live_strategy(strategy_name)
             return {}
         try:
-            from app.core.parsing.json_parser import parse_json_file
             return parse_json_file(params_file)
         except Exception as e:
             _log.error("Failed to parse params.json in %s: %s", run_dir, e)
@@ -455,9 +453,8 @@ class ImproveService:
         settings = self.settings_service.load_settings()
         strategies_dir = Path(settings.user_data_path) / "strategies"
         final_path = strategies_dir / f"{strategy_name}.json"
-        tmp_path = strategies_dir / f"{strategy_name}.json.tmp"
 
-        write_json_file_atomic(tmp_path, self._build_freqtrade_params_file(strategy_name, candidate_config))
+        write_json_file_atomic(final_path, self._build_freqtrade_params_file(strategy_name, candidate_config))
         _log.info("Candidate accepted; written to %s", final_path)
 
     def reject_candidate(self, sandbox_dir: Path) -> None:
@@ -479,9 +476,8 @@ class ImproveService:
         settings = self.settings_service.load_settings()
         strategies_dir = Path(settings.user_data_path) / "strategies"
         final_path = strategies_dir / f"{strategy_name}.json"
-        tmp_path = strategies_dir / f"{strategy_name}.json.tmp"
 
-        write_json_file_atomic(tmp_path, self._build_freqtrade_params_file(strategy_name, baseline_params))
+        write_json_file_atomic(final_path, self._build_freqtrade_params_file(strategy_name, baseline_params))
         _log.info("Rollback complete; restored %s", final_path)
 
     def cleanup_stale_sandboxes(self) -> None:

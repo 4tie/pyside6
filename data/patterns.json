@@ -1,0 +1,309 @@
+{
+  "version": "1.0",
+  "description": "100 failure patterns for strategy optimization",
+  "categories": [
+    {
+      "name": "Risk",
+      "prefix": "PR",
+      "description": "Risk management related patterns",
+      "patterns": [
+        {"id": "PR_001", "name": "stoploss_too_wide", "condition": "max_drawdown > 20", "action": "reduce_stoploss", "params": ["stoploss", -0.08], "severity": 0.9},
+        {"id": "PR_002", "name": "stoploss_too_narrow", "condition": "win_rate < 0.40 AND profit_abs < 0", "action": "increase_stoploss", "params": ["stoploss", 0.05], "severity": 0.8},
+        {"id": "PR_003", "name": "no_trailing_stoploss", "condition": "profit_factor > 1.5 AND max_drawdown > 15", "action": "enable_trailing", "params": ["trailing_stop", true], "severity": 0.7},
+        {"id": "PR_004", "name": "trailing_too_tight", "condition": "total_trades < 50 AND profit_abs < 0", "action": "loosen_trailing", "params": ["trailing_stop_dist", 0.02], "severity": 0.6},
+        {"id": "PR_005", "name": "position_sizing_too_aggressive", "condition": "max_drawdown > 25", "action": "reduce_position", "params": ["enter_position_sizing", -0.02], "severity": 0.9},
+        {"id": "PR_006", "name": "position_sizing_too_conservative", "condition": "profit_abs > 100 AND max_drawdown < 5", "action": "increase_position", "params": ["enter_position_sizing", 0.01], "severity": 0.5},
+        {"id": "PR_007", "name": "high_fee_erosion", "condition": "profit_factor < 1.2 AND total_trades > 100", "action": "reduce_trading", "params": ["timeframe", "4h"], "severity": 0.7},
+        {"id": "PR_008", "name": "drawdown_recovery_slow", "condition": "max_drawdown > 20 AND recovery_time > 50", "action": "tighten_stoploss", "params": ["stoploss", -0.03], "severity": 0.6},
+        {"id": "PR_009", "name": "risk_reward_too_low", "condition": "avg_trade_balance < 0 AND profit_factor < 1.0", "action": "widen_stoploss", "params": ["stoploss", 0.04], "severity": 0.8},
+        {"id": "PR_010", "name": "consecutive_losses_high", "condition": "max_drawdown > 15", "action": "add_cooldown", "params": ["cooldown_time", 1], "severity": 0.7},
+        {"id": "PR_011", "name": "over_leverage", "condition": "max_drawdown > 30", "action": "reduce_leverage", "params": ["leverage", 1], "severity": 0.9},
+        {"id": "PR_012", "name": "margin_call_risk", "condition": "max_drawdown > 20", "action": "reduce_position", "params": ["enter_position_sizing", -0.03], "severity": 0.9},
+        {"id": "PR_013", "name": "stop_hunt_vulnerable", "condition": "total_trades < 30", "action": "widen_stoploss", "params": ["stoploss", 0.02], "severity": 0.6},
+        {"id": "PR_014", "name": "asymmetric_risk", "condition": "avg_trade_balance < 0", "action": "tighten_stoploss", "params": ["stoploss", -0.02], "severity": 0.7},
+        {"id": "PR_015", "name": "variable_risk_exposure", "condition": "profit_stddev > profit_mean", "action": "fix_position_sizing", "params": ["enter_position_sizing", "fixed"], "severity": 0.5}
+      ]
+    },
+    {
+      "name": "Frequency",
+      "prefix": "FR",
+      "description": "Trading frequency related patterns",
+      "patterns": [
+        {"id": "FR_001", "name": "trades_too_low", "condition": "total_trades < 30", "action": "relax_entry", "params": ["entry_timeout", 0], "severity": 0.7},
+        {"id": "FR_002", "name": "trades_too_high", "condition": "total_trades > 200", "action": "tighten_entry", "params": ["entry_timeout", 5], "severity": 0.8},
+        {"id": "FR_003", "name": "over_trading", "condition": "total_trades > 150 AND profit_factor < 1.2", "action": "add_cooldown", "params": ["cooldown_time", 2], "severity": 0.8},
+        {"id": "FR_004", "name": "under_trading", "condition": "total_trades < 50 AND profit_abs < 0", "action": "relax_entry", "params": ["entry_timeout", 0], "severity": 0.6},
+        {"id": "FR_005", "name": "whipsaw_sensitivity", "condition": "total_trades > 100 AND win_rate < 0.45", "action": "add_confirmation", "params": ["confirm_timeout", 2], "severity": 0.7},
+        {"id": "FR_006", "name": "signal_clustering", "condition": "trades_per_day > 5", "action": "add_cooldown", "params": ["cooldown_time", 1], "severity": 0.7},
+        {"id": "FR_007", "name": "time_between_trades_low", "condition": "avg_trades_per_day > 3", "action": "add_cooldown", "params": ["cooldown_time", 1], "severity": 0.6},
+        {"id": "FR_008", "name": "time_between_trades_high", "condition": "avg_trades_per_day < 0.5", "action": "relax_entry", "params": ["entry_timeout", 0], "severity": 0.5},
+        {"id": "FR_009", "name": "entry_frequency_volatile", "condition": "trades_per_day_std > trades_per_day_mean", "action": "stabilize_entry", "params": ["entry_timeout", 3], "severity": 0.6},
+        {"id": "FR_010", "name": "exit_frequency_volatile", "condition": "exits_per_day_std > exits_per_day_mean", "action": "stabilize_exit", "params": ["exit_timeout", 3], "severity": 0.6},
+        {"id": "FR_011", "name": "cycle_time_too_short", "condition": "avg_trade_duration < 1", "action": "extend_cycle", "params": ["min_trade_duration", 1], "severity": 0.7},
+        {"id": "FR_012", "name": "cycle_time_too_long", "condition": "avg_trade_duration > 20", "action": "shorten_cycle", "params": ["max_trade_duration", 10], "severity": 0.5},
+        {"id": "FR_013", "name": "burst_trading", "condition": "trades_per_day > 5", "action": "add_cooldown", "params": ["cooldown_time", 2], "severity": 0.8},
+        {"id": "FR_014", "name": "dead_time_excessive", "condition": "avg_trades_per_day < 0.3", "action": "relax_entry", "params": ["entry_timeout", 0], "severity": 0.6},
+        {"id": "FR_015", "name": "inconsistent_frequency", "condition": "trades_per_day_cv > 0.5", "action": "stabilize_frequency", "params": ["entry_timeout", 2], "severity": 0.5}
+      ]
+    },
+    {
+      "name": "Entries",
+      "prefix": "EN",
+      "description": "Entry signal related patterns",
+      "patterns": [
+        {"id": "EN_001", "name": "entry_too_aggressive", "condition": "win_rate < 0.40", "action": "tighten_entry", "params": ["entry_timeout", 3], "severity": 0.8},
+        {"id": "EN_002", "name": "entry_too_conservative", "condition": "total_trades < 30 AND profit_abs < 0", "action": "relax_entry", "params": ["entry_timeout", 0], "severity": 0.6},
+        {"id": "EN_003", "name": "early_entry", "condition": "avg_trade_balance < 0 AND win_rate < 0.45", "action": "delay_entry", "params": ["entry_timeout", 2], "severity": 0.7},
+        {"id": "EN_004", "name": "late_entry", "condition": "profit_factor < 1.2", "action": "earlier_entry", "params": ["entry_timeout", -1], "severity": 0.6},
+        {"id": "EN_005", "name": "entry_timing_mismatch", "condition": "profit_factor < 1.0", "action": "fix_entry_timing", "params": ["entry_timeout", 1], "severity": 0.7},
+        {"id": "EN_006", "name": "false_signal_entry", "condition": "win_rate < 0.40 AND total_trades > 50", "action": "add_confirmation", "params": ["confirm_timeout", 2], "severity": 0.8},
+        {"id": "EN_007", "name": "missed_entry", "condition": "profit_factor > 1.3 AND total_trades < 50", "action": "relax_entry", "params": ["entry_timeout", 0], "severity": 0.6},
+        {"id": "EN_008", "name": "entry_threshold_too_high", "condition": "total_trades < 40", "action": "lower_entry_threshold", "params": ["entry_timeout", 0], "severity": 0.6},
+        {"id": "EN_009", "name": "entry_threshold_too_low", "condition": "total_trades > 150", "action": "raise_entry_threshold", "params": ["entry_timeout", 2], "severity": 0.7},
+        {"id": "EN_010", "name": "signal_confirmation_weak", "condition": "win_rate < 0.45", "action": "add_confirmation", "params": ["confirm_timeout", 3], "severity": 0.7},
+        {"id": "EN_011", "name": "multiple_signal_conflict", "condition": "total_trades > 100 AND win_rate < 0.45", "action": "prioritize_signals", "params": ["max_signals", 1], "severity": 0.7},
+        {"id": "EN_012", "name": "entry_lag_high", "condition": "profit_factor < 1.2", "action": "reduce_entry_lag", "params": ["entry_timeout", -1], "severity": 0.6},
+        {"id": "EN_013", "name": "volume_spike_entry", "condition": "total_trades > 100", "action": "filter_volume", "params": ["min_volume_ratio", 1.2], "severity": 0.6},
+        {"id": "EN_014", "name": "gap_entry_missed", "condition": "profit_factor > 1.2 AND total_trades < 50", "action": "enable_gap_entry", "params": ["allow_gap_entry", true], "severity": 0.5},
+        {"id": "EN_015", "name": "entry_reliability_low", "condition": "win_rate < 0.40", "action": "improve_entry_reliability", "params": ["confirm_timeout", 3], "severity": 0.8}
+      ]
+    },
+    {
+      "name": "Exits",
+      "prefix": "EX",
+      "description": "Exit signal related patterns",
+      "patterns": [
+        {"id": "EX_001", "name": "exit_too_early", "condition": "avg_trade_balance < 0 AND win_rate > 0.45", "action": "delay_exit", "params": ["exit_timeout", 2], "severity": 0.7},
+        {"id": "EX_002", "name": "exit_too_late", "condition": "profit_factor < 1.2", "action": "earlier_exit", "params": ["exit_timeout", -1], "severity": 0.7},
+        {"id": "EX_003", "name": "premature_profit_take", "condition": "avg_trade_balance < 0 AND win_rate > 0.50", "action": "extend_profit_target", "params": ["exit_timeout", 2], "severity": 0.7},
+        {"id": "EX_004", "name": "late_loss_cut", "condition": "avg_trade_balance < 0", "action": "earlier_exit", "params": ["exit_timeout", -2], "severity": 0.8},
+        {"id": "EX_005", "name": "exit_timing_mismatch", "condition": "profit_factor < 1.0", "action": "fix_exit_timing", "params": ["exit_timeout", 1], "severity": 0.7},
+        {"id": "EX_006", "name": "trailing_stop_underperform", "condition": "profit_factor < 1.3", "action": "optimize_trailing", "params": ["trailing_stop_dist", 0.015], "severity": 0.7},
+        {"id": "EX_007", "name": "partial_exit_too_early", "condition": "profit_factor < 1.2", "action": "delay_partial_exit", "params": ["partial_exit_threshold", 0.02], "severity": 0.6},
+        {"id": "EX_008", "name": "partial_exit_too_late", "condition": "max_drawdown > 15", "action": "earlier_partial_exit", "params": ["partial_exit_threshold", 0.01], "severity": 0.6},
+        {"id": "EX_009", "name": "break_even_too_early", "condition": "win_rate < 0.45", "action": "delay_break_even", "params": ["break_even_delay", 2], "severity": 0.6},
+        {"id": "EX_010", "name": "break_even_too_late", "condition": "max_drawdown > 10", "action": "earlier_break_even", "params": ["break_even_delay", 0], "severity": 0.6},
+        {"id": "EX_011", "name": "time_based_exit_early", "condition": "avg_trade_balance < 0", "action": "disable_time_exit", "params": ["max_trade_duration", 0], "severity": 0.6},
+        {"id": "EX_012", "name": "time_based_exit_late", "condition": "max_drawdown > 15", "action": "enable_time_exit", "params": ["max_trade_duration", 10], "severity": 0.6},
+        {"id": "EX_013", "name": "exit_signal_conflict", "condition": "total_trades > 100", "action": "prioritize_exits", "params": ["max_exit_signals", 1], "severity": 0.6},
+        {"id": "EX_014", "name": "exit_reliability_low", "condition": "win_rate < 0.40", "action": "improve_exit_reliability", "params": ["confirm_timeout", 2], "severity": 0.8},
+        {"id": "EX_015", "name": "asymmetric_exit", "condition": "avg_trade_balance < 0", "action": "symmetrize_exits", "params": ["exit_timeout", 0], "severity": 0.7}
+      ]
+    },
+    {
+      "name": "Pairs",
+      "prefix": "PA",
+      "description": "Pair selection and concentration patterns",
+      "patterns": [
+        {"id": "PA_001", "name": "poor_pair_concentration", "condition": "unique_pairs < 3", "action": "diversify_pairs", "params": ["min_pairs", 5], "severity": 0.7},
+        {"id": "PA_002", "name": "pair_dominance", "condition": "top_pair_profit > total_profit * 0.5", "action": "reduce_pair_dominance", "params": ["max_pair_weight", 0.3], "severity": 0.7},
+        {"id": "PA_003", "name": "pair_correlation_high", "condition": "pair_correlation > 0.7", "action": "reduce_correlation", "params": ["max_correlation", 0.5], "severity": 0.7},
+        {"id": "PA_004", "name": "pair_performance_variance", "condition": "pair_profit_std > pair_profit_mean", "action": "balance_pairs", "params": ["min_pairs", 4], "severity": 0.6},
+        {"id": "PA_005", "name": "underperforming_pairs", "condition": "pairs_with_loss > pairs_with_profit", "action": "remove_weak_pairs", "params": ["min_pair_profit", 0], "severity": 0.7},
+        {"id": "PA_006", "name": "overconcentration", "condition": "top_3_pairs > total_profit * 0.7", "action": "reduce_concentration", "params": ["max_pair_weight", 0.25], "severity": 0.8},
+        {"id": "PA_007", "name": "pair_instability", "condition": "pair_profit_cv > 1.0", "action": "stabilize_pairs", "params": ["min_pair_trades", 10], "severity": 0.6},
+        {"id": "PA_008", "name": "pair_time_mismatch", "condition": "profit_factor < 1.2", "action": "align_pair_times", "params": ["entry_timeout", 1], "severity": 0.6},
+        {"id": "PA_009", "name": "pair_volatility_mismatch", "condition": "pair_volatility_cv > 0.5", "action": "normalize_volatility", "params": ["volatility_adjust", true], "severity": 0.6},
+        {"id": "PA_010", "name": "pair_regime_mismatch", "condition": "profit_factor < 1.0", "action": "diversify_regimes", "params": ["min_regimes", 2], "severity": 0.7},
+        {"id": "PA_011", "name": "unused_pairs", "condition": "unused_pairs > 5", "action": "enable_pairs", "params": ["min_pairs", 3], "severity": 0.5},
+        {"id": "PA_012", "name": "pair_overlap", "condition": "pair_signal_overlap > 0.5", "action": "reduce_overlap", "params": ["entry_timeout", 2], "severity": 0.6},
+        {"id": "PA_013", "name": "pair_capacity_unbalanced", "condition": "pair_trade_imbalance > 0.3", "action": "balance_capacity", "params": ["max_pair_trades", 0.2], "severity": 0.5},
+        {"id": "PA_014", "name": "pair_selection_too_broad", "condition": "unique_pairs > 15 AND profit_factor < 1.2", "action": "narrow_pairs", "params": ["max_pairs", 8], "severity": 0.6},
+        {"id": "PA_015", "name": "pair_selection_too_narrow", "condition": "unique_pairs < 4 AND max_drawdown > 15", "action": "expand_pairs", "params": ["min_pairs", 5], "severity": 0.6}
+      ]
+    },
+    {
+      "name": "Structure",
+      "prefix": "ST",
+      "description": "Strategy structure and configuration patterns",
+      "patterns": [
+        {"id": "ST_001", "name": "filter_strictness_high", "condition": "total_trades < 30", "action": "relax_filters", "params": ["entry_timeout", 0], "severity": 0.7},
+        {"id": "ST_002", "name": "filter_strictness_low", "condition": "total_trades > 150 AND win_rate < 0.45", "action": "tighten_filters", "params": ["entry_timeout", 3], "severity": 0.7},
+        {"id": "ST_003", "name": "timeframe_mismatch", "condition": "profit_factor < 1.2", "action": "change_timeframe", "params": ["timeframe", "4h"], "severity": 0.7},
+        {"id": "ST_004", "name": "timeframe_too_short", "condition": "total_trades > 200", "action": "extend_timeframe", "params": ["timeframe", "4h"], "severity": 0.7},
+        {"id": "ST_005", "name": "timeframe_too_long", "condition": "total_trades < 30", "action": "shorten_timeframe", "params": ["timeframe", "1h"], "severity": 0.6},
+        {"id": "ST_006", "name": "indicator_conflict", "condition": "profit_factor < 1.0", "action": "resolve_conflicts", "params": ["max_indicators", 3], "severity": 0.7},
+        {"id": "ST_007", "name": "indicator_redundancy", "condition": "profit_factor < 1.2", "action": "remove_redundant", "params": ["max_indicators", 3], "severity": 0.6},
+        {"id": "ST_008", "name": "parameter_overfitting", "condition": "profit_factor > 1.5 AND total_trades < 50", "action": "simplify_params", "params": ["max_params", 5], "severity": 0.8},
+        {"id": "ST_009", "name": "parameter_underfitting", "condition": "profit_factor < 1.0", "action": "add_params", "params": ["min_params", 3], "severity": 0.6},
+        {"id": "ST_010", "name": "strategy_complexity_high", "condition": "profit_factor < 1.2", "action": "simplify_strategy", "params": ["max_indicators", 3], "severity": 0.7},
+        {"id": "ST_011", "name": "strategy_complexity_low", "condition": "profit_factor < 1.0", "action": "complexify_strategy", "params": ["min_indicators", 2], "severity": 0.6},
+        {"id": "ST_012", "name": "rule_conflict", "condition": "profit_factor < 1.0", "action": "resolve_conflicts", "params": ["max_rules", 5], "severity": 0.7},
+        {"id": "ST_013", "name": "missing_hedge", "condition": "max_drawdown > 20", "action": "add_hedge", "params": ["hedge_enabled", true], "severity": 0.7},
+        {"id": "ST_014", "name": "over_hedging", "condition": "profit_factor < 1.2", "action": "reduce_hedge", "params": ["hedge_enabled", false], "severity": 0.6},
+        {"id": "ST_015", "name": "strategy_drift", "condition": "profit_factor_change > 0.2", "action": "stabilize_strategy", "params": ["param_decay", 0.9], "severity": 0.7}
+      ]
+    },
+    {
+      "name": "Market Adaptation",
+      "prefix": "MA",
+      "description": "Market regime adaptation patterns",
+      "patterns": [
+        {"id": "MA_001", "name": "regime_dependency", "condition": "profit_factor < 1.2", "action": "add_regime_filter", "params": ["regime_filter", true], "severity": 0.7},
+        {"id": "MA_002", "name": "volatility_mismatch", "condition": "profit_factor < 1.0", "action": "adjust_volatility", "params": ["volatility_adjust", true], "severity": 0.7},
+        {"id": "MA_003", "name": "trend_dependency", "condition": "profit_factor < 1.2", "action": "add_trend_filter", "params": ["trend_filter", true], "severity": 0.7},
+        {"id": "MA_004", "name": "range_dependency", "condition": "profit_factor < 1.2", "action": "add_range_filter", "params": ["range_filter", true], "severity": 0.7},
+        {"id": "MA_005", "name": "low_volatility_underperform", "condition": "avg_volatility < 0.5 AND profit_factor < 1.2", "action": "adapt_low_vol", "params": ["low_vol_mode", true], "severity": 0.7},
+        {"id": "MA_006", "name": "high_volatility_underperform", "condition": "avg_volatility > 2.0 AND profit_factor < 1.2", "action": "adapt_high_vol", "params": ["high_vol_mode", true], "severity": 0.7},
+        {"id": "MA_007", "name": "market_regime_change", "condition": "profit_factor_change > 0.3", "action": "adapt_regime", "params": ["regime_adapt", true], "severity": 0.8},
+        {"id": "MA_008", "name": "liquidity_mismatch", "condition": "profit_factor < 1.2", "action": "filter_liquidity", "params": ["min_liquidity", 1000], "severity": 0.6},
+        {"id": "MA_009", "name": "correlation_regime_change", "condition": "pair_correlation_change > 0.2", "action": "adapt_correlation", "params": ["correlation_adapt", true], "severity": 0.7},
+        {"id": "MA_010", "name": "seasonal_underperform", "condition": "profit_factor < 1.2", "action": "add_seasonal_filter", "params": ["seasonal_filter", true], "severity": 0.6}
+      ]
+    }
+  ]
+}{
+  "version": "1.0",
+  "description": "100 failure patterns for strategy optimization",
+  "categories": [
+    {
+      "name": "Risk",
+      "prefix": "PR",
+      "description": "Risk management related patterns",
+      "patterns": [
+        {"id": "PR_001", "name": "stoploss_too_wide", "condition": "max_drawdown > 20", "action": "reduce_stoploss", "params": ["stoploss", -0.08], "severity": 0.9},
+        {"id": "PR_002", "name": "stoploss_too_narrow", "condition": "win_rate < 0.40 AND profit_abs < 0", "action": "increase_stoploss", "params": ["stoploss", 0.05], "severity": 0.8},
+        {"id": "PR_003", "name": "no_trailing_stoploss", "condition": "profit_factor > 1.5 AND max_drawdown > 15", "action": "enable_trailing", "params": ["trailing_stop", True], "severity": 0.7},
+        {"id": "PR_004", "name": "trailing_too_tight", "condition": "total_trades < 50 AND profit_abs < 0", "action": "loosen_trailing", "params": ["trailing_stop_dist", 0.02], "severity": 0.6},
+        {"id": "PR_005", "name": "position_sizing_too_aggressive", "condition": "max_drawdown > 25", "action": "reduce_position", "params": ["enter_position_sizing", -0.02], "severity": 0.9},
+        {"id": "PR_006", "name": "position_sizing_too_conservative", "condition": "profit_abs > 100 AND max_drawdown < 5", "action": "increase_position", "params": ["enter_position_sizing", 0.01], "severity": 0.5},
+        {"id": "PR_007", "name": "high_fee_erosion", "condition": "profit_factor < 1.2 AND total_trades > 100", "action": "reduce_trading", "params": ["timeframe", "4h"], "severity": 0.7},
+        {"id": "PR_008", "name": "drawdown_recovery_slow", "condition": "max_drawdown > 20 AND recovery_time > 50", "action": "tighten_stoploss", "params": ["stoploss", -0.03], "severity": 0.6},
+        {"id": "PR_009", "name": "risk_reward_too_low", "condition": "avg_trade_balance < 0 AND profit_factor < 1.0", "action": "widen_stoploss", "params": ["stoploss", 0.04], "severity": 0.8},
+        {"id": "PR_010", "name": "consecutive_losses_high", "condition": "max_drawdown > 15", "action": "add_cooldown", "params": ["cooldown_time", 1], "severity": 0.7},
+        {"id": "PR_011", "name": "over_leverage", "condition": "max_drawdown > 30", "action": "reduce_leverage", "params": ["leverage", 1], "severity": 0.9},
+        {"id": "PR_012", "name": "margin_call_risk", "condition": "max_drawdown > 20", "action": "reduce_position", "params": ["enter_position_sizing", -0.03], "severity": 0.9},
+        {"id": "PR_013", "name": "stop_hunt_vulnerable", "condition": "total_trades < 30", "action": "widen_stoploss", "params": ["stoploss", 0.02], "severity": 0.6},
+        {"id": "PR_014", "name": "asymmetric_risk", "condition": "avg_trade_balance < 0", "action": "tighten_stoploss", "params": ["stoploss", -0.02], "severity": 0.7},
+        {"id": "PR_015", "name": "variable_risk_exposure", "condition": "profit_stddev > profit_mean", "action": "fix_position_sizing", "params": ["enter_position_sizing", "fixed"], "severity": 0.5}
+      ]
+    },
+    {
+      "name": "Frequency",
+      "prefix": "FR",
+      "description": "Trading frequency related patterns",
+      "patterns": [
+        {"id": "FR_001", "name": "trades_too_low", "condition": "total_trades < 30", "action": "relax_entry", "params": ["entry_timeout", 0], "severity": 0.7},
+        {"id": "FR_002", "name": "trades_too_high", "condition": "total_trades > 200", "action": "tighten_entry", "params": ["entry_timeout", 5], "severity": 0.8},
+        {"id": "FR_003", "name": "over_trading", "condition": "total_trades > 150 AND profit_factor < 1.2", "action": "add_cooldown", "params": ["cooldown_time", 2], "severity": 0.8},
+        {"id": "FR_004", "name": "under_trading", "condition": "total_trades < 50 AND profit_abs < 0", "action": "relax_entry", "params": ["entry_timeout", 0], "severity": 0.6},
+        {"id": "FR_005", "name": "whipsaw_sensitivity", "condition": "total_trades > 100 AND win_rate < 0.45", "action": "add_confirmation", "params": ["confirm_timeout", 2], "severity": 0.7},
+        {"id": "FR_006", "name": "signal_clustering", "condition": "trades_per_day > 5", "action": "add_cooldown", "params": ["cooldown_time", 1], "severity": 0.7},
+        {"id": "FR_007", "name": "time_between_trades_low", "condition": "avg_trades_per_day > 3", "action": "add_cooldown", "params": ["cooldown_time", 1], "severity": 0.6},
+        {"id": "FR_008", "name": "time_between_trades_high", "condition": "avg_trades_per_day < 0.5", "action": "relax_entry", "params": ["entry_timeout", 0], "severity": 0.5},
+        {"id": "FR_009", "name": "entry_frequency_volatile", "condition": "trades_per_day_std > trades_per_day_mean", "action": "stabilize_entry", "params": ["entry_timeout", 3], "severity": 0.6},
+        {"id": "FR_010", "name": "exit_frequency_volatile", "condition": "exits_per_day_std > exits_per_day_mean", "action": "stabilize_exit", "params": ["exit_timeout", 3], "severity": 0.6},
+        {"id": "FR_011", "name": "cycle_time_too_short", "condition": "avg_trade_duration < 1", "action": "extend_cycle", "params": ["min_trade_duration", 1], "severity": 0.7},
+        {"id": "FR_012", "name": "cycle_time_too_long", "condition": "avg_trade_duration > 20", "action": "shorten_cycle", "params": ["max_trade_duration", 10], "severity": 0.5},
+        {"id": "FR_013", "name": "burst_trading", "condition": "trades_per_day > 5", "action": "add_cooldown", "params": ["cooldown_time", 2], "severity": 0.8},
+        {"id": "FR_014", "name": "dead_time_excessive", "condition": "avg_trades_per_day < 0.3", "action": "relax_entry", "params": ["entry_timeout", 0], "severity": 0.6},
+        {"id": "FR_015", "name": "inconsistent_frequency", "condition": "trades_per_day_cv > 0.5", "action": "stabilize_frequency", "params": ["entry_timeout", 2], "severity": 0.5}
+      ]
+    },
+    {
+      "name": "Entries",
+      "prefix": "EN",
+      "description": "Entry signal related patterns",
+      "patterns": [
+        {"id": "EN_001", "name": "entry_too_aggressive", "condition": "win_rate < 0.40", "action": "tighten_entry", "params": ["entry_timeout", 3], "severity": 0.8},
+        {"id": "EN_002", "name": "entry_too_conservative", "condition": "total_trades < 30 AND profit_abs < 0", "action": "relax_entry", "params": ["entry_timeout", 0], "severity": 0.6},
+        {"id": "EN_003", "name": "early_entry", "condition": "avg_trade_balance < 0 AND win_rate < 0.45", "action": "delay_entry", "params": ["entry_timeout", 2], "severity": 0.7},
+        {"id": "EN_004", "name": "late_entry", "condition": "profit_factor < 1.2", "action": "earlier_entry", "params": ["entry_timeout", -1], "severity": 0.6},
+        {"id": "EN_005", "name": "entry_timing_mismatch", "condition": "profit_factor < 1.0", "action": "fix_entry_timing", "params": ["entry_timeout", 1], "severity": 0.7},
+        {"id": "EN_006", "name": "false_signal_entry", "condition": "win_rate < 0.40 AND total_trades > 50", "action": "add_confirmation", "params": ["confirm_timeout", 2], "severity": 0.8},
+        {"id": "EN_007", "name": "missed_entry", "condition": "profit_factor > 1.3 AND total_trades < 50", "action": "relax_entry", "params": ["entry_timeout", 0], "severity": 0.6},
+        {"id": "EN_008", "name": "entry_threshold_too_high", "condition": "total_trades < 40", "action": "lower_entry_threshold", "params": ["entry_timeout", 0], "severity": 0.6},
+        {"id": "EN_009", "name": "entry_threshold_too_low", "condition": "total_trades > 150", "action": "raise_entry_threshold", "params": ["entry_timeout", 2], "severity": 0.7},
+        {"id": "EN_010", "name": "signal_confirmation_weak", "condition": "win_rate < 0.45", "action": "add_confirmation", "params": ["confirm_timeout", 3], "severity": 0.7},
+        {"id": "EN_011", "name": "multiple_signal_conflict", "condition": "total_trades > 100 AND win_rate < 0.45", "action": "prioritize_signals", "params": ["max_signals", 1], "severity": 0.7},
+        {"id": "EN_012", "name": "entry_lag_high", "condition": "profit_factor < 1.2", "action": "reduce_entry_lag", "params": ["entry_timeout", -1], "severity": 0.6},
+        {"id": "EN_013", "name": "volume_spike_entry", "condition": "total_trades > 100", "action": "filter_volume", "params": ["min_volume_ratio", 1.2], "severity": 0.6},
+        {"id": "EN_014", "name": "gap_entry_missed", "condition": "profit_factor > 1.2 AND total_trades < 50", "action": "enable_gap_entry", "params": ["allow_gap_entry", True], "severity": 0.5},
+        {"id": "EN_015", "name": "entry_reliability_low", "condition": "win_rate < 0.40", "action": "improve_entry_reliability", "params": ["confirm_timeout", 3], "severity": 0.8}
+      ]
+    },
+    {
+      "name": "Exits",
+      "prefix": "EX",
+      "description": "Exit signal related patterns",
+      "patterns": [
+        {"id": "EX_001", "name": "exit_too_early", "condition": "avg_trade_balance < 0 AND win_rate > 0.45", "action": "delay_exit", "params": ["exit_timeout", 2], "severity": 0.7},
+        {"id": "EX_002", "name": "exit_too_late", "condition": "profit_factor < 1.2", "action": "earlier_exit", "params": ["exit_timeout", -1], "severity": 0.7},
+        {"id": "EX_003", "name": "premature_profit_take", "condition": "avg_trade_balance < 0 AND win_rate > 0.50", "action": "extend_profit_target", "params": ["exit_timeout", 2], "severity": 0.7},
+        {"id": "EX_004", "name": "late_loss_cut", "condition": "avg_trade_balance < 0", "action": "earlier_exit", "params": ["exit_timeout", -2], "severity": 0.8},
+        {"id": "EX_005", "name": "exit_timing_mismatch", "condition": "profit_factor < 1.0", "action": "fix_exit_timing", "params": ["exit_timeout", 1], "severity": 0.7},
+        {"id": "EX_006", "name": "trailing_stop_underperform", "condition": "profit_factor < 1.3", "action": "optimize_trailing", "params": ["trailing_stop_dist", 0.015], "severity": 0.7},
+        {"id": "EX_007", "name": "partial_exit_too_early", "condition": "profit_factor < 1.2", "action": "delay_partial_exit", "params": ["partial_exit_threshold", 0.02], "severity": 0.6},
+        {"id": "EX_008", "name": "partial_exit_too_late", "condition": "max_drawdown > 15", "action": "earlier_partial_exit", "params": ["partial_exit_threshold", 0.01], "severity": 0.6},
+        {"id": "EX_009", "name": "break_even_too_early", "condition": "win_rate < 0.45", "action": "delay_break_even", "params": ["break_even_delay", 2], "severity": 0.6},
+        {"id": "EX_010", "name": "break_even_too_late", "condition": "max_drawdown > 10", "action": "earlier_break_even", "params": ["break_even_delay", 0], "severity": 0.6},
+        {"id": "EX_011", "name": "time_based_exit_early", "condition": "avg_trade_balance < 0", "action": "disable_time_exit", "params": ["max_trade_duration", 0], "severity": 0.6},
+        {"id": "EX_012", "name": "time_based_exit_late", "condition": "max_drawdown > 15", "action": "enable_time_exit", "params": ["max_trade_duration", 10], "severity": 0.6},
+        {"id": "EX_013", "name": "exit_signal_conflict", "condition": "total_trades > 100", "action": "prioritize_exits", "params": ["max_exit_signals", 1], "severity": 0.6},
+        {"id": "EX_014", "name": "exit_reliability_low", "condition": "win_rate < 0.40", "action": "improve_exit_reliability", "params": ["confirm_timeout", 2], "severity": 0.8},
+        {"id": "EX_015", "name": "asymmetric_exit", "condition": "avg_trade_balance < 0", "action": "symmetrize_exits", "params": ["exit_timeout", 0], "severity": 0.7}
+      ]
+    },
+    {
+      "name": "Pairs",
+      "prefix": "PA",
+      "description": "Pair selection and concentration patterns",
+      "patterns": [
+        {"id": "PA_001", "name": "poor_pair_concentration", "condition": "unique_pairs < 3", "action": "diversify_pairs", "params": ["min_pairs", 5], "severity": 0.7},
+        {"id": "PA_002", "name": "pair_dominance", "condition": "top_pair_profit > total_profit * 0.5", "action": "reduce_pair_dominance", "params": ["max_pair_weight", 0.3], "severity": 0.7},
+        {"id": "PA_003", "name": "pair_correlation_high", "condition": "pair_correlation > 0.7", "action": "reduce_correlation", "params": ["max_correlation", 0.5], "severity": 0.7},
+        {"id": "PA_004", "name": "pair_performance_variance", "condition": "pair_profit_std > pair_profit_mean", "action": "balance_pairs", "params": ["min_pairs", 4], "severity": 0.6},
+        {"id": "PA_005", "name": "underperforming_pairs", "condition": "pairs_with_loss > pairs_with_profit", "action": "remove_weak_pairs", "params": ["min_pair_profit", 0], "severity": 0.7},
+        {"id": "PA_006", "name": "overconcentration", "condition": "top_3_pairs > total_profit * 0.7", "action": "reduce_concentration", "params": ["max_pair_weight", 0.25], "severity": 0.8},
+        {"id": "PA_007", "name": "pair_instability", "condition": "pair_profit_cv > 1.0", "action": "stabilize_pairs", "params": ["min_pair_trades", 10], "severity": 0.6},
+        {"id": "PA_008", "name": "pair_time_mismatch", "condition": "profit_factor < 1.2", "action": "align_pair_times", "params": ["entry_timeout", 1], "severity": 0.6},
+        {"id": "PA_009", "name": "pair_volatility_mismatch", "condition": "pair_volatility_cv > 0.5", "action": "normalize_volatility", "params": ["volatility_adjust", True], "severity": 0.6},
+        {"id": "PA_010", "name": "pair_regime_mismatch", "condition": "profit_factor < 1.0", "action": "diversify_regimes", "params": ["min_regimes", 2], "severity": 0.7},
+        {"id": "PA_011", "name": "unused_pairs", "condition": "unused_pairs > 5", "action": "enable_pairs", "params": ["min_pairs", 3], "severity": 0.5},
+        {"id": "PA_012", "name": "pair_overlap", "condition": "pair_signal_overlap > 0.5", "action": "reduce_overlap", "params": ["entry_timeout", 2], "severity": 0.6},
+        {"id": "PA_013", "name": "pair_capacity_unbalanced", "condition": "pair_trade_imbalance > 0.3", "action": "balance_capacity", "params": ["max_pair_trades", 0.2], "severity": 0.5},
+        {"id": "PA_014", "name": "pair_selection_too_broad", "condition": "unique_pairs > 15 AND profit_factor < 1.2", "action": "narrow_pairs", "params": ["max_pairs", 8], "severity": 0.6},
+        {"id": "PA_015", "name": "pair_selection_too_narrow", "condition": "unique_pairs < 4 AND max_drawdown > 15", "action": "expand_pairs", "params": ["min_pairs", 5], "severity": 0.6}
+      ]
+    },
+    {
+      "name": "Structure",
+      "prefix": "ST",
+      "description": "Strategy structure and configuration patterns",
+      "patterns": [
+        {"id": "ST_001", "name": "filter_strictness_high", "condition": "total_trades < 30", "action": "relax_filters", "params": ["entry_timeout", 0], "severity": 0.7},
+        {"id": "ST_002", "name": "filter_strictness_low", "condition": "total_trades > 150 AND win_rate < 0.45", "action": "tighten_filters", "params": ["entry_timeout", 3], "severity": 0.7},
+        {"id": "ST_003", "name": "timeframe_mismatch", "condition": "profit_factor < 1.2", "action": "change_timeframe", "params": ["timeframe", "4h"], "severity": 0.7},
+        {"id": "ST_004", "name": "timeframe_too_short", "condition": "total_trades > 200", "action": "extend_timeframe", "params": ["timeframe", "4h"], "severity": 0.7},
+        {"id": "ST_005", "name": "timeframe_too_long", "condition": "total_trades < 30", "action": "shorten_timeframe", "params": ["timeframe", "1h"], "severity": 0.6},
+        {"id": "ST_006", "name": "indicator_conflict", "condition": "profit_factor < 1.0", "action": "resolve_conflicts", "params": ["max_indicators", 3], "severity": 0.7},
+        {"id": "ST_007", "name": "indicator_redundancy", "condition": "profit_factor < 1.2", "action": "remove_redundant", "params": ["max_indicators", 3], "severity": 0.6},
+        {"id": "ST_008", "name": "parameter_overfitting", "condition": "profit_factor > 1.5 AND total_trades < 50", "action": "simplify_params", "params": ["max_params", 5], "severity": 0.8},
+        {"id": "ST_009", "name": "parameter_underfitting", "condition": "profit_factor < 1.0", "action": "add_params", "params": ["min_params", 3], "severity": 0.6},
+        {"id": "ST_010", "name": "strategy_complexity_high", "condition": "profit_factor < 1.2", "action": "simplify_strategy", "params": ["max_indicators", 3], "severity": 0.7},
+        {"id": "ST_011", "name": "strategy_complexity_low", "condition": "profit_factor < 1.0", "action": "complexify_strategy", "params": ["min_indicators", 2], "severity": 0.6},
+        {"id": "ST_012", "name": "rule_conflict", "condition": "profit_factor < 1.0", "action": "resolve_conflicts", "params": ["max_rules", 5], "severity": 0.7},
+        {"id": "ST_013", "name": "missing_hedge", "condition": "max_drawdown > 20", "action": "add_hedge", "params": ["hedge_enabled", True], "severity": 0.7},
+        {"id": "ST_014", "name": "over_hedging", "condition": "profit_factor < 1.2", "action": "reduce_hedge", "params": ["hedge_enabled", False], "severity": 0.6},
+        {"id": "ST_015", "name": "strategy_drift", "condition": "profit_factor_change > 0.2", "action": "stabilize_strategy", "params": ["param_decay", 0.9], "severity": 0.7}
+      ]
+    },
+    {
+      "name": "Market Adaptation",
+      "prefix": "MA",
+      "description": "Market regime adaptation patterns",
+      "patterns": [
+        {"id": "MA_001", "name": "regime_dependency", "condition": "profit_factor < 1.2", "action": "add_regime_filter", "params": ["regime_filter", True], "severity": 0.7},
+        {"id": "MA_002", "name": "volatility_mismatch", "condition": "profit_factor < 1.0", "action": "adjust_volatility", "params": ["volatility_adjust", True], "severity": 0.7},
+        {"id": "MA_003", "name": "trend_dependency", "condition": "profit_factor < 1.2", "action": "add_trend_filter", "params": ["trend_filter", True], "severity": 0.7},
+        {"id": "MA_004", "name": "range_dependency", "condition": "profit_factor < 1.2", "action": "add_range_filter", "params": ["range_filter", True], "severity": 0.7},
+        {"id": "MA_005", "name": "low_volatility_underperform", "condition": "avg_volatility < 0.5 AND profit_factor < 1.2", "action": "adapt_low_vol", "params": ["low_vol_mode", True], "severity": 0.7},
+        {"id": "MA_006", "name": "high_volatility_underperform", "condition": "avg_volatility > 2.0 AND profit_factor < 1.2", "action": "adapt_high_vol", "params": ["high_vol_mode", True], "severity": 0.7},
+        {"id": "MA_007", "name": "market_regime_change", "condition": "profit_factor_change > 0.3", "action": "adapt_regime", "params": ["regime_adapt", True], "severity": 0.8},
+        {"id": "MA_008", "name": "liquidity_mismatch", "condition": "profit_factor < 1.2", "action": "filter_liquidity", "params": ["min_liquidity", 1000], "severity": 0.6},
+        {"id": "MA_009", "name": "correlation_regime_change", "condition": "pair_correlation_change > 0.2", "action": "adapt_correlation", "params": ["correlation_adapt", True], "severity": 0.7},
+        {"id": "MA_010", "name": "seasonal_underperform", "condition": "profit_factor < 1.2", "action": "add_seasonal_filter", "params": ["seasonal_filter", True], "severity": 0.6}
+      ]
+    }
+  ]
+}

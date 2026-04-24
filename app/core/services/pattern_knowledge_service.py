@@ -337,6 +337,9 @@ class PatternKnowledgeService:
         # Also record in legacy format for compatibility
         self.record_pattern_result(pattern_id, "action", improved)
 
+        # CRITICAL: Persist the update to disk
+        self._save()
+
     def get_success_rate(self, action_id: str) -> float:
         """Get success rate for an action.
 

@@ -123,6 +123,7 @@ class PatternKnowledgeBase:
     """
 
     patterns: Dict[str, PatternKnowledge] = field(default_factory=dict)
+    _action_data: Dict[str, Dict[str, int]] = field(default_factory=dict)  # action_id -> {success, failure}
     created_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     updated_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     total_recorded_outcomes: int = 0
@@ -216,6 +217,7 @@ class PatternKnowledgeBase:
             "patterns": {
                 k: v.to_dict() for k, v in self.patterns.items()
             },
+            "_action_data": self._action_data,
             "created_at": self.created_at,
             "updated_at": self.updated_at,
             "total_recorded_outcomes": self.total_recorded_outcomes,
@@ -229,6 +231,7 @@ class PatternKnowledgeBase:
                 k: PatternKnowledge.from_dict(v)
                 for k, v in data.get("patterns", {}).items()
             },
+            _action_data=data.get("_action_data", {}),
             created_at=data.get("created_at", datetime.now(timezone.utc).isoformat()),
             updated_at=data.get("updated_at", datetime.now(timezone.utc).isoformat()),
             total_recorded_outcomes=data.get("total_recorded_outcomes", 0),

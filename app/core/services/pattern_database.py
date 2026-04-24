@@ -52,7 +52,21 @@ class PatternDatabase:
         try:
             data = parse_json_file(json_path)
             
-            # Parse patterns from JSON
+            # Handle new format with categories
+            if 'categories' in data:
+                patterns = []
+                for category_data in data['categories']:
+                    category_name = category_data.get('name', '').lower().replace(' ', '_')
+                    for pattern_data in category_data.get('patterns', []):
+                        pattern = cls._parse_pattern_v2(pattern_data, category_name)
+                        if pattern:
+                            patterns.append(pattern)
+                cls._patterns = patterns
+                cls._loaded = True
+                _log.info("Loaded %d patterns from %s", len(patterns), json_path)
+                return True
+            
+            # Handle legacy format with top-level 'patterns' array
             patterns = []
             for pattern_data in data.get('patterns', []):
                 pattern = cls._parse_pattern(pattern_data)
@@ -143,6 +157,80 @@ class PatternDatabase:
             return None
 
     @classmethod
+    def _parse_pattern_v2(cls, data: dict, category: str) -> Optional[FailurePattern]:
+        """Parse a pattern from the new JSON format with categories.
+        
+        Args:
+            data: Pattern dictionary from JSON.
+            category: Category name from parent category object.
+            
+        Returns:
+            FailurePattern object or None if invalid.
+        """
+        try:
+            # Parse condition from 'condition' field (simple string format)
+            conditions = []
+            condition_str = data.get('condition', '')
+            if condition_str:
+                # Parse "metric op value" format
+                import re
+                match = re.match(r'(\w+)\s*(<|>|==|>=|<=)\s*([\d.]+)', condition_str)
+                if match:
+                    conditions.append(PatternCondition(
+                        metric=match.group(1),
+                        op=match.group(2),
+                        value=float(match.group(3))
+                    ))
+            
+            # Parse action from 'action' and 'params' fields
+            actions = []
+            action_id = data.get('action', '')
+            params = data.get('params', [])
+            if action_id and params:
+                param_name = params[0] if params else 'unknown'
+                param_value = params[1] if len(params) > 1 else None
+                
+                # Determine action type based on value type
+                action_type = 'set'
+                factor = None
+                delta = None
+                value = param_value
+                
+                if isinstance(param_value, bool):
+                    action_type = 'toggle'
+                elif isinstance(param_value, (int, float)):
+                    if param_value > 0:
+                        action_type = 'add'
+                        delta = param_value
+                    else:
+                        action_type = 'add'
+                        delta = param_value
+                    value = None
+                
+                actions.append(PatternAction(
+                    id=action_id,
+                    parameter=param_name,
+                    type=action_type,
+                    factor=factor,
+                    delta=delta,
+                    value=value,
+                    bounds=None
+                ))
+            
+            return FailurePattern(
+                id=data['id'],
+                category=category,
+                conditions=conditions,
+                actions=actions,
+                description=data.get('name', ''),
+                severity=data.get('severity', 0.5)
+            )
+            
+        except (KeyError, TypeError) as e:
+            _log.warning("Failed to parse pattern v2 %s: %s", data.get('id', 'unknown'), e)
+            return None
+
+    @classmethod
     def get_all(cls) -> List[FailurePattern]:
         """Get all loaded patterns.
         
@@ -211,3 +299,29 @@ class PatternDatabase:
         cls._patterns = []
         cls._loaded = False
         _log.info("Cleared pattern database")
+
+    @classmethod
+    def auto_load(cls, base_path: str = None) -> bool:
+        """Auto-load patterns from default location.
+        
+        Args:
+            base_path: Base path to the project. If None, uses current directory.
+            
+        Returns:
+            True if patterns loaded successfully, False otherwise.
+        """
+        if cls._loaded:
+            return True
+            
+        import os
+        if base_path is None:
+            base_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+            base_path = os.path.dirname(base_path)  # Go up from app/core/services to project root
+        
+        json_path = os.path.join(base_path, 'data', 'patterns.json')
+        
+        if os.path.exists(json_path):
+            return cls.load_from_json(json_path)
+        else:
+            _log.warning("Pattern database not found at %s", json_path)
+            return False
