@@ -1,5 +1,7 @@
 """Download Data page."""
 from __future__ import annotations
+from typing import Optional
+
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
     QComboBox, QLineEdit, QFormLayout, QFrame, QSplitter, QListWidget,
@@ -10,7 +12,8 @@ from PySide6.QtCore import Qt, Signal, Slot
 from app.app_state.settings_state import SettingsState
 from app.core.services.download_data_service import DownloadDataService
 from app.core.services.settings_service import SettingsService
-from app.core.services.process_service import ProcessService
+from app.core.services.process_run_manager import ProcessRunManager
+from app.ui.adapters.process_run_adapter import ProcessRunAdapter
 from app.ui import theme
 from app.ui.widgets.terminal_widget import TerminalWidget
 from app.core.utils.app_logger import get_logger
@@ -31,12 +34,14 @@ class DownloadPage(QWidget):
     _sig_stderr   = Signal(str)
     _sig_finished = Signal(int)
 
-    def __init__(self, settings_state: SettingsState, parent: QWidget | None = None):
+    def __init__(self, settings_state: SettingsState, process_manager: ProcessRunManager, parent: QWidget | None = None):
         super().__init__(parent)
         self._state = settings_state
         self._settings_svc = SettingsService()
         self._download_svc = DownloadDataService(self._settings_svc)
-        self._process_svc  = ProcessService()
+        self._process_manager = process_manager
+        self._current_run_id: Optional[str] = None
+        self._adapter: Optional[ProcessRunAdapter] = None
         self._running = False
         self._build()
         self._sig_stdout.connect(self._terminal.append_output)
@@ -246,21 +251,23 @@ class DownloadPage(QWidget):
         self._terminal.set_status("downloading", theme.ACCENT)
         self._terminal.append_info(f"$ {cmd.to_display_string()}\n\n", theme.ACCENT)
 
-        env = (
-            ProcessService.build_environment(settings.venv_path)
-            if settings.venv_path else None
-        )
-        self._process_svc.execute_command(
-            cmd.as_list(),
-            on_output=self._sig_stdout.emit,
-            on_error=self._sig_stderr.emit,
-            on_finished=self._sig_finished.emit,
-            working_directory=cmd.cwd,
-            env=env,
-        )
+        run = self._process_manager.start_run(cmd)
+        self._current_run_id = run.run_id
+        self._adapter = ProcessRunAdapter(run, parent=self)
+        self._adapter.stdout_received.connect(self._sig_stdout.emit)
+        self._adapter.stderr_received.connect(self._sig_stderr.emit)
+        self._adapter.run_finished.connect(self._sig_finished.emit)
+        self._adapter.start()
 
     def _stop(self):
-        self._process_svc.stop_process()
+        if self._current_run_id:
+            try:
+                self._process_manager.stop_run(self._current_run_id)
+            except (KeyError, ValueError):
+                pass
+        if self._adapter:
+            self._adapter.stop()
+            self._adapter = None
         self._terminal.append_info("\n■ Stopped.", theme.YELLOW)
         self._set_idle()
 

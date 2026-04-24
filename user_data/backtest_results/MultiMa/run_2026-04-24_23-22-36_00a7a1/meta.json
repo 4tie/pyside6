@@ -1,0 +1,30 @@
+{
+  "backtest_end": "2026-04-11 00:05:00",
+  "backtest_start": "2025-04-29 00:00:00",
+  "calmar": -1.0769,
+  "expectancy": -0.0058,
+  "final_balance": 78.7251,
+  "losses": 135,
+  "max_drawdown_abs": 6.5183,
+  "max_drawdown_pct": 8.1479,
+  "pairs": [
+    "ADA/USDT",
+    "ETH/USDT"
+  ],
+  "profit_factor": 0.9753,
+  "profit_total_abs": -1.2749,
+  "profit_total_pct": -1.5937,
+  "run_id": "run_2026-04-24_23-22-36_00a7a1",
+  "sharpe": -0.1007,
+  "sortino": -0.1785,
+  "start_time": "2026-04-24T23:22:36.107639",
+  "starting_balance": 80.0,
+  "status": "completed",
+  "strategy": "MultiMa",
+  "timeframe": "5m",
+  "timerange": "20250429-20260424",
+  "trades_count": 218,
+  "version_id": null,
+  "win_rate_pct": 38.07,
+  "wins": 83
+}

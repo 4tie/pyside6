@@ -14,7 +14,7 @@ page migrations.
 
 ## Tasks
 
-- [ ] 1. Define `RunStatus` enum and `ProcessRun` dataclass in `app/core/models/run_models.py`
+- [x] 1. Define `RunStatus` enum and `ProcessRun` dataclass in `app/core/models/run_models.py`
   - Create `app/core/models/run_models.py` with `RunStatus(str, Enum)` defining exactly:
     `PENDING`, `RUNNING`, `FINISHED`, `FAILED`, `CANCELLED`
   - Define `ProcessRun` as a `@dataclass` with fields: `command: list[str]`, `cwd: Optional[str]`,
@@ -28,7 +28,7 @@ page migrations.
   - Do NOT import PySide6, fastapi, or starlette
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
 
-  - [ ] 1.1 Write property test for `ProcessRun` construction invariants (Property 1)
+  - [x] 1.1 Write property test for `ProcessRun` construction invariants (Property 1)
     - **Property 1: ProcessRun construction invariants**
     - Use `@given(command=st.lists(st.text(min_size=1), min_size=1), cwd=st.one_of(st.none(), st.text(min_size=1)))`
     - Assert: `run_id` is a non-empty string matching UUID4 format, `status == RunStatus.PENDING`,
@@ -37,14 +37,14 @@ page migrations.
     - File: `tests/core/models/test_run_models_properties.py`
     - **Validates: Requirements 1.2, 1.3**
 
-  - [ ] 1.2 Write property test for `run_id` uniqueness (Property 2)
+  - [x] 1.2 Write property test for `run_id` uniqueness (Property 2)
     - **Property 2: run_id uniqueness**
     - Use `@given(st.lists(st.lists(st.text(min_size=1), min_size=1), min_size=2, max_size=20))`
     - Construct N independent `ProcessRun` instances; assert all `run_id` values are distinct
     - File: `tests/core/models/test_run_models_properties.py`
     - **Validates: Requirements 1.2**
 
-- [ ] 2. Implement `ProcessRunManager` in `app/core/services/process_run_manager.py`
+- [x] 2. Implement `ProcessRunManager` in `app/core/services/process_run_manager.py`
   - Create `app/core/services/process_run_manager.py`
   - Implement `ProcessRunManager.__init__(self, on_run_finished: Optional[Callable[[ProcessRun], None]] = None)`
     with `_runs: dict[str, ProcessRun]`, `_processes: dict[str, subprocess.Popen]`,
@@ -68,7 +68,7 @@ page migrations.
   - Do NOT import PySide6, fastapi, or starlette
   - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 2.10, 3.1, 3.2, 3.3, 3.4, 3.5, 6.1, 6.2, 6.3, 6.4, 8.1, 8.2, 8.3, 8.4_
 
-  - [ ] 2.1 Write property test for `stop_run` on non-RUNNING run raises `ValueError` (Property 4)
+  - [x] 2.1 Write property test for `stop_run` on non-RUNNING run raises `ValueError` (Property 4)
     - **Property 4: stop_run on non-RUNNING run raises ValueError**
     - Use `@given(st.sampled_from([RunStatus.PENDING, RunStatus.FINISHED, RunStatus.FAILED, RunStatus.CANCELLED]))`
     - Construct a `ProcessRun` and manually set its status to the sampled non-RUNNING value;
@@ -76,14 +76,14 @@ page migrations.
     - File: `tests/core/services/test_process_run_manager_properties.py`
     - **Validates: Requirements 2.5**
 
-  - [ ] 2.2 Write property test for `get_run` with unknown id raises `KeyError` (Property 7)
+  - [x] 2.2 Write property test for `get_run` with unknown id raises `KeyError` (Property 7)
     - **Property 7: get_run with unknown id raises KeyError**
     - Use `@given(st.text(min_size=1))` for arbitrary strings not returned by `start_run`
     - Assert `manager.get_run(arbitrary_id)` raises `KeyError`
     - File: `tests/core/services/test_process_run_manager_properties.py`
     - **Validates: Requirements 2.9**
 
-  - [ ] 2.3 Write property test for `list_runs` ordering and status filtering (Property 8)
+  - [x] 2.3 Write property test for `list_runs` ordering and status filtering (Property 8)
     - **Property 8: list_runs preserves creation order and supports status filtering**
     - Use `@given(st.lists(st.sampled_from(list(RunStatus)), min_size=1, max_size=10))`
     - Construct N `ProcessRun` instances with varying statuses, register them in a manager
@@ -93,7 +93,7 @@ page migrations.
     - File: `tests/core/services/test_process_run_manager_properties.py`
     - **Validates: Requirements 2.10, 8.1, 8.2**
 
-  - [ ] 2.4 Write unit tests for `ProcessRunManager` lifecycle with real subprocesses
+  - [x] 2.4 Write unit tests for `ProcessRunManager` lifecycle with real subprocesses
     - Test `start_run` → status is `RUNNING`, `started_at` is set, run retrievable via `get_run`
       (Property 3 — validates Requirements 2.1, 2.2, 2.8)
     - Test exit code 0 → status becomes `FINISHED`, `exit_code == 0`, `finished_at` set
@@ -108,7 +108,7 @@ page migrations.
     - Use short-lived `python -c "..."` subprocesses; wait with `time.sleep` + polling
     - File: `tests/core/services/test_process_run_manager.py`
 
-  - [ ] 2.5 Write unit test for stdout/stderr buffer accumulation (Property 9)
+  - [x] 2.5 Write unit test for stdout/stderr buffer accumulation (Property 9)
     - Launch a subprocess that prints N known lines to stdout and M to stderr
     - After run reaches terminal state, assert `stdout_buffer` contains exactly those N lines
       and `stderr_buffer` contains exactly those M lines in order
@@ -116,10 +116,10 @@ page migrations.
     - **Validates: Requirements 3.1, 3.2, 3.4, 3.5**
     - File: `tests/core/services/test_process_run_manager.py`
 
-- [ ] 3. Checkpoint — core model and manager tests pass
+- [x] 3. Checkpoint — core model and manager tests pass
   - Ensure all tests in `tests/core/models/` and `tests/core/services/` pass, ask the user if questions arise.
 
-- [ ] 4. Update `ProcessService` backward-compat shim in `app/core/services/process_service.py`
+- [x] 4. Update `ProcessService` backward-compat shim in `app/core/services/process_service.py`
   - Add `_manager: ProcessRunManager` instance attribute (created in `__init__`)
   - Add `_current_run_id: Optional[str]` instance attribute
   - Implement a private `_ShimAdapter` helper class (inner class or module-level) that reads
@@ -134,7 +134,7 @@ page migrations.
   - Keep all existing public method signatures unchanged (same parameters, same return types)
   - _Requirements: 7.1, 7.2, 7.3, 7.4_
 
-  - [ ] 4.1 Write property test for `ProcessService.execute_command` delegation round-trip (Property 11)
+  - [x] 4.1 Write property test for `ProcessService.execute_command` delegation round-trip (Property 11)
     - **Property 11: ProcessService.execute_command delegation round-trip**
     - Use `@given(st.lists(st.text(min_size=1), min_size=1, max_size=5))` for command args
     - Call `ProcessService.execute_command` with a short-lived `python -c "print('x')"` command
@@ -143,7 +143,7 @@ page migrations.
     - File: `tests/core/services/test_process_service_shim.py`
     - **Validates: Requirements 7.2, 7.3**
 
-  - [ ] 4.2 Write smoke tests for framework independence
+  - [x] 4.2 Write smoke tests for framework independence
     - Import `ProcessRunManager` and `ProcessRun`; assert `"PySide6"`, `"fastapi"`, `"starlette"`
       are NOT in `sys.modules` after import
     - Import `ProcessService`; verify importable without Qt application
@@ -151,10 +151,10 @@ page migrations.
     - File: `tests/core/services/test_smoke.py`
     - **Validates: Requirements 6.1, 6.2, 6.3**
 
-- [ ] 5. Checkpoint — shim tests and smoke tests pass
+- [x] 5. Checkpoint — shim tests and smoke tests pass
   - Ensure all tests in `tests/core/services/` pass, ask the user if questions arise.
 
-- [ ] 6. Implement `ProcessRunAdapter` (Qt desktop adapter) in `app/ui/adapters/process_run_adapter.py`
+- [x] 6. Implement `ProcessRunAdapter` (Qt desktop adapter) in `app/ui/adapters/process_run_adapter.py`
   - Create `app/ui/adapters/` directory and `app/ui/adapters/process_run_adapter.py`
   - Implement `ProcessRunAdapter(QObject)` with:
     - Signals: `stdout_received = Signal(str)`, `stderr_received = Signal(str)`, `run_finished = Signal(int)`
@@ -169,7 +169,7 @@ page migrations.
   - Add `_log = get_logger("ui.adapters.process_run_adapter")`
   - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5_
 
-  - [ ] 6.1 Write integration tests for `ProcessRunAdapter` signals
+  - [x] 6.1 Write integration tests for `ProcessRunAdapter` signals
     - Requires `QApplication` fixture (session-scoped `pytest-qt` or manual `QApplication`)
     - Test: adapter emits `stdout_received` / `stderr_received` when queue has data
     - Test: adapter emits `run_finished` and stops timer when run reaches terminal state
@@ -177,7 +177,7 @@ page migrations.
     - File: `tests/ui/adapters/test_process_run_adapter.py`
     - **Validates: Requirements 4.2, 4.3, 4.4, 4.5**
 
-- [ ] 7. Implement Web API router in `app/api/routers/runs_router.py`
+- [x] 7. Implement Web API router in `app/api/routers/runs_router.py`
   - Create `app/api/` and `app/api/routers/` directories with empty `__init__.py` files
   - Create `app/api/routers/runs_router.py` with:
     - Pydantic models: `RunRequest(BaseModel)` with `command: list[str]`, `cwd: Optional[str]`;
@@ -195,7 +195,7 @@ page migrations.
   - Add `_log = get_logger("api.runs_router")`
   - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6_
 
-  - [ ] 7.1 Write property test for Web API 404 on unknown run_id (Property 12)
+  - [x] 7.1 Write property test for Web API 404 on unknown run_id (Property 12)
     - **Property 12: Web API 404 for unknown run_id**
     - Use `@given(st.text(min_size=1).filter(lambda s: s not in registered_ids))`
     - Use FastAPI `TestClient` (no running server needed)
@@ -203,7 +203,7 @@ page migrations.
     - File: `tests/api/test_runs_router_properties.py`
     - **Validates: Requirements 5.5**
 
-  - [ ] 7.2 Write integration tests for Web API endpoints
+  - [x] 7.2 Write integration tests for Web API endpoints
     - `POST /runs` with valid body → 201, `run_id` in response
     - `GET /runs/{run_id}` → 200, all fields present
     - `DELETE /runs/{run_id}` on running run → 200, status `cancelled`
@@ -213,10 +213,10 @@ page migrations.
     - File: `tests/api/test_runs_router.py`
     - **Validates: Requirements 5.1, 5.2, 5.3, 5.4, 5.5**
 
-- [ ] 8. Checkpoint — adapter and API tests pass
+- [x] 8. Checkpoint — adapter and API tests pass
   - Ensure all tests in `tests/ui/adapters/` and `tests/api/` pass, ask the user if questions arise.
 
-- [ ] 9. Migrate `BacktestPage` to use `ProcessRunManager` + `ProcessRunAdapter`
+- [x] 9. Migrate `BacktestPage` to use `ProcessRunManager` + `ProcessRunAdapter`
   - Update `app/ui/pages/backtest_page.py`:
     - Change constructor signature to accept `process_manager: ProcessRunManager` alongside
       `settings_state: SettingsState`
@@ -232,13 +232,13 @@ page migrations.
       and `_handle_finished` slot unchanged
   - _Requirements: 4.6_
 
-  - [ ] 9.1 Write smoke test for `BacktestPage` instantiation with injected manager
+  - [x] 9.1 Write smoke test for `BacktestPage` instantiation with injected manager
     - Instantiate `BacktestPage` with a mock `SettingsState` and a real `ProcessRunManager`
     - Assert page has no `_process_svc` attribute
     - Assert page has `_process_manager` attribute
     - File: `tests/ui/pages/test_backtest_page_smoke.py`
 
-- [ ] 10. Migrate `OptimizePage` to use `ProcessRunManager` + `ProcessRunAdapter`
+- [x] 10. Migrate `OptimizePage` to use `ProcessRunManager` + `ProcessRunAdapter`
   - Update `app/ui/pages/optimize_page.py` following the same pattern as task 9:
     - Accept `process_manager: ProcessRunManager` in constructor
     - Remove `ProcessService()` instantiation
@@ -246,18 +246,18 @@ page migrations.
     - Use `stop_run` in `_stop()`
   - _Requirements: 4.6_
 
-  - [ ] 10.1 Write smoke test for `OptimizePage` instantiation with injected manager
+  - [x] 10.1 Write smoke test for `OptimizePage` instantiation with injected manager
     - File: `tests/ui/pages/test_optimize_page_smoke.py`
 
-- [ ] 11. Migrate `DownloadDataPage` to use `ProcessRunManager` + `ProcessRunAdapter`
+- [x] 11. Migrate `DownloadDataPage` to use `ProcessRunManager` + `ProcessRunAdapter`
   - Locate the download data page (likely `app/ui/pages/download_data_page.py` or equivalent)
   - Apply the same migration pattern as tasks 9 and 10
   - _Requirements: 4.6_
 
-  - [ ] 11.1 Write smoke test for `DownloadDataPage` instantiation with injected manager
+  - [x] 11.1 Write smoke test for `DownloadDataPage` instantiation with injected manager
     - File: `tests/ui/pages/test_download_data_page_smoke.py`
 
-- [ ] 12. Wire `ProcessRunManager` into `MainWindow` and update page construction
+- [x] 12. Wire `ProcessRunManager` into `MainWindow` and update page construction
   - Update `app/ui/main_window.py`:
     - Instantiate a single `ProcessRunManager()` at `MainWindow.__init__` level
     - Pass the manager instance to `BacktestPage`, `OptimizePage`, and `DownloadDataPage`
@@ -265,7 +265,7 @@ page migrations.
     - Ensure the manager instance is stored as `self._process_manager` for potential future use
   - _Requirements: 2.1, 4.6_
 
-- [ ] 13. Final checkpoint — full test suite passes
+- [x] 13. Final checkpoint — full test suite passes
   - Run `pytest --tb=short` and ensure all tests pass
   - Run `ruff check .` and `ruff format .` and fix any issues
   - Ensure all tests pass, ask the user if questions arise.

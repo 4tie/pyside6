@@ -3,13 +3,14 @@ from __future__ import annotations
 from typing import Optional
 
 from PySide6.QtWidgets import (
-    QMainWindow, QWidget, QHBoxLayout, QVBoxLayout, QStackedWidget,
-    QLabel, QApplication
+    QMainWindow, QWidget, QHBoxLayout, QStackedWidget,
+    QApplication
 )
-from PySide6.QtCore import Qt, QSettings, QTimer
+from PySide6.QtCore import QSettings, QTimer
 from PySide6.QtGui import QKeySequence, QShortcut
 
 from app.app_state.settings_state import SettingsState
+from app.core.services.process_run_manager import ProcessRunManager
 from app.ui import theme
 from app.ui.shell.sidebar import NavSidebar
 from app.ui.pages.dashboard_page import DashboardPage
@@ -43,6 +44,7 @@ class ModernMainWindow(QMainWindow):
             settings_state = SettingsState()
             settings_state.load_settings()
         self.settings_state = settings_state
+        self._process_manager = ProcessRunManager()
 
         # Apply stylesheet
         QApplication.instance().setStyleSheet(theme.stylesheet())
@@ -72,11 +74,11 @@ class ModernMainWindow(QMainWindow):
 
         # Create pages
         self.dashboard_page  = DashboardPage(self.settings_state)
-        self.backtest_page   = BacktestPage(self.settings_state)
+        self.backtest_page   = BacktestPage(self.settings_state, self._process_manager)
         self.results_page    = ResultsPage(self.settings_state)
         self.compare_page    = ComparePage(self.settings_state)
-        self.optimize_page   = OptimizePage(self.settings_state)
-        self.download_page   = DownloadPage(self.settings_state)
+        self.optimize_page   = OptimizePage(self.settings_state, self._process_manager)
+        self.download_page   = DownloadPage(self.settings_state, self._process_manager)
         self.settings_page   = SettingsPage(self.settings_state)
 
         self._pages = {
