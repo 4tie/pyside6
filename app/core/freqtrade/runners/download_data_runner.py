@@ -1,7 +1,8 @@
 from typing import List, Optional
 
 from app.core.models.settings_models import AppSettings
-from app.core.freqtrade.runners.base_runner import RunCommand, create_command
+from app.core.models.command_models import DownloadDataRunCommand, RunCommand
+from app.core.freqtrade.runners.base_runner import create_command
 from app.core.freqtrade.resolvers.runtime_resolver import find_run_paths
 
 
@@ -10,7 +11,7 @@ def create_download_data_command(
     timeframe: str,
     timerange: Optional[str] = None,
     pairs: Optional[List[str]] = None,
-) -> RunCommand:
+) -> DownloadDataRunCommand:
     """Build a freqtrade download-data command.
 
     Args:
@@ -20,7 +21,7 @@ def create_download_data_command(
         pairs: Optional list of pairs.
 
     Returns:
-        RunCommand ready for ProcessService.
+        DownloadDataRunCommand ready for ProcessService.
 
     Raises:
         ValueError: If settings are incomplete.
@@ -39,4 +40,11 @@ def create_download_data_command(
     if pairs:
         ft_args += ["-p"] + list(pairs)
 
-    return create_command(settings, *ft_args)
+    base = create_command(settings, *ft_args)
+    return DownloadDataRunCommand(
+        program=base.program,
+        args=base.args,
+        cwd=base.cwd,
+        config_file=str(paths.config_file),
+        strategy_file=str(paths.strategy_file),
+    )

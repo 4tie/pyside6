@@ -1,17 +1,9 @@
-from dataclasses import dataclass
 from datetime import datetime
 
 from app.core.utils.app_logger import get_logger
+from app.core.models.ai_models import EventRecord
 
 _log = get_logger("services.event_journal")
-
-
-@dataclass
-class EventRecord:
-    timestamp: datetime
-    event_type: str
-    source: str
-    payload: dict
 
 
 class EventJournal:

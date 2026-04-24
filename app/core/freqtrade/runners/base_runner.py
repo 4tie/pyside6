@@ -1,35 +1,11 @@
 import os
 import shlex
 import subprocess
-from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Sequence
 
 from app.core.models.settings_models import AppSettings
-
-
-@dataclass
-class RunCommand:
-    """Executable command ready for ProcessService."""
-    program: str
-    args: List[str]
-    cwd: str
-
-    def as_list(self) -> List[str]:
-        """Return the command as a flat token list."""
-        return [self.program, *self.args]
-
-    def to_display_string(self) -> str:
-        """Return a shell-safe display string for the current platform."""
-        return format_command_string(self.as_list())
-
-
-def format_command_string(command: Sequence[str]) -> str:
-    """Render a tokenized command for display/copy without re-splitting it later."""
-    command_parts = [str(part) for part in command if part is not None]
-    if os.name == "nt":
-        return subprocess.list2cmdline(command_parts)
-    return shlex.join(command_parts)
+from app.core.models.command_models import RunCommand, format_command_string
 
 
 def create_command(settings: AppSettings, *ft_args: str) -> RunCommand:

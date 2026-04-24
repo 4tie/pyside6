@@ -986,7 +986,7 @@ class LoopService:
         Uses run_id from context to find the correct result file,
         not just "latest file" which can cause race conditions.
         """
-        from app.core.storage.path_builder import build_gate_export_dir
+        from app.core.utils.path_utils import build_gate_export_dir
         
         # Build expected export directory using run_id from context
         export_dir = build_gate_export_dir(
@@ -1074,7 +1074,7 @@ class LoopService:
         Raises GateBacktestError on failure after sending event.
         """
         from app.core.models.loop_models import GateBacktestError
-        from app.core.storage.path_builder import build_gate_export_dir
+        from app.core.utils.path_utils import build_gate_export_dir
         from app.core.freqtrade import create_backtest_command, find_config_file_safe
         from app.core.utils.app_logger import get_logger
         import time

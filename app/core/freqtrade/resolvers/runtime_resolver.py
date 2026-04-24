@@ -1,21 +1,10 @@
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
 
 from app.core.freqtrade.resolvers.config_resolver import find_config_file_path
 from app.core.freqtrade.resolvers.strategy_resolver import find_strategy_file_path
 from app.core.models.settings_models import AppSettings
-
-
-@dataclass(frozen=True)
-class ResolvedRunPaths:
-    """Resolved filesystem paths needed to build a freqtrade command."""
-
-    project_dir: Path
-    user_data_dir: Path
-    config_file: Path
-    strategies_dir: Path
-    strategy_file: Optional[Path] = None
+from app.core.models.command_models import ResolvedRunPaths
 
 
 def find_user_data_directory(settings: AppSettings) -> Path:

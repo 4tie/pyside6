@@ -5,7 +5,6 @@ with proper wrappers, logging, and error handling.
 """
 from app.core.freqtrade.parsing import (
     parse_backtest_zip,
-    parse_json_file_safe,
 )
 from app.core.freqtrade.discovery import (
     list_strategies,
@@ -17,14 +16,15 @@ from app.core.freqtrade.commands import (
     create_optimize_command,
     create_download_data_command,
 )
-from app.core.freqtrade.runners.backtest_runner import BacktestRunCommand
-from app.core.freqtrade.runners.optimize_runner import OptimizeRunCommand
-from app.core.freqtrade.runners.download_data_runner import RunCommand as DownloadDataRunCommand
+from app.core.models.command_models import (
+    BacktestRunCommand,
+    OptimizeRunCommand,
+    DownloadDataRunCommand,
+)
 
 __all__ = [
     # Parsing
     "parse_backtest_zip",
-    "parse_json_file_safe",
     # Discovery
     "list_strategies",
     "find_config_file_safe",

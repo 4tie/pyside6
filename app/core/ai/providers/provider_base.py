@@ -1,32 +1,10 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
 from typing import Iterator, Optional
 
 from app.core.utils.app_logger import get_logger
+from app.core.models.ai_models import AIResponse, ProviderHealth, StreamToken
 
 _log = get_logger("services.ai_provider")
-
-
-@dataclass
-class AIResponse:
-    content: str
-    model: str
-    tool_calls: list = field(default_factory=list)
-    finish_reason: str = ""
-    usage: Optional[dict] = None
-
-
-@dataclass
-class ProviderHealth:
-    ok: bool
-    message: str
-    latency_ms: Optional[float] = None
-
-
-@dataclass
-class StreamToken:
-    delta: str
-    finish_reason: Optional[str] = None
 
 
 class AIProvider(ABC):

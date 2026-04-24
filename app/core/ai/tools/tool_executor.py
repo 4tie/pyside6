@@ -1,29 +1,12 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
 from typing import Any, Optional
 
 from app.core.utils.app_logger import get_logger
 from app.core.ai.tools.tool_registry import ToolRegistry
+from app.core.models.ai_models import ToolResult
 
 _log = get_logger("services.tool_executor")
-
-
-@dataclass
-class ToolResult:
-    """Result of a tool execution.
-
-    Attributes:
-        tool_name: Name of the tool that was executed.
-        output: Raw output returned by the tool callable.
-        display_text: Human-readable string representation of the output.
-        error: Error message if execution failed, otherwise ``None``.
-    """
-
-    tool_name: str
-    output: Any
-    display_text: str = ""
-    error: Optional[str] = None
 
 
 class ToolExecutor:

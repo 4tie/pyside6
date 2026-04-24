@@ -3,11 +3,13 @@ from pathlib import Path
 import uuid
 from app.core.utils.app_logger import get_logger
 
-_log = get_logger("storage.path_builder")
+_log = get_logger("utils.path")
+
 
 def build_run_id() -> str:
     """Generate unique run ID for tracking."""
     return uuid.uuid4().hex[:12]
+
 
 def build_gate_export_dir(
     sandbox_dir: Path,

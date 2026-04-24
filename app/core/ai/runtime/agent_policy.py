@@ -1,20 +1,4 @@
-from dataclasses import dataclass, field
-from typing import List
-
-
-@dataclass
-class AgentPolicy:
-    """Policy configuration governing agent behaviour, tool usage, and safety rules.
-
-    Attributes:
-        system_prompt: The system-level instruction given to the AI model.
-        tool_usage_policy: Guidance on when and how the agent should invoke tools.
-        safety_rules: List of rules the agent must enforce in every response.
-    """
-
-    system_prompt: str
-    tool_usage_policy: str
-    safety_rules: List[str] = field(default_factory=list)
+from app.core.models.ai_models import AgentPolicy
 
 
 def default_policy() -> AgentPolicy:

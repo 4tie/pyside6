@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import asyncio
 import re
-from dataclasses import dataclass, field
+from dataclasses import field
 from typing import Any, Optional, Callable, List
 
 from app.core.parsing.json_parser import parse_json_string, json_dumps
@@ -17,6 +17,7 @@ from app.core.ai.providers.provider_factory import ProviderFactory
 from app.core.ai.runtime.agent_policy import AgentPolicy, default_policy
 from app.core.ai.runtime.async_base import AsyncRuntimeBase
 from app.core.models.settings_models import AISettings
+from app.core.models.ai_models import TaskRunResult
 from app.core.utils.app_logger import get_logger
 
 _log = get_logger("services.async_conversation_runtime")
@@ -75,30 +76,8 @@ def _get_model_capability(model: str, provider: AIProvider) -> str:
 
 
 # ---------------------------------------------------------------------------
-# TaskRunResult
-# ---------------------------------------------------------------------------
-
-
-@dataclass
-class TaskRunResult:
-    """Result returned by ConversationRuntime.run_task().
-
-    Attributes:
-        messages: Full message history at the time the task completed.
-        tool_steps: List of ToolResult objects from each tool call iteration.
-        final_response: The last assistant response text, or None if cancelled/errored.
-        cancelled: True if the task was cancelled before completion.
-        error: Error message string if the task failed, else None.
-    """
-
-    messages: list = field(default_factory=list)
-    tool_steps: list = field(default_factory=list)
-    final_response: Optional[str] = None
-    cancelled: bool = False
-    error: Optional[str] = None
-
-
-# ---------------------------------------------------------------------------
+# ConversationRuntime
+# ---------------------------------------------------------------------------# ---------------------------------------------------------------------------
 # AsyncConversationRuntime
 # ---------------------------------------------------------------------------
 

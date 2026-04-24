@@ -6,10 +6,12 @@ RobustScoreInput, and RobustScore used by LoopService and LoopPage.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from pathlib import Path
-from typing import Dict, List, Optional
+import copy
 import time
+from dataclasses import dataclass, field
+from datetime import datetime
+from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 from app.core.backtests.results_models import BacktestSummary
 from app.core.models.settings_models import AppSettings
@@ -96,6 +98,22 @@ class GateResult:
     metrics: Optional[BacktestSummary] = None
     fold_summaries: Optional[List[BacktestSummary]] = None
     failure_reason: Optional[str] = None
+
+
+# ---------------------------------------------------------------------------
+# Hyperopt suggestion
+# ---------------------------------------------------------------------------
+
+@dataclass
+class HyperoptSuggestion:
+    """Recommended hyperopt settings derived from past run analysis."""
+    epochs: int = 200
+    spaces: List[str] = field(default_factory=lambda: ["buy", "sell", "roi", "stoploss", "trailing"])
+    loss_function: str = "SharpeHyperOptLoss"
+    min_timerange_days: int = 90
+    tips: List[str] = field(default_factory=list)
+    warnings: List[str] = field(default_factory=list)
+    source: str = "default"  # "last_run" | "default"
 
 
 # ---------------------------------------------------------------------------

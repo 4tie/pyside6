@@ -1,28 +1,11 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import Callable, Optional
+from typing import Callable
 
 from app.core.utils.app_logger import get_logger
+from app.core.models.ai_models import ToolDefinition
 
 _log = get_logger("services.tool_registry")
-
-
-@dataclass
-class ToolDefinition:
-    """Describes a single callable tool exposed to the AI model.
-
-    Attributes:
-        name: Unique tool name used in OpenAI function-calling schema.
-        description: Human-readable description of what the tool does.
-        parameters_schema: JSON Schema dict describing the tool's parameters.
-        callable: The Python callable that implements the tool.
-    """
-
-    name: str
-    description: str
-    parameters_schema: dict
-    callable: Callable
 
 
 class ToolRegistry:

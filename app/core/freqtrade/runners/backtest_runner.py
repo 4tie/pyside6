@@ -1,17 +1,9 @@
-from dataclasses import dataclass
 from typing import List, Optional
 
 from app.core.models.settings_models import AppSettings
-from app.core.freqtrade.runners.base_runner import RunCommand, create_command
+from app.core.models.command_models import BacktestRunCommand, RunCommand
+from app.core.freqtrade.runners.base_runner import create_command
 from app.core.freqtrade.resolvers.runtime_resolver import find_run_paths
-
-
-@dataclass
-class BacktestRunCommand(RunCommand):
-    """RunCommand extended with backtest-specific paths."""
-    export_dir: str
-    config_file: str
-    strategy_file: str
 
 
 def create_backtest_command(

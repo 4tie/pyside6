@@ -2,25 +2,12 @@
 hyperopt_advisor.py — Analyses past hyperopt/backtest runs for a strategy
 and recommends better hyperopt settings for the next run.
 """
-from dataclasses import dataclass, field
 from pathlib import Path
 from typing import List, Optional
 
 from app.core.utils.app_logger import get_logger
 from app.core.parsing.json_parser import parse_json_file, parse_json_string
 from app.core.models.loop_models import HyperoptSuggestion
-
-
-@dataclass
-class HyperoptSuggestion:
-    """Recommended hyperopt settings derived from past run analysis."""
-    epochs: int = 200
-    spaces: List[str] = field(default_factory=lambda: ["buy", "sell", "roi", "stoploss", "trailing"])
-    loss_function: str = "SharpeHyperOptLoss"
-    min_timerange_days: int = 90
-    tips: List[str] = field(default_factory=list)
-    warnings: List[str] = field(default_factory=list)
-    source: str = "default"  # "last_run" | "default"
 
 
 def _load_latest_hyperopt_result(hyperopt_results_dir: Path, strategy: str) -> Optional[dict]:
