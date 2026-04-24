@@ -166,6 +166,10 @@ class WinRateDonut(QWidget):
             return
 
         import math
+        from PySide6.QtGui import QPolygonF, QPainterPath, QColor as QC
+        from PySide6.QtCore import QPointF
+        from PySide6.QtWidgets import QGraphicsPathItem
+
         data = [
             (wins / total, theme.GREEN),
             (losses / total, theme.RED),
@@ -177,13 +181,27 @@ class WinRateDonut(QWidget):
             if frac <= 0:
                 continue
             end = start + 2 * math.pi * frac
-            angles = np.linspace(start, end, max(3, int(frac * 60)))
+            n = max(3, int(frac * 120))
+            angles = np.linspace(start, end, n)
             outer = 1.0
-            inner = 0.6
-            xs = np.concatenate([outer * np.cos(angles), inner * np.cos(angles[::-1])])
-            ys = np.concatenate([outer * np.sin(angles), inner * np.sin(angles[::-1])])
-            poly = pg.PlotDataItem(xs, ys, fillLevel=0, brush=pg.mkBrush(color), pen=pg.mkPen(None))
-            self._pw.addItem(poly)
+            inner = 0.55
+
+            path = QPainterPath()
+            # Start at outer arc beginning
+            path.moveTo(outer * math.cos(angles[0]), outer * math.sin(angles[0]))
+            # Outer arc
+            for a in angles[1:]:
+                path.lineTo(outer * math.cos(a), outer * math.sin(a))
+            # Inner arc (reversed)
+            for a in angles[::-1]:
+                path.lineTo(inner * math.cos(a), inner * math.sin(a))
+            path.closeSubpath()
+
+            item = QGraphicsPathItem(path)
+            c = QC(color)
+            item.setBrush(QBrush(c))
+            item.setPen(QPen(Qt.NoPen))
+            self._pw.addItem(item)
             start = end
 
         # Center text

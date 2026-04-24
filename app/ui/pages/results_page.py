@@ -63,6 +63,46 @@ def _trade_close_rate(t: dict) -> float:
     return t.get("exit_rate", t.get("close_rate", 0.0))
 
 
+# ── Color-coding pure functions ───────────────────────────────────────────────
+
+def _profit_color(value: float) -> str:
+    """Map profit/return value to theme color."""
+    if value > 0:
+        return theme.GREEN
+    if value < 0:
+        return theme.RED
+    return theme.TEXT_PRIMARY
+
+
+def _win_rate_color(value: float) -> str:
+    """Map win rate percentage to theme color."""
+    return theme.GREEN if value >= 50.0 else theme.RED
+
+
+def _sharpe_color(value: float) -> str:
+    """Map Sharpe ratio to theme color."""
+    if value >= 1.0:
+        return theme.GREEN
+    if value > 0.0:
+        return theme.YELLOW
+    return theme.RED
+
+
+def _profit_factor_color(value: float) -> str:
+    """Map profit factor to theme color."""
+    return theme.GREEN if value >= 1.0 else theme.RED
+
+
+def _profit_accent_color(value: float) -> str:
+    """Map profit % to StatCard accent color."""
+    return theme.GREEN if value >= 0 else theme.RED
+
+
+def _drawdown_accent_color(value: float) -> str:
+    """Map drawdown % to StatCard accent color."""
+    return theme.RED if value > 20.0 else theme.YELLOW
+
+
 class ResultsPage(QWidget):
     def __init__(self, settings_state: SettingsState, parent: QWidget | None = None):
         super().__init__(parent)
@@ -334,6 +374,176 @@ class ResultsPage(QWidget):
         return f
 
     # ------------------------------------------------------------------
+    def _balance_delta_widget(self, starting: float, final: float) -> QLabel | None:
+        """Return a delta QLabel for the balance change, or None if equal."""
+        if final > starting:
+            delta = final - starting
+            lbl = QLabel(f"+{delta:.2f} USDT")
+            lbl.setStyleSheet(
+                f"color: {theme.GREEN}; font-size: 12px; font-weight: 600;"
+            )
+            return lbl
+        if final < starting:
+            delta = starting - final
+            lbl = QLabel(f"\u2212{delta:.2f} USDT")
+            lbl.setStyleSheet(
+                f"color: {theme.RED}; font-size: 12px; font-weight: 600;"
+            )
+            return lbl
+        return None
+
+    # ------------------------------------------------------------------
+    def _build_pairs_widget(self, pairs: list) -> QWidget:
+        """Return a flow-wrap badge widget for pairs, or a plain dash label."""
+        from PySide6.QtWidgets import QGridLayout
+        if not pairs:
+            lbl = QLabel("—")
+            lbl.setStyleSheet(f"color: {theme.TEXT_PRIMARY};")
+            return lbl
+
+        container = QWidget()
+        badge_style = (
+            f"background: {theme.ACCENT_DIM}; color: {theme.ACCENT}; "
+            "border-radius: 10px; padding: 2px 8px; "
+            "font-size: 11px; font-weight: 600;"
+        )
+        badges: list = []
+        for pair in pairs:
+            badge = QLabel(pair)
+            badge.setStyleSheet(badge_style)
+            badge.setParent(container)
+            badges.append(badge)
+
+        def _reflow(event=None):
+            """Reposition badge labels in a flow-wrap pattern."""
+            if event is not None:
+                super(type(container), container).resizeEvent(event)
+            x, y = 0, 0
+            h_gap, v_gap = 6, 4
+            row_height = 0
+            w = container.width() or 400
+            for badge in badges:
+                badge.adjustSize()
+                bw = badge.sizeHint().width()
+                bh = badge.sizeHint().height()
+                if x + bw > w and x > 0:
+                    x = 0
+                    y += row_height + v_gap
+                    row_height = 0
+                badge.setGeometry(x, y, bw, bh)
+                x += bw + h_gap
+                row_height = max(row_height, bh)
+            total_h = y + row_height + v_gap
+            container.setMinimumHeight(max(total_h, 28))
+
+        container.resizeEvent = _reflow  # type: ignore[method-assign]
+        _reflow()
+        return container
+
+    # ------------------------------------------------------------------
+    def _summary_section(
+        self,
+        title: str,
+        fields: list,
+    ) -> QFrame:
+        """Build a titled, bordered section card with a two-column grid of fields.
+
+        Each field is a tuple of (label_text, value_text_or_widget, color_hex).
+        The value element may be a plain str or a QWidget for inline composites.
+        """
+        from PySide6.QtWidgets import QGridLayout
+
+        outer = QFrame()
+        outer_lay = QVBoxLayout(outer)
+        outer_lay.setContentsMargins(0, 0, 0, 0)
+        outer_lay.setSpacing(6)
+
+        # Section header
+        header = QLabel(title.upper())
+        header.setStyleSheet(
+            f"color: {theme.TEXT_SECONDARY}; font-size: 11px; font-weight: 600;"
+        )
+        outer_lay.addWidget(header)
+
+        # Card body
+        card = QFrame()
+        card.setStyleSheet(f"""
+            QFrame {{
+                background: {theme.BG_SURFACE};
+                border: 1px solid {theme.BG_BORDER};
+                border-radius: 8px;
+            }}
+        """)
+        grid = QGridLayout(card)
+        grid.setContentsMargins(12, 12, 12, 12)
+        grid.setSpacing(8)
+        grid.setColumnMinimumWidth(1, 200)
+        grid.setColumnMinimumWidth(3, 200)
+
+        for i, field in enumerate(fields):
+            label_text, value_item, color_hex = field
+            col_offset = (i % 2) * 2  # 0 or 2
+            row = i // 2
+
+            lbl = QLabel(label_text)
+            lbl.setStyleSheet(
+                f"color: {theme.TEXT_SECONDARY}; font-size: 11px;"
+            )
+            grid.addWidget(lbl, row, col_offset)
+
+            if isinstance(value_item, QWidget):
+                grid.addWidget(value_item, row, col_offset + 1)
+            else:
+                val = QLabel(str(value_item))
+                val.setStyleSheet(
+                    f"color: {color_hex}; font-size: 13px; font-weight: 500;"
+                )
+                grid.addWidget(val, row, col_offset + 1)
+
+        outer_lay.addWidget(card)
+        return outer
+
+    # ------------------------------------------------------------------
+    def _build_kpi_row(self, run: dict) -> QWidget:
+        """Return a QWidget containing a horizontal row of six StatCards."""
+        container = QWidget()
+        hlay = QHBoxLayout(container)
+        hlay.setContentsMargins(0, 0, 0, 0)
+        hlay.setSpacing(10)
+
+        profit_v = run.get("profit_total_pct", 0.0) or 0.0
+        wr_v = run.get("win_rate_pct", 0.0) or 0.0
+        trades_v = run.get("trades_count", 0)
+        dd_v = run.get("max_drawdown_pct", 0.0) or 0.0
+        sharpe_v = run.get("sharpe", None)
+        pf_v = run.get("profit_factor", 0.0) or 0.0
+
+        cards_def = [
+            ("Total Profit %",  f"{profit_v:+.2f}%",                    _profit_accent_color(profit_v)),
+            ("Win Rate",        f"{wr_v:.1f}%",                          theme.ACCENT),
+            ("Total Trades",    str(trades_v),                           theme.PURPLE),
+            ("Max Drawdown %",  f"{dd_v:.2f}%",                          _drawdown_accent_color(dd_v)),
+            ("Sharpe Ratio",    f"{sharpe_v:.3f}" if sharpe_v is not None else "—", theme.ACCENT),
+            ("Profit Factor",   f"{pf_v:.3f}" if pf_v else "—",          theme.GREEN),
+        ]
+
+        for label, value, accent in cards_def:
+            card = StatCard(label, value, accent_color=accent)
+            card.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+            card.setFixedHeight(100)
+            hlay.addWidget(card)
+
+        return container
+
+    # ------------------------------------------------------------------
+    def _clear_summary_layout(self) -> None:
+        """Remove all widgets from _summary_layout."""
+        while self._summary_layout.count():
+            item = self._summary_layout.takeAt(0)
+            if item.widget():
+                item.widget().deleteLater()
+
+    # ------------------------------------------------------------------
     def refresh(self):
         settings = self._state.current_settings
         if not settings or not settings.user_data_path:
@@ -505,52 +715,86 @@ class ResultsPage(QWidget):
         self._build_summary(run)
 
     # ------------------------------------------------------------------
-    def _build_summary(self, run: dict):
-        while self._summary_layout.count():
-            item = self._summary_layout.takeAt(0)
-            if item.widget():
-                item.widget().deleteLater()
+    def _build_summary(self, run: dict) -> None:
+        """Rebuild the Summary tab content for the given run dict."""
+        self._clear_summary_layout()
+        try:
+            # ── Overview section ──────────────────────────────────────
+            overview_fields = [
+                ("Strategy",      run.get("strategy", "—"),                          theme.TEXT_PRIMARY),
+                ("Timeframe",     run.get("timeframe", "—"),                         theme.TEXT_PRIMARY),
+                ("Timerange",     run.get("timerange", "—"),                         theme.TEXT_PRIMARY),
+                ("Backtest Start",run.get("backtest_start", "—"),                    theme.TEXT_PRIMARY),
+                ("Backtest End",  run.get("backtest_end", "—"),                      theme.TEXT_PRIMARY),
+                ("Pairs",         self._build_pairs_widget(run.get("pairs", [])),    theme.TEXT_PRIMARY),
+                ("Run ID",        run.get("run_id", "—"),                            theme.TEXT_PRIMARY),
+                ("Saved At",      run.get("saved_at", "—")[:19].replace("T", " "),  theme.TEXT_PRIMARY),
+            ]
+            self._summary_layout.addWidget(self._summary_section("Overview", overview_fields))
 
-        fields = [
-            ("Strategy",         run.get("strategy", "—")),
-            ("Timeframe",        run.get("timeframe", "—")),
-            ("Timerange",        run.get("timerange", "—")),
-            ("Backtest Start",   run.get("backtest_start", "—")),
-            ("Backtest End",     run.get("backtest_end", "—")),
-            ("Starting Balance", f"{run.get('starting_balance', 0):.2f} USDT"),
-            ("Final Balance",    f"{run.get('final_balance', 0):.2f} USDT"),
-            ("Total Profit %",   f"{run.get('profit_total_pct', 0):+.4f}%"),
-            ("Total Profit Abs", f"{run.get('profit_total_abs', 0):+.4f}"),
-            ("Max Drawdown %",   f"{run.get('max_drawdown_pct', 0):.4f}%"),
-            ("Max Drawdown Abs", f"{run.get('max_drawdown_abs', 0):.4f}"),
-            ("Total Trades",     str(run.get("trades_count", 0))),
-            ("Wins",             str(run.get("wins", 0))),
-            ("Losses",           str(run.get("losses", 0))),
-            ("Win Rate",         f"{run.get('win_rate_pct', 0):.2f}%"),
-            ("Sharpe Ratio",     f"{run.get('sharpe', 0) or 0:.4f}"),
-            ("Sortino Ratio",    f"{run.get('sortino', 0) or 0:.4f}"),
-            ("Calmar Ratio",     f"{run.get('calmar', 0) or 0:.4f}"),
-            ("Profit Factor",    f"{run.get('profit_factor', 0):.4f}"),
-            ("Expectancy",       f"{run.get('expectancy', 0):.4f}"),
-            ("Pairs",            ", ".join(run.get("pairs", []))),
-            ("Run ID",           run.get("run_id", "—")),
-            ("Saved At",         run.get("saved_at", "—")[:19].replace("T", " ")),
-        ]
+            # ── Performance section ───────────────────────────────────
+            starting = run.get("starting_balance", 0.0) or 0.0
+            final    = run.get("final_balance", 0.0) or 0.0
+            profit_pct = run.get("profit_total_pct", 0.0) or 0.0
+            profit_abs = run.get("profit_total_abs", 0.0) or 0.0
+            pf_v       = run.get("profit_factor", 0.0) or 0.0
+            exp_v      = run.get("expectancy", 0.0) or 0.0
 
-        for label, value in fields:
-            row_lay = QHBoxLayout()
-            lbl = QLabel(label + ":")
-            lbl.setFixedWidth(160)
-            lbl.setStyleSheet(
-                f"color: {theme.TEXT_SECONDARY}; font-size: 12px;"
-            )
-            val = QLabel(value)
-            val.setStyleSheet(
-                f"color: {theme.TEXT_PRIMARY}; font-size: 12px; font-weight: 500;"
-            )
-            val.setWordWrap(True)
-            row_lay.addWidget(lbl)
-            row_lay.addWidget(val, 1)
-            self._summary_layout.addLayout(row_lay)
+            # Build Final Balance composite widget (value + optional delta)
+            delta_lbl = self._balance_delta_widget(starting, final)
+            if delta_lbl is not None:
+                final_container = QWidget()
+                final_hlay = QHBoxLayout(final_container)
+                final_hlay.setContentsMargins(0, 0, 0, 0)
+                final_hlay.setSpacing(8)
+                final_val_lbl = QLabel(f"{final:.2f} USDT")
+                final_val_lbl.setStyleSheet(
+                    f"color: {theme.TEXT_PRIMARY}; font-size: 13px; font-weight: 500;"
+                )
+                final_hlay.addWidget(final_val_lbl)
+                final_hlay.addWidget(delta_lbl)
+                final_hlay.addStretch()
+                final_value: object = final_container
+            else:
+                final_value = f"{final:.2f} USDT"
 
-        self._summary_layout.addStretch()
+            perf_fields = [
+                ("Starting Balance", f"{starting:.2f} USDT",                    theme.TEXT_PRIMARY),
+                ("Final Balance",    final_value,                                theme.TEXT_PRIMARY),
+                ("Total Profit %",   f"{profit_pct:+.2f}%",                     _profit_color(profit_pct)),
+                ("Total Profit Abs", f"{profit_abs:+.4f}",                      _profit_color(profit_abs)),
+                ("Profit Factor",    f"{pf_v:.3f}",                             _profit_factor_color(pf_v)),
+                ("Expectancy",       f"{exp_v:.4f}",                            _profit_color(exp_v)),
+            ]
+            self._summary_layout.addWidget(self._summary_section("Performance", perf_fields))
+
+            # ── Trade Statistics section ──────────────────────────────
+            wr_v = run.get("win_rate_pct", 0.0) or 0.0
+            trade_fields = [
+                ("Total Trades", str(run.get("trades_count", 0)),  theme.TEXT_PRIMARY),
+                ("Wins",         str(run.get("wins", 0)),           theme.TEXT_PRIMARY),
+                ("Losses",       str(run.get("losses", 0)),         theme.TEXT_PRIMARY),
+                ("Win Rate",     f"{wr_v:.1f}%",                    _win_rate_color(wr_v)),
+            ]
+            self._summary_layout.addWidget(self._summary_section("Trade Statistics", trade_fields))
+
+            # ── Risk Metrics section ──────────────────────────────────
+            sharpe_v  = run.get("sharpe", None)
+            sortino_v = run.get("sortino", None)
+            calmar_v  = run.get("calmar", None)
+            dd_pct    = run.get("max_drawdown_pct", 0.0) or 0.0
+            dd_abs    = run.get("max_drawdown_abs", 0.0) or 0.0
+
+            risk_fields = [
+                ("Max Drawdown %",   f"{dd_pct:.2f}%",                                          theme.RED),
+                ("Max Drawdown Abs", f"{dd_abs:.4f}",                                           theme.RED),
+                ("Sharpe Ratio",     f"{sharpe_v:.3f}" if sharpe_v is not None else "—",        _sharpe_color(sharpe_v) if sharpe_v is not None else theme.TEXT_PRIMARY),
+                ("Sortino Ratio",    f"{sortino_v:.3f}" if sortino_v is not None else "—",      _sharpe_color(sortino_v) if sortino_v is not None else theme.TEXT_PRIMARY),
+                ("Calmar Ratio",     f"{calmar_v:.3f}" if calmar_v is not None else "—",        theme.TEXT_PRIMARY),
+            ]
+            self._summary_layout.addWidget(self._summary_section("Risk Metrics", risk_fields))
+
+            self._summary_layout.addStretch()
+
+        except Exception as exc:
+            _log.warning("_build_summary failed: %s", exc)

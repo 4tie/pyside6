@@ -28840,3 +28840,80 @@ Freqtrade Version:	freqtrade 2026.3
 2026-04-24 18:29:31.896 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to settings
 2026-04-24 18:29:41.465 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to dashboard
 2026-04-24 18:29:52.806 | INFO     | freqtrade_gui.startup          | Application exiting — code=0
+2026-04-24 19:01:05.882 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 19:01:05.883 | INFO     | freqtrade_gui.startup          | ============================================================
+2026-04-24 19:01:05.883 | INFO     | freqtrade_gui.startup          | Freqtrade GUI starting
+2026-04-24 19:01:05.883 | INFO     | freqtrade_gui.startup          | Python     : 3.12.3
+2026-04-24 19:01:05.883 | INFO     | freqtrade_gui.startup          | Platform   : Linux 6.17.0-22-generic
+2026-04-24 19:01:05.883 | INFO     | freqtrade_gui.startup          | PySide6    : 6.11.0
+2026-04-24 19:01:05.883 | INFO     | freqtrade_gui.startup          | user_data  : /home/mohs/Desktop/ae/pyside6/user_data
+2026-04-24 19:01:05.883 | INFO     | freqtrade_gui.startup          | venv       : /home/mohs/Desktop/ae/pyside6/.venv
+2026-04-24 19:01:05.883 | INFO     | freqtrade_gui.startup          | python_exe : /home/mohs/Desktop/ae/pyside6/.venv/bin/python
+2026-04-24 19:01:05.883 | INFO     | freqtrade_gui.startup          | freqtrade  : /home/mohs/Desktop/ae/pyside6/.venv/bin/freqtrade
+2026-04-24 19:01:05.884 | INFO     | freqtrade_gui.startup          | use_module : True
+2026-04-24 19:01:05.884 | INFO     | freqtrade_gui.startup          | ============================================================
+2026-04-24 19:01:06.242 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 19:01:06.242 | DEBUG    | freqtrade_gui.freqtrade.discovery | Listing strategies from: /home/mohs/Desktop/ae/pyside6/user_data
+2026-04-24 19:01:06.414 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-24 19:01:06.414 | DEBUG    | freqtrade_gui.freqtrade.discovery | Listing strategies from: /home/mohs/Desktop/ae/pyside6/user_data
+2026-04-24 19:01:06.505 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to dashboard
+2026-04-24 19:01:06.529 | INFO     | freqtrade_gui.ui.main_window   | ModernMainWindow initialised
+2026-04-24 19:01:06.530 | INFO     | freqtrade_gui.startup          | Main window shown
+2026-04-24 19:01:06.711 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-24_18-04-29_1df3eb  (exists=True)
+2026-04-24 19:01:06.713 | DEBUG    | freqtrade_gui.ui.results       | Loaded 532 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-24_18-04-29_1df3eb/trades.json
+2026-04-24 19:01:06.797 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-24_18-04-29_1df3eb  (exists=True)
+2026-04-24 19:01:06.798 | DEBUG    | freqtrade_gui.ui.results       | Loaded 532 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-24_18-04-29_1df3eb/trades.json
+2026-04-24 19:01:09.513 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to backtest
+2026-04-24 19:01:14.200 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to results
+2026-04-24 19:02:19.414 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-24_13-35-54_4a1407  (exists=True)
+2026-04-24 19:02:19.425 | DEBUG    | freqtrade_gui.ui.results       | Loaded 542 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-24_13-35-54_4a1407/trades.json
+2026-04-24 19:02:20.076 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-24_18-04-29_1df3eb  (exists=True)
+2026-04-24 19:02:20.079 | DEBUG    | freqtrade_gui.ui.results       | Loaded 532 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-24_18-04-29_1df3eb/trades.json
+2026-04-24 19:02:20.605 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-24_13-35-54_4a1407  (exists=True)
+2026-04-24 19:02:20.611 | DEBUG    | freqtrade_gui.ui.results       | Loaded 542 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-24_13-35-54_4a1407/trades.json
+2026-04-24 19:02:20.933 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-24_12-18-00_3a3aaf  (exists=True)
+2026-04-24 19:02:20.943 | DEBUG    | freqtrade_gui.ui.results       | Loaded 542 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-24_12-18-00_3a3aaf/trades.json
+2026-04-24 19:02:21.272 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-24_10-58-04_e93f5a  (exists=True)
+2026-04-24 19:02:21.278 | DEBUG    | freqtrade_gui.ui.results       | Loaded 353 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-24_10-58-04_e93f5a/trades.json
+2026-04-24 19:02:21.627 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-24_09-53-09_e7f703  (exists=True)
+2026-04-24 19:02:21.641 | DEBUG    | freqtrade_gui.ui.results       | Loaded 774 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-24_09-53-09_e7f703/trades.json
+2026-04-24 19:02:22.017 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-21_06-00-48_b48c6a  (exists=True)
+2026-04-24 19:02:22.025 | DEBUG    | freqtrade_gui.ui.results       | Loaded 537 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-21_06-00-48_b48c6a/trades.json
+2026-04-24 19:02:22.388 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-19_08-13-08_e6d605  (exists=True)
+2026-04-24 19:02:22.398 | DEBUG    | freqtrade_gui.ui.results       | Loaded 477 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-19_08-13-08_e6d605/trades.json
+2026-04-24 19:02:22.724 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-17_21-33-41_6cd76a  (exists=True)
+2026-04-24 19:02:22.732 | DEBUG    | freqtrade_gui.ui.results       | Loaded 313 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-17_21-33-41_6cd76a/trades.json
+2026-04-24 19:02:23.117 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-17_20-37-28_0a9985  (exists=True)
+2026-04-24 19:02:23.124 | DEBUG    | freqtrade_gui.ui.results       | Loaded 313 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-17_20-37-28_0a9985/trades.json
+2026-04-24 19:02:23.531 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-17_20-42-36_3b1c3e  (exists=True)
+2026-04-24 19:02:23.537 | DEBUG    | freqtrade_gui.ui.results       | Loaded 221 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-17_20-42-36_3b1c3e/trades.json
+2026-04-24 19:02:40.513 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-16_13-52-29_d1ce21  (exists=True)
+2026-04-24 19:02:40.518 | DEBUG    | freqtrade_gui.ui.results       | Loaded 440 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-16_13-52-29_d1ce21/trades.json
+2026-04-24 19:02:41.139 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-17_20-42-36_3b1c3e  (exists=True)
+2026-04-24 19:02:41.141 | DEBUG    | freqtrade_gui.ui.results       | Loaded 221 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-17_20-42-36_3b1c3e/trades.json
+2026-04-24 19:02:42.250 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-16_14-05-43_857b22  (exists=True)
+2026-04-24 19:02:42.257 | DEBUG    | freqtrade_gui.ui.results       | Loaded 283 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-16_14-05-43_857b22/trades.json
+2026-04-24 19:02:42.705 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-16_14-01-06_3379cd  (exists=True)
+2026-04-24 19:02:42.709 | DEBUG    | freqtrade_gui.ui.results       | Loaded 271 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-16_14-01-06_3379cd/trades.json
+2026-04-24 19:02:43.175 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-17_08-48-43_f4c52f  (exists=True)
+2026-04-24 19:02:43.184 | DEBUG    | freqtrade_gui.ui.results       | Loaded 313 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-17_08-48-43_f4c52f/trades.json
+2026-04-24 19:02:44.326 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-17_08-48-43_f4c52f  (exists=True)
+2026-04-24 19:02:44.327 | DEBUG    | freqtrade_gui.ui.results       | Loaded 313 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-17_08-48-43_f4c52f/trades.json
+2026-04-24 19:02:44.768 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-17_20-42-36_3b1c3e  (exists=True)
+2026-04-24 19:02:44.770 | DEBUG    | freqtrade_gui.ui.results       | Loaded 221 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-17_20-42-36_3b1c3e/trades.json
+2026-04-24 19:02:45.115 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-18_05-40-01_8160df  (exists=True)
+2026-04-24 19:02:45.125 | DEBUG    | freqtrade_gui.ui.results       | Loaded 477 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-18_05-40-01_8160df/trades.json
+2026-04-24 19:02:45.443 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-19_08-13-08_e6d605  (exists=True)
+2026-04-24 19:02:45.450 | DEBUG    | freqtrade_gui.ui.results       | Loaded 477 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-19_08-13-08_e6d605/trades.json
+2026-04-24 19:02:45.630 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-19_18-36-46_2b9b2e  (exists=True)
+2026-04-24 19:02:45.634 | DEBUG    | freqtrade_gui.ui.results       | Loaded 472 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-19_18-36-46_2b9b2e/trades.json
+2026-04-24 19:02:45.798 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-21_06-00-48_b48c6a  (exists=True)
+2026-04-24 19:02:45.800 | DEBUG    | freqtrade_gui.ui.results       | Loaded 537 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMeee/run_2026-04-21_06-00-48_b48c6a/trades.json
+2026-04-24 19:03:03.933 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to compare
+2026-04-24 19:03:11.246 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to optimize
+2026-04-24 19:03:13.112 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to download
+2026-04-24 19:03:14.491 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to settings
+2026-04-24 19:03:18.744 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to dashboard
+2026-04-24 19:03:21.299 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to backtest
+2026-04-24 19:03:22.861 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to results
+2026-04-24 19:03:24.206 | INFO     | freqtrade_gui.startup          | Application exiting — code=0
