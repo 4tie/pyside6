@@ -490,8 +490,8 @@ class LoopPage(QWidget):
     # ------------------------------------------------------------------
 
     def _check_config_guard(self) -> None:
-        settings = self._settings_state.settings_service.load_settings()
-        if not settings.user_data_path:
+        settings = self._settings_state.current_settings
+        if not settings or not settings.user_data_path:
             self._no_config_banner.setText(
                 "Warning: User data path is not configured. "
                 "Go to Settings and set your Freqtrade user_data directory."
@@ -1041,8 +1041,8 @@ class LoopPage(QWidget):
 
     def _update_state_machine(self) -> None:
         """Update enabled/disabled widget state based on config and runtime."""
-        settings = self._settings_state.settings_service.load_settings()
-        ok = bool(settings.user_data_path)
+        settings = self._settings_state.current_settings
+        ok = bool(settings and settings.user_data_path)
         is_running = self._loop_service.is_running or getattr(self, '_baseline_in_progress', False)
         strategy = self._strategy_combo.currentText().strip()
         has_strategy = bool(strategy) and not strategy.startswith("(")
@@ -1086,7 +1086,9 @@ class LoopPage(QWidget):
         """Restore saved StrategyLabPreferences from AppSettings."""
         self._ensure_loop_runtime_state()
         try:
-            settings = self._settings_state.settings_service.load_settings()
+            settings = self._settings_state.current_settings
+            if not settings:
+                return
             prefs = settings.strategy_lab
 
             if prefs.strategy:
@@ -1172,7 +1174,7 @@ class LoopPage(QWidget):
             ]
             prefs.ai_advisor_enabled = self._ai_advisor_chk.isChecked()
             prefs.pairs = ",".join(self._selected_pairs)
-            self._settings_state.settings_service.save_settings(settings)
+            self._settings_state.save_settings(settings)
         except Exception as exc:
             _log.warning("Failed to save StrategyLabPreferences: %s", exc)
 
@@ -1237,8 +1239,9 @@ class LoopPage(QWidget):
 
     def _build_loop_config(self, strategy: str) -> LoopConfig:
         """Build a LoopConfig from the current UI state."""
-        # Detect strategy timeframe
-        settings = self._settings_state.settings_service.load_settings()
+        settings = self._settings_state.current_settings
+        if not settings or not settings.user_data_path:
+            raise ValueError("user_data_path is not configured")
         strategy_py = Path(settings.user_data_path) / "strategies" / f"{strategy}.py"
         detected_timeframe = "5m"  # fallback default
         if strategy_py.exists():
@@ -1293,7 +1296,9 @@ class LoopPage(QWidget):
         if datetime.strptime(date_from, "%Y%m%d") >= datetime.strptime(date_to, "%Y%m%d"):
             return "Start Date must be earlier than End Date."
 
-        settings = self._settings_state.settings_service.load_settings()
+        settings = self._settings_state.current_settings
+        if not settings or not settings.user_data_path:
+            return "user_data_path is not configured in Settings."
         strategy_py = Path(settings.user_data_path) / "strategies" / f"{strategy}.py"
         if not strategy_py.exists():
             return f"Strategy file not found: {strategy_py}"
@@ -1370,7 +1375,9 @@ class LoopPage(QWidget):
 
     def _build_gate_export_dir(self, gate_name: str) -> Path:
         """Create a per-gate export directory under `_loop` results."""
-        settings = self._settings_state.settings_service.load_settings()
+        settings = self._settings_state.current_settings
+        if not settings or not settings.user_data_path:
+            raise ValueError("user_data_path is not configured")
         config = self._loop_service._config
         iteration = self._current_iteration
         suffix = gate_name
@@ -1445,12 +1452,18 @@ class LoopPage(QWidget):
         self._gate_indicator.set_running(gate_name)
         self._set_status(phase_label)
         self._gate_run_started_at = time.time()
+
+        env = None
+        if settings and settings.venv_path:
+            env = ProcessService.build_environment(settings.venv_path)
+
         self._process_service.execute_command(
             cmd.as_list(),
             on_output=self._terminal.append_output,
             on_error=self._terminal.append_error,
             on_finished=self._on_gate_backtest_finished,
             working_directory=cmd.cwd,
+            env=env,
         )
 
     def _parse_current_gate_results(self) -> BacktestResults:

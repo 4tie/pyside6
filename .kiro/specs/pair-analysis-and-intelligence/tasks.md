@@ -82,18 +82,18 @@
   - [x] 11.7 Implement `set_run_choices(runs: List[dict])` method
   - [x] 11.8 Implement `display(comparison: RunComparison)` method
 
-- [~] 12. Update BacktestPage with new tabs and load_results()
+- [ ] 12. Update BacktestPage with new tabs and load_results()
   - [ ] 12.1 Import `PairResultsWidget`, `CompareWidget`, `PairAnalysisService`, `ComparisonService` in `backtest_page.py`
-  - [~] 12.2 Add `_pair_results_widget` and `_compare_widget` instances in `_build_right_panel()`
-  - [~] 12.3 Set tab order: Results (0) → Pair Results (1) → Compare (2) → Terminal (3)
-  - [~] 12.4 Implement `load_results(results: BacktestResults)` method that calls `_results_widget.display_results()`, `_pair_results_widget.display()`, and navigates to tab 0
-  - [~] 12.5 Replace all direct `_results_widget.display_results()` calls in `_try_load_results()` and `_on_load_run()` with `load_results()`
-  - [~] 12.6 Wire `_refresh_run_picker()` to also call `_compare_widget.set_run_choices(runs)`
-  - [~] 12.7 Wire the Compare button to call `ComparisonService.compare()` and `_compare_widget.display()`
+  - [ ] 12.2 Add `_pair_results_widget` and `_compare_widget` instances in `_build_right_panel()`
+  - [ ] 12.3 Set tab order: Results (0) → Pair Results (1) → Compare (2) → Terminal (3)
+  - [ ] 12.4 Implement `load_results(results: BacktestResults)` method that calls `_results_widget.display_results()`, `_pair_results_widget.display()`, and navigates to tab 0
+  - [ ] 12.5 Replace all direct `_results_widget.display_results()` calls in `_try_load_results()` and `_on_load_run()` with `load_results()`
+  - [ ] 12.6 Wire `_refresh_run_picker()` to also call `_compare_widget.set_run_choices(runs)`
+  - [ ] 12.7 Wire the Compare button to call `ComparisonService.compare()` and `_compare_widget.display()`
 
-- [~] 13. Add step-gating to LoopPage
-  - [~] 13.1 Identify all step-gated control groups in `LoopPage` (Run, Results/Problems, Improve, Preview, Run Candidate, Compare, Accept/Reject)
-  - [~] 13.2 Implement `_update_step_gates()` private method that enables/disables controls based on current state flags
-  - [~] 13.3 Call `_update_step_gates()` after every state transition: baseline run complete, diagnosis shown, candidate generated, preview shown, candidate run complete, comparison shown
-  - [~] 13.4 Ensure Run controls are always enabled (step 1 gate)
-  - [~] 13.5 Verify step-gating does not break existing LoopPage functionality
+- [ ] 13. Add step-gating to LoopPage
+  - [ ] 13.1 Identify all step-gated control groups in `LoopPage` (Run, Results/Problems, Improve, Preview, Run Candidate, Compare, Accept/Reject)
+  - [ ] 13.2 Implement `_update_step_gates()` private method that enables/disables controls based on current state flags
+  - [ ] 13.3 Call `_update_step_gates()` after every state transition: baseline run complete, diagnosis shown, candidate generated, preview shown, candidate run complete, comparison shown
+  - [ ] 13.4 Ensure Run controls are always enabled (step 1 gate)
+  - [ ] 13.5 Verify step-gating does not break existing LoopPage functionality
