@@ -32,6 +32,7 @@ from PySide6.QtWidgets import (
     QDialog,
     QDialogButtonBox,
     QDoubleSpinBox,
+    QCheckBox,
     QFormLayout,
     QFrame,
     QGroupBox,
@@ -64,10 +65,12 @@ from app.core.models.optimizer_models import (
     TrialRecord,
     TrialStatus,
 )
+from app.core.parsing.strategy_py_parser import parse_strategy_py
 from app.core.services.backtest_service import BacktestService
 from app.core.services.optimizer_session_service import StrategyOptimizerService
 from app.core.services.optimizer_store import OptimizerStore
 from app.core.services.process_run_manager import ProcessRunManager
+from app.core.services.rollback_service import RollbackService
 from app.core.services.settings_service import SettingsService
 from app.core.utils.app_logger import get_logger
 from app.ui import theme
@@ -286,4 +289,611 @@ class OptimizerPage(QWidget):
         # Load initial data
         self._load_strategies()
         self._sync_from_backtest()
+        self._load_history()
+
+    def _build(self) -> None:
+        root = QVBoxLayout(self)
+        root.setContentsMargins(18, 18, 18, 18)
+        root.setSpacing(12)
+
+        header = QHBoxLayout()
+        title = QLabel("Strategy Optimizer")
+        title.setStyleSheet(f"font-size: 22px; font-weight: 700; color: {theme.TEXT_PRIMARY};")
+        header.addWidget(title)
+        header.addStretch()
+
+        self._start_btn = QPushButton("Start Optimizer")
+        self._start_btn.setObjectName("primary")
+        self._start_btn.clicked.connect(self._start_optimizer)
+        header.addWidget(self._start_btn)
+
+        self._stop_btn = QPushButton("Stop")
+        self._stop_btn.setObjectName("danger")
+        self._stop_btn.setEnabled(False)
+        self._stop_btn.clicked.connect(self._stop_optimizer)
+        header.addWidget(self._stop_btn)
+        root.addLayout(header)
+
+        self._warning_lbl = QLabel("")
+        self._warning_lbl.setVisible(False)
+        self._warning_lbl.setWordWrap(True)
+        self._warning_lbl.setStyleSheet(
+            f"color: {theme.YELLOW}; background: {theme.BG_ELEVATED}; "
+            f"border: 1px solid {theme.YELLOW}; border-radius: 6px; padding: 8px;"
+        )
+        root.addWidget(self._warning_lbl)
+
+        splitter = QSplitter(Qt.Horizontal)
+        splitter.setHandleWidth(1)
+        splitter.setStyleSheet(f"QSplitter::handle {{ background: {theme.BG_BORDER}; }}")
+        splitter.addWidget(self._build_left_sidebar())
+        splitter.addWidget(self._build_center_pane())
+        splitter.addWidget(self._build_right_sidebar())
+        splitter.setSizes([340, 680, 300])
+        root.addWidget(splitter, 1)
+
+    def _panel(self, min_width: int = 260, max_width: int | None = None) -> QFrame:
+        panel = QFrame()
+        panel.setStyleSheet(
+            f"QFrame {{ background: {theme.BG_SURFACE}; border: 1px solid {theme.BG_BORDER}; "
+            "border-radius: 8px; }"
+        )
+        panel.setMinimumWidth(min_width)
+        if max_width:
+            panel.setMaximumWidth(max_width)
+        return panel
+
+    def _label(self, text: str) -> QLabel:
+        lbl = QLabel(text)
+        lbl.setStyleSheet(f"color: {theme.TEXT_SECONDARY}; font-size: 12px;")
+        return lbl
+
+    def _build_left_sidebar(self) -> QWidget:
+        panel = self._panel(300, 390)
+        layout = QVBoxLayout(panel)
+        layout.setContentsMargins(14, 14, 14, 14)
+        layout.setSpacing(10)
+
+        layout.addWidget(_section_label("Configuration"))
+        form = QFormLayout()
+        form.setLabelAlignment(Qt.AlignRight)
+        form.setSpacing(8)
+
+        self._strategy_combo = QComboBox()
+        self._strategy_combo.currentTextChanged.connect(self._on_strategy_changed)
+        form.addRow(self._label("Strategy"), self._strategy_combo)
+
+        self._timeframe_edit = QLineEdit()
+        self._timeframe_edit.setReadOnly(True)
+        form.addRow(self._label("Timeframe"), self._timeframe_edit)
+
+        self._timerange_edit = QLineEdit()
+        self._timerange_edit.setReadOnly(True)
+        form.addRow(self._label("Timerange"), self._timerange_edit)
+
+        self._pairs_edit = QLineEdit()
+        self._pairs_edit.setReadOnly(True)
+        form.addRow(self._label("Pairs"), self._pairs_edit)
+
+        self._wallet_spin = QDoubleSpinBox()
+        self._wallet_spin.setRange(1, 1_000_000)
+        self._wallet_spin.setSuffix(" USDT")
+        form.addRow(self._label("Wallet"), self._wallet_spin)
+
+        self._trades_spin = QSpinBox()
+        self._trades_spin.setRange(1, 100)
+        form.addRow(self._label("Max Trades"), self._trades_spin)
+
+        self._trials_spin = QSpinBox()
+        self._trials_spin.setRange(1, 1000)
+        self._trials_spin.setValue(50)
+        form.addRow(self._label("Trials"), self._trials_spin)
+
+        self._score_combo = QComboBox()
+        for key, label in SCORE_METRICS:
+            self._score_combo.addItem(label, key)
+        form.addRow(self._label("Score"), self._score_combo)
+        layout.addLayout(form)
+
+        sync_btn = QPushButton("Sync from Backtest")
+        sync_btn.clicked.connect(self._sync_from_backtest)
+        layout.addWidget(sync_btn)
+
+        layout.addWidget(_section_label("Parameters"))
+        self._param_model = QStandardItemModel(0, _PCOL_COUNT, self)
+        self._param_model.setHorizontalHeaderLabels(["On", "Name", "Type", "Default", "Min", "Max"])
+        self._param_model.itemChanged.connect(self._on_param_item_changed)
+        self._param_table = QTableView()
+        self._param_table.setToolTip(_PARAM_TABLE_TOOLTIP)
+        self._param_table.setModel(self._param_model)
+        self._param_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self._param_table.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self._param_table.setMinimumHeight(180)
+        layout.addWidget(self._param_table, 1)
+
+        layout.addWidget(_section_label("History"))
+        self._history_table = QTableWidget(0, 5)
+        self._history_table.setHorizontalHeaderLabels(["Strategy", "Started", "Trials", "Best", "Status"])
+        self._history_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self._history_table.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self._history_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self._history_table.cellDoubleClicked.connect(self._load_history_session)
+        self._history_table.setMaximumHeight(150)
+        layout.addWidget(self._history_table)
+
+        delete_btn = QPushButton("Delete Session")
+        delete_btn.clicked.connect(self._delete_selected_history)
+        layout.addWidget(delete_btn)
+        return panel
+
+    def _build_center_pane(self) -> QWidget:
+        pane = QWidget()
+        layout = QVBoxLayout(pane)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(10)
+
+        top = QHBoxLayout()
+        self._progress = QProgressBar()
+        self._progress.setRange(0, 1)
+        self._progress.setValue(0)
+        top.addWidget(self._progress, 1)
+        self._elapsed_lbl = QLabel("Elapsed: 00:00")
+        self._eta_lbl = QLabel("ETA: --:--")
+        for lbl in (self._elapsed_lbl, self._eta_lbl):
+            lbl.setStyleSheet(f"color: {theme.TEXT_SECONDARY}; font-size: 12px;")
+            top.addWidget(lbl)
+        layout.addLayout(top)
+
+        splitter = QSplitter(Qt.Vertical)
+        splitter.setHandleWidth(1)
+        self._log_view = QPlainTextEdit()
+        self._log_view.setReadOnly(True)
+        self._log_view.setMaximumBlockCount(5000)
+        self._log_view.setStyleSheet(f"font-family: {theme.FONT_MONO}; font-size: 11px;")
+        splitter.addWidget(self._log_view)
+
+        self._trial_model = TrialTableModel(self)
+        self._trial_proxy = QSortFilterProxyModel(self)
+        self._trial_proxy.setSourceModel(self._trial_model)
+        self._trial_table = QTableView()
+        self._trial_table.setModel(self._trial_proxy)
+        self._trial_table.setSortingEnabled(True)
+        self._trial_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self._trial_table.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self._trial_table.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self._trial_table.clicked.connect(self._on_trial_clicked)
+        splitter.addWidget(self._trial_table)
+        splitter.setSizes([320, 260])
+        layout.addWidget(splitter, 1)
+        return pane
+
+    def _build_right_sidebar(self) -> QWidget:
+        panel = self._panel(260, 340)
+        layout = QVBoxLayout(panel)
+        layout.setContentsMargins(14, 14, 14, 14)
+        layout.setSpacing(10)
+
+        layout.addWidget(_section_label("Best Result"))
+        self._best_labels = self._metric_group(layout)
+        self._export_btn = QPushButton("Export Best")
+        self._export_btn.clicked.connect(self._export_best)
+        self._rollback_btn = QPushButton("Rollback")
+        self._rollback_btn.clicked.connect(self._rollback)
+        layout.addWidget(self._export_btn)
+        layout.addWidget(self._rollback_btn)
+
+        layout.addWidget(_section_label("Selected Trial"))
+        self._selected_labels = self._metric_group(layout)
+
+        self._set_best_btn = QPushButton("Set as Best")
+        self._set_best_btn.clicked.connect(self._set_selected_as_best)
+        self._open_log_btn = QPushButton("Open Log")
+        self._open_log_btn.clicked.connect(self._open_selected_log)
+        self._open_result_btn = QPushButton("Open Result File")
+        self._open_result_btn.clicked.connect(self._open_selected_result)
+        self._compare_btn = QPushButton("Compare")
+        self._compare_btn.clicked.connect(self._compare_selected)
+        for btn in (self._set_best_btn, self._open_log_btn, self._open_result_btn, self._compare_btn):
+            layout.addWidget(btn)
+        layout.addStretch()
+        return panel
+
+    def _metric_group(self, parent_layout: QVBoxLayout) -> dict[str, QLabel]:
+        labels: dict[str, QLabel] = {}
+        for key, label in [
+            ("profit", "Profit %"),
+            ("abs", "Profit abs"),
+            ("win", "Win rate"),
+            ("dd", "Max DD %"),
+            ("trades", "Trades"),
+            ("pf", "Profit factor"),
+            ("sharpe", "Sharpe"),
+            ("score", "Score"),
+        ]:
+            row = QHBoxLayout()
+            left, right = _metric_row(label)
+            row.addWidget(left)
+            row.addStretch()
+            row.addWidget(right)
+            parent_layout.addLayout(row)
+            labels[key] = right
+        return labels
+
+    def _load_strategies(self) -> None:
+        try:
+            strategies = self._backtest_svc.get_available_strategies()
+            self._strategy_combo.blockSignals(True)
+            self._strategy_combo.clear()
+            self._strategy_combo.addItems(strategies)
+            settings = self._settings_svc.load_settings()
+            preferred = (
+                settings.optimizer_preferences.last_strategy
+                or settings.backtest_preferences.last_strategy
+            )
+            if preferred:
+                idx = self._strategy_combo.findText(preferred)
+                if idx >= 0:
+                    self._strategy_combo.setCurrentIndex(idx)
+            self._strategy_combo.blockSignals(False)
+            self._on_strategy_changed(self._strategy_combo.currentText())
+        except Exception as exc:
+            _log.warning("Could not load optimizer strategies: %s", exc)
+
+    def _sync_from_backtest(self) -> None:
+        settings = self._settings_svc.load_settings()
+        prefs = settings.backtest_preferences
+        self._timeframe_edit.setText(prefs.default_timeframe or "5m")
+        self._timerange_edit.setText(prefs.default_timerange or "")
+        self._pairs_edit.setText(prefs.default_pairs or "")
+        self._wallet_spin.setValue(prefs.dry_run_wallet)
+        self._trades_spin.setValue(prefs.max_open_trades)
+        idx = self._strategy_combo.findText(prefs.last_strategy)
+        if idx >= 0:
+            self._strategy_combo.setCurrentIndex(idx)
+        has_config = bool(prefs.last_strategy or prefs.default_pairs or settings.user_data_path)
+        self._warning_lbl.setVisible(not has_config)
+        self._warning_lbl.setText("Backtesting preferences look empty. Configure the Backtesting tab first.")
+
+    def _on_strategy_changed(self, strategy_name: str) -> None:
+        self._param_defs = []
+        self._param_model.blockSignals(True)
+        self._param_model.removeRows(0, self._param_model.rowCount())
+        self._param_model.blockSignals(False)
+        if not strategy_name:
+            return
+        settings = self._settings_svc.load_settings()
+        if not settings.user_data_path:
+            return
+        path = Path(settings.user_data_path).expanduser() / "strategies" / f"{strategy_name}.py"
+        params = parse_strategy_py(path)
+        defs = list(params.buy_params.values()) + list(params.sell_params.values())
+        self._param_defs = defs
+        self._strategy_class = params.strategy_class
+        if params.timeframe:
+            self._timeframe_edit.setText(params.timeframe)
+        self._populate_param_table(defs)
+
+    def _populate_param_table(self, defs: list[ParamDef]) -> None:
+        self._param_model.blockSignals(True)
+        self._param_model.removeRows(0, self._param_model.rowCount())
+        for param in defs:
+            enabled = QStandardItem()
+            enabled.setCheckable(True)
+            enabled.setCheckState(Qt.Checked if param.enabled else Qt.Unchecked)
+            row = [
+                enabled,
+                QStandardItem(param.name),
+                QStandardItem(param.param_type.value),
+                QStandardItem(str(param.default)),
+                QStandardItem("" if param.low is None else str(param.low)),
+                QStandardItem("" if param.high is None else str(param.high)),
+            ]
+            for idx, item in enumerate(row):
+                if idx not in (_PCOL_ENABLED, _PCOL_MIN, _PCOL_MAX):
+                    item.setEditable(False)
+            self._param_model.appendRow(row)
+        self._param_model.blockSignals(False)
+
+    def _on_param_item_changed(self, item: QStandardItem) -> None:
+        if item.column() not in (_PCOL_ENABLED, _PCOL_MIN, _PCOL_MAX):
+            return
+        row = item.row()
+        if not (0 <= row < len(self._param_defs)):
+            return
+        param = self._param_defs[row]
+        enabled_item = self._param_model.item(row, _PCOL_ENABLED)
+        low_text = self._param_model.item(row, _PCOL_MIN).text().strip()
+        high_text = self._param_model.item(row, _PCOL_MAX).text().strip()
+        low = self._to_float(low_text)
+        high = self._to_float(high_text)
+        if low is not None and high is not None and low >= high:
+            item.setBackground(__import__("PySide6.QtGui", fromlist=["QColor"]).QColor(theme.RED))
+            return
+        item.setBackground(__import__("PySide6.QtGui", fromlist=["QColor"]).QColor("transparent"))
+        self._param_defs[row] = param.model_copy(
+            update={
+                "enabled": enabled_item.checkState() == Qt.Checked,
+                "low": low,
+                "high": high,
+            }
+        )
+
+    @staticmethod
+    def _to_float(text: str) -> Optional[float]:
+        if not text:
+            return None
+        try:
+            return float(text)
+        except ValueError:
+            return None
+
+    def _build_config(self) -> SessionConfig:
+        strategy = self._strategy_combo.currentText().strip()
+        if not strategy:
+            raise ValueError("Select a strategy before starting.")
+        pairs = [p.strip() for p in self._pairs_edit.text().split(",") if p.strip()]
+        return SessionConfig(
+            strategy_name=strategy,
+            strategy_class=getattr(self, "_strategy_class", strategy),
+            pairs=pairs,
+            timeframe=self._timeframe_edit.text().strip() or "5m",
+            timerange=self._timerange_edit.text().strip() or None,
+            dry_run_wallet=self._wallet_spin.value(),
+            max_open_trades=self._trades_spin.value(),
+            total_trials=self._trials_spin.value(),
+            score_metric=self._score_combo.currentData() or "total_profit_pct",
+            param_defs=self._param_defs,
+        )
+
+    def _start_optimizer(self) -> None:
+        if self._running:
+            return
+        try:
+            config = self._build_config()
+            session = self._service.create_session(config)
+        except Exception as exc:
+            QMessageBox.warning(self, "Optimizer", str(exc))
+            return
+        self._active_session = session
+        self._session_start_time = time.monotonic()
+        self._running = True
+        self._current_best_trial_number = 0
+        self._selected_trial = None
+        self._trial_model.clear()
+        self._log_view.clear()
+        self._progress.setRange(0, config.total_trials)
+        self._progress.setValue(0)
+        self._start_btn.setEnabled(False)
+        self._stop_btn.setEnabled(True)
+        self._elapsed_timer.start()
+        self._service.run_session_async(
+            session,
+            on_trial_start=lambda n, p: self._sig_trial_start.emit(n, p),
+            on_trial_complete=lambda r: self._sig_trial_done.emit(r),
+            on_session_complete=lambda s: self._sig_session_done.emit(s),
+            on_log_line=lambda line: self._sig_log_line.emit(line),
+        )
+
+    def _stop_optimizer(self) -> None:
+        self._service.stop_session()
+        self._stop_btn.setEnabled(False)
+        self._append_log("Stop requested.")
+
+    @Slot(str)
+    def _on_log_line(self, line: str) -> None:
+        self._pending_log_lines.append(line)
+
+    @Slot(object)
+    def _on_trial_done(self, record: TrialRecord) -> None:
+        self._pending_trials.append(record)
+
+    @Slot(object)
+    def _on_session_done(self, session: OptimizerSession) -> None:
+        self._active_session = session
+        self._running = False
+        self._start_btn.setEnabled(True)
+        self._stop_btn.setEnabled(False)
+        self._elapsed_timer.stop()
+        self._append_log(f"Session {session.status.value}: {session.trials_completed} trial(s).")
+        self._load_history()
+
+    @Slot(int, dict)
+    def _on_trial_start(self, trial_number: int, params: dict) -> None:
+        self._append_log(f"\n=== Trial #{trial_number}: {params} ===")
+
+    def _flush_pending_updates(self) -> None:
+        if self._pending_log_lines:
+            lines = self._pending_log_lines[:]
+            self._pending_log_lines.clear()
+            self._append_log("\n".join(lines))
+        if self._pending_trials:
+            trials = self._pending_trials[:]
+            self._pending_trials.clear()
+            for record in trials:
+                old_best = self._current_best_trial_number
+                self._trial_model.append_trial(record)
+                if record.is_best:
+                    self._current_best_trial_number = record.trial_number
+                    self._trial_model.update_best(old_best, record.trial_number)
+                    self._update_metric_labels(self._best_labels, record)
+                if self._active_session:
+                    self._progress.setValue(min(self._progress.maximum(), self._progress.value() + 1))
+                self._append_log(self._trial_summary(record))
+
+    def _append_log(self, text: str) -> None:
+        if not text:
+            return
+        self._log_view.appendPlainText(text)
+        self._log_view.verticalScrollBar().setValue(self._log_view.verticalScrollBar().maximum())
+
+    def _trial_summary(self, record: TrialRecord) -> str:
+        if record.status == TrialStatus.SUCCESS and record.metrics:
+            return (
+                f"Trial #{record.trial_number} done: profit={record.metrics.total_profit_pct:.2f}% "
+                f"dd={record.metrics.max_drawdown_pct:.2f}% trades={record.metrics.total_trades} "
+                f"score={record.score or 0.0:.4g}"
+            )
+        return f"Trial #{record.trial_number} failed."
+
+    def _update_elapsed(self) -> None:
+        if not self._session_start_time:
+            return
+        elapsed = int(time.monotonic() - self._session_start_time)
+        self._elapsed_lbl.setText(f"Elapsed: {elapsed // 60:02d}:{elapsed % 60:02d}")
+        done = max(1, self._progress.value())
+        total = self._progress.maximum()
+        if self._running and done and total > done:
+            eta = int((elapsed / done) * (total - done))
+            self._eta_lbl.setText(f"ETA: {eta // 60:02d}:{eta % 60:02d}")
+        else:
+            self._eta_lbl.setText("ETA: --:--")
+
+    def _on_trial_clicked(self, index: QModelIndex) -> None:
+        source_index = self._trial_proxy.mapToSource(index)
+        record = self._trial_model.data(source_index, Qt.UserRole)
+        if isinstance(record, TrialRecord):
+            self._selected_trial = record
+            self._update_metric_labels(self._selected_labels, record)
+
+    def _update_metric_labels(self, labels: dict[str, QLabel], record: Optional[TrialRecord]) -> None:
+        if not record or not record.metrics:
+            for lbl in labels.values():
+                lbl.setText("—")
+            if record:
+                labels["score"].setText(_fmt_float(record.score, 4))
+            return
+        m = record.metrics
+        labels["profit"].setText(_fmt_pct(m.total_profit_pct))
+        labels["abs"].setText(_fmt_float(m.total_profit_abs))
+        labels["win"].setText(_fmt_pct(m.win_rate * 100 if m.win_rate <= 1 else m.win_rate))
+        labels["dd"].setText(_fmt_pct(m.max_drawdown_pct))
+        labels["trades"].setText(_fmt_int(m.total_trades))
+        labels["pf"].setText(_fmt_float(m.profit_factor))
+        labels["sharpe"].setText(_fmt_float(m.sharpe_ratio))
+        labels["score"].setText(_fmt_float(record.score, 4))
+
+    def _set_selected_as_best(self) -> None:
+        if not self._active_session or not self._selected_trial:
+            return
+        if self._selected_trial.status != TrialStatus.SUCCESS:
+            QMessageBox.information(self, "Optimizer", "Only successful trials can be set as best.")
+            return
+        old_best = self._current_best_trial_number
+        self._service.set_best(self._active_session.session_id, self._selected_trial.trial_number)
+        self._current_best_trial_number = self._selected_trial.trial_number
+        self._trial_model.update_best(old_best, self._selected_trial.trial_number)
+        self._update_metric_labels(self._best_labels, self._selected_trial)
+
+    def _export_best(self) -> None:
+        if not self._active_session:
+            return
+        pointer = self._store.load_best_pointer(self._active_session.session_id)
+        if not pointer:
+            QMessageBox.information(self, "Optimizer", "No best trial is available yet.")
+            return
+        record = self._store.load_trial_record(self._active_session.session_id, pointer.trial_number)
+        settings = self._settings_svc.load_settings()
+        live_json = Path(settings.user_data_path or "user_data") / "strategies" / f"{self._active_session.config.strategy_name}.json"
+        dlg = ExportConfirmDialog(str(live_json), record.candidate_params if record else {}, self)
+        if dlg.exec() != QDialog.Accepted:
+            return
+        result = self._service.export_best(self._active_session.session_id)
+        if result.success:
+            QMessageBox.information(self, "Export Best", f"Exported to:\n{result.live_json_path}\n\nBackup:\n{result.backup_path}")
+        else:
+            QMessageBox.warning(self, "Export Best", result.error_message)
+
+    def _rollback(self) -> None:
+        strategy = self._strategy_combo.currentText().strip()
+        settings = self._settings_svc.load_settings()
+        if not strategy or not settings.user_data_path:
+            return
+        live_json = Path(settings.user_data_path) / "strategies" / f"{strategy}.json"
+        backups = sorted(live_json.parent.glob(f"{live_json.name}.bak_*"), key=lambda p: p.name, reverse=True)
+        if not backups:
+            QMessageBox.information(self, "Rollback", "No backups found for this strategy JSON.")
+            return
+        backup = backups[0]
+        dlg = RollbackDialog(strategy, backup.name, True, False, live_json, Path(settings.user_data_path) / "config.json", self)
+        if dlg.exec() != QDialog.Accepted or not dlg.restore_params:
+            return
+        try:
+            rollback = RollbackService()
+            rollback._backup_file(live_json)
+            rollback._atomic_restore(backup, live_json)
+            QMessageBox.information(self, "Rollback", f"Restored:\n{backup}")
+        except Exception as exc:
+            QMessageBox.warning(self, "Rollback", str(exc))
+
+    def _trial_path(self, filename: str) -> Optional[Path]:
+        if not self._active_session or not self._selected_trial:
+            return None
+        return self._store.trial_dir(self._active_session.session_id, self._selected_trial.trial_number) / filename
+
+    def _open_selected_log(self) -> None:
+        path = self._trial_path("trial.log")
+        if path and path.exists():
+            QDesktopServices.openUrl(QUrl.fromLocalFile(str(path)))
+
+    def _open_selected_result(self) -> None:
+        path = self._trial_path("backtest_result.json")
+        if path and path.exists():
+            QDesktopServices.openUrl(QUrl.fromLocalFile(str(path)))
+
+    def _compare_selected(self) -> None:
+        rows = self._trial_table.selectionModel().selectedRows()
+        records: list[TrialRecord] = []
+        for proxy_idx in rows[:2]:
+            source_idx = self._trial_proxy.mapToSource(proxy_idx)
+            record = self._trial_model.data(source_idx, Qt.UserRole)
+            if isinstance(record, TrialRecord):
+                records.append(record)
+        if len(records) != 2:
+            QMessageBox.information(self, "Compare", "Select exactly two trials to compare.")
+            return
+        _CompareDialog(records[0], records[1], self).exec()
+
+    def _load_history(self) -> None:
+        sessions = self._store.list_sessions()
+        self._history_sessions = sessions
+        self._history_table.setRowCount(0)
+        for session in sessions:
+            row = self._history_table.rowCount()
+            self._history_table.insertRow(row)
+            best = session.best_pointer.score if session.best_pointer else None
+            values = [
+                session.config.strategy_name,
+                session.started_at or "",
+                str(session.trials_completed),
+                "—" if best is None else f"{best:.4g}",
+                session.status.value,
+            ]
+            for col, value in enumerate(values):
+                self._history_table.setItem(row, col, QTableWidgetItem(value))
+
+    def _load_history_session(self, row: int, _col: int) -> None:
+        if not hasattr(self, "_history_sessions") or row >= len(self._history_sessions):
+            return
+        session = self._history_sessions[row]
+        self._active_session = session
+        self._trial_model.clear()
+        self._current_best_trial_number = session.best_pointer.trial_number if session.best_pointer else 0
+        for record in self._store.load_all_trial_records(session.session_id):
+            self._trial_model.append_trial(record)
+        if session.best_pointer:
+            self._trial_model.update_best(0, session.best_pointer.trial_number)
+            record = self._store.load_trial_record(session.session_id, session.best_pointer.trial_number)
+            self._update_metric_labels(self._best_labels, record)
+        self._progress.setRange(0, max(session.config.total_trials, 1))
+        self._progress.setValue(session.trials_completed)
+
+    def _delete_selected_history(self) -> None:
+        row = self._history_table.currentRow()
+        if row < 0 or not hasattr(self, "_history_sessions") or row >= len(self._history_sessions):
+            return
+        session = self._history_sessions[row]
+        result = QMessageBox.question(self, "Delete Session", f"Delete optimizer session {session.session_id}?")
+        if result != QMessageBox.Yes:
+            return
+        self._store.delete_session(session.session_id)
         self._load_history()

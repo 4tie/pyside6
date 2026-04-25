@@ -13,6 +13,7 @@ _NAV_ITEMS = [
     ("results",    "📊", "Results"),
     ("compare",    "⇄",  "Compare"),
     ("optimize",   "⚙",  "Optimize"),
+    ("optimizer",  "⚡",  "Optimizer"),
     ("download",   "↓",  "Download"),
     ("settings",   "⚙",  "Settings"),
 ]

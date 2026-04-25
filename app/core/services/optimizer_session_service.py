@@ -17,7 +17,7 @@ from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional
 
 import optuna
-from sqlalchemy import create_engine, event
+from sqlalchemy import event, text
 
 from app.core.models.optimizer_models import (
     BestPointer,
@@ -105,16 +105,18 @@ def _sanitize_float(value: Any) -> float:
 def _create_optuna_study(db_path: Path, study_name: str) -> optuna.Study:
     """Create an Optuna study with SQLite WAL mode enabled."""
     storage_url = f"sqlite:///{db_path}"
-    engine = create_engine(storage_url, connect_args={"check_same_thread": False})
-
-    @event.listens_for(engine, "connect")
-    def set_wal_mode(dbapi_conn, _):
-        dbapi_conn.execute("PRAGMA journal_mode=WAL")
-
     storage = optuna.storages.RDBStorage(
         url=storage_url,
         engine_kwargs={"connect_args": {"check_same_thread": False}},
     )
+
+    @event.listens_for(storage.engine, "connect")
+    def set_wal_mode(dbapi_conn, _):
+        dbapi_conn.execute("PRAGMA journal_mode=WAL")
+
+    with storage.engine.connect() as conn:
+        conn.execute(text("PRAGMA journal_mode=WAL"))
+
     return optuna.create_study(
         study_name=study_name,
         storage=storage,

@@ -29670,3 +29670,19 @@ Freqtrade Version:	freqtrade 2026.3
 2026-04-24 23:23:28.541 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to settings
 2026-04-24 23:23:30.037 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to dashboard
 2026-04-24 23:23:31.595 | INFO     | freqtrade_gui.startup          | Application exiting — code=0
+2026-04-25 04:58:14.950 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 04:58:15.031 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 04:58:15.032 | DEBUG    | freqtrade_gui.freqtrade.discovery | Listing strategies from: /home/mohs/Desktop/ae/pyside6/user_data
+2026-04-25 04:58:15.032 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 04:58:15.033 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 04:58:15.035 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 04:58:15.036 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 04:58:28.777 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 04:58:28.846 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 04:58:28.846 | DEBUG    | freqtrade_gui.freqtrade.discovery | Listing strategies from: /home/mohs/Desktop/ae/pyside6/user_data
+2026-04-25 04:58:28.847 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 04:58:28.847 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 04:58:28.852 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 04:58:28.853 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:10:42.152 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 9b37c173-6681-44fe-ae75-284714100070
+2026-04-25 05:10:42.153 | INFO     | freqtrade_gui.services.optimizer_session | Created session 9b37c173-6681-44fe-ae75-284714100070 for strategy S

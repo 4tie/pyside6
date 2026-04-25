@@ -1,15 +1,20 @@
 """
 Unit and integration tests for the Strategy Optimizer session service and store.
 """
+import os
+import sqlite3
+
 import pytest
 from pathlib import Path
 from unittest.mock import MagicMock
 
+from app.core.models.command_models import BacktestRunCommand
 from app.core.models.optimizer_models import (
-    BestPointer, OptimizerSession, SessionConfig, SessionStatus,
+    BestPointer, OptimizerSession, ParamDef, ParamType, SessionConfig, SessionStatus,
     TrialMetrics, TrialRecord, TrialStatus,
 )
 from app.core.models.settings_models import AppSettings
+from app.core.services.optimizer_session_service import StrategyOptimizerService
 from app.core.services.optimizer_store import OptimizerStore
 from app.core.services.settings_service import SettingsService
 
@@ -31,6 +36,30 @@ def make_session_config() -> SessionConfig:
         total_trials=10,
         score_metric="total_profit_pct",
     )
+
+
+def make_service(tmp_path: Path, *, export_dir: Path | None = None) -> StrategyOptimizerService:
+    """Create a StrategyOptimizerService with isolated settings and fake backtest command."""
+    settings_service = make_settings_service(tmp_path)
+    export_path = export_dir or (tmp_path / "backtest_results")
+    export_path.mkdir(parents=True, exist_ok=True)
+
+    backtest_service = MagicMock()
+    backtest_service.build_command.return_value = BacktestRunCommand(
+        program="freqtrade",
+        args=["backtesting"],
+        cwd=str(tmp_path),
+        export_dir=str(export_path),
+        config_file=str(tmp_path / "config.json"),
+        strategy_file=str(tmp_path / "strategies" / "TestStrategy.py"),
+    )
+    return StrategyOptimizerService(settings_service, backtest_service)
+
+
+def run_optimizer_thread(service: StrategyOptimizerService, session: OptimizerSession) -> None:
+    thread = service.run_session_async(session)
+    thread.join(timeout=10)
+    assert not thread.is_alive()
 
 
 def make_session(session_id: str = "test-session-001") -> OptimizerSession:
@@ -178,3 +207,174 @@ class TestOptimizerStore:
         store.save_trial_record("session-001", record)
         content2 = path.read_text()
         assert content1 == content2
+
+
+class TestStrategyOptimizerServiceIntegration:
+    def test_run_one_mock_trial_persists_record_and_best_pointer(self, tmp_path, monkeypatch):
+        service = make_service(tmp_path)
+        session = service.create_session(make_session_config().model_copy(update={"total_trials": 1}))
+
+        monkeypatch.setattr(service, "_run_subprocess", lambda *args, **kwargs: 0)
+        monkeypatch.setattr(
+            service,
+            "_parse_trial_result",
+            lambda *args, **kwargs: TrialMetrics(
+                total_profit_pct=6.25,
+                total_profit_abs=12.5,
+                win_rate=0.75,
+                total_trades=4,
+                profit_factor=1.8,
+            ),
+        )
+
+        run_optimizer_thread(service, session)
+
+        record = service._store.load_trial_record(session.session_id, 1)
+        best = service._store.load_best_pointer(session.session_id)
+        saved_session = service._store.load_session(session.session_id)
+
+        assert record is not None
+        assert record.status == TrialStatus.SUCCESS
+        assert record.score == pytest.approx(6.25)
+        assert best is not None
+        assert best.trial_number == 1
+        assert best.score == pytest.approx(6.25)
+        assert saved_session is not None
+        assert saved_session.status == SessionStatus.COMPLETED
+
+    def test_failed_trial_is_recorded_and_does_not_stop_session(self, tmp_path, monkeypatch):
+        service = make_service(tmp_path)
+        session = service.create_session(make_session_config().model_copy(update={"total_trials": 2}))
+
+        monkeypatch.setattr(service, "_run_subprocess", lambda *args, **kwargs: 1)
+
+        run_optimizer_thread(service, session)
+
+        records = service._store.load_all_trial_records(session.session_id)
+        saved_session = service._store.load_session(session.session_id)
+
+        assert [record.status for record in records] == [TrialStatus.FAILED, TrialStatus.FAILED]
+        assert saved_session is not None
+        assert saved_session.trials_completed == 2
+        assert saved_session.status == SessionStatus.COMPLETED
+        assert service._store.load_best_pointer(session.session_id) is None
+
+    def test_stop_session_terminates_active_subprocess_and_marks_session_stopped(self, tmp_path, monkeypatch):
+        service = make_service(tmp_path)
+        config = make_session_config().model_copy(
+            update={
+                "total_trials": 5,
+                "param_defs": [
+                    ParamDef(
+                        name="buy_rsi",
+                        param_type=ParamType.INT,
+                        default=14,
+                        low=10,
+                        high=20,
+                    )
+                ],
+            }
+        )
+        session = service.create_session(config)
+
+        class FakeProcess:
+            terminated = False
+            killed = False
+
+            def poll(self):
+                return None
+
+            def terminate(self):
+                self.terminated = True
+
+            def wait(self, timeout=None):
+                return 0
+
+            def kill(self):
+                self.killed = True
+
+        fake_process = FakeProcess()
+
+        def execute_and_stop(session_arg, trial_number, candidate, trial_dir, on_log_line):
+            service._active_subprocess = fake_process
+            service.stop_session()
+            return make_trial_record(session_arg.session_id, trial_number, score=1.0)
+
+        monkeypatch.setattr(service, "_execute_trial", execute_and_stop)
+
+        run_optimizer_thread(service, session)
+
+        saved_session = service._store.load_session(session.session_id)
+        records = service._store.load_all_trial_records(session.session_id)
+
+        assert fake_process.terminated is True
+        assert fake_process.killed is False
+        assert len(records) == 1
+        assert saved_session is not None
+        assert saved_session.status == SessionStatus.STOPPED
+
+    def test_export_best_writes_live_json_atomically_and_creates_backup(self, tmp_path, monkeypatch):
+        service = make_service(tmp_path)
+        session = service.create_session(make_session_config().model_copy(update={"total_trials": 1}))
+        record = make_trial_record(session.session_id, 1, score=3.0)
+        record.candidate_params = {"buy_rsi": 21, "sell_rsi": 80}
+        service._store.save_trial_record(session.session_id, record)
+        service._store.save_best_pointer(
+            session.session_id,
+            BestPointer(session_id=session.session_id, trial_number=1, score=3.0),
+        )
+
+        live_json = tmp_path / "strategies" / "TestStrategy.json"
+        live_json.parent.mkdir(parents=True, exist_ok=True)
+        live_json.write_text('{"buy_rsi": 14}', encoding="utf-8")
+        backup_json = tmp_path / "strategies" / "TestStrategy.json.bak"
+
+        rollback = MagicMock()
+        rollback._backup_file.return_value = backup_json
+        service._rollback = rollback
+
+        replacements: list[tuple[Path, Path]] = []
+        real_replace = os.replace
+
+        def capture_replace(src, dst):
+            replacements.append((Path(src), Path(dst)))
+            real_replace(src, dst)
+
+        monkeypatch.setattr("app.core.parsing.json_parser.os.replace", capture_replace)
+
+        result = service.export_best(session.session_id)
+
+        assert result.success is True
+        assert result.live_json_path == str(live_json)
+        assert result.backup_path == str(backup_json)
+        assert rollback._backup_file.call_args.args[0] == live_json
+        assert rollback._prune_backups.call_args.args[0] == live_json
+        assert any(src.parent == live_json.parent and dst == live_json for src, dst in replacements)
+        assert '"buy_rsi": 21' in live_json.read_text(encoding="utf-8")
+
+    def test_set_best_updates_best_pointer_to_manual_trial(self, tmp_path):
+        service = make_service(tmp_path)
+        session = service.create_session(make_session_config().model_copy(update={"total_trials": 2}))
+        service._store.save_trial_record(session.session_id, make_trial_record(session.session_id, 1, score=1.0))
+        service._store.save_trial_record(session.session_id, make_trial_record(session.session_id, 2, score=4.0))
+        service._store.save_best_pointer(
+            session.session_id,
+            BestPointer(session_id=session.session_id, trial_number=1, score=1.0),
+        )
+
+        service.set_best(session.session_id, 2)
+
+        best = service._store.load_best_pointer(session.session_id)
+        assert best is not None
+        assert best.trial_number == 2
+        assert best.score == pytest.approx(4.0)
+
+    def test_create_session_uses_sqlite_wal_mode_for_optuna_study(self, tmp_path):
+        service = make_service(tmp_path)
+        session = service.create_session(make_session_config())
+        study_db = service._store.session_dir(session.session_id) / "study.db"
+
+        with sqlite3.connect(study_db) as conn:
+            journal_mode = conn.execute("PRAGMA journal_mode").fetchone()[0]
+
+        assert journal_mode == "wal"

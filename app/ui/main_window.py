@@ -18,6 +18,7 @@ from app.ui.pages.backtest_page import BacktestPage
 from app.ui.pages.results_page import ResultsPage
 from app.ui.pages.compare_page import ComparePage
 from app.ui.pages.optimize_page import OptimizePage
+from app.ui.pages.optimizer_page import OptimizerPage
 from app.ui.pages.download_page import DownloadPage
 from app.ui.pages.settings_page import SettingsPage
 from app.core.utils.app_logger import get_logger
@@ -78,6 +79,7 @@ class ModernMainWindow(QMainWindow):
         self.results_page    = ResultsPage(self.settings_state)
         self.compare_page    = ComparePage(self.settings_state)
         self.optimize_page   = OptimizePage(self.settings_state, self._process_manager)
+        self.optimizer_page  = OptimizerPage(self.settings_state, self._process_manager)
         self.download_page   = DownloadPage(self.settings_state, self._process_manager)
         self.settings_page   = SettingsPage(self.settings_state)
 
@@ -87,6 +89,7 @@ class ModernMainWindow(QMainWindow):
             "results":   self.results_page,
             "compare":   self.compare_page,
             "optimize":  self.optimize_page,
+            "optimizer": self.optimizer_page,
             "download":  self.download_page,
             "settings":  self.settings_page,
         }
