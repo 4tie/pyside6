@@ -654,29 +654,90 @@ def handle_request(req: dict) -> dict | None:
 
 # ── Main stdio loop ───────────────────────────────────────────────────────────
 
+def _read_one_object(stdin) -> "dict | None":
+    """
+    Read exactly one JSON object from stdin, handling embedded literal newlines.
+
+    Real MCP clients (Kiro, Claude Desktop, etc.) send proper ndjson where
+    \\n inside string values is the two-character escape sequence.  But when
+    testing from a shell with `printf '...\\n...'`, the shell expands \\n to
+    a literal 0x0a *inside* the JSON string, splitting one object across
+    multiple lines.
+
+    Strategy: read byte-by-byte, track brace depth (ignoring braces inside
+    string literals), and return as soon as depth reaches zero.  This is
+    O(n) and handles both cases correctly.
+
+    Returns None on EOF.
+    """
+    buf = bytearray()
+    depth = 0          # net { minus }
+    in_string = False
+    escape_next = False
+    started = False    # have we seen the opening '{'?
+
+    while True:
+        byte = stdin.read(1)
+        if not byte:
+            return None  # EOF
+
+        ch = byte[0]
+        buf.append(ch)
+
+        if escape_next:
+            escape_next = False
+            continue
+
+        if in_string:
+            if ch == ord("\\"):
+                escape_next = True
+            elif ch == ord('"'):
+                in_string = False
+            continue
+
+        # Outside a string
+        if ch == ord('"'):
+            in_string = True
+        elif ch == ord("{"):
+            depth += 1
+            started = True
+        elif ch == ord("}"):
+            depth -= 1
+            if started and depth == 0:
+                # Complete object
+                try:
+                    raw_str = buf.decode("utf-8", errors="replace")
+                    # json.loads rejects literal control characters (0x00–0x1f)
+                    # inside strings — e.g. 0x0a produced by shell printf \n.
+                    # Re-encode them as proper JSON escape sequences.
+                    sanitized = re.sub(
+                        r'[\x00-\x1f]',
+                        lambda m: f"\\u{ord(m.group()):04x}",
+                        raw_str,
+                    )
+                    return json.loads(sanitized)
+                except json.JSONDecodeError:
+                    # Malformed — reset and keep reading for the next object
+                    buf.clear()
+                    depth = 0
+                    started = False
+                    in_string = False
+                    escape_next = False
+        # Whitespace / other chars outside braces before the first '{' — skip
+        elif not started:
+            buf.clear()
+
+
 def main() -> None:
     """Read JSON-RPC messages from stdin, write responses to stdout."""
-    # Use binary mode to avoid platform line-ending issues
     stdin = sys.stdin.buffer
     stdout = sys.stdout.buffer
 
     while True:
         try:
-            raw = stdin.readline()
-            if not raw:
-                break  # EOF — client disconnected
-
-            line = raw.decode("utf-8", errors="replace").strip()
-            if not line:
-                continue
-
-            try:
-                req = json.loads(line)
-            except json.JSONDecodeError as exc:
-                resp = _jsonrpc_error(None, -32700, f"Parse error: {exc}")
-                stdout.write((json.dumps(resp) + "\n").encode("utf-8"))
-                stdout.flush()
-                continue
+            req = _read_one_object(stdin)
+            if req is None:
+                break  # EOF
 
             response = handle_request(req)
             if response is not None:
@@ -686,7 +747,6 @@ def main() -> None:
         except KeyboardInterrupt:
             break
         except Exception as exc:
-            # Last-resort error — keep the server alive
             try:
                 resp = _jsonrpc_error(None, -32603, f"Internal error: {exc}")
                 stdout.write((json.dumps(resp) + "\n").encode("utf-8"))
