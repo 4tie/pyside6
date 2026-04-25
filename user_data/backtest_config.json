@@ -1,11 +1,11 @@
 {
-  "strategy": "MultiMa_v3",
-  "timeframe": "5m",
+  "dry_run_wallet": 80.0,
+  "max_open_trades": 2,
   "pairs": [
     "ADA/USDT",
     "ETH/USDT"
   ],
-  "timerange": "20250510-",
-  "max_open_trades": 2,
-  "dry_run_wallet": 100.0
+  "strategy": "yty",
+  "timeframe": "5m",
+  "timerange": "20250510-"
 }

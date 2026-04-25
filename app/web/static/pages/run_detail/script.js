@@ -47,7 +47,7 @@ async function loadRunDetail(runId) {
     document.getElementById('strategy').textContent = run.strategy;
     document.getElementById('timeframe').textContent = run.timeframe;
     document.getElementById('timerange').textContent = run.timerange;
-    document.getElementById('pairs').textContent = run.pairs.join(', ');
+    document.getElementById('pairs').textContent = (run.pairs || []).join(', ');
     
     const profitEl = document.getElementById('profit');
     profitEl.textContent = formatPct(run.profit_total_pct / 100);
@@ -59,7 +59,8 @@ async function loadRunDetail(runId) {
     
     // Render trades table
     const tradesBody = document.getElementById('trades-body');
-    tradesBody.innerHTML = run.trades.map(trade => `
+    const trades = run.trades || [];
+    tradesBody.innerHTML = trades.map(trade => `
       <tr>
         <td>${trade.pair}</td>
         <td>${formatDate(trade.open_date)}</td>
@@ -70,9 +71,9 @@ async function loadRunDetail(runId) {
     `).join('');
     
     // Update trades summary
-    const totalTrades = run.trades.length;
-    const wins = run.trades.filter(t => t.profit >= 0).length;
-    const losses = run.trades.filter(t => t.profit < 0).length;
+    const totalTrades = trades.length;
+    const wins = trades.filter(t => t.profit >= 0).length;
+    const losses = trades.filter(t => t.profit < 0).length;
     const winRate = totalTrades > 0 ? ((wins / totalTrades) * 100).toFixed(1) : 0;
     
     document.getElementById('total-trades').textContent = totalTrades;
