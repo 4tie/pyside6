@@ -65,6 +65,30 @@ def _trade_close_rate(t: dict) -> float:
     return t.get("exit_rate", t.get("close_rate", 0.0))
 
 
+def _trade_duration_min(t: dict) -> int:
+    """Return trade duration in minutes, handling saved and raw result fields."""
+    raw = t.get("duration_min", t.get("trade_duration", t.get("duration", 0)))
+    try:
+        return int(float(raw or 0))
+    except (TypeError, ValueError):
+        return 0
+
+
+def _format_duration(minutes: int) -> str:
+    if minutes <= 0:
+        return "—"
+    hours, mins = divmod(minutes, 60)
+    days, hours = divmod(hours, 24)
+    parts = []
+    if days:
+        parts.append(f"{days}d")
+    if hours:
+        parts.append(f"{hours}h")
+    if mins or not parts:
+        parts.append(f"{mins}m")
+    return " ".join(parts)
+
+
 # ── Color-coding pure functions ───────────────────────────────────────────────
 
 def _profit_color(value: float) -> str:
@@ -110,6 +134,7 @@ class ResultsPage(QWidget):
         super().__init__(parent)
         self._state = settings_state
         self._current_run: Optional[dict] = None
+        self._current_trades: List[dict] = []
         self._all_runs: List[dict] = []
         self._rollback_service = RollbackService()
         self._build()
@@ -307,11 +332,29 @@ class ResultsPage(QWidget):
         trades_tab = QWidget()
         tt_lay = QVBoxLayout(trades_tab)
         tt_lay.setContentsMargins(12, 12, 12, 12)
+
+        trades_filter_row = QHBoxLayout()
+        trades_filter_row.setContentsMargins(0, 0, 0, 0)
+        trades_filter_row.setSpacing(8)
+        trades_filter_row.addWidget(QLabel("Pair:"))
+        self._trade_pair_filter = QComboBox()
+        self._trade_pair_filter.setMinimumWidth(180)
+        self._trade_pair_filter.currentTextChanged.connect(lambda *_: self._render_trades_table())
+        trades_filter_row.addWidget(self._trade_pair_filter)
+        self._trade_filter_count = QLabel("0 trades")
+        self._trade_filter_count.setStyleSheet(
+            f"color: {theme.TEXT_MUTED}; font-size: 11px;"
+        )
+        trades_filter_row.addWidget(self._trade_filter_count)
+        trades_filter_row.addStretch()
+        tt_lay.addLayout(trades_filter_row)
+
         self._trades_table = QTableWidget()
-        self._trades_table.setColumnCount(8)
+        self._trades_table.setColumnCount(9)
         self._trades_table.setHorizontalHeaderLabels(
             ["Pair", "Entry Date", "Exit Date",
-             "Entry Rate", "Exit Rate", "Profit %", "Profit Abs", "Exit Reason"]
+             "Duration", "Entry Rate", "Exit Rate",
+             "Profit %", "Profit Abs", "Exit Reason"]
         )
         self._trades_table.horizontalHeader().setSectionResizeMode(
             QHeaderView.ResizeToContents
@@ -793,11 +836,45 @@ class ResultsPage(QWidget):
                 pairs_list, pvals = zip(*sorted_pairs)
                 self._pair_chart.set_data(list(pairs_list), list(pvals))
 
-        # ── Trades table ──────────────────────────────────────────────
+        self._current_trades = trades
+        self._populate_trade_pair_filter(trades)
+        self._render_trades_table()
+
+        # ── Summary ───────────────────────────────────────────────────
+        self._build_summary(run)
+
+    # ------------------------------------------------------------------
+    def _populate_trade_pair_filter(self, trades: List[dict]) -> None:
+        """Refresh the per-pair filter for the currently loaded run."""
+        pairs = sorted({str(t.get("pair", "")) for t in trades if t.get("pair")})
+
+        self._trade_pair_filter.blockSignals(True)
+        self._trade_pair_filter.clear()
+        self._trade_pair_filter.addItem("All Pairs")
+        for pair in pairs:
+            self._trade_pair_filter.addItem(pair)
+        self._trade_pair_filter.setCurrentIndex(0)
+        self._trade_pair_filter.blockSignals(False)
+
+    # ------------------------------------------------------------------
+    def _filtered_trades(self) -> List[dict]:
+        selected_pair = self._trade_pair_filter.currentText()
+        if not selected_pair or selected_pair == "All Pairs":
+            return list(self._current_trades)
+        return [
+            trade for trade in self._current_trades
+            if str(trade.get("pair", "")) == selected_pair
+        ]
+
+    # ------------------------------------------------------------------
+    def _render_trades_table(self) -> None:
+        """Render the trades table for the selected pair filter."""
+        trades = self._filtered_trades()
         self._trades_table.setRowCount(0)
         for t in trades:
             profit_pct = _trade_profit(t)
             profit_abs = _trade_profit_abs(t)
+            duration = _trade_duration_min(t)
             color = theme.GREEN if profit_pct >= 0 else theme.RED
 
             row = self._trades_table.rowCount()
@@ -806,6 +883,7 @@ class ResultsPage(QWidget):
                 (t.get("pair", ""),                    theme.TEXT_PRIMARY),
                 (_trade_open_date(t),                  theme.TEXT_SECONDARY),
                 (_trade_close_date(t),                 theme.TEXT_SECONDARY),
+                (_format_duration(duration),            theme.TEXT_SECONDARY),
                 (f"{_trade_open_rate(t):.6f}",         theme.TEXT_PRIMARY),
                 (f"{_trade_close_rate(t):.6f}",        theme.TEXT_PRIMARY),
                 (f"{profit_pct:+.4f}%",                color),
@@ -817,8 +895,11 @@ class ResultsPage(QWidget):
                 item.setForeground(QColor(c))
                 self._trades_table.setItem(row, col, item)
 
-        # ── Summary ───────────────────────────────────────────────────
-        self._build_summary(run)
+        total = len(self._current_trades)
+        shown = len(trades)
+        self._trade_filter_count.setText(
+            f"{shown} of {total} trades" if shown != total else f"{total} trades"
+        )
 
     # ------------------------------------------------------------------
     def _build_summary(self, run: dict) -> None:

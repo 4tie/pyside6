@@ -1,0 +1,69 @@
+{
+  "best_pointer": {
+    "score": -0.7940827375000009,
+    "session_id": "fc0416a6-5303-4aed-8235-e54dfe08959e",
+    "trial_number": 34
+  },
+  "config": {
+    "config_file_path": "",
+    "dry_run_wallet": 80.0,
+    "max_open_trades": 2,
+    "pairs": [
+      "ADA/USDT",
+      "ETH/USDT"
+    ],
+    "param_defs": [
+      {
+        "categories": null,
+        "default": 16,
+        "enabled": true,
+        "high": 20.0,
+        "low": 1.0,
+        "name": "buy_ma_count",
+        "param_type": "int",
+        "space": "buy"
+      },
+      {
+        "categories": null,
+        "default": 34,
+        "enabled": true,
+        "high": 50.0,
+        "low": 1.0,
+        "name": "buy_ma_gap",
+        "param_type": "int",
+        "space": "buy"
+      },
+      {
+        "categories": null,
+        "default": 2,
+        "enabled": true,
+        "high": 20.0,
+        "low": 1.0,
+        "name": "sell_ma_count",
+        "param_type": "int",
+        "space": "sell"
+      },
+      {
+        "categories": null,
+        "default": 23,
+        "enabled": true,
+        "high": 50.0,
+        "low": 1.0,
+        "name": "sell_ma_gap",
+        "param_type": "int",
+        "space": "sell"
+      }
+    ],
+    "score_metric": "total_profit_pct",
+    "strategy_class": "MultiMeee",
+    "strategy_name": "MultiMeee",
+    "timeframe": "5m",
+    "timerange": "20250422-20260417",
+    "total_trials": 50
+  },
+  "finished_at": "2026-04-25T02:37:10.214888+00:00",
+  "session_id": "fc0416a6-5303-4aed-8235-e54dfe08959e",
+  "started_at": "2026-04-25T02:30:00.775744+00:00",
+  "status": "completed",
+  "trials_completed": 50
+}

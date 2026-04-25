@@ -12,6 +12,7 @@ import shutil
 import subprocess
 import threading
 import uuid
+from dataclasses import asdict
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional
@@ -100,6 +101,78 @@ def _sanitize_float(value: Any) -> float:
         return f if math.isfinite(f) else 0.0
     except (TypeError, ValueError):
         return 0.0
+
+
+def _group_candidate_params(candidate: Dict[str, Any], param_defs: List[ParamDef]) -> Dict[str, Any]:
+    """Convert sampled flat optimizer params into Freqtrade strategy param groups."""
+    grouped: Dict[str, Any] = {}
+    spaces_by_name = {param_def.name: param_def.space for param_def in param_defs}
+
+    for name, value in candidate.items():
+        space = spaces_by_name.get(name, "")
+        if space == "buy":
+            grouped.setdefault("buy_params", {})[name] = value
+        elif space == "sell":
+            grouped.setdefault("sell_params", {})[name] = value
+        elif space == "roi":
+            grouped.setdefault("minimal_roi", {})[name] = value
+        elif space == "stoploss":
+            grouped["stoploss"] = value
+        elif space == "trailing":
+            grouped[name] = value
+        else:
+            grouped.setdefault("buy_params", {})[name] = value
+
+    return grouped
+
+
+def _build_freqtrade_params_file(
+    strategy_name: str,
+    grouped_params: Dict[str, Any],
+    base_params_file: Path,
+) -> Dict[str, Any]:
+    """Build a Freqtrade strategy JSON file from grouped optimizer params."""
+    try:
+        from app.core.parsing.json_parser import parse_json_file
+
+        base = parse_json_file(base_params_file) if base_params_file.exists() else {}
+    except Exception:
+        base = {}
+
+    ft_params = dict(base.get("params", {}))
+
+    if grouped_params.get("buy_params"):
+        ft_params["buy"] = grouped_params["buy_params"]
+    if grouped_params.get("sell_params"):
+        ft_params["sell"] = grouped_params["sell_params"]
+    if grouped_params.get("minimal_roi"):
+        ft_params["roi"] = grouped_params["minimal_roi"]
+    if grouped_params.get("stoploss") is not None:
+        ft_params["stoploss"] = {"stoploss": grouped_params["stoploss"]}
+    if grouped_params.get("max_open_trades") is not None:
+        ft_params["max_open_trades"] = {"max_open_trades": grouped_params["max_open_trades"]}
+
+    trailing_keys = {
+        "trailing_stop",
+        "trailing_stop_positive",
+        "trailing_stop_positive_offset",
+        "trailing_only_offset_is_reached",
+    }
+    trailing_updates = {
+        key: grouped_params[key]
+        for key in trailing_keys
+        if key in grouped_params and grouped_params[key] is not None
+    }
+    if trailing_updates:
+        trailing = dict(ft_params.get("trailing", {}))
+        trailing.update(trailing_updates)
+        ft_params["trailing"] = trailing
+
+    base["strategy_name"] = strategy_name
+    base["params"] = ft_params
+    base["ft_stratparam_v"] = 1
+    base["export_time"] = datetime.now(timezone.utc).isoformat()
+    return base
 
 
 def _create_optuna_study(db_path: Path, study_name: str) -> optuna.Study:
@@ -267,7 +340,18 @@ class StrategyOptimizerService:
             backup_path = self._rollback._backup_file(live_json)
 
             # (b+c+d) Write candidate params atomically (temp file in same dir)
-            write_json_file_atomic(live_json, record.candidate_params)
+            grouped_params = _group_candidate_params(
+                record.candidate_params,
+                session.config.param_defs,
+            )
+            write_json_file_atomic(
+                live_json,
+                _build_freqtrade_params_file(
+                    session.config.strategy_name,
+                    grouped_params,
+                    live_json,
+                ),
+            )
 
             # Prune old backups
             self._rollback._prune_backups(live_json)
@@ -419,12 +503,22 @@ class StrategyOptimizerService:
         if src_py.exists():
             shutil.copy2(src_py, strategy_dir / src_py.name)
 
+        grouped_candidate = _group_candidate_params(candidate, session.config.param_defs)
+
         # Write candidate params JSON named after the strategy class
         params_json_path = strategy_dir / f"{session.config.strategy_class}.json"
-        write_json_file_atomic(params_json_path, candidate)
+        live_params_path = strategies_path / f"{session.config.strategy_name}.json"
+        write_json_file_atomic(
+            params_json_path,
+            _build_freqtrade_params_file(
+                session.config.strategy_class,
+                grouped_candidate,
+                live_params_path,
+            ),
+        )
 
         # Also write params.json in trial dir for record-keeping
-        write_json_file_atomic(trial_dir / "params.json", candidate)
+        write_json_file_atomic(trial_dir / "params.json", grouped_candidate)
 
         # Build backtest command with --strategy-path override
         log_lines: List[str] = []
@@ -536,7 +630,7 @@ class StrategyOptimizerService:
         try:
             import json
             (trial_dir / "backtest_result.json").write_text(
-                json.dumps(s.model_dump(mode="json"), indent=2), encoding="utf-8"
+                json.dumps(asdict(s), indent=2), encoding="utf-8"
             )
         except Exception:
             pass

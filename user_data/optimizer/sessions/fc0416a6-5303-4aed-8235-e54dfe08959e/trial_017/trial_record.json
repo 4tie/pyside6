@@ -1,0 +1,29 @@
+{
+  "candidate_params": {
+    "buy_ma_count": 14,
+    "buy_ma_gap": 38,
+    "sell_ma_count": 16,
+    "sell_ma_gap": 20
+  },
+  "is_best": false,
+  "log_excerpt": ". Duration Winners │ 0d 00:25 / 0d 02:55 / 0d 02:07 │\n│ Min/Max/Avg. Duration Losers  │ 0d 00:15 / 0d 02:45 / 0d 01:25 │\n│ Max Consecutive Wins / Loss   │ 7 / 9                          │\n│ Rejected Entry signals        │ 0                              │\n│ Entry/Exit Timeouts           │ 0 / 0                          │\n│                               │                                │\n│ Min balance                   │ 70.259 USDT                    │\n│ Max balance                   │ 81.984 USDT                    │\n│ Max % of account underwater   │ 14.30%                         │\n│ Absolute drawdown             │ 11.725 USDT (14.30%)           │\n│ Drawdown duration             │ 118 days 09:30:00              │\n│ Profit at drawdown start      │ 1.984 USDT                     │\n│ Profit at drawdown end        │ -9.741 USDT                    │\n│ Drawdown start                │ 2025-12-13 11:15:00            │\n│ Drawdown end                  │ 2026-04-10 20:45:00            │\n│ Market change                 │ -10.05%                        │\n└───────────────────────────────┴────────────────────────────────┘\n\nBacktested 2025-04-22 00:00:00 -> 2026-04-11 00:05:00 | Max open trades : 2\n                                                          STRATEGY SUMMARY                                                          \n┏━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┓\n┃  Strategy ┃ Trades ┃ Avg Profit % ┃ Tot Profit USDT ┃ Tot Profit % ┃ Avg Duration ┃  Win  Draw  Loss  Win% ┃            Drawdown ┃\n┡━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━┩\n│ MultiMeee │    449 │        -0.05 │          -9.741 │       -12.18 │      1:41:00 │  168     0   281  37.4 │ 11.725 USDT  14.30% │\n└───────────┴────────┴──────────────┴─────────────────┴──────────────┴──────────────┴────────────────────────┴─────────────────────┘",
+  "metrics": {
+    "best_pair": "ADA/USDT",
+    "best_trade_profit_pct": 0.0,
+    "final_balance": 70.25933606,
+    "max_drawdown_pct": 14.301327186904311,
+    "profit_factor": 0.8693022562228254,
+    "sharpe_ratio": -1.2183630394758038,
+    "total_profit_abs": -9.74066394,
+    "total_profit_pct": -12.175829924999999,
+    "total_trades": 449,
+    "win_rate": 0.3741648106904232,
+    "worst_pair": "ETH/USDT",
+    "worst_trade_profit_pct": 0.0
+  },
+  "score": -12.175829924999999,
+  "score_metric": "total_profit_pct",
+  "session_id": "fc0416a6-5303-4aed-8235-e54dfe08959e",
+  "status": "success",
+  "trial_number": 17
+}

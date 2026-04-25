@@ -1,0 +1,16 @@
+{
+  "candidate_params": {
+    "buy_ma_count": 1,
+    "buy_ma_gap": 1,
+    "sell_ma_count": 1,
+    "sell_ma_gap": 1
+  },
+  "is_best": false,
+  "log_excerpt": "s ...\n2026-04-25 05:21:21,759 - freqtrade.configuration.configuration - INFO - Parameter --cache=day detected ...\n2026-04-25 05:21:21,760 - freqtrade.configuration.configuration - INFO - Using pairs ['ADA/USDT', 'ETH/USDT']\n2026-04-25 05:21:21,760 - freqtrade.configuration.configuration - INFO - Filter trades by timerange: 20250422-20260417\n2026-04-25 05:21:21,760 - freqtrade.exchange.check_exchange - INFO - Checking exchange...\n2026-04-25 05:21:21,766 - freqtrade.exchange.check_exchange - INFO - Exchange \"binance\" is officially supported by the Freqtrade development team.\n2026-04-25 05:21:21,767 - freqtrade.configuration.config_validation - INFO - Validating configuration ...\n2026-04-25 05:21:21,769 - freqtrade.commands.optimize_commands - INFO - Starting freqtrade in Backtesting mode\n2026-04-25 05:21:21,769 - freqtrade.exchange.exchange - INFO - Instance is running with dry_run enabled\n2026-04-25 05:21:21,769 - freqtrade.exchange.exchange - INFO - Using CCXT 4.5.50\n2026-04-25 05:21:21,769 - freqtrade.exchange.exchange - INFO - Applying additional ccxt config: {'enableRateLimit': True, 'timeout': 120000}\n2026-04-25 05:21:21,775 - freqtrade.exchange.exchange - INFO - Applying additional ccxt config: {'enableRateLimit': True, 'timeout': 120000}\n2026-04-25 05:21:21,781 - freqtrade.exchange.exchange - INFO - Using Exchange \"Binance\"\n2026-04-25 05:21:22,968 - freqtrade.resolvers.exchange_resolver - INFO - Using resolved exchange 'Binance'...\n2026-04-25 05:21:22,977 - freqtrade.resolvers.iresolver - INFO - Using resolved strategy MultiMa from \n'/home/mohs/Desktop/ae/pyside6/user_data/optimizer/sessions/abd0593c-38f2-4bae-9eb1-68a8f3de76ec/trial_003/strategy_dir/MultiMa.py'...\n2026-04-25 05:21:22,977 - freqtrade.strategy.hyper - INFO - Loading parameters from file \n/home/mohs/Desktop/ae/pyside6/user_data/optimizer/sessions/abd0593c-38f2-4bae-9eb1-68a8f3de76ec/trial_003/strategy_dir/MultiMa.json\n2026-04-25 05:21:22,977 - freqtrade - ERROR - Invalid parameter file provided.",
+  "metrics": null,
+  "score": null,
+  "score_metric": "win_rate",
+  "session_id": "abd0593c-38f2-4bae-9eb1-68a8f3de76ec",
+  "status": "failed",
+  "trial_number": 3
+}

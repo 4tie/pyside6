@@ -1,0 +1,10 @@
+{
+  "buy_params": {
+    "buy_ma_count": 14,
+    "buy_ma_gap": 38
+  },
+  "sell_params": {
+    "sell_ma_count": 18,
+    "sell_ma_gap": 19
+  }
+}

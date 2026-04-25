@@ -200,6 +200,21 @@ def test_positional_args_int_parameter(tmp_path):
     assert p.default == 14
 
 
+def test_positional_args_resolve_class_level_constants(tmp_path):
+    """IntParameter bounds can reference simple class constants."""
+    f = tmp_path / "const_bound.py"
+    f.write_text(
+        "class S:\n"
+        "    count_max = 20\n"
+        "    buy_ma_count = IntParameter(1, count_max, default=5, space='buy')\n"
+    )
+    result = parse_strategy_py(f)
+    p = result.buy_params["buy_ma_count"]
+    assert p.low == 1.0
+    assert p.high == 20.0
+    assert p.default == 5
+
+
 def test_annotated_assignment(tmp_path):
     """Annotated assignments (buy_rsi: int = IntParameter(...)) are parsed."""
     f = tmp_path / "ann.py"

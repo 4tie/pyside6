@@ -51,6 +51,7 @@ from PySide6.QtWidgets import (
     QTableView,
     QTableWidget,
     QTableWidgetItem,
+    QToolButton,
     QVBoxLayout,
     QWidget,
     QComboBox,
@@ -76,7 +77,7 @@ from app.core.utils.app_logger import get_logger
 from app.ui import theme
 from app.ui.dialogs.export_confirm_dialog import ExportConfirmDialog
 from app.ui.dialogs.rollback_dialog import RollbackDialog
-from app.ui.widgets.trial_table_model import TrialTableModel
+from app.ui.widgets.trial_table_model import TRIAL_RATING_COLUMN, TrialTableModel
 
 _log = get_logger("ui.pages.optimizer_page")
 
@@ -302,6 +303,24 @@ class OptimizerPage(QWidget):
         header.addWidget(title)
         header.addStretch()
 
+        self._left_panel_toggle = self._panel_toggle(
+            "Config",
+            "Show or hide optimizer configuration",
+        )
+        self._left_panel_toggle.toggled.connect(
+            lambda checked: self._set_side_panel_visible("left", checked)
+        )
+        header.addWidget(self._left_panel_toggle)
+
+        self._right_panel_toggle = self._panel_toggle(
+            "Details",
+            "Show or hide best and selected trial details",
+        )
+        self._right_panel_toggle.toggled.connect(
+            lambda checked: self._set_side_panel_visible("right", checked)
+        )
+        header.addWidget(self._right_panel_toggle)
+
         self._start_btn = QPushButton("Start Optimizer")
         self._start_btn.setObjectName("primary")
         self._start_btn.clicked.connect(self._start_optimizer)
@@ -323,14 +342,64 @@ class OptimizerPage(QWidget):
         )
         root.addWidget(self._warning_lbl)
 
-        splitter = QSplitter(Qt.Horizontal)
-        splitter.setHandleWidth(1)
-        splitter.setStyleSheet(f"QSplitter::handle {{ background: {theme.BG_BORDER}; }}")
-        splitter.addWidget(self._build_left_sidebar())
-        splitter.addWidget(self._build_center_pane())
-        splitter.addWidget(self._build_right_sidebar())
-        splitter.setSizes([340, 680, 300])
-        root.addWidget(splitter, 1)
+        self._main_splitter = QSplitter(Qt.Horizontal)
+        self._main_splitter.setHandleWidth(1)
+        self._main_splitter.setStyleSheet(
+            f"QSplitter::handle {{ background: {theme.BG_BORDER}; }}"
+        )
+
+        self._left_sidebar = self._build_left_sidebar()
+        self._center_pane = self._build_center_pane()
+        self._right_sidebar = self._build_right_sidebar()
+        self._main_splitter.addWidget(self._left_sidebar)
+        self._main_splitter.addWidget(self._center_pane)
+        self._main_splitter.addWidget(self._right_sidebar)
+        self._main_splitter.setCollapsible(0, True)
+        self._main_splitter.setCollapsible(1, False)
+        self._main_splitter.setCollapsible(2, True)
+        self._main_splitter.setSizes([340, 680, 300])
+        self._expanded_splitter_sizes = [340, 680, 300]
+        root.addWidget(self._main_splitter, 1)
+
+    def _panel_toggle(self, text: str, tooltip: str) -> QToolButton:
+        btn = QToolButton()
+        btn.setText(text)
+        btn.setCheckable(True)
+        btn.setChecked(True)
+        btn.setToolTip(tooltip)
+        btn.setStyleSheet(
+            f"QToolButton {{ color: {theme.TEXT_SECONDARY}; background: {theme.BG_ELEVATED}; "
+            f"border: 1px solid {theme.BG_BORDER}; border-radius: 6px; padding: 5px 9px; }}"
+            f"QToolButton:checked {{ color: {theme.TEXT_PRIMARY}; border-color: {theme.ACCENT}; }}"
+        )
+        return btn
+
+    def _set_side_panel_visible(self, side: str, visible: bool) -> None:
+        if not hasattr(self, "_main_splitter"):
+            return
+
+        sizes = self._main_splitter.sizes()
+        if any(sizes):
+            self._expanded_splitter_sizes = sizes
+
+        panel_index = 0 if side == "left" else 2
+        panel = self._left_sidebar if side == "left" else self._right_sidebar
+        panel.setVisible(visible)
+
+        if visible:
+            restored = list(self._expanded_splitter_sizes)
+            if restored[panel_index] <= 0:
+                restored[panel_index] = 340 if side == "left" else 300
+            if restored[1] <= 0:
+                restored[1] = 680
+            self._main_splitter.setSizes(restored)
+            return
+
+        collapsed = self._main_splitter.sizes()
+        reclaimed = collapsed[panel_index]
+        collapsed[1] = max(collapsed[1] + reclaimed, 360)
+        collapsed[panel_index] = 0
+        self._main_splitter.setSizes(collapsed)
 
     def _panel(self, min_width: int = 260, max_width: int | None = None) -> QFrame:
         panel = QFrame()
@@ -459,6 +528,10 @@ class OptimizerPage(QWidget):
         self._trial_table.setModel(self._trial_proxy)
         self._trial_table.setSortingEnabled(True)
         self._trial_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self._trial_table.horizontalHeader().setSectionResizeMode(
+            TRIAL_RATING_COLUMN,
+            QHeaderView.ResizeToContents,
+        )
         self._trial_table.setSelectionBehavior(QAbstractItemView.SelectRows)
         self._trial_table.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self._trial_table.clicked.connect(self._on_trial_clicked)

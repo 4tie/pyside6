@@ -6,7 +6,7 @@ Displays one row per TrialRecord with columns:
 
 Supports:
 - Incremental row insertion via beginInsertRows/endInsertRows (no full reset)
-- Targeted dataChanged emission for the ★ column when best changes
+- Targeted dataChanged emission for the ★ column when ratings change
 - In-memory sort by any numeric column
 - DisplayRole, BackgroundRole (semantic row colors), and UserRole (full TrialRecord)
 """
@@ -24,10 +24,19 @@ _log = get_logger("ui.widgets.trial_table_model")
 
 # ── Row background colors (applied via BackgroundRole, not stylesheets) ──────
 _COLOR_BEST_BG    = QColor("#1E3A2F")   # muted green — Accepted_Best row
-_COLOR_BEST_STAR  = QColor("#4CAF50")   # bright green star
 _COLOR_FAILED_BG  = QColor("#3A1E1E")   # muted red — failed trial
 _COLOR_RUNNING_BG = QColor("#1E2A3A")   # soft blue — running trial
 _COLOR_DEFAULT_BG = QColor("#1E1E1E")   # standard dark background
+
+_STAR_COLORS = {
+    1: QColor("#FF3B30"),  # glowing red — weakest scored trial
+    2: QColor("#FF6B2A"),
+    3: QColor("#FF9F0A"),
+    4: QColor("#FFD60A"),
+    5: QColor("#C8F043"),
+    6: QColor("#7DFF5A"),
+    7: QColor("#31FF72"),  # glowing green — best scored trial
+}
 
 # Column index constants
 _COL_NUMBER = 0
@@ -36,6 +45,8 @@ _COL_PROFIT = 2
 _COL_DD     = 3
 _COL_SCORE  = 4
 _COL_STAR   = 5
+TRIAL_RATING_COLUMN = _COL_STAR
+MAX_TRIAL_RATING = 7
 
 
 def _format_params(record: TrialRecord) -> str:
@@ -115,10 +126,12 @@ class TrialTableModel(QAbstractTableModel):
                 return _COLOR_RUNNING_BG
             return _COLOR_DEFAULT_BG
 
-        # ── ForegroundRole: star column gets a bright green for best row ──────
+        # ── ForegroundRole: star column uses red→green rating colors ─────────
         if role == Qt.ForegroundRole:
-            if col == _COL_STAR and record.is_best:
-                return _COLOR_BEST_STAR
+            if col == _COL_STAR:
+                rating = self._star_rating(record)
+                if rating:
+                    return _STAR_COLORS[rating]
 
         # ── DisplayRole ───────────────────────────────────────────────────────
         if role == Qt.DisplayRole:
@@ -143,6 +156,7 @@ class TrialTableModel(QAbstractTableModel):
         self.beginInsertRows(QModelIndex(), row, row)
         self._records.append(record)
         self.endInsertRows()
+        self._emit_rating_column_changed()
         _log.debug("Appended trial #%d (status=%s)", record.trial_number, record.status)
 
     def update_trial(self, record: TrialRecord) -> None:
@@ -162,6 +176,7 @@ class TrialTableModel(QAbstractTableModel):
         tl = self.index(idx, 0)
         br = self.index(idx, len(self.COLUMNS) - 1)
         self.dataChanged.emit(tl, br, [Qt.DisplayRole, Qt.BackgroundRole])
+        self._emit_rating_column_changed()
 
     def update_best(self, old_best_trial_number: int, new_best_trial_number: int) -> None:
         """
@@ -195,6 +210,8 @@ class TrialTableModel(QAbstractTableModel):
             tl = self.index(new_idx, star_col)
             self.dataChanged.emit(tl, tl, [Qt.DisplayRole, Qt.BackgroundRole, Qt.ForegroundRole])
 
+        self._emit_rating_column_changed()
+
         _log.debug(
             "update_best: old=#%d (row=%d) → new=#%d (row=%d)",
             old_best_trial_number, old_idx,
@@ -227,7 +244,7 @@ class TrialTableModel(QAbstractTableModel):
             if column == _COL_SCORE:
                 return _safe_float(record.score)
             if column == _COL_STAR:
-                return 1 if record.is_best else 0
+                return self._star_rating(record)
             # Params column — sort by string representation
             return _format_params(record)
 
@@ -286,9 +303,45 @@ class TrialTableModel(QAbstractTableModel):
             return f"{record.score:.4g}"
 
         if col == _COL_STAR:
-            return "★" if record.is_best else ""
+            rating = self._star_rating(record)
+            return "★" * rating if rating else ""
 
         return ""
+
+    def _star_rating(self, record: TrialRecord) -> int:
+        """Return a relative 1..7 rating for completed scored trials."""
+        if record.status != TrialStatus.SUCCESS or record.score is None:
+            return 0
+        score = _safe_float(record.score, fallback=float("nan"))
+        if score != score:
+            return 0
+        if record.is_best:
+            return MAX_TRIAL_RATING
+
+        scores = [
+            _safe_float(r.score, fallback=float("nan"))
+            for r in self._records
+            if r.status == TrialStatus.SUCCESS and r.score is not None
+        ]
+        finite_scores = [s for s in scores if s == s]
+        if not finite_scores:
+            return 0
+
+        low = min(finite_scores)
+        high = max(finite_scores)
+        if high == low:
+            return MAX_TRIAL_RATING
+
+        scaled = 1 + round(((score - low) / (high - low)) * (MAX_TRIAL_RATING - 1))
+        return max(1, min(MAX_TRIAL_RATING, scaled))
+
+    def _emit_rating_column_changed(self) -> None:
+        """Refresh the star column because relative ratings can shift together."""
+        if not self._records:
+            return
+        top_left = self.index(0, _COL_STAR)
+        bottom_right = self.index(len(self._records) - 1, _COL_STAR)
+        self.dataChanged.emit(top_left, bottom_right, [Qt.DisplayRole, Qt.ForegroundRole])
 
 
 # ── Utility ───────────────────────────────────────────────────────────────────

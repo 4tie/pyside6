@@ -3,6 +3,7 @@ Unit and integration tests for the Strategy Optimizer session service and store.
 """
 import os
 import sqlite3
+import json
 
 import pytest
 from pathlib import Path
@@ -35,6 +36,10 @@ def make_session_config() -> SessionConfig:
         timeframe="5m",
         total_trials=10,
         score_metric="total_profit_pct",
+        param_defs=[
+            ParamDef(name="buy_rsi", param_type=ParamType.INT, default=14, low=1, high=99, space="buy"),
+            ParamDef(name="sell_rsi", param_type=ParamType.INT, default=80, low=1, high=99, space="sell"),
+        ],
     )
 
 
@@ -313,6 +318,54 @@ class TestStrategyOptimizerServiceIntegration:
         assert saved_session is not None
         assert saved_session.status == SessionStatus.STOPPED
 
+    def test_execute_trial_writes_freqtrade_strategy_params_file(self, tmp_path, monkeypatch):
+        service = make_service(tmp_path)
+        session = service.create_session(make_session_config().model_copy(update={"total_trials": 1}))
+
+        strategy_file = tmp_path / "strategies" / "TestStrategy.py"
+        strategy_file.parent.mkdir(parents=True, exist_ok=True)
+        strategy_file.write_text("class TestStrategy:\n    pass\n", encoding="utf-8")
+        live_json = tmp_path / "strategies" / "TestStrategy.json"
+        live_json.write_text(
+            json.dumps({
+                "strategy_name": "TestStrategy",
+                "params": {
+                    "buy": {"buy_rsi": 14},
+                    "sell": {"sell_rsi": 80},
+                    "roi": {"0": 0.1},
+                    "stoploss": {"stoploss": -0.1},
+                },
+            }),
+            encoding="utf-8",
+        )
+
+        monkeypatch.setattr(service, "_run_subprocess", lambda *args, **kwargs: 1)
+
+        trial_dir = service._store.trial_dir(session.session_id, 1)
+        record = service._execute_trial(
+            session,
+            1,
+            {"buy_rsi": 21, "sell_rsi": 70},
+            trial_dir,
+            None,
+        )
+
+        strategy_json = trial_dir / "strategy_dir" / "TestStrategy.json"
+        trial_params = trial_dir / "params.json"
+        data = json.loads(strategy_json.read_text(encoding="utf-8"))
+        grouped = json.loads(trial_params.read_text(encoding="utf-8"))
+
+        assert record.status == TrialStatus.FAILED
+        assert data["strategy_name"] == "TestStrategy"
+        assert data["ft_stratparam_v"] == 1
+        assert data["params"]["buy"] == {"buy_rsi": 21}
+        assert data["params"]["sell"] == {"sell_rsi": 70}
+        assert data["params"]["roi"] == {"0": 0.1}
+        assert grouped == {
+            "buy_params": {"buy_rsi": 21},
+            "sell_params": {"sell_rsi": 70},
+        }
+
     def test_export_best_writes_live_json_atomically_and_creates_backup(self, tmp_path, monkeypatch):
         service = make_service(tmp_path)
         session = service.create_session(make_session_config().model_copy(update={"total_trials": 1}))
@@ -326,7 +379,10 @@ class TestStrategyOptimizerServiceIntegration:
 
         live_json = tmp_path / "strategies" / "TestStrategy.json"
         live_json.parent.mkdir(parents=True, exist_ok=True)
-        live_json.write_text('{"buy_rsi": 14}', encoding="utf-8")
+        live_json.write_text(
+            '{"strategy_name":"TestStrategy","params":{"buy":{"buy_rsi":14},"sell":{"sell_rsi":75}}}',
+            encoding="utf-8",
+        )
         backup_json = tmp_path / "strategies" / "TestStrategy.json.bak"
 
         rollback = MagicMock()
@@ -350,7 +406,11 @@ class TestStrategyOptimizerServiceIntegration:
         assert rollback._backup_file.call_args.args[0] == live_json
         assert rollback._prune_backups.call_args.args[0] == live_json
         assert any(src.parent == live_json.parent and dst == live_json for src, dst in replacements)
-        assert '"buy_rsi": 21' in live_json.read_text(encoding="utf-8")
+        exported = json.loads(live_json.read_text(encoding="utf-8"))
+        assert exported["strategy_name"] == "TestStrategy"
+        assert exported["ft_stratparam_v"] == 1
+        assert exported["params"]["buy"] == {"buy_rsi": 21}
+        assert exported["params"]["sell"] == {"sell_rsi": 80}
 
     def test_set_best_updates_best_pointer_to_manual_trial(self, tmp_path):
         service = make_service(tmp_path)

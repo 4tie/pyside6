@@ -47,7 +47,7 @@ def _get_func_name(node: ast.Call) -> str:
     return ""
 
 
-def _eval_constant(node: ast.expr) -> Any:
+def _eval_constant(node: ast.expr, names: Optional[Dict[str, Any]] = None) -> Any:
     """
     Safely evaluate a simple AST node to a Python value.
 
@@ -59,14 +59,16 @@ def _eval_constant(node: ast.expr) -> Any:
     """
     if isinstance(node, ast.Constant):
         return node.value
+    if isinstance(node, ast.Name) and names and node.id in names:
+        return names[node.id]
     if isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.USub):
-        inner = _eval_constant(node.operand)
+        inner = _eval_constant(node.operand, names)
         if isinstance(inner, (int, float)):
             return -inner
     if isinstance(node, (ast.List, ast.Tuple)):
         result = []
         for elt in node.elts:
-            val = _eval_constant(elt)
+            val = _eval_constant(elt, names)
             result.append(val)
         return result
     return None
@@ -99,6 +101,7 @@ class _ParamVisitor(ast.NodeVisitor):
         self.trailing_stop_positive_offset: Optional[float] = None
         self._in_strategy_class: bool = False
         self._current_space: str = "buy"
+        self._class_constants: Dict[str, Any] = {}
 
     # ------------------------------------------------------------------
     # Class-level traversal
@@ -138,7 +141,9 @@ class _ParamVisitor(ast.NodeVisitor):
                 return
 
             # ---- strategy metadata ----
-            val = _eval_constant(node.value)
+            val = _eval_constant(node.value, self._class_constants)
+            if val is not None:
+                self._class_constants[name] = val
             if name == "timeframe" and isinstance(val, str):
                 self.timeframe = val
                 return
@@ -197,10 +202,13 @@ class _ParamVisitor(ast.NodeVisitor):
         kwargs: Dict[str, Any] = {}
         for kw in call.keywords:
             if kw.arg:
-                kwargs[kw.arg] = _eval_constant(kw.value)
+                kwargs[kw.arg] = _eval_constant(kw.value, self._class_constants)
 
         # Collect positional arguments
-        positional: List[Any] = [_eval_constant(a) for a in call.args]
+        positional: List[Any] = [
+            _eval_constant(a, self._class_constants)
+            for a in call.args
+        ]
 
         # Determine space
         space = kwargs.get("space", self._current_space)
@@ -253,7 +261,7 @@ class _ParamVisitor(ast.NodeVisitor):
             key = _eval_constant(key_node)
             if not isinstance(key, str):
                 continue
-            val = _eval_constant(val_node)
+            val = _eval_constant(val_node, self._class_constants)
             if key in self.params:
                 # Update default on existing ParamDef
                 self.params[key] = self.params[key].model_copy(update={"default": val})
@@ -264,8 +272,8 @@ class _ParamVisitor(ast.NodeVisitor):
         for key_node, val_node in zip(dict_node.keys, dict_node.values):
             if key_node is None:
                 continue
-            key = _eval_constant(key_node)
-            val = _eval_constant(val_node)
+            key = _eval_constant(key_node, self._class_constants)
+            val = _eval_constant(val_node, self._class_constants)
             if key is not None and val is not None:
                 try:
                     roi[str(key)] = float(val)
