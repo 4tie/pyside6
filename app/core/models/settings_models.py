@@ -4,6 +4,8 @@ from pathlib import Path
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
+from app.core.models.optimizer_models import OptimizerPreferences
+
 
 class TerminalPreferences(BaseModel):
     """Terminal appearance preferences."""
@@ -227,6 +229,9 @@ class AppSettings(BaseModel):
     )
     strategy_lab: StrategyLabPreferences = Field(
         default_factory=StrategyLabPreferences, description="Strategy Lab loop preferences"
+    )
+    optimizer_preferences: OptimizerPreferences = Field(
+        default_factory=OptimizerPreferences, description="Strategy Optimizer UI preferences"
     )
     favorite_pairs: list[str] = Field(
         default_factory=list,
