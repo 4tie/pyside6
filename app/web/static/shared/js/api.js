@@ -130,6 +130,64 @@ export async function getLoopIterations() {
   return fetch(`${API_BASE}/loop/iterations`).then(r => r.json());
 }
 
+export async function getOptimizerStrategies() {
+  return api.get('/optimizer/strategies');
+}
+
+export async function getOptimizerStrategyParams(strategyName) {
+  return api.get(`/optimizer/strategy-params?strategy=${encodeURIComponent(strategyName)}`);
+}
+
+export async function createOptimizerSession(config) {
+  return api.post('/optimizer/sessions', config);
+}
+
+export async function getOptimizerSession(sessionId) {
+  return api.get(`/optimizer/sessions/${sessionId}`);
+}
+
+export async function listOptimizerSessions() {
+  return api.get('/optimizer/sessions');
+}
+
+export async function startOptimizerSession(sessionId) {
+  return api.post(`/optimizer/sessions/${sessionId}/start`);
+}
+
+export async function stopOptimizerSession(sessionId) {
+  return api.post(`/optimizer/sessions/${sessionId}/stop`);
+}
+
+export async function listOptimizerTrials(sessionId) {
+  return api.get(`/optimizer/sessions/${sessionId}/trials`);
+}
+
+export async function getOptimizerTrial(sessionId, trialNumber) {
+  return api.get(`/optimizer/sessions/${sessionId}/trials/${trialNumber}`);
+}
+
+export async function setOptimizerBestTrial(sessionId, trialNumber) {
+  return api.post(`/optimizer/sessions/${sessionId}/best`, { trial_number: trialNumber });
+}
+
+export async function exportOptimizerBest(sessionId) {
+  return api.post(`/optimizer/sessions/${sessionId}/export`);
+}
+
+export async function rollbackOptimizerExport(sessionId) {
+  return api.post(`/optimizer/sessions/${sessionId}/rollback`);
+}
+
+export async function applyOptimizerTrial(sessionId, trialNumber, newStrategyName = null) {
+  return api.post(`/optimizer/sessions/${sessionId}/trials/${trialNumber}/apply`, {
+    new_strategy_name: newStrategyName,
+  });
+}
+
+export async function deleteOptimizerSession(sessionId) {
+  return api.delete(`/optimizer/sessions/${sessionId}`);
+}
+
 // Generic REST API methods
 export const api = {
   get: (path) => fetch(`${API_BASE}${path}`).then(r => {

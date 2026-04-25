@@ -8,9 +8,9 @@ import json
 from typing import AsyncGenerator, Optional, List, Dict, Any
 from pathlib import Path
 
-from fastapi import APIRouter, HTTPException, BackgroundTasks, Depends
-from fastapi.responses import StreamingResponse
-from pydantic import BaseModel
+from fastapi import APIRouter, HTTPException
+from fastapi.responses import FileResponse, StreamingResponse
+from pydantic import BaseModel, Field
 
 from app.core.models.optimizer_models import (
     SessionConfig,
@@ -20,6 +20,8 @@ from app.core.models.optimizer_models import (
     ParamDef,
     OptimizerPreferences,
 )
+from app.core.parsing.json_parser import parse_json_file, write_json_file_atomic
+from app.core.services.rollback_service import RollbackService
 from app.core.services.optimizer_session_service import StrategyOptimizerService
 from app.core.services.optimizer_store import OptimizerStore
 from app.core.services.settings_service import SettingsService
@@ -33,6 +35,7 @@ router = APIRouter()
 
 # Store active sessions and their event queues
 _active_sessions: Dict[str, asyncio.Queue] = {}
+_running_services: Dict[str, StrategyOptimizerService] = {}
 
 
 class CreateSessionRequest(BaseModel):
@@ -51,7 +54,7 @@ class CreateSessionRequest(BaseModel):
     target_profit_pct: float = 50.0
     max_drawdown_limit: float = 25.0
     target_romad: float = 2.0
-    param_defs: List[Dict[str, Any]] = []
+    param_defs: List[Dict[str, Any]] = Field(default_factory=list)
 
 
 class CreateSessionResponse(BaseModel):
@@ -215,71 +218,65 @@ async def start_session(
     session_id: str,
     settings: SettingsServiceDep,
     backtest: BacktestServiceDep,
-    background_tasks: BackgroundTasks,
 ) -> Dict[str, str]:
     """Start an optimizer session."""
     service = get_optimizer_service(settings, backtest)
     store = OptimizerStore(settings)
+    loop = asyncio.get_running_loop()
     
     session = store.load_session(session_id)
     if not session:
         raise HTTPException(status_code=404, detail="Session not found")
     
-    if session.status.value in ["running", "completed"]:
+    active_thread = getattr(_running_services.get(session_id), "_optimizer_thread", None)
+    if session.status.value == "running" or (active_thread and active_thread.is_alive()):
+        raise HTTPException(status_code=400, detail="Session is already running")
+    if session.status.value == "completed":
         raise HTTPException(status_code=400, detail=f"Session is already {session.status.value}")
     
-    # Define callbacks that push to the event queue
-    async def on_trial_start(trial_number: int, params: dict):
+    queue = _active_sessions.setdefault(session_id, asyncio.Queue())
+
+    def push_event(event: Dict[str, Any]) -> None:
         queue = _active_sessions.get(session_id)
         if queue:
-            await queue.put({
-                "type": "trial_start",
-                "trial_number": trial_number,
-                "params": params,
-            })
+            loop.call_soon_threadsafe(queue.put_nowait, event)
+
+    # Define callbacks that push to the event queue from the optimizer thread.
+    def on_trial_start(trial_number: int, params: dict):
+        push_event({
+            "type": "trial_start",
+            "trial_number": trial_number,
+            "params": params,
+        })
     
-    async def on_trial_complete(record: TrialRecord):
-        queue = _active_sessions.get(session_id)
-        if queue:
-            await queue.put({
-                "type": "trial_complete",
-                "trial": record.model_dump(),
-            })
+    def on_trial_complete(record: TrialRecord):
+        push_event({
+            "type": "trial_complete",
+            "trial": record.model_dump(mode="json"),
+        })
     
-    async def on_session_complete(session: OptimizerSession):
-        queue = _active_sessions.get(session_id)
-        if queue:
-            await queue.put({
-                "type": "session_complete",
-                "session": session.model_dump(),
-            })
+    def on_session_complete(completed_session: OptimizerSession):
+        push_event({
+            "type": "session_complete",
+            "session": completed_session.model_dump(mode="json"),
+        })
+        _running_services.pop(session_id, None)
     
-    async def on_log_line(line: str):
-        queue = _active_sessions.get(session_id)
-        if queue:
-            await queue.put({
-                "type": "log",
-                "line": line,
-            })
+    def on_log_line(line: str):
+        push_event({
+            "type": "log",
+            "line": line,
+        })
     
-    def run_in_thread():
-        service.run_session_async(
-            session,
-            on_trial_start=lambda n, p: asyncio.run_coroutine_threadsafe(
-                on_trial_start(n, p), asyncio.get_event_loop()
-            ),
-            on_trial_complete=lambda r: asyncio.run_coroutine_threadsafe(
-                on_trial_complete(r), asyncio.get_event_loop()
-            ),
-            on_session_complete=lambda s: asyncio.run_coroutine_threadsafe(
-                on_session_complete(s), asyncio.get_event_loop()
-            ),
-            on_log_line=lambda l: asyncio.run_coroutine_threadsafe(
-                on_log_line(l), asyncio.get_event_loop()
-            ),
-        )
-    
-    background_tasks.add_task(run_in_thread)
+    thread = service.run_session_async(
+        session,
+        on_trial_start=on_trial_start,
+        on_trial_complete=on_trial_complete,
+        on_session_complete=on_session_complete,
+        on_log_line=on_log_line,
+    )
+    setattr(service, "_optimizer_thread", thread)
+    _running_services[session_id] = service
     
     return {"status": "started", "session_id": session_id}
 
@@ -291,7 +288,13 @@ async def stop_session(
     backtest: BacktestServiceDep,
 ) -> Dict[str, str]:
     """Stop a running optimizer session."""
-    service = get_optimizer_service(settings, backtest)
+    service = _running_services.get(session_id)
+    if service is None:
+        store = OptimizerStore(settings)
+        session = store.load_session(session_id)
+        if not session:
+            raise HTTPException(status_code=404, detail="Session not found")
+        raise HTTPException(status_code=400, detail="No active optimizer process for this session")
     service.stop_session()
     
     return {"status": "stopped", "session_id": session_id}
@@ -332,6 +335,34 @@ async def get_trial(
     return trial.model_dump()
 
 
+@router.get("/optimizer/sessions/{session_id}/trials/{trial_number}/log")
+async def get_trial_log(
+    session_id: str,
+    trial_number: int,
+    settings: SettingsServiceDep,
+) -> FileResponse:
+    """Open the persisted log file for a trial."""
+    store = OptimizerStore(settings)
+    log_path = store.trial_dir(session_id, trial_number) / "trial.log"
+    if not log_path.exists():
+        raise HTTPException(status_code=404, detail="Trial log not found")
+    return FileResponse(str(log_path), media_type="text/plain", filename=log_path.name)
+
+
+@router.get("/optimizer/sessions/{session_id}/trials/{trial_number}/result")
+async def get_trial_result(
+    session_id: str,
+    trial_number: int,
+    settings: SettingsServiceDep,
+) -> FileResponse:
+    """Open the persisted backtest result JSON for a trial."""
+    store = OptimizerStore(settings)
+    result_path = store.trial_dir(session_id, trial_number) / "backtest_result.json"
+    if not result_path.exists():
+        raise HTTPException(status_code=404, detail="Trial result not found")
+    return FileResponse(str(result_path), media_type="application/json", filename=result_path.name)
+
+
 @router.post("/optimizer/sessions/{session_id}/best")
 async def set_best_trial(
     session_id: str,
@@ -366,6 +397,43 @@ async def export_best(
         "success": True,
         "live_json_path": result.live_json_path,
         "backup_path": result.backup_path,
+    }
+
+
+@router.post("/optimizer/sessions/{session_id}/rollback")
+async def rollback_latest_export(
+    session_id: str,
+    settings: SettingsServiceDep,
+) -> Dict[str, Any]:
+    """Restore the most recent backup of the session strategy params JSON."""
+    store = OptimizerStore(settings)
+    session = store.load_session(session_id)
+    if not session:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    app_settings = settings.load_settings()
+    if not app_settings.user_data_path:
+        raise HTTPException(status_code=404, detail="User data path not configured")
+
+    live_json = Path(app_settings.user_data_path) / "strategies" / f"{session.config.strategy_name}.json"
+    backups = sorted(live_json.parent.glob(f"{live_json.name}.bak_*"), key=lambda p: p.name, reverse=True)
+    if not backups:
+        raise HTTPException(status_code=404, detail="No optimizer export backup found")
+
+    backup_to_restore = backups[0]
+    try:
+        rollback = RollbackService()
+        current_backup = rollback._backup_file(live_json)
+        write_json_file_atomic(live_json, parse_json_file(backup_to_restore))
+        rollback._prune_backups(live_json)
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail=f"Rollback failed: {exc}") from exc
+
+    return {
+        "success": True,
+        "restored_from": str(backup_to_restore),
+        "current_backup": str(current_backup),
+        "live_json_path": str(live_json),
     }
 
 
@@ -478,3 +546,24 @@ async def list_sessions(
                     })
     
     return sessions
+
+
+@router.delete("/optimizer/sessions/{session_id}")
+async def delete_session(
+    session_id: str,
+    settings: SettingsServiceDep,
+) -> Dict[str, Any]:
+    """Delete a persisted optimizer session."""
+    service = _running_services.get(session_id)
+    active_thread = getattr(service, "_optimizer_thread", None) if service else None
+    if active_thread and active_thread.is_alive():
+        raise HTTPException(status_code=400, detail="Cannot delete a running optimizer session")
+
+    store = OptimizerStore(settings)
+    if not store.session_dir(session_id).exists():
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    store.delete_session(session_id)
+    _active_sessions.pop(session_id, None)
+    _running_services.pop(session_id, None)
+    return {"success": True, "session_id": session_id}

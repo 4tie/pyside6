@@ -5265,3 +5265,20 @@
 2026-04-25 06:16:56.690 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to optimize
 2026-04-25 06:16:57.074 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to compare
 2026-04-25 06:16:59.070 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to results
+2026-04-25 18:40:30.818 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to dashboard
+2026-04-25 18:40:30.850 | INFO     | freqtrade_gui.ui.main_window   | ModernMainWindow initialised
+2026-04-25 18:40:30.929 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_18-02-43_83ccdb  (exists=True)
+2026-04-25 18:40:30.931 | DEBUG    | freqtrade_gui.ui.results       | Loaded 298 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_18-02-43_83ccdb/trades.json
+2026-04-25 18:40:30.988 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_18-02-43_83ccdb  (exists=True)
+2026-04-25 18:40:30.989 | DEBUG    | freqtrade_gui.ui.results       | Loaded 298 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_18-02-43_83ccdb/trades.json
+2026-04-25 18:40:38.382 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to backtest
+2026-04-25 18:40:41.356 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to optimizer
+2026-04-25 18:44:28.281 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to dashboard
+2026-04-25 18:44:28.308 | INFO     | freqtrade_gui.ui.main_window   | ModernMainWindow initialised
+2026-04-25 18:44:28.380 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_18-02-43_83ccdb  (exists=True)
+2026-04-25 18:44:28.381 | DEBUG    | freqtrade_gui.ui.results       | Loaded 298 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_18-02-43_83ccdb/trades.json
+2026-04-25 18:44:28.438 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_18-02-43_83ccdb  (exists=True)
+2026-04-25 18:44:28.439 | DEBUG    | freqtrade_gui.ui.results       | Loaded 298 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_18-02-43_83ccdb/trades.json
+2026-04-25 18:44:30.106 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to optimizer
+2026-04-25 18:48:24.564 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to dashboard
+2026-04-25 18:48:24.584 | INFO     | freqtrade_gui.ui.main_window   | ModernMainWindow initialised

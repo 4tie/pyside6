@@ -32,12 +32,22 @@ router = APIRouter()
 
 # Simple in-memory status tracking for polling fallback
 _backtest_status = {"status": "idle", "run_id": None, "message": ""}
+_current_run_id: Optional[str] = None
 
 def update_backtest_status(status: str, run_id: str = None, message: str = ""):
     """Update backtest status for polling."""
     _backtest_status["status"] = status
     _backtest_status["run_id"] = run_id
     _backtest_status["message"] = message
+
+def set_current_run_id(run_id: Optional[str]):
+    """Set the current running backtest run ID."""
+    global _current_run_id
+    _current_run_id = run_id
+
+def get_current_run_id() -> Optional[str]:
+    """Get the current running backtest run ID."""
+    return _current_run_id
 
 # Common trading pairs from Binance
 COMMON_PAIRS = [
@@ -206,6 +216,7 @@ async def execute_backtest(
         full_command = command.as_list()
 
         def on_finished(exit_code: int):
+            set_current_run_id(None)
             if exit_code == 0:
                 # Use shared service method to parse and save results
                 run_id = backtest_service.parse_and_save_latest_results(
@@ -219,9 +230,14 @@ async def execute_backtest(
             else:
                 update_backtest_status("error", message=f"Process exited with code: {exit_code}")
         
+        # Generate a run_id for tracking
+        from uuid import uuid4
+        run_id = str(uuid4())[:8]
+        set_current_run_id(run_id)
+        
         # Execute command in background
         def execute_backtest_task():
-            update_backtest_status("running", message="Backtest in progress...")
+            update_backtest_status("running", run_id, "Backtest in progress...")
             try:
                 process_service.execute_command(
                     command=full_command,
@@ -232,8 +248,10 @@ async def execute_backtest(
                     env=env
                 )
             except FileNotFoundError as e:
+                set_current_run_id(None)
                 update_backtest_status("error", message=f"Freqtrade not found: {str(e)}")
             except Exception as e:
+                set_current_run_id(None)
                 update_backtest_status("error", message=f"Backtest execution failed: {str(e)}")
         
         background_tasks.add_task(execute_backtest_task)
@@ -313,3 +331,21 @@ async def get_backtest_config(settings: SettingsServiceDep) -> BacktestConfigRes
 async def get_backtest_status() -> dict:
     """Get current backtest status for polling fallback."""
     return _backtest_status
+
+
+@router.post("/backtest/stop")
+async def stop_backtest(
+    process_service: ProcessServiceDep,
+) -> dict:
+    """Stop the currently running backtest."""
+    current_run_id = get_current_run_id()
+    if not current_run_id:
+        raise HTTPException(status_code=400, detail="No backtest is currently running")
+    
+    try:
+        process_service.stop_process()
+        set_current_run_id(None)
+        update_backtest_status("stopped", message="Backtest stopped by user")
+        return {"status": "stopped", "message": "Backtest stopped successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to stop backtest: {str(e)}")

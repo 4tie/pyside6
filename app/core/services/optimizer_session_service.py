@@ -453,12 +453,23 @@ class StrategyOptimizerService:
         record = self._store.load_trial_record(session_id, trial_number)
         if record is None:
             raise ValueError(f"Trial {trial_number} not found in session {session_id}")
+        if record.status != TrialStatus.SUCCESS:
+            raise ValueError("Only successful trials can be set as best.")
         pointer = BestPointer(
             session_id=session_id,
             trial_number=trial_number,
             score=record.score or 0.0,
         )
         self._store.save_best_pointer(session_id, pointer)
+        session = self._store.load_session(session_id)
+        if session is not None:
+            session.best_pointer = pointer
+            self._store.save_session(session)
+        for trial_record in self._store.load_all_trial_records(session_id):
+            should_be_best = trial_record.trial_number == trial_number
+            if trial_record.is_best != should_be_best:
+                trial_record.is_best = should_be_best
+                self._store.save_trial_record(session_id, trial_record)
         _log.info("Manually set best to trial %d for session %s", trial_number, session_id)
 
     def export_best(self, session_id: str) -> ExportResult:
@@ -1010,6 +1021,11 @@ class StrategyOptimizerService:
 
         current = self._store.load_best_pointer(session.session_id)
         if current is None or record.score > current.score:
+            if current is not None:
+                previous = self._store.load_trial_record(session.session_id, current.trial_number)
+                if previous is not None and previous.is_best:
+                    previous.is_best = False
+                    self._store.save_trial_record(session.session_id, previous)
             pointer = BestPointer(
                 session_id=session.session_id,
                 trial_number=record.trial_number,

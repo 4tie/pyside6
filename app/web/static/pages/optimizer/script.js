@@ -714,6 +714,24 @@ async function exportBest() {
   }
 }
 
+// Roll back the most recent optimizer export backup.
+async function rollbackLatestExport() {
+  if (!currentSessionId) {
+    showError('No active session');
+    return;
+  }
+
+  if (!confirm('Rollback the latest exported strategy params backup?')) return;
+
+  try {
+    const result = await api.post(`/optimizer/sessions/${currentSessionId}/rollback`);
+    showSuccess(`Restored from ${result.restored_from}`);
+  } catch (err) {
+    console.error('Failed to rollback:', err);
+    showError(err.message || 'Failed to rollback');
+  }
+}
+
 // Apply trial
 async function applyTrial(asNew = false) {
   if (!currentSessionId || !selectedTrial) {
@@ -747,7 +765,10 @@ async function applyTrial(asNew = false) {
 
 // Open selected log
 async function openSelectedLog() {
-  if (!currentSessionId || !selectedTrial) return;
+  if (!currentSessionId || !selectedTrial) {
+    showError('No trial selected');
+    return;
+  }
   
   const url = `/api/optimizer/sessions/${currentSessionId}/trials/${selectedTrial.trial_number}/log`;
   window.open(url, '_blank');
@@ -755,7 +776,10 @@ async function openSelectedLog() {
 
 // Open selected result
 async function openSelectedResult() {
-  if (!currentSessionId || !selectedTrial) return;
+  if (!currentSessionId || !selectedTrial) {
+    showError('No trial selected');
+    return;
+  }
   
   const url = `/api/optimizer/sessions/${currentSessionId}/trials/${selectedTrial.trial_number}/result`;
   window.open(url, '_blank');
@@ -763,6 +787,11 @@ async function openSelectedResult() {
 
 // Compare trials
 function showCompareModal() {
+  if (!selectedTrial) {
+    showError('No trial selected');
+    return;
+  }
+
   if (!compareTrialA || !selectedTrial) {
     // Set first trial for comparison
     compareTrialA = selectedTrial;
@@ -905,9 +934,7 @@ function setupEventListeners() {
   
   // Best actions
   document.getElementById('export-best').addEventListener('click', exportBest);
-  document.getElementById('rollback-best').addEventListener('click', () => {
-    showInfo('Rollback not yet implemented in web UI');
-  });
+  document.getElementById('rollback-best').addEventListener('click', rollbackLatestExport);
   
   // Selected actions
   document.getElementById('set-best').addEventListener('click', setSelectedAsBest);
@@ -948,7 +975,8 @@ function setupEventListeners() {
 // Sort trials
 function sortTrials(by) {
   document.querySelectorAll('.trial-filters button').forEach(btn => btn.classList.remove('active'));
-  document.getElementById(`sort-${by}`).classList.add('active');
+  const activeButtonId = by === 'number' ? 'sort-trial-num' : `sort-${by}`;
+  document.getElementById(activeButtonId)?.classList.add('active');
   
   trials.sort((a, b) => {
     switch (by) {

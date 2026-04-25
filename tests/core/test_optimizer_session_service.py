@@ -216,6 +216,37 @@ class TestOptimizerStore:
 
 
 class TestStrategyOptimizerServiceIntegration:
+    def test_disabled_param_is_held_at_default_and_not_sampled(self, tmp_path):
+        service = make_service(tmp_path)
+        optuna_trial = MagicMock()
+        optuna_trial.suggest_int.return_value = 33
+        defs = [
+            ParamDef(
+                name="buy_disabled",
+                param_type=ParamType.INT,
+                default=14,
+                low=1,
+                high=99,
+                space="buy",
+                enabled=False,
+            ),
+            ParamDef(
+                name="sell_enabled",
+                param_type=ParamType.INT,
+                default=80,
+                low=1,
+                high=99,
+                space="sell",
+                enabled=True,
+            ),
+        ]
+
+        params = service._sample_params(optuna_trial, defs)
+
+        assert params["buy_disabled"] == 14
+        assert params["sell_enabled"] == 33
+        optuna_trial.suggest_int.assert_called_once_with("sell_enabled", 1, 99)
+
     def test_run_one_mock_trial_persists_record_and_best_pointer(self, tmp_path, monkeypatch):
         service = make_service(tmp_path)
         session = service.create_session(make_session_config().model_copy(update={"total_trials": 1}))

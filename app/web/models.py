@@ -42,6 +42,8 @@ class SettingsUpdate(BaseModel):
     venv_path: Optional[str] = None
     python_executable: Optional[str] = None
     freqtrade_executable: Optional[str] = None
+    backtest_preferences: Optional[Dict[str, Any]] = None
+    optimizer_preferences: Optional[Dict[str, Any]] = None
 
 
 # ============================================================================
@@ -145,6 +147,8 @@ class SettingsResponse(BaseModel):
     python_executable: str
     freqtrade_executable: str
     use_module_execution: bool
+    backtest_preferences: Dict[str, Any] = Field(default_factory=dict)
+    optimizer_preferences: Dict[str, Any] = Field(default_factory=dict)
 
 
 class LoopStatusResponse(BaseModel):

@@ -10,6 +10,7 @@ import pytest
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication, QInputDialog, QMessageBox
 
 from app.core.models.optimizer_models import (
@@ -24,6 +25,7 @@ from app.core.models.optimizer_models import (
 )
 from app.core.models.settings_models import AppSettings
 from app.core.services.process_run_manager import ProcessRunManager
+from app.ui.pages import optimizer_page as optimizer_page_module
 from app.ui.pages.optimizer_page import OptimizerPage
 
 
@@ -39,7 +41,20 @@ def _page(tmp_path: Path) -> OptimizerPage:
     strategies_dir = tmp_path / "strategies"
     strategies_dir.mkdir(parents=True, exist_ok=True)
     (strategies_dir / "TestStrategy.py").write_text(
-        "class TestStrategy:\n    pass\n",
+        "\n".join(
+            [
+                "class TestStrategy:",
+                "    timeframe = '5m'",
+                "    minimal_roi = {'0': 0.10, '30': 0.05}",
+                "    stoploss = -0.10",
+                "    trailing_stop = True",
+                "    trailing_stop_positive = 0.02",
+                "    trailing_stop_positive_offset = 0.04",
+                "    buy_rsi = IntParameter(10, 50, default=25, space='buy')",
+                "    sell_rsi = IntParameter(50, 90, default=75, space='sell')",
+                "",
+            ]
+        ),
         encoding="utf-8",
     )
 
@@ -112,6 +127,38 @@ def test_build_config_reads_composite_score_controls_on_start(qt_app, tmp_path):
     assert config.target_profit_pct == pytest.approx(75.0)
     assert config.max_drawdown_limit == pytest.approx(18.5)
     assert config.target_romad == pytest.approx(3.0)
+
+
+def test_param_table_includes_space_column(qt_app, tmp_path):
+    page = _page(tmp_path)
+
+    headers = [
+        page._param_model.headerData(idx, Qt.Horizontal)
+        for idx in range(page._param_model.columnCount())
+    ]
+
+    assert "Space" in headers
+    assert page._param_model.rowCount() >= 5
+    spaces = {
+        page._param_model.item(row, optimizer_page_module._PCOL_SPACE).text()
+        for row in range(page._param_model.rowCount())
+    }
+    assert {"buy", "sell", "roi", "stoploss", "trailing"}.issubset(spaces)
+
+
+def test_build_config_uses_core_generated_all_space_params(qt_app, tmp_path):
+    page = _page(tmp_path)
+
+    config = page._build_config()
+    by_space = {}
+    for param in config.param_defs:
+        by_space.setdefault(param.space, set()).add(param.name)
+
+    assert by_space["buy"] == {"buy_rsi"}
+    assert by_space["sell"] == {"sell_rsi"}
+    assert {"0", "30"}.issubset(by_space["roi"])
+    assert by_space["stoploss"] == {"stoploss"}
+    assert "trailing_stop_positive" in by_space["trailing"]
 
 
 def test_apply_to_strategy_action_calls_service(qt_app, tmp_path, monkeypatch):

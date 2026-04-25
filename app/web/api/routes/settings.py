@@ -4,6 +4,8 @@ Provides endpoints to retrieve and update application settings.
 """
 from fastapi import APIRouter, HTTPException, Depends
 
+from app.core.models.optimizer_models import OptimizerPreferences
+from app.core.models.settings_models import BacktestPreferences
 from app.core.services.settings_service import SettingsService
 from app.web.dependencies import SettingsServiceDep
 from app.web.models import SettingsResponse, SettingsUpdate
@@ -24,6 +26,8 @@ async def get_settings(
         python_executable=app_settings.python_executable or "",
         freqtrade_executable=app_settings.freqtrade_executable or "",
         use_module_execution=app_settings.use_module_execution,
+        backtest_preferences=app_settings.backtest_preferences.model_dump(mode="json"),
+        optimizer_preferences=app_settings.optimizer_preferences.model_dump(mode="json"),
     )
 
 
@@ -44,6 +48,14 @@ async def update_settings(
         app_settings.python_executable = update.python_executable
     if update.freqtrade_executable is not None:
         app_settings.freqtrade_executable = update.freqtrade_executable
+    if update.backtest_preferences is not None:
+        merged = app_settings.backtest_preferences.model_dump()
+        merged.update(update.backtest_preferences)
+        app_settings.backtest_preferences = BacktestPreferences.model_validate(merged)
+    if update.optimizer_preferences is not None:
+        merged = app_settings.optimizer_preferences.model_dump()
+        merged.update(update.optimizer_preferences)
+        app_settings.optimizer_preferences = OptimizerPreferences.model_validate(merged)
     
     # Save the updated settings
     settings.save_settings(app_settings)
@@ -54,4 +66,6 @@ async def update_settings(
         python_executable=app_settings.python_executable or "",
         freqtrade_executable=app_settings.freqtrade_executable or "",
         use_module_execution=app_settings.use_module_execution,
+        backtest_preferences=app_settings.backtest_preferences.model_dump(mode="json"),
+        optimizer_preferences=app_settings.optimizer_preferences.model_dump(mode="json"),
     )

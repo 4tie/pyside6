@@ -34,6 +34,10 @@
       <div class="container">
         <div class="page-header">
           <h2>Run Backtest</h2>
+          <div class="header-actions">
+            <span id="status-indicator" class="status-badge status-ready">Ready</span>
+            <button type="button" id="load-prefs-btn" class="button button-secondary">Load Saved Prefs</button>
+          </div>
         </div>
         
         <div class="card form-container">
@@ -55,6 +59,20 @@
                 <option value="1h">1h</option>
                 <option value="4h">4h</option>
                 <option value="1d">1d</option>
+              </select>
+            </div>
+
+            <!-- Timerange Preset -->
+            <div class="form-group">
+              <label for="timerange-preset">Timerange Preset</label>
+              <select id="timerange-preset" name="timerange-preset" class="input">
+                <option value="custom">Custom</option>
+                <option value="7d">7 days</option>
+                <option value="14d">14 days</option>
+                <option value="30d" selected>30 days</option>
+                <option value="90d">90 days</option>
+                <option value="180d">180 days</option>
+                <option value="360d">360 days</option>
               </select>
             </div>
 
@@ -94,7 +112,8 @@
             <!-- Action Buttons -->
             <div class="form-actions">
               <button type="button" id="download-data-btn" class="button button-secondary">Download Data</button>
-              <button type="button" id="run-backtest-btn" class="button">Run Backtest</button>
+              <button type="button" id="run-backtest-btn" class="button button-primary">Run Backtest</button>
+              <button type="button" id="stop-backtest-btn" class="button button-danger" disabled>Stop</button>
             </div>
           </form>
         </div>

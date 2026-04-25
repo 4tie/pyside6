@@ -69,8 +69,8 @@ from app.core.models.optimizer_models import (
     TrialRecord,
     TrialStatus,
 )
-from app.core.parsing.strategy_py_parser import parse_strategy_py
 from app.core.services.backtest_service import BacktestService
+from app.core.services.optimizer_search_space_service import OptimizerSearchSpaceService
 from app.core.services.optimizer_session_service import StrategyOptimizerService
 from app.core.services.optimizer_store import OptimizerStore
 from app.core.services.process_run_manager import ProcessRunManager
@@ -98,14 +98,16 @@ SCORE_OPTIONS = [
 _PCOL_ENABLED  = 0
 _PCOL_NAME     = 1
 _PCOL_TYPE     = 2
-_PCOL_DEFAULT  = 3
-_PCOL_MIN      = 4
-_PCOL_MAX      = 5
-_PCOL_COUNT    = 6
+_PCOL_SPACE    = 3
+_PCOL_DEFAULT  = 4
+_PCOL_MIN      = 5
+_PCOL_MAX      = 6
+_PCOL_COUNT    = 7
 
 _PARAM_TABLE_TOOLTIP = (
-    "Only parameters declared directly in the strategy class body are detected. "
-    "Inherited parameters from base classes are not shown."
+    "Buy/sell parameters come from declarations in the strategy class body. "
+    "ROI, stoploss, and trailing spaces are generated from strategy metadata "
+    "and live JSON when available."
 )
 
 
@@ -298,12 +300,12 @@ class OptimizerPage(QWidget):
 
     def _build(self) -> None:
         root = QVBoxLayout(self)
-        root.setContentsMargins(18, 18, 18, 18)
-        root.setSpacing(12)
+        root.setContentsMargins(16, 14, 16, 10)
+        root.setSpacing(10)
 
         header = QHBoxLayout()
         title = QLabel("Strategy Optimizer")
-        title.setStyleSheet(f"font-size: 22px; font-weight: 700; color: {theme.TEXT_PRIMARY};")
+        title.setStyleSheet(f"font-size: 20px; font-weight: 700; color: {theme.TEXT_PRIMARY};")
         header.addWidget(title)
         header.addStretch()
 
@@ -361,8 +363,11 @@ class OptimizerPage(QWidget):
         self._main_splitter.setCollapsible(0, True)
         self._main_splitter.setCollapsible(1, False)
         self._main_splitter.setCollapsible(2, True)
-        self._main_splitter.setSizes([340, 680, 300])
-        self._expanded_splitter_sizes = [340, 680, 300]
+        self._main_splitter.setStretchFactor(0, 0)
+        self._main_splitter.setStretchFactor(1, 1)
+        self._main_splitter.setStretchFactor(2, 0)
+        self._main_splitter.setSizes([410, 980, 360])
+        self._expanded_splitter_sizes = [410, 980, 360]
         root.addWidget(self._main_splitter, 1)
 
     def _panel_toggle(self, text: str, tooltip: str) -> QToolButton:
@@ -393,7 +398,7 @@ class OptimizerPage(QWidget):
         if visible:
             restored = list(self._expanded_splitter_sizes)
             if restored[panel_index] <= 0:
-                restored[panel_index] = 340 if side == "left" else 300
+                restored[panel_index] = 410 if side == "left" else 360
             if restored[1] <= 0:
                 restored[1] = 680
             self._main_splitter.setSizes(restored)
@@ -407,8 +412,9 @@ class OptimizerPage(QWidget):
 
     def _panel(self, min_width: int = 260, max_width: int | None = None) -> QFrame:
         panel = QFrame()
+        panel.setObjectName("optimizerPanel")
         panel.setStyleSheet(
-            f"QFrame {{ background: {theme.BG_SURFACE}; border: 1px solid {theme.BG_BORDER}; "
+            f"QFrame#optimizerPanel {{ background: {theme.BG_SURFACE}; border: 1px solid {theme.BG_BORDER}; "
             "border-radius: 8px; }"
         )
         panel.setMinimumWidth(min_width)
@@ -416,21 +422,36 @@ class OptimizerPage(QWidget):
             panel.setMaximumWidth(max_width)
         return panel
 
+    def _scroll_panel(self, panel: QFrame, *, min_width: int, max_width: int | None = None) -> QScrollArea:
+        scroll = QScrollArea()
+        scroll.setWidget(panel)
+        scroll.setWidgetResizable(True)
+        scroll.setFrameShape(QFrame.NoFrame)
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        scroll.setMinimumWidth(min_width)
+        if max_width:
+            scroll.setMaximumWidth(max_width)
+        scroll.setStyleSheet("QScrollArea { background: transparent; border: none; }")
+        return scroll
+
     def _label(self, text: str) -> QLabel:
         lbl = QLabel(text)
         lbl.setStyleSheet(f"color: {theme.TEXT_SECONDARY}; font-size: 12px;")
         return lbl
 
     def _build_left_sidebar(self) -> QWidget:
-        panel = self._panel(300, 390)
+        panel = self._panel(390)
         layout = QVBoxLayout(panel)
-        layout.setContentsMargins(14, 14, 14, 14)
-        layout.setSpacing(10)
+        layout.setContentsMargins(12, 12, 12, 12)
+        layout.setSpacing(8)
 
         layout.addWidget(_section_label("Configuration"))
         form = QFormLayout()
         form.setLabelAlignment(Qt.AlignRight)
-        form.setSpacing(8)
+        form.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
+        form.setFormAlignment(Qt.AlignTop)
+        form.setHorizontalSpacing(8)
+        form.setVerticalSpacing(7)
 
         self._strategy_combo = QComboBox()
         self._strategy_combo.currentTextChanged.connect(self._on_strategy_changed)
@@ -492,6 +513,22 @@ class OptimizerPage(QWidget):
         self._target_romad_spin.setValue(2.0)
         form.addRow(self._label("Target RoMAD"), self._target_romad_spin)
         layout.addLayout(form)
+        for widget in (
+            self._strategy_combo,
+            self._timeframe_edit,
+            self._timerange_edit,
+            self._pairs_edit,
+            self._wallet_spin,
+            self._trades_spin,
+            self._trials_spin,
+            self._score_combo,
+            self._target_trades_spin,
+            self._target_profit_spin,
+            self._max_drawdown_spin,
+            self._target_romad_spin,
+        ):
+            widget.setMinimumWidth(0)
+            widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
         sync_btn = QPushButton("Sync from Backtest")
         sync_btn.clicked.connect(self._sync_from_backtest)
@@ -499,36 +536,47 @@ class OptimizerPage(QWidget):
 
         layout.addWidget(_section_label("Parameters"))
         self._param_model = QStandardItemModel(0, _PCOL_COUNT, self)
-        self._param_model.setHorizontalHeaderLabels(["On", "Name", "Type", "Default", "Min", "Max"])
+        self._param_model.setHorizontalHeaderLabels(["On", "Name", "Type", "Space", "Default", "Min", "Max"])
         self._param_model.itemChanged.connect(self._on_param_item_changed)
         self._param_table = QTableView()
         self._param_table.setToolTip(_PARAM_TABLE_TOOLTIP)
         self._param_table.setModel(self._param_model)
-        self._param_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        param_header = self._param_table.horizontalHeader()
+        param_header.setMinimumSectionSize(42)
+        param_header.setSectionResizeMode(_PCOL_ENABLED, QHeaderView.ResizeToContents)
+        param_header.setSectionResizeMode(_PCOL_NAME, QHeaderView.Stretch)
+        param_header.setSectionResizeMode(_PCOL_TYPE, QHeaderView.ResizeToContents)
+        param_header.setSectionResizeMode(_PCOL_SPACE, QHeaderView.ResizeToContents)
+        param_header.setSectionResizeMode(_PCOL_DEFAULT, QHeaderView.ResizeToContents)
+        param_header.setSectionResizeMode(_PCOL_MIN, QHeaderView.ResizeToContents)
+        param_header.setSectionResizeMode(_PCOL_MAX, QHeaderView.ResizeToContents)
+        self._param_table.verticalHeader().setVisible(False)
         self._param_table.setSelectionBehavior(QAbstractItemView.SelectRows)
-        self._param_table.setMinimumHeight(180)
+        self._param_table.setMinimumHeight(150)
+        self._param_table.setMaximumHeight(220)
         layout.addWidget(self._param_table, 1)
 
         layout.addWidget(_section_label("History"))
         self._history_table = QTableWidget(0, 5)
         self._history_table.setHorizontalHeaderLabels(["Strategy", "Started", "Trials", "Best", "Status"])
         self._history_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self._history_table.verticalHeader().setVisible(False)
         self._history_table.setSelectionBehavior(QAbstractItemView.SelectRows)
         self._history_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self._history_table.cellDoubleClicked.connect(self._load_history_session)
-        self._history_table.setMaximumHeight(150)
+        self._history_table.setMaximumHeight(125)
         layout.addWidget(self._history_table)
 
         delete_btn = QPushButton("Delete Session")
         delete_btn.clicked.connect(self._delete_selected_history)
         layout.addWidget(delete_btn)
-        return panel
+        return self._scroll_panel(panel, min_width=390, max_width=440)
 
     def _build_center_pane(self) -> QWidget:
         pane = QWidget()
         layout = QVBoxLayout(pane)
         layout.setContentsMargins(0, 0, 0, 0)
-        layout.setSpacing(10)
+        layout.setSpacing(8)
 
         top = QHBoxLayout()
         self._progress = QProgressBar()
@@ -565,15 +613,15 @@ class OptimizerPage(QWidget):
         self._trial_table.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self._trial_table.clicked.connect(self._on_trial_clicked)
         splitter.addWidget(self._trial_table)
-        splitter.setSizes([320, 260])
+        splitter.setSizes([360, 300])
         layout.addWidget(splitter, 1)
         return pane
 
     def _build_right_sidebar(self) -> QWidget:
-        panel = self._panel(260, 340)
+        panel = self._panel(340)
         layout = QVBoxLayout(panel)
-        layout.setContentsMargins(14, 14, 14, 14)
-        layout.setSpacing(10)
+        layout.setContentsMargins(12, 12, 12, 12)
+        layout.setSpacing(8)
 
         layout.addWidget(_section_label("Best Result"))
         self._best_labels = self._metric_group(layout)
@@ -581,15 +629,18 @@ class OptimizerPage(QWidget):
         self._export_btn.clicked.connect(self._export_best)
         self._rollback_btn = QPushButton("Rollback")
         self._rollback_btn.clicked.connect(self._rollback)
-        layout.addWidget(self._export_btn)
-        layout.addWidget(self._rollback_btn)
+        best_actions = QHBoxLayout()
+        best_actions.setSpacing(8)
+        best_actions.addWidget(self._export_btn)
+        best_actions.addWidget(self._rollback_btn)
+        layout.addLayout(best_actions)
 
         layout.addWidget(_section_label("Selected Trial"))
         self._selected_labels = self._metric_group(layout)
         layout.addWidget(_section_label("Score Breakdown"))
         self._score_breakdown_view = QPlainTextEdit()
         self._score_breakdown_view.setReadOnly(True)
-        self._score_breakdown_view.setMaximumHeight(120)
+        self._score_breakdown_view.setFixedHeight(78)
         self._score_breakdown_view.setStyleSheet(
             f"font-family: {theme.FONT_MONO}; font-size: 10px;"
         )
@@ -614,14 +665,18 @@ class OptimizerPage(QWidget):
         apply_menu.addAction(self._apply_new_action)
         self._apply_btn.setMenu(apply_menu)
 
-        for btn in (
-            self._set_best_btn,
-            self._open_log_btn,
-            self._open_result_btn,
-            self._compare_btn,
-            self._apply_btn,
-        ):
-            layout.addWidget(btn)
+        primary_actions = QHBoxLayout()
+        primary_actions.setSpacing(8)
+        primary_actions.addWidget(self._set_best_btn)
+        primary_actions.addWidget(self._compare_btn)
+        layout.addLayout(primary_actions)
+
+        file_actions = QHBoxLayout()
+        file_actions.setSpacing(8)
+        file_actions.addWidget(self._open_log_btn)
+        file_actions.addWidget(self._open_result_btn)
+        layout.addLayout(file_actions)
+        layout.addWidget(self._apply_btn)
 
         layout.addWidget(_section_label("Selected Trial Changes"))
         self._diff_status_lbl = QLabel("Select a successful trial to preview changes.")
@@ -632,21 +687,21 @@ class OptimizerPage(QWidget):
         self._param_diff_table = QTableWidget(0, 3)
         self._param_diff_table.setHorizontalHeaderLabels(["Key", "Current", "Selected"])
         self._param_diff_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self._param_diff_table.verticalHeader().setVisible(False)
         self._param_diff_table.setSelectionBehavior(QAbstractItemView.SelectRows)
         self._param_diff_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self._param_diff_table.setMaximumHeight(150)
+        self._param_diff_table.setFixedHeight(120)
         layout.addWidget(self._param_diff_table)
 
         self._strategy_diff_view = QPlainTextEdit()
         self._strategy_diff_view.setReadOnly(True)
-        self._strategy_diff_view.setMaximumHeight(170)
+        self._strategy_diff_view.setFixedHeight(135)
         self._strategy_diff_view.setStyleSheet(
             f"font-family: {theme.FONT_MONO}; font-size: 10px;"
         )
         layout.addWidget(self._strategy_diff_view)
 
-        layout.addStretch()
-        return panel
+        return self._scroll_panel(panel, min_width=340, max_width=390)
 
     def _metric_group(self, parent_layout: QVBoxLayout) -> dict[str, QLabel]:
         labels: dict[str, QLabel] = {}
@@ -661,7 +716,11 @@ class OptimizerPage(QWidget):
             ("score", "Score"),
         ]:
             row = QHBoxLayout()
+            row.setSpacing(8)
             left, right = _metric_row(label)
+            left.setMinimumWidth(100)
+            right.setMinimumWidth(74)
+            right.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
             row.addWidget(left)
             row.addStretch()
             row.addWidget(right)
@@ -723,9 +782,10 @@ class OptimizerPage(QWidget):
         settings = self._settings_svc.load_settings()
         if not settings.user_data_path:
             return
-        path = Path(settings.user_data_path).expanduser() / "strategies" / f"{strategy_name}.py"
-        params = parse_strategy_py(path)
-        defs = list(params.buy_params.values()) + list(params.sell_params.values())
+        strategies_dir = Path(settings.user_data_path).expanduser() / "strategies"
+        path = strategies_dir / f"{strategy_name}.py"
+        json_path = strategies_dir / f"{strategy_name}.json"
+        params, defs = OptimizerSearchSpaceService.build_search_space_from_files(path, json_path)
         self._param_defs = defs
         self._strategy_class = params.strategy_class
         if params.timeframe:
@@ -743,6 +803,7 @@ class OptimizerPage(QWidget):
                 enabled,
                 QStandardItem(param.name),
                 QStandardItem(param.param_type.value),
+                QStandardItem(param.space),
                 QStandardItem(str(param.default)),
                 QStandardItem("" if param.low is None else str(param.low)),
                 QStandardItem("" if param.high is None else str(param.high)),
@@ -793,6 +854,12 @@ class OptimizerPage(QWidget):
         pairs = [p.strip() for p in self._pairs_edit.text().split(",") if p.strip()]
         score_key = self._score_combo.currentData() or "composite"
         score_mode = "composite" if score_key == "composite" else "single_metric"
+        param_errors = OptimizerSearchSpaceService.validate_param_defs(self._param_defs)
+        if param_errors:
+            shown = "\n".join(param_errors[:8])
+            if len(param_errors) > 8:
+                shown += f"\n... and {len(param_errors) - 8} more."
+            raise ValueError(f"Invalid optimizer parameters:\n{shown}")
         return SessionConfig(
             strategy_name=strategy,
             strategy_class=getattr(self, "_strategy_class", strategy),
