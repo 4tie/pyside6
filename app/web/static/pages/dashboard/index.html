@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="/static/shared/styles/base.css">
   <link rel="stylesheet" href="/static/shared/styles/themes.css">
   <link rel="stylesheet" href="/static/pages/dashboard/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
   <div class="page-container">
@@ -34,6 +35,7 @@
       <div class="container">
         <div class="page-header">
           <h2>Dashboard</h2>
+          <button id="refresh-btn" class="button button-secondary">Refresh</button>
         </div>
         
         <!-- Metrics Cards -->
@@ -47,17 +49,44 @@
             <span class="metric-value" id="total-strategies">0</span>
           </div>
           <div class="metric-card">
-            <span class="metric-label">Avg Profit</span>
-            <span class="metric-value" id="avg-profit">0%</span>
+            <span class="metric-label">Best Profit</span>
+            <span class="metric-value" id="best-profit">0%</span>
           </div>
           <div class="metric-card">
-            <span class="metric-label">Avg Win Rate</span>
-            <span class="metric-value" id="avg-winrate">0%</span>
+            <span class="metric-label">Best Win Rate</span>
+            <span class="metric-value" id="best-winrate">0%</span>
+          </div>
+          <div class="metric-card">
+            <span class="metric-label">Min Drawdown</span>
+            <span class="metric-value" id="min-drawdown">0%</span>
+          </div>
+          <div class="metric-card">
+            <span class="metric-label">Latest Run</span>
+            <span class="metric-value" id="latest-run">-</span>
+          </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-section">
+          <div class="chart-card">
+            <h4>Equity Curve (Latest Run)</h4>
+            <div class="chart-container">
+              <canvas id="equity-chart"></canvas>
+            </div>
+          </div>
+          <div class="chart-card">
+            <h4>Per-Trade Profit (Latest Run)</h4>
+            <div class="chart-container">
+              <canvas id="profit-chart"></canvas>
+            </div>
           </div>
         </div>
 
         <!-- Recent Runs -->
-        <h3>Recent Runs</h3>
+        <div class="section-header">
+          <h3>Recent Runs</h3>
+          <a href="/static/pages/run_detail/index.html" class="button button-small">View All</a>
+        </div>
         <div class="runs-list" id="runs-list">
           <div class="loading">Loading runs...</div>
         </div>

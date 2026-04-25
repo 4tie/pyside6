@@ -152,6 +152,40 @@
         }
       ]
     },
+    "MultiMa2": {
+      "runs": [
+        {
+          "backtest_end": "2026-04-25 00:00:00",
+          "backtest_start": "2025-04-30 00:00:00",
+          "calmar": -0.958,
+          "expectancy": -0.0056,
+          "final_balance": 78.6653,
+          "losses": 151,
+          "max_drawdown_abs": 7.6512,
+          "max_drawdown_pct": 9.242,
+          "pairs": [
+            "ADA/USDT",
+            "ETH/USDT"
+          ],
+          "profit_factor": 0.9756,
+          "profit_total_abs": -1.3347,
+          "profit_total_pct": -1.6684,
+          "run_dir": "MultiMa2/run_2026-04-25_19-26-03_b32c90",
+          "run_id": "run_2026-04-25_19-26-03_b32c90",
+          "saved_at": "2026-04-25T19:26:03.513379",
+          "sharpe": -0.1033,
+          "sortino": -0.1867,
+          "starting_balance": 80.0,
+          "strategy": "MultiMa2",
+          "timeframe": "5m",
+          "timerange": "20250430-20260425",
+          "trades_count": 237,
+          "version_id": null,
+          "win_rate_pct": 36.29,
+          "wins": 86
+        }
+      ]
+    },
     "MultiMa_v3": {
       "runs": [
         {
@@ -1149,5 +1183,5 @@
       ]
     }
   },
-  "updated_at": "2026-04-25T18:02:44.013676"
+  "updated_at": "2026-04-25T19:26:03.513396"
 }
