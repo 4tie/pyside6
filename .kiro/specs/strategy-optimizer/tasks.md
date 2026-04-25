@@ -53,7 +53,7 @@
   - [x] 8.1 Create `ExportConfirmDialog(QDialog)` that displays: target JSON file path, current parameter values (read from live JSON), new parameter values from `Accepted_Best`, and a diff-style view of changed keys
   - [x] 8.2 Add optional "Patch .py file" checkbox that triggers a second confirmation dialog before proceeding
 
-- [-] 9. Optimizer Page (`app/ui/pages/optimizer_page.py`)
+- [ ] 9. Optimizer Page (`app/ui/pages/optimizer_page.py`)
   - [ ] 9.1 Create `OptimizerPage(QWidget)` with constructor `(settings_state: SettingsState, process_manager: ProcessRunManager)`; instantiate `StrategyOptimizerService` with injected `SettingsService` and `BacktestService`
   - [ ] 9.2 Build three-pane `QSplitter` layout: left sidebar (config + param table + action buttons), center (progress bar + live log top half, trial table bottom half), right sidebar (best result metrics + selected trial metrics + per-trial actions)
   - [ ] 9.3 Build left sidebar config panel: strategy dropdown (populated via `BacktestService.get_available_strategies()`), read-only inherited fields (timeframe, timerange, pairs, wallet, max trades), trials spinbox (1–1000, default 50), score metric dropdown, "Sync from Backtest" button; add tooltip on param table noting V1 limitation (inherited parameters not detected)
@@ -74,18 +74,18 @@
   - [ ] 9.18 Implement session deletion from history panel with confirmation prompt
   - [ ] 9.19 Display warning banner when `BacktestPreferences` has no strategy configured (Requirement 1.3)
 
-- [~] 10. Sidebar and Main Window Integration
+- [ ] 10. Sidebar and Main Window Integration
   - [ ] 10.1 Add `("optimizer", "⚡", "Optimizer")` to `_NAV_ITEMS` in `app/ui/shell/sidebar.py`
   - [ ] 10.2 Import `OptimizerPage` and add it to `self._pages` dict in `app/ui/main_window.py`; wire `Ctrl+N` shortcut (next available after existing pages)
 
-- [~] 11. Architecture Boundary Verification
+- [ ] 11. Architecture Boundary Verification
   - [ ] 11.1 Run `python tests/test_architecture.py` and confirm zero violations after all new files are created
   - [ ] 11.2 Confirm `app/core/services/optimizer_session_service.py` has no PySide6 imports
   - [ ] 11.3 Confirm `app/core/models/optimizer_models.py` has no PySide6 imports
   - [ ] 11.4 Confirm `app/core/parsing/strategy_py_parser.py` has no PySide6 imports
   - [ ] 11.5 Confirm `app/core/services/optimizer_store.py` has no PySide6 imports
 
-- [~] 12. Integration and Smoke Tests
+- [ ] 12. Integration and Smoke Tests
   - [ ] 12.1 Write `tests/core/test_optimizer_session_service.py` integration test: create a session, run one mock trial (mock `ProcessService` to return exit code 0 with a fake result), verify `TrialRecord` is persisted and `best.json` is written
   - [ ] 12.2 Write `tests/core/test_optimizer_session_service.py` test: failed trial (exit code 1) does not stop the session and is recorded with `TrialStatus.FAILED`
   - [ ] 12.3 Write `tests/core/test_optimizer_session_service.py` test: `stop_session()` sends SIGTERM to the active subprocess mock, halts the loop after the current trial, and sets session status to `stopped`
