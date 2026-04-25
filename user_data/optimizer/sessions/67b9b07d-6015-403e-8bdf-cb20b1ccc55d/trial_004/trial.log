@@ -1,0 +1,64 @@
+2026-04-25 20:15:11,769 - freqtrade - INFO - freqtrade 2026.3
+2026-04-25 20:15:12,840 - freqtrade.configuration.load_config - INFO - Using config: /home/mohs/Desktop/ae/pyside6/user_data/config.json ...
+2026-04-25 20:15:12,842 - freqtrade.loggers - INFO - Enabling colorized output.
+2026-04-25 20:15:12,843 - freqtrade.loggers - INFO - Logfile configured
+2026-04-25 20:15:12,843 - freqtrade.loggers - INFO - Verbosity set to 0
+2026-04-25 20:15:12,843 - freqtrade.configuration.configuration - INFO - Using additional Strategy lookup path: 
+/home/mohs/Desktop/ae/pyside6/user_data/optimizer/sessions/67b9b07d-6015-403e-8bdf-cb20b1ccc55d/trial_004/strategy_dir
+2026-04-25 20:15:12,844 - freqtrade.configuration.configuration - WARNING - `force_entry_enable` RPC message enabled.
+2026-04-25 20:15:12,844 - freqtrade.configuration.configuration - INFO - Parameter -i/--timeframe detected ... Using timeframe: 4h ...
+2026-04-25 20:15:12,844 - freqtrade.configuration.configuration - INFO - Parameter --max-open-trades detected, overriding max_open_trades to: 2 ...
+2026-04-25 20:15:12,844 - freqtrade.configuration.configuration - INFO - Parameter --dry-run-wallet detected, overriding dry_run_wallet to: 150.0 ...
+2026-04-25 20:15:12,845 - freqtrade.configuration.configuration - INFO - Parameter --timerange detected: 20250422-20260417 ...
+2026-04-25 20:15:12,845 - freqtrade.configuration.configuration - INFO - Using user-data directory: /home/mohs/Desktop/ae/pyside6/user_data ...
+2026-04-25 20:15:12,845 - freqtrade.configuration.configuration - INFO - Using data directory: /home/mohs/Desktop/ae/pyside6/user_data/data/binance ...
+2026-04-25 20:15:12,846 - freqtrade.configuration.configuration - INFO - Parameter --export detected: trades ...
+2026-04-25 20:15:12,846 - freqtrade.configuration.configuration - INFO - Parameter --cache=day detected ...
+2026-04-25 20:15:12,846 - freqtrade.configuration.configuration - INFO - Using pairs ['ETH/USDT', 'XRP/USDT', 'HOME/USDT']
+2026-04-25 20:15:12,846 - freqtrade.configuration.configuration - INFO - Filter trades by timerange: 20250422-20260417
+2026-04-25 20:15:12,847 - freqtrade.exchange.check_exchange - INFO - Checking exchange...
+2026-04-25 20:15:12,853 - freqtrade.exchange.check_exchange - INFO - Exchange "binance" is officially supported by the Freqtrade development team.
+2026-04-25 20:15:12,854 - freqtrade.configuration.config_validation - INFO - Validating configuration ...
+2026-04-25 20:15:12,856 - freqtrade.commands.optimize_commands - INFO - Starting freqtrade in Backtesting mode
+2026-04-25 20:15:12,856 - freqtrade.exchange.exchange - INFO - Instance is running with dry_run enabled
+2026-04-25 20:15:12,856 - freqtrade.exchange.exchange - INFO - Using CCXT 4.5.50
+2026-04-25 20:15:12,857 - freqtrade.exchange.exchange - INFO - Applying additional ccxt config: {'enableRateLimit': True, 'timeout': 120000}
+2026-04-25 20:15:12,862 - freqtrade.exchange.exchange - INFO - Applying additional ccxt config: {'enableRateLimit': True, 'timeout': 120000}
+2026-04-25 20:15:12,868 - freqtrade.exchange.exchange - INFO - Using Exchange "Binance"
+2026-04-25 20:15:14,060 - freqtrade.resolvers.exchange_resolver - INFO - Using resolved exchange 'Binance'...
+2026-04-25 20:15:14,068 - freqtrade.resolvers.iresolver - INFO - Using resolved strategy MultiMeee from 
+'/home/mohs/Desktop/ae/pyside6/user_data/optimizer/sessions/67b9b07d-6015-403e-8bdf-cb20b1ccc55d/trial_004/strategy_dir/MultiMeee.py'...
+2026-04-25 20:15:14,069 - freqtrade.strategy.hyper - INFO - Loading parameters from file 
+/home/mohs/Desktop/ae/pyside6/user_data/optimizer/sessions/67b9b07d-6015-403e-8bdf-cb20b1ccc55d/trial_004/strategy_dir/MultiMeee.json
+2026-04-25 20:15:14,069 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'timeframe' with value from the configuration: 4h.
+2026-04-25 20:15:14,069 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'stake_currency' with value from the configuration: USDT.
+2026-04-25 20:15:14,070 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'stake_amount' with value from the configuration: unlimited.
+2026-04-25 20:15:14,070 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'use_exit_signal' with value from the configuration: True.
+2026-04-25 20:15:14,070 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'max_open_trades' with value from the configuration: 2.
+2026-04-25 20:15:14,071 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using minimal_roi: {'0': 0.3505201013508008, '13': 0.8776837553181915, '146': 0.6979800249844528, '38': 
+0.9520678727742072}
+2026-04-25 20:15:14,071 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using timeframe: 4h
+2026-04-25 20:15:14,071 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using stoploss: -0.6869084076430068
+2026-04-25 20:15:14,071 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using trailing_stop: True
+2026-04-25 20:15:14,072 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using trailing_stop_positive: 0.7509133325138786
+2026-04-25 20:15:14,072 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using trailing_stop_positive_offset: 0.1392007420070643
+2026-04-25 20:15:14,072 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using trailing_only_offset_is_reached: True
+2026-04-25 20:15:14,072 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using use_custom_stoploss: False
+2026-04-25 20:15:14,073 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using process_only_new_candles: True
+2026-04-25 20:15:14,073 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using order_types: {'entry': 'limit', 'exit': 'limit', 'stoploss': 'limit', 'stoploss_on_exchange': False, 
+'stoploss_on_exchange_interval': 60}
+2026-04-25 20:15:14,073 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using order_time_in_force: {'entry': 'GTC', 'exit': 'GTC'}
+2026-04-25 20:15:14,073 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using stake_currency: USDT
+2026-04-25 20:15:14,074 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using stake_amount: unlimited
+2026-04-25 20:15:14,074 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using startup_candle_count: 0
+2026-04-25 20:15:14,074 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using use_exit_signal: True
+2026-04-25 20:15:14,074 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using exit_profit_only: False
+2026-04-25 20:15:14,075 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using ignore_roi_if_entry_signal: False
+2026-04-25 20:15:14,075 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using exit_profit_offset: 0.0
+2026-04-25 20:15:14,075 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using disable_dataframe_checks: False
+2026-04-25 20:15:14,075 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using ignore_buying_expired_candle_after: 0
+2026-04-25 20:15:14,076 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using position_adjustment_enable: False
+2026-04-25 20:15:14,076 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using max_entry_position_adjustment: -1
+2026-04-25 20:15:14,076 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using max_open_trades: 2
+2026-04-25 20:15:14,076 - freqtrade - ERROR - Configuration error: The config trailing_stop_positive_offset needs to be greater than trailing_stop_positive in your config.
+Please make sure to review the documentation at https://www.freqtrade.io/en/stable.

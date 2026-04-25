@@ -1,0 +1,165 @@
+{
+  "best_pointer": {
+    "score": 37.42900016666667,
+    "session_id": "67b9b07d-6015-403e-8bdf-cb20b1ccc55d",
+    "trial_number": 24
+  },
+  "config": {
+    "config_file_path": "",
+    "dry_run_wallet": 150.0,
+    "max_drawdown_limit": 18.0,
+    "max_open_trades": 2,
+    "pairs": [
+      "ETH/USDT",
+      "XRP/USDT",
+      "HOME/USDT"
+    ],
+    "param_defs": [
+      {
+        "categories": null,
+        "default": 16,
+        "enabled": true,
+        "high": 20.0,
+        "low": 1.0,
+        "name": "buy_ma_count",
+        "param_type": "int",
+        "space": "buy"
+      },
+      {
+        "categories": null,
+        "default": 34,
+        "enabled": true,
+        "high": 50.0,
+        "low": 1.0,
+        "name": "buy_ma_gap",
+        "param_type": "int",
+        "space": "buy"
+      },
+      {
+        "categories": null,
+        "default": 2,
+        "enabled": true,
+        "high": 20.0,
+        "low": 1.0,
+        "name": "sell_ma_count",
+        "param_type": "int",
+        "space": "sell"
+      },
+      {
+        "categories": null,
+        "default": 23,
+        "enabled": true,
+        "high": 50.0,
+        "low": 1.0,
+        "name": "sell_ma_gap",
+        "param_type": "int",
+        "space": "sell"
+      },
+      {
+        "categories": null,
+        "default": 0.099,
+        "enabled": true,
+        "high": 1.0,
+        "low": 0.0,
+        "name": "0",
+        "param_type": "decimal",
+        "space": "roi"
+      },
+      {
+        "categories": null,
+        "default": 0.034,
+        "enabled": true,
+        "high": 1.0,
+        "low": 0.0,
+        "name": "13",
+        "param_type": "decimal",
+        "space": "roi"
+      },
+      {
+        "categories": null,
+        "default": 0.024,
+        "enabled": true,
+        "high": 1.0,
+        "low": 0.0,
+        "name": "38",
+        "param_type": "decimal",
+        "space": "roi"
+      },
+      {
+        "categories": null,
+        "default": 0.0,
+        "enabled": true,
+        "high": 1.0,
+        "low": 0.0,
+        "name": "146",
+        "param_type": "decimal",
+        "space": "roi"
+      },
+      {
+        "categories": null,
+        "default": -0.245,
+        "enabled": true,
+        "high": -0.1225,
+        "low": -0.735,
+        "name": "stoploss",
+        "param_type": "decimal",
+        "space": "stoploss"
+      },
+      {
+        "categories": null,
+        "default": true,
+        "enabled": true,
+        "high": null,
+        "low": null,
+        "name": "trailing_stop",
+        "param_type": "boolean",
+        "space": "trailing"
+      },
+      {
+        "categories": null,
+        "default": 0.334,
+        "enabled": true,
+        "high": 1.002,
+        "low": 0.001,
+        "name": "trailing_stop_positive",
+        "param_type": "decimal",
+        "space": "trailing"
+      },
+      {
+        "categories": null,
+        "default": 0.371,
+        "enabled": true,
+        "high": 1.113,
+        "low": 0.001,
+        "name": "trailing_stop_positive_offset",
+        "param_type": "decimal",
+        "space": "trailing"
+      },
+      {
+        "categories": null,
+        "default": false,
+        "enabled": true,
+        "high": null,
+        "low": null,
+        "name": "trailing_only_offset_is_reached",
+        "param_type": "boolean",
+        "space": "trailing"
+      }
+    ],
+    "score_metric": "total_profit_pct",
+    "score_mode": "single_metric",
+    "strategy_class": "MultiMeee",
+    "strategy_name": "MultiMeee",
+    "target_min_trades": 100,
+    "target_profit_pct": 50.0,
+    "target_romad": 2.0,
+    "timeframe": "4h",
+    "timerange": "20250422-20260417",
+    "total_trials": 52
+  },
+  "finished_at": "2026-04-25T17:18:03.590981+00:00",
+  "session_id": "67b9b07d-6015-403e-8bdf-cb20b1ccc55d",
+  "started_at": "2026-04-25T17:14:59.709801+00:00",
+  "status": "completed",
+  "trials_completed": 52
+}

@@ -1,0 +1,30 @@
+{
+  "export_time": "2026-04-25T17:06:04.544448+00:00",
+  "ft_stratparam_v": 1,
+  "params": {
+    "buy": {
+      "buy_ma_count": 20,
+      "buy_ma_gap": 64
+    },
+    "roi": {
+      "0": 0.11038555960353025,
+      "1553": 0.25874567892760747,
+      "2332": 0.9340755908590572,
+      "3169": 0.264463869341684
+    },
+    "sell": {
+      "sell_ma_count": 8,
+      "sell_ma_gap": 49
+    },
+    "stoploss": {
+      "stoploss": -0.6901073604716398
+    },
+    "trailing": {
+      "trailing_only_offset_is_reached": true,
+      "trailing_stop": false,
+      "trailing_stop_positive": null,
+      "trailing_stop_positive_offset": 0.5060774161600756
+    }
+  },
+  "strategy_name": "yty"
+}

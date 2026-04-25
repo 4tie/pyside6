@@ -1,0 +1,33 @@
+{
+  "avg_duration_min": 1831,
+  "avg_profit_pct": 0.368851,
+  "backtest_end": "2026-04-25 00:00:00",
+  "backtest_start": "2025-04-30 00:00:00",
+  "calmar_ratio": 4.646,
+  "draws": 0,
+  "expectancy": 0.0824,
+  "final_balance": 109.973514,
+  "losses": 69,
+  "max_consecutive_losses": 14,
+  "max_consecutive_wins": 10,
+  "max_drawdown_abs": 13.768737,
+  "max_drawdown_pct": 11.3923,
+  "pairs": [
+    "ADA/USDT",
+    "ETH/USDT",
+    "BNB/USDT",
+    "XRP/USDT"
+  ],
+  "profit_factor": 1.2296,
+  "sharpe_ratio": 0.4754,
+  "sortino_ratio": 1.0688,
+  "starting_balance": 100.0,
+  "strategy": "yty",
+  "timeframe": "1h",
+  "timerange": "20250430-20260425",
+  "total_profit_abs": 9.973514,
+  "total_profit_pct": 9.973514,
+  "total_trades": 121,
+  "win_rate_pct": 42.9752,
+  "wins": 52
+}

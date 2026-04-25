@@ -8,6 +8,13 @@
   <link rel="stylesheet" href="/static/shared/styles/base.css">
   <link rel="stylesheet" href="/static/shared/styles/themes.css">
   <link rel="stylesheet" href="/static/pages/comparison/styles.css">
+  <script>
+    // Initialize theme synchronously to prevent flash of unstyled content
+    (function() {
+      const saved = localStorage.getItem('theme') || 'dark';
+      document.documentElement.dataset.theme = saved;
+    })();
+  </script>
 </head>
 <body>
   <div class="page-container">

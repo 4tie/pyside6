@@ -1,0 +1,33 @@
+{
+  "export_time": "2026-04-25T17:16:48.228809+00:00",
+  "ft_stratparam_v": 1,
+  "params": {
+    "buy": {
+      "buy_ma_count": 12,
+      "buy_ma_gap": 10
+    },
+    "max_open_trades": {
+      "max_open_trades": 2
+    },
+    "roi": {
+      "0": 0.9363388637767833,
+      "13": 0.4830300622198148,
+      "146": 0.15704284852139289,
+      "38": 0.5290097234333438
+    },
+    "sell": {
+      "sell_ma_count": 20,
+      "sell_ma_gap": 27
+    },
+    "stoploss": {
+      "stoploss": -0.18176071451170958
+    },
+    "trailing": {
+      "trailing_only_offset_is_reached": true,
+      "trailing_stop": true,
+      "trailing_stop_positive": 0.6522468401439938,
+      "trailing_stop_positive_offset": 0.31712481240457907
+    }
+  },
+  "strategy_name": "MultiMeee"
+}

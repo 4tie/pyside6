@@ -129,6 +129,30 @@ def test_build_config_reads_composite_score_controls_on_start(qt_app, tmp_path):
     assert config.target_romad == pytest.approx(3.0)
 
 
+def test_build_config_uses_reselected_timeframe_and_pairs(qt_app, tmp_path):
+    page = _page(tmp_path)
+    page._timeframe_combo.setCurrentText("1h")
+    page._pairs_edit.setText("BTC/USDT, ETH/USDT")
+
+    config = page._build_config()
+
+    assert config.timeframe == "1h"
+    assert config.pairs == ["BTC/USDT", "ETH/USDT"]
+
+
+def test_select_pairs_updates_pairs_field(qt_app, tmp_path, monkeypatch):
+    page = _page(tmp_path)
+    monkeypatch.setattr(
+        QInputDialog,
+        "getText",
+        lambda *args, **kwargs: ("ADA/USDT, ETH/USDT,ADA/USDT", True),
+    )
+
+    page._select_pairs()
+
+    assert page._pairs_edit.text() == "ADA/USDT,ETH/USDT"
+
+
 def test_param_table_includes_space_column(qt_app, tmp_path):
     page = _page(tmp_path)
 

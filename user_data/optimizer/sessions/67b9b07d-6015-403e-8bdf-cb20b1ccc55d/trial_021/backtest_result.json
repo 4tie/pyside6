@@ -1,0 +1,32 @@
+{
+  "strategy": "MultiMeee",
+  "timeframe": "4h",
+  "total_trades": 10,
+  "wins": 4,
+  "losses": 6,
+  "draws": 0,
+  "win_rate": 40.0,
+  "avg_profit": 0.3411035525663968,
+  "total_profit": 1.3142665866666683,
+  "total_profit_abs": 1.9713998800000023,
+  "sharpe_ratio": 0.02433195380823958,
+  "sortino_ratio": 0.1141166752416726,
+  "calmar_ratio": 1.0150528076925642,
+  "max_drawdown": 6.909684782981472,
+  "max_drawdown_abs": 11.103428549999999,
+  "trade_duration_avg": 4080,
+  "starting_balance": 150.0,
+  "final_balance": 151.97139988,
+  "timerange": "20250422-20260417",
+  "pairlist": [
+    "ETH/USDT",
+    "XRP/USDT",
+    "HOME/USDT"
+  ],
+  "backtest_start": "2025-04-24 00:00:00",
+  "backtest_end": "2026-04-17 00:00:00",
+  "expectancy": 0.197139988,
+  "profit_factor": 1.136691382865563,
+  "max_consecutive_wins": 2,
+  "max_consecutive_losses": 3
+}

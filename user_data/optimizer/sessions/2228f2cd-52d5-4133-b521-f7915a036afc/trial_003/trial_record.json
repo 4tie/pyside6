@@ -1,0 +1,39 @@
+{
+  "candidate_params": {
+    "0": 0.3041312129058652,
+    "1553": 0.4670255188836092,
+    "2332": 0.4579771991952273,
+    "3169": 0.6927413835380235,
+    "buy_ma_count": 11,
+    "buy_ma_gap": 45,
+    "sell_ma_count": 17,
+    "sell_ma_gap": 76,
+    "stoploss": -0.8689847807244994,
+    "trailing_only_offset_is_reached": false,
+    "trailing_stop": true,
+    "trailing_stop_positive_offset": 0.10431000119534287
+  },
+  "is_best": false,
+  "log_excerpt": " 20:00 / 10d 16:00 / 4d 10:40 │\n│ Min/Max/Avg. Duration Losers  │ 4d 16:00 / 7d 16:00 / 6d 11:00  │\n│ Max Consecutive Wins / Loss   │ 2 / 2                           │\n│ Rejected Entry signals        │ 0                               │\n│ Entry/Exit Timeouts           │ 0 / 0                           │\n│                               │                                 │\n│ Min balance                   │ 145.376 USDT                    │\n│ Max balance                   │ 149.88 USDT                     │\n│ Max % of account underwater   │ 3.08%                           │\n│ Absolute drawdown             │ 4.624 USDT (3.08%)              │\n│ Drawdown duration             │ 2 days 08:00:00                 │\n│ Profit at drawdown start      │ 0 USDT                          │\n│ Profit at drawdown end        │ -4.624 USDT                     │\n│ Drawdown start                │ 2026-01-11 00:00:00             │\n│ Drawdown end                  │ 2026-01-13 08:00:00             │\n│ Market change                 │ -27.75%                         │\n└───────────────────────────────┴─────────────────────────────────┘\n\nBacktested 2025-04-24 00:00:00 -> 2026-04-17 00:00:00 | Max open trades : 4\n                                                          STRATEGY SUMMARY                                                           \n┏━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━┓\n┃ Strategy ┃ Trades ┃ Avg Profit % ┃ Tot Profit USDT ┃ Tot Profit % ┃     Avg Duration ┃  Win  Draw  Loss  Win% ┃          Drawdown ┃\n┡━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━┩\n│      yty │      7 │        -0.96 │          -2.484 │        -1.66 │ 5 days, 14:17:00 │    3     0     4  42.9 │ 4.624 USDT  3.08% │\n└──────────┴────────┴──────────────┴─────────────────┴──────────────┴──────────────────┴────────────────────────┴───────────────────┘",
+  "metrics": {
+    "best_pair": "ETH/USDT",
+    "best_trade_profit_pct": 0.0,
+    "final_balance": 147.51628065,
+    "max_drawdown_pct": 3.082733626666671,
+    "profit_factor": 0.6318043910757836,
+    "sharpe_ratio": -0.06251476829209507,
+    "total_profit_abs": -2.4837193500000008,
+    "total_profit_pct": -1.6558129000000004,
+    "total_trades": 7,
+    "win_rate": 0.42857142857142855,
+    "worst_pair": "ADA/USDT",
+    "worst_trade_profit_pct": 0.0
+  },
+  "score": -1.6558129000000004,
+  "score_breakdown": {},
+  "score_metric": "total_profit_pct",
+  "score_mode": "single_metric",
+  "session_id": "2228f2cd-52d5-4133-b521-f7915a036afc",
+  "status": "success",
+  "trial_number": 3
+}

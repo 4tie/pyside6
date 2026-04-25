@@ -9,6 +9,13 @@
   <link rel="stylesheet" href="/static/shared/styles/themes.css">
   <link rel="stylesheet" href="/static/pages/run_detail/styles.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script>
+    // Initialize theme synchronously to prevent flash of unstyled content
+    (function() {
+      const saved = localStorage.getItem('theme') || 'dark';
+      document.documentElement.dataset.theme = saved;
+    })();
+  </script>
 </head>
 <body>
   <div class="page-container">

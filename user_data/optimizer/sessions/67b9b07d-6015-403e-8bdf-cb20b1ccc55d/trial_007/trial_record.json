@@ -1,0 +1,40 @@
+{
+  "candidate_params": {
+    "0": 0.620656460954656,
+    "13": 0.9556782322104153,
+    "146": 0.8276877144290897,
+    "38": 0.9285220625279486,
+    "buy_ma_count": 3,
+    "buy_ma_gap": 39,
+    "sell_ma_count": 5,
+    "sell_ma_gap": 42,
+    "stoploss": -0.7260895317305694,
+    "trailing_only_offset_is_reached": true,
+    "trailing_stop": true,
+    "trailing_stop_positive": 0.09883573831287365,
+    "trailing_stop_positive_offset": 1.0418208472379493
+  },
+  "is_best": false,
+  "log_excerpt": "qtrade.resolvers.strategy_resolver - INFO - Strategy using startup_candle_count: 0\n2026-04-25 20:15:24,661 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using use_exit_signal: True\n2026-04-25 20:15:24,661 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using exit_profit_only: False\n2026-04-25 20:15:24,661 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using ignore_roi_if_entry_signal: False\n2026-04-25 20:15:24,662 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using exit_profit_offset: 0.0\n2026-04-25 20:15:24,662 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using disable_dataframe_checks: False\n2026-04-25 20:15:24,662 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using ignore_buying_expired_candle_after: 0\n2026-04-25 20:15:24,662 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using position_adjustment_enable: False\n2026-04-25 20:15:24,663 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using max_entry_position_adjustment: -1\n2026-04-25 20:15:24,663 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using max_open_trades: 2\n2026-04-25 20:15:24,663 - freqtrade.configuration.config_validation - INFO - Validating configuration ...\n2026-04-25 20:15:24,665 - freqtrade.configuration.config_validation - CRITICAL - Invalid configuration. Reason: 1.041820847237949 is greater than the maximum of 1\n\nFailed validating 'maximum' in schema['properties']['trailing_stop_positive_offset']:\n    {'description': 'Offset for trailing stop to activate. \\n'\n                    'Usually specified in the strategy and missing in the '\n                    'configuration.',\n     'type': 'number',\n     'minimum': 0,\n     'maximum': 1}\n\nOn instance['trailing_stop_positive_offset']:\n    1.041820847237949\n2026-04-25 20:15:24,666 - freqtrade - ERROR - Configuration error: 1.041820847237949 is greater than the maximum of 1\nPlease make sure to review the documentation at https://www.freqtrade.io/en/stable.",
+  "metrics": {
+    "best_pair": "ETH/USDT",
+    "best_trade_profit_pct": 0.0,
+    "final_balance": 169.89985672999998,
+    "max_drawdown_pct": 11.998700666843334,
+    "profit_factor": 1.2328990747143862,
+    "sharpe_ratio": 0.25032190066218407,
+    "total_profit_abs": 19.89985673,
+    "total_profit_pct": 13.266571153333334,
+    "total_trades": 61,
+    "win_rate": 0.3770491803278688,
+    "worst_pair": "HOME/USDT",
+    "worst_trade_profit_pct": 0.0
+  },
+  "score": 13.266571153333334,
+  "score_breakdown": {},
+  "score_metric": "total_profit_pct",
+  "score_mode": "single_metric",
+  "session_id": "67b9b07d-6015-403e-8bdf-cb20b1ccc55d",
+  "status": "success",
+  "trial_number": 7
+}

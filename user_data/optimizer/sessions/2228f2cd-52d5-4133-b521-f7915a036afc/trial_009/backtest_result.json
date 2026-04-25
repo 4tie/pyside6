@@ -1,0 +1,33 @@
+{
+  "strategy": "yty",
+  "timeframe": "4h",
+  "total_trades": 36,
+  "wins": 21,
+  "losses": 15,
+  "draws": 0,
+  "win_rate": 58.333333333333336,
+  "avg_profit": -1.0521125021183235,
+  "total_profit": -9.738416233333332,
+  "total_profit_abs": -14.60762435,
+  "sharpe_ratio": -0.2921585055880028,
+  "sortino_ratio": -0.602011569403293,
+  "calmar_ratio": -4.031226124215427,
+  "max_drawdown": 12.891830260000006,
+  "max_drawdown_abs": 19.337745390000006,
+  "trade_duration_avg": 8853,
+  "starting_balance": 150.0,
+  "final_balance": 135.39237565,
+  "timerange": "20250422-20260417",
+  "pairlist": [
+    "ETH/USDT",
+    "XRP/USDT",
+    "HOME/USDT",
+    "ADA/USDT"
+  ],
+  "backtest_start": "2025-04-24 00:00:00",
+  "backtest_end": "2026-04-17 00:00:00",
+  "expectancy": -0.4057673430555553,
+  "profit_factor": 0.7066308402163884,
+  "max_consecutive_wins": 7,
+  "max_consecutive_losses": 4
+}

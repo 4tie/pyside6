@@ -1,0 +1,31 @@
+{
+  "backtest_end": "2026-04-25 00:00:00",
+  "backtest_start": "2025-04-30 00:00:00",
+  "calmar": 8.0883,
+  "expectancy": 0.3507,
+  "final_balance": 125.5457,
+  "losses": 32,
+  "max_drawdown_abs": 23.8169,
+  "max_drawdown_pct": 19.0674,
+  "pairs": [
+    "ETH/USDT",
+    "XRP/USDT",
+    "DOGE/USDT"
+  ],
+  "profit_factor": 1.4332,
+  "profit_total_abs": 24.5457,
+  "profit_total_pct": 24.3027,
+  "run_id": "run_2026-04-25_19-47-55_deafa9",
+  "sharpe": 0.4213,
+  "sortino": 0.4524,
+  "start_time": "2026-04-25T19:47:55.755981",
+  "starting_balance": 101.0,
+  "status": "completed",
+  "strategy": "yty",
+  "timeframe": "4h",
+  "timerange": "20250430-20260425",
+  "trades_count": 70,
+  "version_id": null,
+  "win_rate_pct": 54.29,
+  "wins": 38
+}

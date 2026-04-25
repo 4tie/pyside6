@@ -557,29 +557,40 @@ class OptimizerPage(QWidget):
         self._param_table.setToolTip(_PARAM_TABLE_TOOLTIP)
         self._param_table.setModel(self._param_model)
         param_header = self._param_table.horizontalHeader()
-        param_header.setMinimumSectionSize(42)
-        param_header.setSectionResizeMode(_PCOL_ENABLED, QHeaderView.ResizeToContents)
-        param_header.setSectionResizeMode(_PCOL_NAME, QHeaderView.Stretch)
-        param_header.setSectionResizeMode(_PCOL_TYPE, QHeaderView.ResizeToContents)
-        param_header.setSectionResizeMode(_PCOL_SPACE, QHeaderView.ResizeToContents)
-        param_header.setSectionResizeMode(_PCOL_DEFAULT, QHeaderView.ResizeToContents)
-        param_header.setSectionResizeMode(_PCOL_MIN, QHeaderView.ResizeToContents)
-        param_header.setSectionResizeMode(_PCOL_MAX, QHeaderView.ResizeToContents)
+        param_header.setMinimumSectionSize(24)
+        param_header.setSectionResizeMode(QHeaderView.Fixed)
+        param_header.resizeSection(_PCOL_ENABLED, 36)
+        param_header.resizeSection(_PCOL_NAME, 55)
+        param_header.resizeSection(_PCOL_TYPE, 44)
+        param_header.resizeSection(_PCOL_SPACE, 58)
+        param_header.resizeSection(_PCOL_DEFAULT, 70)
+        param_header.resizeSection(_PCOL_MIN, 44)
+        param_header.resizeSection(_PCOL_MAX, 48)
         self._param_table.verticalHeader().setVisible(False)
+        self._param_table.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self._param_table.setWordWrap(False)
         self._param_table.setSelectionBehavior(QAbstractItemView.SelectRows)
-        self._param_table.setMinimumHeight(150)
-        self._param_table.setMaximumHeight(220)
+        self._param_table.setFixedHeight(165)
         layout.addWidget(self._param_table, 1)
 
         layout.addWidget(_section_label("History"))
         self._history_table = QTableWidget(0, 5)
         self._history_table.setHorizontalHeaderLabels(["Strategy", "Started", "Trials", "Best", "Status"])
-        self._history_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        history_header = self._history_table.horizontalHeader()
+        history_header.setMinimumSectionSize(36)
+        history_header.setSectionResizeMode(QHeaderView.Fixed)
+        history_header.resizeSection(0, 82)
+        history_header.resizeSection(1, 88)
+        history_header.resizeSection(2, 52)
+        history_header.resizeSection(3, 58)
+        history_header.resizeSection(4, 84)
         self._history_table.verticalHeader().setVisible(False)
+        self._history_table.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self._history_table.setWordWrap(False)
         self._history_table.setSelectionBehavior(QAbstractItemView.SelectRows)
         self._history_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self._history_table.cellDoubleClicked.connect(self._load_history_session)
-        self._history_table.setMaximumHeight(125)
+        self._history_table.setFixedHeight(112)
         layout.addWidget(self._history_table)
 
         delete_btn = QPushButton("Delete Session")
@@ -767,7 +778,7 @@ class OptimizerPage(QWidget):
         settings = self._settings_svc.load_settings()
         prefs = settings.backtest_preferences
         optimizer_prefs = settings.optimizer_preferences
-        self._timeframe_edit.setText(prefs.default_timeframe or "5m")
+        self._timeframe_combo.setCurrentText(prefs.default_timeframe or "5m")
         self._timerange_edit.setText(prefs.default_timerange or "")
         self._pairs_edit.setText(prefs.default_pairs or "")
         self._wallet_spin.setValue(prefs.dry_run_wallet)
@@ -786,6 +797,30 @@ class OptimizerPage(QWidget):
         has_config = bool(prefs.last_strategy or prefs.default_pairs or settings.user_data_path)
         self._warning_lbl.setVisible(not has_config)
         self._warning_lbl.setText("Backtesting preferences look empty. Configure the Backtesting tab first.")
+
+    def _select_pairs(self) -> None:
+        current = self._pairs_edit.text().strip()
+        try:
+            settings = self._settings_svc.load_settings()
+            favorites = list(getattr(settings, "favorite_pairs", []) or [])
+            if not favorites:
+                favorites = list(getattr(settings.backtest_preferences, "paired_favorites", []) or [])
+        except Exception as exc:
+            _log.warning("Could not load optimizer pair favorites: %s", exc)
+            favorites = []
+
+        seed_pairs = current or ",".join(favorites)
+        text, accepted = QInputDialog.getText(
+            self,
+            "Select Optimizer Pairs",
+            "Pairs, comma-separated:",
+            QLineEdit.Normal,
+            seed_pairs,
+        )
+        if not accepted:
+            return
+        pairs = [pair.strip() for pair in text.split(",") if pair.strip()]
+        self._pairs_edit.setText(",".join(dict.fromkeys(pairs)))
 
     def _on_strategy_changed(self, strategy_name: str) -> None:
         self._param_defs = []

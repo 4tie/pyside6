@@ -1,0 +1,40 @@
+{
+  "candidate_params": {
+    "0": 0.8268362936768517,
+    "13": 0.9219274743817369,
+    "146": 0.1591454025101276,
+    "38": 0.16391192598512916,
+    "buy_ma_count": 7,
+    "buy_ma_gap": 6,
+    "sell_ma_count": 12,
+    "sell_ma_gap": 38,
+    "stoploss": -0.4607582435411203,
+    "trailing_only_offset_is_reached": true,
+    "trailing_stop": true,
+    "trailing_stop_positive": 0.2857545505432594,
+    "trailing_stop_positive_offset": 0.41722801109665303
+  },
+  "is_best": false,
+  "log_excerpt": " 20:00 / 4d 21:32 │\n│ Min/Max/Avg. Duration Losers  │ 1d 08:00 / 21d 12:00 / 5d 06:48 │\n│ Max Consecutive Wins / Loss   │ 8 / 4                           │\n│ Rejected Entry signals        │ 14                              │\n│ Entry/Exit Timeouts           │ 0 / 0                           │\n│                               │                                 │\n│ Min balance                   │ 133.388 USDT                    │\n│ Max balance                   │ 193.87 USDT                     │\n│ Max % of account underwater   │ 12.75%                          │\n│ Absolute drawdown             │ 24.721 USDT (12.75%)            │\n│ Drawdown duration             │ 247 days 16:00:00               │\n│ Profit at drawdown start      │ 43.87 USDT                      │\n│ Profit at drawdown end        │ 19.149 USDT                     │\n│ Drawdown start                │ 2025-08-12 08:00:00             │\n│ Drawdown end                  │ 2026-04-17 00:00:00             │\n│ Market change                 │ -16.15%                         │\n└───────────────────────────────┴─────────────────────────────────┘\n\nBacktested 2025-04-24 00:00:00 -> 2026-04-17 00:00:00 | Max open trades : 2\n                                                           STRATEGY SUMMARY                                                            \n┏━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┓\n┃  Strategy ┃ Trades ┃ Avg Profit % ┃ Tot Profit USDT ┃ Tot Profit % ┃    Avg Duration ┃  Win  Draw  Loss  Win% ┃            Drawdown ┃\n┡━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━┩\n│ MultiMeee │     23 │         1.42 │          21.836 │        14.56 │ 5 days, 1:34:00 │   13     0    10  56.5 │ 24.721 USDT  12.75% │\n└───────────┴────────┴──────────────┴─────────────────┴──────────────┴─────────────────┴────────────────────────┴─────────────────────┘",
+  "metrics": {
+    "best_pair": "ETH/USDT",
+    "best_trade_profit_pct": 0.0,
+    "final_balance": 171.83595302,
+    "max_drawdown_pct": 12.751421560164944,
+    "profit_factor": 1.4900272546021107,
+    "sharpe_ratio": 0.1768406828233322,
+    "total_profit_abs": 21.835953020000005,
+    "total_profit_pct": 14.557302013333336,
+    "total_trades": 23,
+    "win_rate": 0.5652173913043478,
+    "worst_pair": "HOME/USDT",
+    "worst_trade_profit_pct": 0.0
+  },
+  "score": 14.557302013333336,
+  "score_breakdown": {},
+  "score_metric": "total_profit_pct",
+  "score_mode": "single_metric",
+  "session_id": "67b9b07d-6015-403e-8bdf-cb20b1ccc55d",
+  "status": "success",
+  "trial_number": 39
+}
