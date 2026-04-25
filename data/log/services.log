@@ -17608,3 +17608,861 @@ Freqtrade Version:	freqtrade 2026.3
 2026-04-25 05:40:32.488 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
 2026-04-25 05:40:32.488 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
 2026-04-25 05:40:32.489 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:52:12.928 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:52:13.523 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:52:13.716 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:52:13.805 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:52:13.806 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:52:13.806 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:52:13.809 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:52:13.809 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:52:13.810 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:52:13.810 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:52:13.835 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:53:10.233 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:53:10.235 | INFO     | freqtrade_gui.services.process_run_manager | Run started | run_id=6f5d608a-1f1e-4232-b9dd-5d9188ae332a | cmd=/home/mohs/Desktop/ae/pyside6/.venv/bin/python -m freqtrade backtesting --user-data-dir /home/mohs/Desktop/ae/pyside6/user_data --config /home/mohs/Desktop/ae/pyside6/user_data/config.json --strategy-path /home/mohs/Desktop/ae/pyside6/user_data/strategies --strategy MultiMa --timeframe 4h --export trades --timerange 20250430-20260425 -p ADA/USDT ETH/USDT --max-open-trades 2 --dry-run-wallet 80.0 | cwd=/home/mohs/Desktop/ae/pyside6/user_data | pid=74358
+2026-04-25 05:53:10.328 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:10,327 - freqtrade - INFO - freqtrade 2026.3\n'
+2026-04-25 05:53:11.422 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:11,421 - freqtrade.configuration.load_config - INFO - Using con'
+2026-04-25 05:53:11.424 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:11,424 - freqtrade.loggers - INFO - Enabling colorized output.\n'
+2026-04-25 05:53:11.424 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:11,424 - freqtrade.loggers - INFO - Logfile configured\n'
+2026-04-25 05:53:11.425 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:11,424 - freqtrade.loggers - INFO - Verbosity set to 0\n'
+2026-04-25 05:53:11.425 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:11,425 - freqtrade.configuration.configuration - INFO - Using a'
+2026-04-25 05:53:11.425 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:11,425 - freqtrade.configuration.configuration - WARNING - `for'
+2026-04-25 05:53:11.426 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:11,425 - freqtrade.configuration.configuration - INFO - Paramet'
+2026-04-25 05:53:11.426 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:11,425 - freqtrade.configuration.configuration - INFO - Paramet'
+2026-04-25 05:53:11.426 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:11,426 - freqtrade.configuration.configuration - INFO - Paramet'
+2026-04-25 05:53:11.426 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:11,426 - freqtrade.configuration.configuration - INFO - Paramet'
+2026-04-25 05:53:11.427 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:11,426 - freqtrade.configuration.configuration - INFO - Using u'
+2026-04-25 05:53:11.427 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:11,427 - freqtrade.configuration.configuration - INFO - Using d'
+2026-04-25 05:53:11.427 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:11,427 - freqtrade.configuration.configuration - INFO - Paramet'
+2026-04-25 05:53:11.428 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:11,427 - freqtrade.configuration.configuration - INFO - Paramet'
+2026-04-25 05:53:11.428 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:11,428 - freqtrade.configuration.configuration - INFO - Using p'
+2026-04-25 05:53:11.428 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:11,428 - freqtrade.configuration.configuration - INFO - Filter '
+2026-04-25 05:53:11.429 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:11,428 - freqtrade.exchange.check_exchange - INFO - Checking ex'
+2026-04-25 05:53:11.439 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:11,438 - freqtrade.exchange.check_exchange - INFO - Exchange "b'
+2026-04-25 05:53:11.440 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:11,439 - freqtrade.configuration.config_validation - INFO - Val'
+2026-04-25 05:53:11.443 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:11,443 - freqtrade.commands.optimize_commands - INFO - Starting'
+2026-04-25 05:53:11.444 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:11,444 - freqtrade.exchange.exchange - INFO - Instance is runni'
+2026-04-25 05:53:11.445 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:11,444 - freqtrade.exchange.exchange - INFO - Using CCXT 4.5.50'
+2026-04-25 05:53:11.445 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:11,445 - freqtrade.exchange.exchange - INFO - Applying addition'
+2026-04-25 05:53:11.452 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:11,451 - freqtrade.exchange.exchange - INFO - Applying addition'
+2026-04-25 05:53:11.463 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:11,462 - freqtrade.exchange.exchange - INFO - Using Exchange "B'
+2026-04-25 05:53:13.581 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:13,580 - freqtrade.resolvers.exchange_resolver - INFO - Using r'
+2026-04-25 05:53:13.590 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:13,590 - freqtrade.resolvers.iresolver - INFO - Using resolved '
+2026-04-25 05:53:13.591 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:13,590 - freqtrade.strategy.hyper - INFO - Loading parameters f'
+2026-04-25 05:53:13.592 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:13,591 - freqtrade.resolvers.strategy_resolver - INFO - Overrid'
+2026-04-25 05:53:13.593 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:13,592 - freqtrade.resolvers.strategy_resolver - INFO - Overrid'
+2026-04-25 05:53:13.593 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:13,593 - freqtrade.resolvers.strategy_resolver - INFO - Overrid'
+2026-04-25 05:53:13.594 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:13,593 - freqtrade.resolvers.strategy_resolver - INFO - Overrid'
+2026-04-25 05:53:13.594 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:13,594 - freqtrade.resolvers.strategy_resolver - INFO - Overrid'
+2026-04-25 05:53:13.595 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:13,595 - freqtrade.resolvers.strategy_resolver - INFO - Strateg'
+2026-04-25 05:53:13.596 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:13,595 - freqtrade.resolvers.strategy_resolver - INFO - Strateg'
+2026-04-25 05:53:13.596 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:13,596 - freqtrade.resolvers.strategy_resolver - INFO - Strateg'
+2026-04-25 05:53:13.597 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:13,596 - freqtrade.resolvers.strategy_resolver - INFO - Strateg'
+2026-04-25 05:53:13.597 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:13,597 - freqtrade.resolvers.strategy_resolver - INFO - Strateg'
+2026-04-25 05:53:13.598 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:13,597 - freqtrade.resolvers.strategy_resolver - INFO - Strateg'
+2026-04-25 05:53:13.598 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:13,598 - freqtrade.resolvers.strategy_resolver - INFO - Strateg'
+2026-04-25 05:53:13.599 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:13,599 - freqtrade.resolvers.strategy_resolver - INFO - Strateg'
+2026-04-25 05:53:13.600 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:13,599 - freqtrade.resolvers.strategy_resolver - INFO - Strateg'
+2026-04-25 05:53:13.600 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: "'stoploss_on_exchange_interval': 60}\n"
+2026-04-25 05:53:13.600 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:13,600 - freqtrade.resolvers.strategy_resolver - INFO - Strateg'
+2026-04-25 05:53:13.601 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:13,600 - freqtrade.resolvers.strategy_resolver - INFO - Strateg'
+2026-04-25 05:53:13.603 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:13,601 - freqtrade.resolvers.strategy_resolver - INFO - Strateg'
+2026-04-25 05:53:13.605 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:13,601 - freqtrade.resolvers.strategy_resolver - INFO - Strateg'
+2026-04-25 05:53:13.605 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:13,601 - freqtrade.resolvers.strategy_resolver - INFO - Strateg'
+2026-04-25 05:53:13.605 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:13,602 - freqtrade.resolvers.strategy_resolver - INFO - Strateg'
+2026-04-25 05:53:13.605 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:13,602 - freqtrade.resolvers.strategy_resolver - INFO - Strateg'
+2026-04-25 05:53:13.606 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:13,603 - freqtrade.resolvers.strategy_resolver - INFO - Strateg'
+2026-04-25 05:53:13.606 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:13,603 - freqtrade.resolvers.strategy_resolver - INFO - Strateg'
+2026-04-25 05:53:13.606 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:13,603 - freqtrade.resolvers.strategy_resolver - INFO - Strateg'
+2026-04-25 05:53:13.606 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:13,603 - freqtrade.resolvers.strategy_resolver - INFO - Strateg'
+2026-04-25 05:53:13.606 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:13,604 - freqtrade.resolvers.strategy_resolver - INFO - Strateg'
+2026-04-25 05:53:13.606 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:13,604 - freqtrade.resolvers.strategy_resolver - INFO - Strateg'
+2026-04-25 05:53:13.606 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:13,604 - freqtrade.configuration.config_validation - INFO - Val'
+2026-04-25 05:53:13.610 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:13,609 - freqtrade.resolvers.iresolver - INFO - Using resolved '
+2026-04-25 05:53:13.610 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: "'/home/mohs/Desktop/ae/pyside6/.venv/lib/python3.12/site-packages/freqtrade/plug"
+2026-04-25 05:53:13.626 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:13,625 - freqtrade.optimize.backtesting - INFO - Using fee 0.10'
+2026-04-25 05:53:13.640 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:13,639 - freqtrade.data.history.datahandlers.idatahandler - WAR'
+2026-04-25 05:53:13.663 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:13,662 - freqtrade.data.history.datahandlers.idatahandler - WAR'
+2026-04-25 05:53:13.672 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:13,672 - freqtrade.optimize.backtesting - INFO - Loading data f'
+2026-04-25 05:53:13.731 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:13,730 - freqtrade.optimize.backtesting - INFO - Dataload compl'
+2026-04-25 05:53:13.734 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:13,734 - freqtrade.optimize.backtesting - INFO - Running backte'
+2026-04-25 05:53:13.735 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:13,735 - freqtrade.strategy.hyper - INFO - Strategy Parameter: '
+2026-04-25 05:53:13.735 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:13,735 - freqtrade.strategy.hyper - INFO - Strategy Parameter: '
+2026-04-25 05:53:13.735 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:13,735 - freqtrade.strategy.hyper - INFO - Strategy Parameter: '
+2026-04-25 05:53:13.736 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:13,735 - freqtrade.strategy.hyper - INFO - Strategy Parameter: '
+2026-04-25 05:53:13.746 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:13,745 - freqtrade.optimize.backtesting - INFO - Backtesting wi'
+2026-04-25 05:53:14.267 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stderr: '2026-04-25 05:53:14,267 - freqtrade.misc - INFO - dumping json to "/home/mohs/De'
+2026-04-25 05:53:14.284 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '  ADA/USDT\t\n'
+2026-04-25 05:53:14.285 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '  ETH/USDT\t\n'
+2026-04-25 05:53:14.285 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: 'Result for strategy MultiMa\n'
+2026-04-25 05:53:14.285 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '                                               BACKTESTING REPORT               '
+2026-04-25 05:53:14.285 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '┏━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━'
+2026-04-25 05:53:14.285 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '┃     Pair ┃ Trades ┃ Avg Profit % ┃ Tot Profit USDT ┃ Tot Profit % ┃     Avg Du'
+2026-04-25 05:53:14.285 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '┡━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━'
+2026-04-25 05:53:14.285 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│ ETH/USDT │     13 │         1.72 │           9.320 │        11.65 │ 2 days, 14'
+2026-04-25 05:53:14.286 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│ ADA/USDT │      8 │        -0.51 │          -2.134 │        -2.67 │ 5 days, 19'
+2026-04-25 05:53:14.286 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│    TOTAL │     21 │         0.87 │           7.187 │         8.98 │ 3 days, 19'
+2026-04-25 05:53:14.286 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '└──────────┴────────┴──────────────┴─────────────────┴──────────────┴───────────'
+2026-04-25 05:53:14.288 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '                                         LEFT OPEN TRADES REPORT                '
+2026-04-25 05:53:14.288 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '┏━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━'
+2026-04-25 05:53:14.288 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '┃  Pair ┃ Trades ┃ Avg Profit % ┃ Tot Profit USDT ┃ Tot Profit % ┃ Avg Duration '
+2026-04-25 05:53:14.288 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '┡━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━'
+2026-04-25 05:53:14.289 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│ TOTAL │      0 │          0.0 │           0.000 │          0.0 │         0:00 '
+2026-04-25 05:53:14.289 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '└───────┴────────┴──────────────┴─────────────────┴──────────────┴──────────────'
+2026-04-25 05:53:14.291 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '                                                  ENTER TAG STATS               '
+2026-04-25 05:53:14.291 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '┏━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━'
+2026-04-25 05:53:14.292 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '┃ Enter Tag ┃ Entries ┃ Avg Profit % ┃ Tot Profit USDT ┃ Tot Profit % ┃     Avg '
+2026-04-25 05:53:14.292 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '┡━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━'
+2026-04-25 05:53:14.292 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│     OTHER │      21 │         0.87 │           7.187 │         8.98 │ 3 days, '
+2026-04-25 05:53:14.292 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│     TOTAL │      21 │         0.87 │           7.187 │         8.98 │ 3 days, '
+2026-04-25 05:53:14.292 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '└───────────┴─────────┴──────────────┴─────────────────┴──────────────┴─────────'
+2026-04-25 05:53:14.295 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '                                                 EXIT REASON STATS              '
+2026-04-25 05:53:14.295 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '┏━━━━━━━━━━━━━┳━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━'
+2026-04-25 05:53:14.295 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '┃ Exit Reason ┃ Exits ┃ Avg Profit % ┃ Tot Profit USDT ┃ Tot Profit % ┃     Avg '
+2026-04-25 05:53:14.295 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '┡━━━━━━━━━━━━━╇━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━'
+2026-04-25 05:53:14.295 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│         roi │    17 │         2.01 │          14.452 │        18.06 │  4 days,'
+2026-04-25 05:53:14.295 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│ exit_signal │     4 │        -3.98 │          -7.265 │        -9.08 │ 2 days, '
+2026-04-25 05:53:14.296 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│       TOTAL │    21 │         0.87 │           7.187 │         8.98 │ 3 days, '
+2026-04-25 05:53:14.296 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '└─────────────┴───────┴──────────────┴─────────────────┴──────────────┴─────────'
+2026-04-25 05:53:14.299 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '                                                        MIXED TAG STATS         '
+2026-04-25 05:53:14.299 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '┏━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━'
+2026-04-25 05:53:14.299 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '┃ Enter Tag ┃ Exit Reason ┃ Trades ┃ Avg Profit % ┃ Tot Profit USDT ┃ Tot Profit'
+2026-04-25 05:53:14.299 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '┡━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━'
+2026-04-25 05:53:14.299 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│           │         roi │     17 │         2.01 │          14.452 │        18.'
+2026-04-25 05:53:14.300 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│           │ exit_signal │      4 │        -3.98 │          -7.265 │        -9.'
+2026-04-25 05:53:14.300 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│     TOTAL │             │     21 │         0.87 │           7.187 │         8.'
+2026-04-25 05:53:14.300 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '└───────────┴─────────────┴────────┴──────────────┴─────────────────┴───────────'
+2026-04-25 05:53:14.312 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '                          SUMMARY METRICS                          \n'
+2026-04-25 05:53:14.312 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n'
+2026-04-25 05:53:14.312 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '┃ Metric                        ┃ Value                           ┃\n'
+2026-04-25 05:53:14.313 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩\n'
+2026-04-25 05:53:14.314 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│ Backtesting from              │ 2025-04-30 00:00:00             │\n'
+2026-04-25 05:53:14.314 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│ Backtesting to                │ 2026-04-21 20:00:00             │\n'
+2026-04-25 05:53:14.314 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│ Trading Mode                  │ Spot                            │\n'
+2026-04-25 05:53:14.315 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│ Max open trades               │ 2                               │\n'
+2026-04-25 05:53:14.315 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│                               │                                 │\n'
+2026-04-25 05:53:14.315 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│ Total/Daily Avg Trades        │ 21 / 0.06                       │\n'
+2026-04-25 05:53:14.315 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│ Starting balance              │ 80 USDT                         │\n'
+2026-04-25 05:53:14.315 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│ Final balance                 │ 87.187 USDT                     │\n'
+2026-04-25 05:53:14.315 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│ Absolute profit               │ 7.187 USDT                      │\n'
+2026-04-25 05:53:14.316 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│ Total profit %                │ 8.98%                           │\n'
+2026-04-25 05:53:14.316 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│ CAGR %                        │ 9.22%                           │\n'
+2026-04-25 05:53:14.316 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│ Sortino                       │ 0.34                            │\n'
+2026-04-25 05:53:14.316 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│ Sharpe                        │ 0.22                            │\n'
+2026-04-25 05:53:14.316 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│ Calmar                        │ 7.79                            │\n'
+2026-04-25 05:53:14.317 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│ SQN                           │ 0.89                            │\n'
+2026-04-25 05:53:14.317 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│ Profit factor                 │ 1.99                            │\n'
+2026-04-25 05:53:14.317 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│ Expectancy (Ratio)            │ 0.34 (0.42)                     │\n'
+2026-04-25 05:53:14.317 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│ Avg. daily profit             │ 0.02 USDT                       │\n'
+2026-04-25 05:53:14.317 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│ Avg. stake amount             │ 43.551 USDT                     │\n'
+2026-04-25 05:53:14.317 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│ Total trade volume            │ 1839.997 USDT                   │\n'
+2026-04-25 05:53:14.317 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│                               │                                 │\n'
+2026-04-25 05:53:14.318 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│ Best Pair                     │ ETH/USDT 11.65%                 │\n'
+2026-04-25 05:53:14.318 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│ Worst Pair                    │ ADA/USDT -2.67%                 │\n'
+2026-04-25 05:53:14.318 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│ Best trade                    │ ETH/USDT 12.30%                 │\n'
+2026-04-25 05:53:14.318 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│ Worst trade                   │ ADA/USDT -6.49%                 │\n'
+2026-04-25 05:53:14.318 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│ Best day                      │ 5.07 USDT                       │\n'
+2026-04-25 05:53:14.318 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│ Worst day                     │ -2.925 USDT                     │\n'
+2026-04-25 05:53:14.318 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│ Days win/draw/lose            │ 11 / 295 / 9                    │\n'
+2026-04-25 05:53:14.319 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│ Min/Max/Avg. Duration Winners │ 1d 04:00 / 3d 20:00 / 2d 09:00  │\n'
+2026-04-25 05:53:14.319 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│ Min/Max/Avg. Duration Losers  │ 1d 00:00 / 31d 04:00 / 5d 18:13 │\n'
+2026-04-25 05:53:14.319 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│ Max Consecutive Wins / Loss   │ 3 / 3                           │\n'
+2026-04-25 05:53:14.319 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│ Rejected Entry signals        │ 0                               │\n'
+2026-04-25 05:53:14.319 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│ Entry/Exit Timeouts           │ 0 / 0                           │\n'
+2026-04-25 05:53:14.319 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│                               │                                 │\n'
+2026-04-25 05:53:14.319 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│ Min balance                   │ 82.234 USDT                     │\n'
+2026-04-25 05:53:14.319 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│ Max balance                   │ 92.94 USDT                      │\n'
+2026-04-25 05:53:14.320 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│ Max % of account underwater   │ 6.19%                           │\n'
+2026-04-25 05:53:14.320 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│ Absolute drawdown             │ 5.754 USDT (6.19%)              │\n'
+2026-04-25 05:53:14.320 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│ Drawdown duration             │ 245 days 16:00:00               │\n'
+2026-04-25 05:53:14.320 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│ Profit at drawdown start      │ 12.94 USDT                      │\n'
+2026-04-25 05:53:14.320 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│ Profit at drawdown end        │ 7.187 USDT                      │\n'
+2026-04-25 05:53:14.320 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│ Drawdown start                │ 2025-08-17 08:00:00             │\n'
+2026-04-25 05:53:14.320 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│ Drawdown end                  │ 2026-04-20 00:00:00             │\n'
+2026-04-25 05:53:14.321 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│ Market change                 │ -17.89%                         │\n'
+2026-04-25 05:53:14.321 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '└───────────────────────────────┴─────────────────────────────────┘\n'
+2026-04-25 05:53:14.321 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '\n'
+2026-04-25 05:53:14.321 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: 'Backtested 2025-04-30 00:00:00 -> 2026-04-21 20:00:00 | Max open trades : 2\n'
+2026-04-25 05:53:14.321 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '                                                          STRATEGY SUMMARY      '
+2026-04-25 05:53:14.322 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '┏━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━'
+2026-04-25 05:53:14.322 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '┃ Strategy ┃ Trades ┃ Avg Profit % ┃ Tot Profit USDT ┃ Tot Profit % ┃     Avg Du'
+2026-04-25 05:53:14.322 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '┡━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━'
+2026-04-25 05:53:14.323 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '│  MultiMa │     21 │         0.87 │           7.187 │         8.98 │ 3 days, 19'
+2026-04-25 05:53:14.323 | DEBUG    | freqtrade_gui.services.process_run_manager | run 6f5d608a stdout: '└──────────┴────────┴──────────────┴─────────────────┴──────────────┴───────────'
+2026-04-25 05:53:14.814 | INFO     | freqtrade_gui.services.process_run_manager | Run 6f5d608a-1f1e-4232-b9dd-5d9188ae332a finished | status=finished | exit_code=0
+2026-04-25 05:53:14.851 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:53:14.858 | INFO     | freqtrade_gui.services.backtest | Backtest results saved: strategy=MultiMa run_id=run_2026-04-25_05-53-14_2f9032
+2026-04-25 05:54:43.885 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:54:43.888 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:54:43.891 | INFO     | freqtrade_gui.settings         | Settings saved to /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:54:43.891 | DEBUG    | freqtrade_gui.settings         | Saved: python=/home/mohs/Desktop/ae/pyside6/.venv/bin/python venv=/home/mohs/Desktop/ae/pyside6/.venv user_data=/home/mohs/Desktop/ae/pyside6/user_data
+2026-04-25 05:54:43.896 | INFO     | freqtrade_gui.services.process_run_manager | Run started | run_id=23edb1ee-5298-41c8-8a46-f6fe8de70b7e | cmd=/home/mohs/Desktop/ae/pyside6/.venv/bin/python -m freqtrade download-data --user-data-dir /home/mohs/Desktop/ae/pyside6/user_data --config /home/mohs/Desktop/ae/pyside6/user_data/config.json --timeframe 4h --prepend --timerange 20250430-20260425 -p ADA/USDT ETH/USDT | cwd=/home/mohs/Desktop/ae/pyside6/user_data | pid=75058
+2026-04-25 05:54:44.017 | DEBUG    | freqtrade_gui.services.process_run_manager | run 23edb1ee stderr: '2026-04-25 05:54:44,017 - freqtrade - INFO - freqtrade 2026.3\n'
+2026-04-25 05:54:44.833 | DEBUG    | freqtrade_gui.services.process_run_manager | run 23edb1ee stderr: '2026-04-25 05:54:44,833 - freqtrade.configuration.load_config - INFO - Using con'
+2026-04-25 05:54:44.835 | DEBUG    | freqtrade_gui.services.process_run_manager | run 23edb1ee stderr: '2026-04-25 05:54:44,834 - freqtrade.loggers - INFO - Enabling colorized output.\n'
+2026-04-25 05:54:44.835 | DEBUG    | freqtrade_gui.services.process_run_manager | run 23edb1ee stderr: '2026-04-25 05:54:44,835 - freqtrade.loggers - INFO - Logfile configured\n'
+2026-04-25 05:54:44.835 | DEBUG    | freqtrade_gui.services.process_run_manager | run 23edb1ee stderr: '2026-04-25 05:54:44,835 - freqtrade.loggers - INFO - Verbosity set to 0\n'
+2026-04-25 05:54:44.836 | DEBUG    | freqtrade_gui.services.process_run_manager | run 23edb1ee stderr: '2026-04-25 05:54:44,835 - freqtrade.configuration.configuration - WARNING - `for'
+2026-04-25 05:54:44.836 | DEBUG    | freqtrade_gui.services.process_run_manager | run 23edb1ee stderr: '2026-04-25 05:54:44,836 - freqtrade.configuration.configuration - INFO - Paramet'
+2026-04-25 05:54:44.836 | DEBUG    | freqtrade_gui.services.process_run_manager | run 23edb1ee stderr: '2026-04-25 05:54:44,836 - freqtrade.configuration.configuration - INFO - Using u'
+2026-04-25 05:54:44.837 | DEBUG    | freqtrade_gui.services.process_run_manager | run 23edb1ee stderr: '2026-04-25 05:54:44,836 - freqtrade.configuration.configuration - INFO - Using d'
+2026-04-25 05:54:44.837 | DEBUG    | freqtrade_gui.services.process_run_manager | run 23edb1ee stderr: '2026-04-25 05:54:44,837 - freqtrade.configuration.configuration - INFO - Using p'
+2026-04-25 05:54:44.837 | DEBUG    | freqtrade_gui.services.process_run_manager | run 23edb1ee stderr: '2026-04-25 05:54:44,837 - freqtrade.configuration.configuration - INFO - Prepend'
+2026-04-25 05:54:44.837 | DEBUG    | freqtrade_gui.services.process_run_manager | run 23edb1ee stderr: '2026-04-25 05:54:44,837 - freqtrade.configuration.configuration - INFO - timefra'
+2026-04-25 05:54:44.838 | DEBUG    | freqtrade_gui.services.process_run_manager | run 23edb1ee stderr: '2026-04-25 05:54:44,837 - freqtrade.configuration.configuration - INFO - Filter '
+2026-04-25 05:54:44.838 | DEBUG    | freqtrade_gui.services.process_run_manager | run 23edb1ee stderr: '2026-04-25 05:54:44,838 - freqtrade.exchange.check_exchange - INFO - Checking ex'
+2026-04-25 05:54:44.851 | DEBUG    | freqtrade_gui.services.process_run_manager | run 23edb1ee stderr: '2026-04-25 05:54:44,850 - freqtrade.exchange.check_exchange - INFO - Exchange "b'
+2026-04-25 05:54:44.853 | DEBUG    | freqtrade_gui.services.process_run_manager | run 23edb1ee stderr: '2026-04-25 05:54:44,851 - freqtrade.configuration.config_validation - INFO - Val'
+2026-04-25 05:54:45.078 | DEBUG    | freqtrade_gui.services.process_run_manager | run 23edb1ee stderr: '2026-04-25 05:54:45,077 - freqtrade.exchange.exchange - INFO - Instance is runni'
+2026-04-25 05:54:45.078 | DEBUG    | freqtrade_gui.services.process_run_manager | run 23edb1ee stderr: '2026-04-25 05:54:45,078 - freqtrade.exchange.exchange - INFO - Using CCXT 4.5.50'
+2026-04-25 05:54:45.078 | DEBUG    | freqtrade_gui.services.process_run_manager | run 23edb1ee stderr: '2026-04-25 05:54:45,078 - freqtrade.exchange.exchange - INFO - Applying addition'
+2026-04-25 05:54:45.084 | DEBUG    | freqtrade_gui.services.process_run_manager | run 23edb1ee stderr: '2026-04-25 05:54:45,084 - freqtrade.exchange.exchange - INFO - Applying addition'
+2026-04-25 05:54:45.094 | DEBUG    | freqtrade_gui.services.process_run_manager | run 23edb1ee stderr: '2026-04-25 05:54:45,094 - freqtrade.exchange.exchange - INFO - Using Exchange "B'
+2026-04-25 05:54:45.095 | DEBUG    | freqtrade_gui.services.process_run_manager | run 23edb1ee stderr: '2026-04-25 05:54:45,095 - freqtrade.resolvers.exchange_resolver - INFO - Using r'
+2026-04-25 05:54:45.096 | DEBUG    | freqtrade_gui.services.process_run_manager | run 23edb1ee stderr: '2026-04-25 05:54:45,096 - freqtrade.exchange.exchange - INFO - Markets were not '
+2026-04-25 05:54:46.467 | DEBUG    | freqtrade_gui.services.process_run_manager | run 23edb1ee stderr: '2026-04-25 05:54:46,467 - freqtrade.data.history.history_utils - INFO - About to'
+2026-04-25 05:54:46.483 | DEBUG    | freqtrade_gui.services.process_run_manager | run 23edb1ee stderr: '2026-04-25 05:54:46,482 - freqtrade.data.history.history_utils - INFO - Download'
+2026-04-25 05:54:46.483 | DEBUG    | freqtrade_gui.services.process_run_manager | run 23edb1ee stderr: '2025-04-30T00:00:00 to 2025-04-24T00:00:00\n'
+2026-04-25 05:54:46.489 | DEBUG    | freqtrade_gui.services.process_run_manager | run 23edb1ee stderr: '2026-04-25 05:54:46,489 - freqtrade.data.history.history_utils - INFO - Download'
+2026-04-25 05:54:46.509 | DEBUG    | freqtrade_gui.services.process_run_manager | run 23edb1ee stderr: '2026-04-25 05:54:46,508 - freqtrade.data.history.history_utils - INFO - Download'
+2026-04-25 05:54:46.510 | DEBUG    | freqtrade_gui.services.process_run_manager | run 23edb1ee stderr: '2025-04-30T00:00:00 to 2025-04-24T00:00:00\n'
+2026-04-25 05:54:46.515 | DEBUG    | freqtrade_gui.services.process_run_manager | run 23edb1ee stderr: '2026-04-25 05:54:46,515 - freqtrade.data.history.history_utils - INFO - Download'
+2026-04-25 05:54:46.525 | DEBUG    | freqtrade_gui.services.process_run_manager | run 23edb1ee stderr: 'Timeframe            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'
+2026-04-25 05:54:46.525 | DEBUG    | freqtrade_gui.services.process_run_manager | run 23edb1ee stderr: 'Downloading ETH/USDT ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'
+2026-04-25 05:54:47.223 | INFO     | freqtrade_gui.services.process_run_manager | Run 23edb1ee-5298-41c8-8a46-f6fe8de70b7e finished | status=finished | exit_code=0
+2026-04-25 05:56:00.577 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:56:00.579 | INFO     | freqtrade_gui.services.process_run_manager | Run started | run_id=f6a1dfc8-49e6-441e-8405-5dd75bf25887 | cmd=/home/mohs/Desktop/ae/pyside6/.venv/bin/python -m freqtrade backtesting --user-data-dir /home/mohs/Desktop/ae/pyside6/user_data --config /home/mohs/Desktop/ae/pyside6/user_data/config.json --strategy-path /home/mohs/Desktop/ae/pyside6/user_data/strategies --strategy MultiMa --timeframe 4h --export trades --timerange 20250430-20260425 -p ADA/USDT ETH/USDT --max-open-trades 2 --dry-run-wallet 80.0 | cwd=/home/mohs/Desktop/ae/pyside6/user_data | pid=75408
+2026-04-25 05:56:00.670 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:00,670 - freqtrade - INFO - freqtrade 2026.3\n'
+2026-04-25 05:56:01.710 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:01,709 - freqtrade.configuration.load_config - INFO - Using con'
+2026-04-25 05:56:01.712 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:01,711 - freqtrade.loggers - INFO - Enabling colorized output.\n'
+2026-04-25 05:56:01.712 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:01,712 - freqtrade.loggers - INFO - Logfile configured\n'
+2026-04-25 05:56:01.712 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:01,712 - freqtrade.loggers - INFO - Verbosity set to 0\n'
+2026-04-25 05:56:01.713 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:01,712 - freqtrade.configuration.configuration - INFO - Using a'
+2026-04-25 05:56:01.713 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:01,713 - freqtrade.configuration.configuration - WARNING - `for'
+2026-04-25 05:56:01.713 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:01,713 - freqtrade.configuration.configuration - INFO - Paramet'
+2026-04-25 05:56:01.713 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:01,713 - freqtrade.configuration.configuration - INFO - Paramet'
+2026-04-25 05:56:01.714 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:01,713 - freqtrade.configuration.configuration - INFO - Paramet'
+2026-04-25 05:56:01.714 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:01,714 - freqtrade.configuration.configuration - INFO - Paramet'
+2026-04-25 05:56:01.714 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:01,714 - freqtrade.configuration.configuration - INFO - Using u'
+2026-04-25 05:56:01.715 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:01,714 - freqtrade.configuration.configuration - INFO - Using d'
+2026-04-25 05:56:01.715 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:01,715 - freqtrade.configuration.configuration - INFO - Paramet'
+2026-04-25 05:56:01.715 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:01,715 - freqtrade.configuration.configuration - INFO - Paramet'
+2026-04-25 05:56:01.716 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:01,715 - freqtrade.configuration.configuration - INFO - Using p'
+2026-04-25 05:56:01.716 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:01,716 - freqtrade.configuration.configuration - INFO - Filter '
+2026-04-25 05:56:01.716 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:01,716 - freqtrade.exchange.check_exchange - INFO - Checking ex'
+2026-04-25 05:56:01.726 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:01,726 - freqtrade.exchange.check_exchange - INFO - Exchange "b'
+2026-04-25 05:56:01.727 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:01,726 - freqtrade.configuration.config_validation - INFO - Val'
+2026-04-25 05:56:01.730 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:01,730 - freqtrade.commands.optimize_commands - INFO - Starting'
+2026-04-25 05:56:01.731 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:01,730 - freqtrade.exchange.exchange - INFO - Instance is runni'
+2026-04-25 05:56:01.731 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:01,731 - freqtrade.exchange.exchange - INFO - Using CCXT 4.5.50'
+2026-04-25 05:56:01.731 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:01,731 - freqtrade.exchange.exchange - INFO - Applying addition'
+2026-04-25 05:56:01.737 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:01,737 - freqtrade.exchange.exchange - INFO - Applying addition'
+2026-04-25 05:56:01.743 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:01,743 - freqtrade.exchange.exchange - INFO - Using Exchange "B'
+2026-04-25 05:56:02.897 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:02,897 - freqtrade.resolvers.exchange_resolver - INFO - Using r'
+2026-04-25 05:56:02.906 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:02,906 - freqtrade.resolvers.iresolver - INFO - Using resolved '
+2026-04-25 05:56:02.907 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:02,906 - freqtrade.strategy.hyper - INFO - Loading parameters f'
+2026-04-25 05:56:02.908 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:02,908 - freqtrade.resolvers.strategy_resolver - INFO - Overrid'
+2026-04-25 05:56:02.909 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:02,908 - freqtrade.resolvers.strategy_resolver - INFO - Overrid'
+2026-04-25 05:56:02.909 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:02,909 - freqtrade.resolvers.strategy_resolver - INFO - Overrid'
+2026-04-25 05:56:02.910 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:02,909 - freqtrade.resolvers.strategy_resolver - INFO - Overrid'
+2026-04-25 05:56:02.910 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:02,910 - freqtrade.resolvers.strategy_resolver - INFO - Overrid'
+2026-04-25 05:56:02.911 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:02,910 - freqtrade.resolvers.strategy_resolver - INFO - Strateg'
+2026-04-25 05:56:02.911 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:02,911 - freqtrade.resolvers.strategy_resolver - INFO - Strateg'
+2026-04-25 05:56:02.912 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:02,911 - freqtrade.resolvers.strategy_resolver - INFO - Strateg'
+2026-04-25 05:56:02.912 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:02,912 - freqtrade.resolvers.strategy_resolver - INFO - Strateg'
+2026-04-25 05:56:02.912 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:02,912 - freqtrade.resolvers.strategy_resolver - INFO - Strateg'
+2026-04-25 05:56:02.913 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:02,913 - freqtrade.resolvers.strategy_resolver - INFO - Strateg'
+2026-04-25 05:56:02.914 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:02,913 - freqtrade.resolvers.strategy_resolver - INFO - Strateg'
+2026-04-25 05:56:02.914 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:02,914 - freqtrade.resolvers.strategy_resolver - INFO - Strateg'
+2026-04-25 05:56:02.915 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:02,914 - freqtrade.resolvers.strategy_resolver - INFO - Strateg'
+2026-04-25 05:56:02.915 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: "'stoploss_on_exchange_interval': 60}\n"
+2026-04-25 05:56:02.916 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:02,915 - freqtrade.resolvers.strategy_resolver - INFO - Strateg'
+2026-04-25 05:56:02.916 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:02,916 - freqtrade.resolvers.strategy_resolver - INFO - Strateg'
+2026-04-25 05:56:02.917 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:02,916 - freqtrade.resolvers.strategy_resolver - INFO - Strateg'
+2026-04-25 05:56:02.917 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:02,917 - freqtrade.resolvers.strategy_resolver - INFO - Strateg'
+2026-04-25 05:56:02.918 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:02,918 - freqtrade.resolvers.strategy_resolver - INFO - Strateg'
+2026-04-25 05:56:02.918 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:02,918 - freqtrade.resolvers.strategy_resolver - INFO - Strateg'
+2026-04-25 05:56:02.919 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:02,918 - freqtrade.resolvers.strategy_resolver - INFO - Strateg'
+2026-04-25 05:56:02.919 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:02,919 - freqtrade.resolvers.strategy_resolver - INFO - Strateg'
+2026-04-25 05:56:02.920 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:02,919 - freqtrade.resolvers.strategy_resolver - INFO - Strateg'
+2026-04-25 05:56:02.920 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:02,920 - freqtrade.resolvers.strategy_resolver - INFO - Strateg'
+2026-04-25 05:56:02.920 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:02,920 - freqtrade.resolvers.strategy_resolver - INFO - Strateg'
+2026-04-25 05:56:02.921 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:02,920 - freqtrade.resolvers.strategy_resolver - INFO - Strateg'
+2026-04-25 05:56:02.921 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:02,921 - freqtrade.resolvers.strategy_resolver - INFO - Strateg'
+2026-04-25 05:56:02.921 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:02,921 - freqtrade.configuration.config_validation - INFO - Val'
+2026-04-25 05:56:02.926 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:02,925 - freqtrade.resolvers.iresolver - INFO - Using resolved '
+2026-04-25 05:56:02.926 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: "'/home/mohs/Desktop/ae/pyside6/.venv/lib/python3.12/site-packages/freqtrade/plug"
+2026-04-25 05:56:02.942 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:02,941 - freqtrade.optimize.backtesting - INFO - Using fee 0.10'
+2026-04-25 05:56:02.955 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:02,952 - freqtrade.data.history.datahandlers.idatahandler - WAR'
+2026-04-25 05:56:02.972 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:02,972 - freqtrade.data.history.datahandlers.idatahandler - WAR'
+2026-04-25 05:56:02.984 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:02,984 - freqtrade.optimize.backtesting - INFO - Loading data f'
+2026-04-25 05:56:03.038 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:03,037 - freqtrade.optimize.backtesting - INFO - Dataload compl'
+2026-04-25 05:56:03.040 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:03,040 - freqtrade.data.btanalysis.bt_fileutils - INFO - Loadin'
+2026-04-25 05:56:03.042 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stderr: '2026-04-25 05:56:03,042 - freqtrade.optimize.backtesting - INFO - Reusing result'
+2026-04-25 05:56:03.047 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: 'Result for strategy MultiMa\n'
+2026-04-25 05:56:03.047 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '                                               BACKTESTING REPORT               '
+2026-04-25 05:56:03.048 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '┏━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━'
+2026-04-25 05:56:03.048 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '┃     Pair ┃ Trades ┃ Avg Profit % ┃ Tot Profit USDT ┃ Tot Profit % ┃     Avg Du'
+2026-04-25 05:56:03.048 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '┡━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━'
+2026-04-25 05:56:03.048 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│ ETH/USDT │     13 │         1.72 │           9.320 │        11.65 │ 2 days, 14'
+2026-04-25 05:56:03.048 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│ ADA/USDT │      8 │        -0.51 │          -2.134 │        -2.67 │ 5 days, 19'
+2026-04-25 05:56:03.048 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│    TOTAL │     21 │         0.87 │           7.187 │         8.98 │ 3 days, 19'
+2026-04-25 05:56:03.048 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '└──────────┴────────┴──────────────┴─────────────────┴──────────────┴───────────'
+2026-04-25 05:56:03.049 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '                                         LEFT OPEN TRADES REPORT                '
+2026-04-25 05:56:03.049 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '┏━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━'
+2026-04-25 05:56:03.049 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '┃  Pair ┃ Trades ┃ Avg Profit % ┃ Tot Profit USDT ┃ Tot Profit % ┃ Avg Duration '
+2026-04-25 05:56:03.049 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '┡━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━'
+2026-04-25 05:56:03.049 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│ TOTAL │      0 │          0.0 │           0.000 │          0.0 │         0:00 '
+2026-04-25 05:56:03.052 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '└───────┴────────┴──────────────┴─────────────────┴──────────────┴──────────────'
+2026-04-25 05:56:03.052 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '                                                  ENTER TAG STATS               '
+2026-04-25 05:56:03.052 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '┏━━━━━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━'
+2026-04-25 05:56:03.052 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '┃ Enter Tag ┃ Entries ┃ Avg Profit % ┃ Tot Profit USDT ┃ Tot Profit % ┃     Avg '
+2026-04-25 05:56:03.052 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '┡━━━━━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━'
+2026-04-25 05:56:03.052 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│     OTHER │      21 │         0.87 │           7.187 │         8.98 │ 3 days, '
+2026-04-25 05:56:03.052 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│     TOTAL │      21 │         0.87 │           7.187 │         8.98 │ 3 days, '
+2026-04-25 05:56:03.052 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '└───────────┴─────────┴──────────────┴─────────────────┴──────────────┴─────────'
+2026-04-25 05:56:03.054 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '                                                 EXIT REASON STATS              '
+2026-04-25 05:56:03.055 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '┏━━━━━━━━━━━━━┳━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━'
+2026-04-25 05:56:03.055 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '┃ Exit Reason ┃ Exits ┃ Avg Profit % ┃ Tot Profit USDT ┃ Tot Profit % ┃     Avg '
+2026-04-25 05:56:03.055 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '┡━━━━━━━━━━━━━╇━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━'
+2026-04-25 05:56:03.055 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│         roi │    17 │         2.01 │          14.452 │        18.06 │  4 days,'
+2026-04-25 05:56:03.055 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│ exit_signal │     4 │        -3.98 │          -7.265 │        -9.08 │ 2 days, '
+2026-04-25 05:56:03.055 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│       TOTAL │    21 │         0.87 │           7.187 │         8.98 │ 3 days, '
+2026-04-25 05:56:03.055 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '└─────────────┴───────┴──────────────┴─────────────────┴──────────────┴─────────'
+2026-04-25 05:56:03.058 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '                                                        MIXED TAG STATS         '
+2026-04-25 05:56:03.058 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '┏━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━'
+2026-04-25 05:56:03.058 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '┃ Enter Tag ┃ Exit Reason ┃ Trades ┃ Avg Profit % ┃ Tot Profit USDT ┃ Tot Profit'
+2026-04-25 05:56:03.058 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '┡━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━'
+2026-04-25 05:56:03.058 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│           │         roi │     17 │         2.01 │          14.452 │        18.'
+2026-04-25 05:56:03.059 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│           │ exit_signal │      4 │        -3.98 │          -7.265 │        -9.'
+2026-04-25 05:56:03.059 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│     TOTAL │             │     21 │         0.87 │           7.187 │         8.'
+2026-04-25 05:56:03.059 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '└───────────┴─────────────┴────────┴──────────────┴─────────────────┴───────────'
+2026-04-25 05:56:03.070 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '                          SUMMARY METRICS                          \n'
+2026-04-25 05:56:03.071 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n'
+2026-04-25 05:56:03.071 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '┃ Metric                        ┃ Value                           ┃\n'
+2026-04-25 05:56:03.071 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩\n'
+2026-04-25 05:56:03.071 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│ Backtesting from              │ 2025-04-30 00:00:00             │\n'
+2026-04-25 05:56:03.071 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│ Backtesting to                │ 2026-04-21 20:00:00             │\n'
+2026-04-25 05:56:03.071 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│ Trading Mode                  │ Spot                            │\n'
+2026-04-25 05:56:03.071 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│ Max open trades               │ 2                               │\n'
+2026-04-25 05:56:03.072 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│                               │                                 │\n'
+2026-04-25 05:56:03.072 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│ Total/Daily Avg Trades        │ 21 / 0.06                       │\n'
+2026-04-25 05:56:03.072 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│ Starting balance              │ 80 USDT                         │\n'
+2026-04-25 05:56:03.072 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│ Final balance                 │ 87.187 USDT                     │\n'
+2026-04-25 05:56:03.072 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│ Absolute profit               │ 7.187 USDT                      │\n'
+2026-04-25 05:56:03.073 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│ Total profit %                │ 8.98%                           │\n'
+2026-04-25 05:56:03.073 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│ CAGR %                        │ 9.22%                           │\n'
+2026-04-25 05:56:03.073 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│ Sortino                       │ 0.34                            │\n'
+2026-04-25 05:56:03.073 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│ Sharpe                        │ 0.22                            │\n'
+2026-04-25 05:56:03.073 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│ Calmar                        │ 7.79                            │\n'
+2026-04-25 05:56:03.073 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│ SQN                           │ 0.89                            │\n'
+2026-04-25 05:56:03.073 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│ Profit factor                 │ 1.99                            │\n'
+2026-04-25 05:56:03.074 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│ Expectancy (Ratio)            │ 0.34 (0.42)                     │\n'
+2026-04-25 05:56:03.074 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│ Avg. daily profit             │ 0.02 USDT                       │\n'
+2026-04-25 05:56:03.074 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│ Avg. stake amount             │ 43.551 USDT                     │\n'
+2026-04-25 05:56:03.074 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│ Total trade volume            │ 1839.997 USDT                   │\n'
+2026-04-25 05:56:03.074 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│                               │                                 │\n'
+2026-04-25 05:56:03.074 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│ Best Pair                     │ ETH/USDT 11.65%                 │\n'
+2026-04-25 05:56:03.074 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│ Worst Pair                    │ ADA/USDT -2.67%                 │\n'
+2026-04-25 05:56:03.074 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│ Best trade                    │ ETH/USDT 12.30%                 │\n'
+2026-04-25 05:56:03.075 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│ Worst trade                   │ ADA/USDT -6.49%                 │\n'
+2026-04-25 05:56:03.075 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│ Best day                      │ 5.07 USDT                       │\n'
+2026-04-25 05:56:03.075 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│ Worst day                     │ -2.925 USDT                     │\n'
+2026-04-25 05:56:03.075 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│ Days win/draw/lose            │ 11 / 295 / 9                    │\n'
+2026-04-25 05:56:03.075 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│ Min/Max/Avg. Duration Winners │ 1d 04:00 / 3d 20:00 / 2d 09:00  │\n'
+2026-04-25 05:56:03.076 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│ Min/Max/Avg. Duration Losers  │ 1d 00:00 / 31d 04:00 / 5d 18:13 │\n'
+2026-04-25 05:56:03.076 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│ Max Consecutive Wins / Loss   │ 3 / 3                           │\n'
+2026-04-25 05:56:03.076 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│ Rejected Entry signals        │ 0                               │\n'
+2026-04-25 05:56:03.076 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│ Entry/Exit Timeouts           │ 0 / 0                           │\n'
+2026-04-25 05:56:03.076 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│                               │                                 │\n'
+2026-04-25 05:56:03.076 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│ Min balance                   │ 82.234 USDT                     │\n'
+2026-04-25 05:56:03.076 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│ Max balance                   │ 92.94 USDT                      │\n'
+2026-04-25 05:56:03.077 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│ Max % of account underwater   │ 6.19%                           │\n'
+2026-04-25 05:56:03.077 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│ Absolute drawdown             │ 5.754 USDT (6.19%)              │\n'
+2026-04-25 05:56:03.077 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│ Drawdown duration             │ 245 days 16:00:00               │\n'
+2026-04-25 05:56:03.077 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│ Profit at drawdown start      │ 12.94 USDT                      │\n'
+2026-04-25 05:56:03.077 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│ Profit at drawdown end        │ 7.187 USDT                      │\n'
+2026-04-25 05:56:03.077 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│ Drawdown start                │ 2025-08-17 08:00:00             │\n'
+2026-04-25 05:56:03.077 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│ Drawdown end                  │ 2026-04-20 00:00:00             │\n'
+2026-04-25 05:56:03.078 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│ Market change                 │ -17.89%                         │\n'
+2026-04-25 05:56:03.078 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '└───────────────────────────────┴─────────────────────────────────┘\n'
+2026-04-25 05:56:03.078 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '\n'
+2026-04-25 05:56:03.078 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: 'Backtested 2025-04-30 00:00:00 -> 2026-04-21 20:00:00 | Max open trades : 2\n'
+2026-04-25 05:56:03.078 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '                                                          STRATEGY SUMMARY      '
+2026-04-25 05:56:03.078 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '┏━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━'
+2026-04-25 05:56:03.079 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '┃ Strategy ┃ Trades ┃ Avg Profit % ┃ Tot Profit USDT ┃ Tot Profit % ┃     Avg Du'
+2026-04-25 05:56:03.079 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '┡━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━'
+2026-04-25 05:56:03.079 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '│  MultiMa │     21 │         0.87 │           7.187 │         8.98 │ 3 days, 19'
+2026-04-25 05:56:03.079 | DEBUG    | freqtrade_gui.services.process_run_manager | run f6a1dfc8 stdout: '└──────────┴────────┴──────────────┴─────────────────┴──────────────┴───────────'
+2026-04-25 05:56:03.566 | INFO     | freqtrade_gui.services.process_run_manager | Run f6a1dfc8-49e6-441e-8405-5dd75bf25887 finished | status=finished | exit_code=0
+2026-04-25 05:56:03.601 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:56:03.607 | INFO     | freqtrade_gui.services.backtest | Backtest results saved: strategy=MultiMa run_id=run_2026-04-25_05-56-03_364d59
+2026-04-25 05:56:31.293 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:56:33.909 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:56:33.911 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:56:36.947 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:56:47.151 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:56:47.153 | INFO     | freqtrade_gui.services.optimizer_store | Deleted session abd0593c-38f2-4bae-9eb1-68a8f3de76ec
+2026-04-25 05:56:47.153 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:56:47.154 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:57:31.025 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:57:31.580 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:57:31.581 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 44bce8eb-b32e-4f38-af4c-e15391f7fc1b
+2026-04-25 05:57:31.581 | INFO     | freqtrade_gui.services.optimizer_session | Created session 44bce8eb-b32e-4f38-af4c-e15391f7fc1b for strategy MultiMa
+2026-04-25 05:57:31.582 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:57:31.582 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 44bce8eb-b32e-4f38-af4c-e15391f7fc1b
+2026-04-25 05:57:31.693 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:57:31.693 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:57:31.694 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:57:33.327 | WARNING  | freqtrade_gui.services.optimizer_session | Trial 1 failed with exit code -15
+2026-04-25 05:57:33.338 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:57:33.338 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 1 for session 44bce8eb-b32e-4f38-af4c-e15391f7fc1b
+2026-04-25 05:57:33.339 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:57:33.340 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 44bce8eb-b32e-4f38-af4c-e15391f7fc1b
+2026-04-25 05:57:33.340 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:57:33.341 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 44bce8eb-b32e-4f38-af4c-e15391f7fc1b
+2026-04-25 05:57:33.341 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:57:33.342 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:57:33.343 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:57:46.380 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:57:46.700 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:57:46.701 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:57:46.701 | INFO     | freqtrade_gui.services.optimizer_session | Created session 39ae9442-8ff2-45a0-8950-bb48be8f34cb for strategy MultiMa
+2026-04-25 05:57:46.704 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:57:46.705 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:57:46.759 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:57:46.759 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:57:46.760 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:57:50.522 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:57:50.522 | WARNING  | freqtrade_gui.services.optimizer_store | Cannot load best pointer for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb: File not found (path: /home/mohs/Desktop/ae/pyside6/user_data/optimizer/sessions/39ae9442-8ff2-45a0-8950-bb48be8f34cb/best.json)
+2026-04-25 05:57:50.523 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:57:50.523 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved best pointer for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb → trial 1
+2026-04-25 05:57:50.523 | INFO     | freqtrade_gui.services.optimizer_session | New best: trial 1 score=-0.3687 (session 39ae9442-8ff2-45a0-8950-bb48be8f34cb)
+2026-04-25 05:57:50.524 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:57:50.524 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 1 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:57:50.525 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:57:50.525 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:57:50.576 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:57:50.577 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:57:50.579 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:57:53.791 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:57:53.791 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:57:53.791 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved best pointer for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb → trial 2
+2026-04-25 05:57:53.792 | INFO     | freqtrade_gui.services.optimizer_session | New best: trial 2 score=0.0000 (session 39ae9442-8ff2-45a0-8950-bb48be8f34cb)
+2026-04-25 05:57:53.792 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:57:53.792 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 2 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:57:53.792 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:57:53.793 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:57:53.843 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:57:53.843 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:57:53.844 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:57:56.907 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:57:56.908 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:57:56.908 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 3 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:57:56.909 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:57:56.909 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:57:56.955 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:57:56.956 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:57:56.957 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:00.416 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:00.416 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:00.417 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 4 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:58:00.417 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:00.418 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:58:00.514 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:00.515 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:00.516 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:03.513 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:03.514 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:03.515 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 5 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:58:03.515 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:03.516 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:58:03.554 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:03.555 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:03.556 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:06.985 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:06.985 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:06.986 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved best pointer for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb → trial 6
+2026-04-25 05:58:06.986 | INFO     | freqtrade_gui.services.optimizer_session | New best: trial 6 score=0.3715 (session 39ae9442-8ff2-45a0-8950-bb48be8f34cb)
+2026-04-25 05:58:06.986 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:06.986 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 6 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:58:06.987 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:06.987 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:58:07.134 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:07.135 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:07.137 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:10.430 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:10.430 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:10.431 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 7 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:58:10.431 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:10.432 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:58:10.471 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:10.472 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:10.473 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:13.479 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:13.479 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:13.480 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 8 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:58:13.480 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:13.481 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:58:13.535 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:13.535 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:13.537 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:16.892 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:16.892 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:16.893 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 9 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:58:16.893 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:16.894 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:58:16.935 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:16.936 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:16.938 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:20.724 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:20.724 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:20.725 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 10 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:58:20.725 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:20.726 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:58:20.797 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:20.798 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:20.799 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:24.294 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:24.295 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:24.295 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 11 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:58:24.296 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:24.296 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:58:24.333 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:24.334 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:24.335 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:27.828 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:27.829 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:27.830 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 12 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:58:27.830 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:27.831 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:58:27.872 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:27.873 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:27.873 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:30.822 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:30.823 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:30.823 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 13 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:58:30.824 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:30.824 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:58:30.863 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:30.863 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:30.864 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:34.500 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:34.500 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:34.501 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 14 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:58:34.501 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:34.502 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:58:34.564 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:34.564 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:34.565 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:38.187 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:38.188 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:38.189 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 15 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:58:38.190 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:38.190 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:58:38.242 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:38.243 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:38.244 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:41.644 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:41.644 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:41.644 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 16 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:58:41.645 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:41.645 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:58:41.701 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:41.702 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:41.702 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:44.698 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:44.699 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:44.699 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 17 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:58:44.700 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:44.700 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:58:44.752 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:44.753 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:44.754 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:48.090 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:48.091 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:48.092 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 18 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:58:48.092 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:48.093 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:58:48.132 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:48.132 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:48.133 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:51.306 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:51.307 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:51.308 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 19 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:58:51.308 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:51.310 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:58:51.354 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:51.354 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:51.355 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:55.567 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:55.568 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:55.568 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 20 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:58:55.569 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:55.569 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:58:55.623 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:55.623 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:55.624 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:59.660 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:59.660 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:59.661 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 21 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:58:59.661 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:59.662 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:58:59.703 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:59.704 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:58:59.705 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:03.109 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:03.110 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:03.110 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved best pointer for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb → trial 22
+2026-04-25 05:59:03.110 | INFO     | freqtrade_gui.services.optimizer_session | New best: trial 22 score=0.4944 (session 39ae9442-8ff2-45a0-8950-bb48be8f34cb)
+2026-04-25 05:59:03.111 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:03.111 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 22 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:59:03.112 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:03.112 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:59:03.153 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:03.154 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:03.155 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:06.556 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:06.557 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:06.558 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 23 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:59:06.559 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:06.559 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:59:06.601 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:06.601 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:06.602 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:10.026 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:10.027 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:10.027 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved best pointer for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb → trial 24
+2026-04-25 05:59:10.027 | INFO     | freqtrade_gui.services.optimizer_session | New best: trial 24 score=0.7133 (session 39ae9442-8ff2-45a0-8950-bb48be8f34cb)
+2026-04-25 05:59:10.028 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:10.029 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 24 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:59:10.029 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:10.029 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:59:10.070 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:10.071 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:10.072 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:13.456 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:13.457 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:13.457 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 25 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:59:13.458 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:13.458 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:59:13.511 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:13.513 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:13.517 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:16.439 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:16.441 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:16.442 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 26 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:59:16.442 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:16.443 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:59:16.506 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:16.508 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:16.514 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:19.901 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:19.902 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:19.902 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 27 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:59:19.903 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:19.903 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:59:19.946 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:19.947 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:19.949 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:23.358 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:23.359 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:23.359 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 28 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:59:23.360 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:23.360 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:59:23.402 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:23.402 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:23.403 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:26.528 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:26.529 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:26.529 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 29 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:59:26.530 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:26.530 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:59:26.576 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:26.576 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:26.577 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:30.202 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:30.203 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:30.203 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 30 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:59:30.204 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:30.204 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:59:30.253 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:30.254 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:30.254 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:33.690 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:33.691 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:33.691 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 31 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:59:33.692 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:33.692 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:59:33.737 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:33.738 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:33.738 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:37.040 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:37.040 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:37.041 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 32 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:59:37.041 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:37.042 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:59:37.078 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:37.079 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:37.080 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:40.898 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:40.899 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:40.899 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 33 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:59:40.900 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:40.900 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:59:40.940 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:40.940 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:40.941 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:44.257 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:44.258 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:44.258 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 34 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:59:44.259 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:44.259 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:59:44.321 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:44.322 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:44.323 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:44.918 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:44.918 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:44.919 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:44.919 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:47.788 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:47.789 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:47.790 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 35 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:59:47.790 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:47.791 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:59:47.839 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:47.840 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:47.841 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:51.296 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:51.297 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:51.297 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 36 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:59:51.298 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:51.298 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:59:51.337 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:51.338 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:51.339 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:54.644 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:54.645 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:54.645 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 37 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:59:54.646 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:54.646 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:59:54.686 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:54.686 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:54.687 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:57.953 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:57.954 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:57.954 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 38 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:59:57.955 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:57.955 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 05:59:57.999 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:58.000 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 05:59:58.001 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:01.626 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:01.626 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:01.627 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 39 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 06:00:01.627 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:01.628 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 06:00:01.676 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:01.676 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:01.677 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:05.896 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:05.897 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:05.897 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 40 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 06:00:05.898 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:05.898 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 06:00:05.938 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:05.939 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:05.939 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:08.831 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:08.832 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:08.832 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 41 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 06:00:08.833 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:08.833 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 06:00:08.884 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:08.884 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:08.885 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:12.252 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:12.253 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:12.253 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 42 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 06:00:12.254 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:12.254 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 06:00:12.297 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:12.298 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:12.299 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:15.938 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:15.939 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:15.939 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 43 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 06:00:15.940 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:15.940 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 06:00:16.000 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:16.001 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:16.014 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:19.566 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:19.566 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:19.567 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 44 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 06:00:19.567 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:19.568 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 06:00:19.612 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:19.613 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:19.614 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:23.401 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:23.402 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:23.402 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 45 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 06:00:23.403 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:23.403 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 06:00:23.454 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:23.455 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:23.456 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:26.860 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:26.861 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:26.861 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 46 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 06:00:26.862 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:26.862 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 06:00:26.909 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:26.909 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:26.910 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:30.314 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:30.315 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:30.316 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 47 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 06:00:30.316 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:30.317 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 06:00:30.385 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:30.386 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:30.387 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:33.480 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:33.481 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:33.481 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 48 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 06:00:33.482 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:33.482 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 06:00:33.552 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:33.553 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:33.554 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:36.868 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:36.868 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:36.869 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 49 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 06:00:36.869 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:36.870 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 06:00:36.915 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:36.916 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:36.917 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:40.055 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:40.056 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:40.057 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved trial 50 for session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 06:00:40.057 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:40.058 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 06:00:40.058 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:40.059 | DEBUG    | freqtrade_gui.services.optimizer_store | Saved session 39ae9442-8ff2-45a0-8950-bb48be8f34cb
+2026-04-25 06:00:40.060 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:40.060 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:40.060 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:00:40.061 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:01:37.098 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:01:37.100 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:01:37.101 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:01:37.101 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:01:58.581 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:01:58.583 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:01:58.585 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:01:58.586 | DEBUG    | freqtrade_gui.settings         | Settings loaded from /home/mohs/Desktop/ae/pyside6/data/settings.json
+2026-04-25 06:01:58.591 | INFO     | freqtrade_gui.services.optimizer_session | Applied selected trial 24 as new strategy yty

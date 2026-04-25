@@ -36,6 +36,7 @@ def make_session_config() -> SessionConfig:
         timeframe="5m",
         total_trials=10,
         score_metric="total_profit_pct",
+        score_mode="single_metric",
         param_defs=[
             ParamDef(name="buy_rsi", param_type=ParamType.INT, default=14, low=1, high=99, space="buy"),
             ParamDef(name="sell_rsi", param_type=ParamType.INT, default=80, low=1, high=99, space="sell"),
@@ -247,6 +248,53 @@ class TestStrategyOptimizerServiceIntegration:
         assert saved_session is not None
         assert saved_session.status == SessionStatus.COMPLETED
 
+    def test_composite_trial_persists_score_breakdown_and_best_pointer(self, tmp_path, monkeypatch):
+        service = make_service(tmp_path)
+        config = make_session_config().model_copy(
+            update={
+                "total_trials": 1,
+                "score_metric": "composite",
+                "score_mode": "composite",
+                "target_min_trades": 100,
+                "target_profit_pct": 50.0,
+                "max_drawdown_limit": 25.0,
+                "target_romad": 2.0,
+            }
+        )
+        session = service.create_session(config)
+
+        monkeypatch.setattr(service, "_run_subprocess", lambda *args, **kwargs: 0)
+        monkeypatch.setattr(
+            service,
+            "_parse_trial_result",
+            lambda *args, **kwargs: TrialMetrics(
+                total_profit_pct=50.0,
+                total_profit_abs=50.0,
+                win_rate=0.60,
+                total_trades=100,
+                max_drawdown_pct=10.0,
+                profit_factor=2.0,
+                sharpe_ratio=1.5,
+            ),
+        )
+
+        run_optimizer_thread(service, session)
+
+        record = service._store.load_trial_record(session.session_id, 1)
+        best = service._store.load_best_pointer(session.session_id)
+        score_data = json.loads((service._store.trial_dir(session.session_id, 1) / "score.json").read_text())
+
+        assert record is not None
+        assert record.status == TrialStatus.SUCCESS
+        assert record.score_mode == "composite"
+        assert record.score_metric == "composite"
+        assert record.score_breakdown["final_score"] == pytest.approx(round(record.score, 4))
+        assert "romad_score" in record.score_breakdown
+        assert best is not None
+        assert best.score == pytest.approx(record.score)
+        assert score_data["score_mode"] == "composite"
+        assert score_data["score_breakdown"] == record.score_breakdown
+
     def test_failed_trial_is_recorded_and_does_not_stop_session(self, tmp_path, monkeypatch):
         service = make_service(tmp_path)
         session = service.create_session(make_session_config().model_copy(update={"total_trials": 2}))
@@ -411,6 +459,150 @@ class TestStrategyOptimizerServiceIntegration:
         assert exported["ft_stratparam_v"] == 1
         assert exported["params"]["buy"] == {"buy_rsi": 21}
         assert exported["params"]["sell"] == {"sell_rsi": 80}
+
+    def test_build_trial_diff_reports_param_and_code_changes(self, tmp_path):
+        service = make_service(tmp_path)
+        session = service.create_session(make_session_config().model_copy(update={"total_trials": 1}))
+        record = make_trial_record(session.session_id, 1, score=3.0)
+        record.candidate_params = {"buy_rsi": 21, "sell_rsi": 80}
+        service._store.save_trial_record(session.session_id, record)
+
+        strategies_dir = tmp_path / "strategies"
+        strategies_dir.mkdir(parents=True)
+        (strategies_dir / "TestStrategy.py").write_text(
+            "class TestStrategy:\n    value = 1\n",
+            encoding="utf-8",
+        )
+        (strategies_dir / "TestStrategy.json").write_text(
+            json.dumps({
+                "strategy_name": "TestStrategy",
+                "params": {"buy": {"buy_rsi": 14}, "sell": {"sell_rsi": 75}},
+            }),
+            encoding="utf-8",
+        )
+
+        trial_strategy_dir = service._store.trial_dir(session.session_id, 1) / "strategy_dir"
+        trial_strategy_dir.mkdir(parents=True)
+        (trial_strategy_dir / "TestStrategy.py").write_text(
+            "class TestStrategy:\n    value = 2\n",
+            encoding="utf-8",
+        )
+        (trial_strategy_dir / "TestStrategy.json").write_text(
+            json.dumps({
+                "strategy_name": "TestStrategy",
+                "params": {"buy": {"buy_rsi": 21}, "sell": {"sell_rsi": 80}},
+            }),
+            encoding="utf-8",
+        )
+
+        diff = service.build_trial_diff(session.session_id, 1)
+
+        assert diff.success is True
+        changes = {change.key: change for change in diff.param_changes}
+        assert changes["buy.buy_rsi"].current_value == 14
+        assert changes["buy.buy_rsi"].trial_value == 21
+        assert changes["sell.sell_rsi"].current_value == 75
+        assert changes["sell.sell_rsi"].trial_value == 80
+        assert "-    value = 1" in diff.strategy_diff
+        assert "+    value = 2" in diff.strategy_diff
+
+    def test_apply_trial_to_strategy_backs_up_and_writes_py_and_json(self, tmp_path):
+        service = make_service(tmp_path)
+        session = service.create_session(make_session_config().model_copy(update={"total_trials": 1}))
+        record = make_trial_record(session.session_id, 1, score=3.0)
+        service._store.save_trial_record(session.session_id, record)
+
+        strategies_dir = tmp_path / "strategies"
+        strategies_dir.mkdir(parents=True)
+        live_py = strategies_dir / "TestStrategy.py"
+        live_json = strategies_dir / "TestStrategy.json"
+        live_py.write_text("class TestStrategy:\n    value = 1\n", encoding="utf-8")
+        live_json.write_text(
+            json.dumps({"strategy_name": "TestStrategy", "params": {"buy": {"buy_rsi": 14}}}),
+            encoding="utf-8",
+        )
+
+        trial_strategy_dir = service._store.trial_dir(session.session_id, 1) / "strategy_dir"
+        trial_strategy_dir.mkdir(parents=True)
+        (trial_strategy_dir / "TestStrategy.py").write_text(
+            "class TestStrategy:\n    value = 9\n",
+            encoding="utf-8",
+        )
+        (trial_strategy_dir / "TestStrategy.json").write_text(
+            json.dumps({"strategy_name": "TestStrategy", "params": {"buy": {"buy_rsi": 21}}}),
+            encoding="utf-8",
+        )
+
+        result = service.apply_trial_to_strategy(session.session_id, 1)
+
+        assert result.success is True
+        assert live_py.read_text(encoding="utf-8") == "class TestStrategy:\n    value = 9\n"
+        exported = json.loads(live_json.read_text(encoding="utf-8"))
+        assert exported["strategy_name"] == "TestStrategy"
+        assert exported["params"]["buy"] == {"buy_rsi": 21}
+        assert len(result.backup_paths) == 2
+        assert any(Path(path).name.startswith("TestStrategy.py.bak_") for path in result.backup_paths)
+        assert any(Path(path).name.startswith("TestStrategy.json.bak_") for path in result.backup_paths)
+
+    def test_apply_trial_as_new_strategy_writes_renamed_py_and_json(self, tmp_path):
+        service = make_service(tmp_path)
+        session = service.create_session(make_session_config().model_copy(update={"total_trials": 1}))
+        record = make_trial_record(session.session_id, 1, score=3.0)
+        service._store.save_trial_record(session.session_id, record)
+
+        (tmp_path / "strategies").mkdir(parents=True)
+        trial_strategy_dir = service._store.trial_dir(session.session_id, 1) / "strategy_dir"
+        trial_strategy_dir.mkdir(parents=True)
+        (trial_strategy_dir / "TestStrategy.py").write_text(
+            "class TestStrategy:\n    value = 9\n",
+            encoding="utf-8",
+        )
+        (trial_strategy_dir / "TestStrategy.json").write_text(
+            json.dumps({"strategy_name": "TestStrategy", "params": {"buy": {"buy_rsi": 21}}}),
+            encoding="utf-8",
+        )
+
+        result = service.apply_trial_as_new_strategy(session.session_id, 1, "Strategy1.py")
+
+        assert result.success is True
+        new_py = tmp_path / "strategies" / "Strategy1.py"
+        new_json = tmp_path / "strategies" / "Strategy1.json"
+        assert "class Strategy1:" in new_py.read_text(encoding="utf-8")
+        exported = json.loads(new_json.read_text(encoding="utf-8"))
+        assert exported["strategy_name"] == "Strategy1"
+        assert exported["params"]["buy"] == {"buy_rsi": 21}
+
+    def test_apply_trial_as_new_strategy_blocks_existing_names(self, tmp_path):
+        service = make_service(tmp_path)
+        session = service.create_session(make_session_config().model_copy(update={"total_trials": 1}))
+        service._store.save_trial_record(session.session_id, make_trial_record(session.session_id, 1))
+
+        strategies_dir = tmp_path / "strategies"
+        strategies_dir.mkdir(parents=True)
+        (strategies_dir / "Strategy1.py").write_text("class Strategy1:\n    pass\n", encoding="utf-8")
+        trial_strategy_dir = service._store.trial_dir(session.session_id, 1) / "strategy_dir"
+        trial_strategy_dir.mkdir(parents=True)
+        (trial_strategy_dir / "TestStrategy.py").write_text("class TestStrategy:\n    pass\n", encoding="utf-8")
+        (trial_strategy_dir / "TestStrategy.json").write_text(
+            json.dumps({"strategy_name": "TestStrategy", "params": {}}),
+            encoding="utf-8",
+        )
+
+        result = service.apply_trial_as_new_strategy(session.session_id, 1, "Strategy1")
+
+        assert result.success is False
+        assert "already exists" in result.error_message
+        assert "class Strategy1" in (strategies_dir / "Strategy1.py").read_text(encoding="utf-8")
+
+    def test_apply_trial_as_new_strategy_rejects_invalid_name(self, tmp_path):
+        service = make_service(tmp_path)
+        session = service.create_session(make_session_config().model_copy(update={"total_trials": 1}))
+        service._store.save_trial_record(session.session_id, make_trial_record(session.session_id, 1))
+
+        result = service.apply_trial_as_new_strategy(session.session_id, 1, "bad-name.py")
+
+        assert result.success is False
+        assert "valid Python identifier" in result.error_message
 
     def test_set_best_updates_best_pointer_to_manual_trial(self, tmp_path):
         service = make_service(tmp_path)

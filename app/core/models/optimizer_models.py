@@ -10,6 +10,7 @@ Defines enums and models used across the optimizer subsystem:
 - Best pointer model (BestPointer)
 - Optimizer UI preferences (OptimizerPreferences)
 - Export result model (ExportResult)
+- Selected-trial diff/apply models (TrialParamChange, TrialDiff, ApplyTrialResult)
 
 Architecture boundary: NO PySide6 imports in this module.
 """
@@ -107,6 +108,8 @@ class TrialRecord(BaseModel):
     metrics: Optional[TrialMetrics] = None
     score: Optional[float] = None
     score_metric: str = "total_profit_pct"
+    score_mode: str = "single_metric"
+    score_breakdown: Dict[str, float] = Field(default_factory=dict)
     log_excerpt: str = ""
     is_best: bool = False
 
@@ -132,6 +135,11 @@ class SessionConfig(BaseModel):
     config_file_path: str = ""
     total_trials: int = 50
     score_metric: str = "total_profit_pct"
+    score_mode: str = "composite"
+    target_min_trades: int = 100
+    target_profit_pct: float = 50.0
+    max_drawdown_limit: float = 25.0
+    target_romad: float = 2.0
     param_defs: List[ParamDef] = Field(default_factory=list)
 
 
@@ -152,7 +160,12 @@ class OptimizerPreferences(BaseModel):
 
     last_strategy: str = ""
     total_trials: int = 50
-    score_metric: str = "total_profit_pct"
+    score_metric: str = "composite"
+    score_mode: str = "composite"
+    target_min_trades: int = 100
+    target_profit_pct: float = 50.0
+    max_drawdown_limit: float = 25.0
+    target_romad: float = 2.0
 
 
 class ExportResult(BaseModel):
@@ -161,4 +174,35 @@ class ExportResult(BaseModel):
     success: bool
     live_json_path: str = ""
     backup_path: str = ""
+    error_message: str = ""
+
+
+class TrialParamChange(BaseModel):
+    """One parameter value difference between live params and a selected trial."""
+
+    key: str
+    current_value: Any = None
+    trial_value: Any = None
+
+
+class TrialDiff(BaseModel):
+    """Diff preview for applying a selected optimizer trial."""
+
+    success: bool
+    param_changes: List[TrialParamChange] = Field(default_factory=list)
+    strategy_diff: str = ""
+    live_strategy_path: str = ""
+    trial_strategy_path: str = ""
+    live_json_path: str = ""
+    trial_json_path: str = ""
+    error_message: str = ""
+
+
+class ApplyTrialResult(BaseModel):
+    """Result of applying selected trial artifacts to strategy files."""
+
+    success: bool
+    strategy_py_path: str = ""
+    strategy_json_path: str = ""
+    backup_paths: List[str] = Field(default_factory=list)
     error_message: str = ""

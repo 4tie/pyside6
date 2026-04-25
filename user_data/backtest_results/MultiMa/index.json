@@ -1,6 +1,66 @@
 {
   "runs": [
     {
+      "backtest_end": "2026-04-21 20:00:00",
+      "backtest_start": "2025-04-30 00:00:00",
+      "calmar": 7.7872,
+      "expectancy": 0.3422,
+      "final_balance": 87.1866,
+      "losses": 9,
+      "max_drawdown_abs": 5.7538,
+      "max_drawdown_pct": 6.1908,
+      "pairs": [
+        "ADA/USDT",
+        "ETH/USDT"
+      ],
+      "profit_factor": 1.989,
+      "profit_total_abs": 7.1866,
+      "profit_total_pct": 8.9832,
+      "run_dir": "run_2026-04-25_05-56-03_364d59",
+      "run_id": "run_2026-04-25_05-56-03_364d59",
+      "saved_at": "2026-04-25T05:56:03.607273",
+      "sharpe": 0.224,
+      "sortino": 0.3364,
+      "starting_balance": 80.0,
+      "strategy": "MultiMa",
+      "timeframe": "4h",
+      "timerange": "20250430-20260425",
+      "trades_count": 21,
+      "version_id": null,
+      "win_rate_pct": 57.14,
+      "wins": 12
+    },
+    {
+      "backtest_end": "2026-04-21 20:00:00",
+      "backtest_start": "2025-04-30 00:00:00",
+      "calmar": 7.7872,
+      "expectancy": 0.3422,
+      "final_balance": 87.1866,
+      "losses": 9,
+      "max_drawdown_abs": 5.7538,
+      "max_drawdown_pct": 6.1908,
+      "pairs": [
+        "ADA/USDT",
+        "ETH/USDT"
+      ],
+      "profit_factor": 1.989,
+      "profit_total_abs": 7.1866,
+      "profit_total_pct": 8.9832,
+      "run_dir": "run_2026-04-25_05-53-14_2f9032",
+      "run_id": "run_2026-04-25_05-53-14_2f9032",
+      "saved_at": "2026-04-25T05:53:14.857955",
+      "sharpe": 0.224,
+      "sortino": 0.3364,
+      "starting_balance": 80.0,
+      "strategy": "MultiMa",
+      "timeframe": "4h",
+      "timerange": "20250430-20260425",
+      "trades_count": 21,
+      "version_id": null,
+      "win_rate_pct": 57.14,
+      "wins": 12
+    },
+    {
       "backtest_end": "2026-04-11 00:05:00",
       "backtest_start": "2025-04-30 00:00:00",
       "calmar": 0.8018,
@@ -90,5 +150,5 @@
     }
   ],
   "strategy": "MultiMa",
-  "updated_at": "2026-04-25T05:16:27.863001"
+  "updated_at": "2026-04-25T05:56:03.607291"
 }

@@ -13,6 +13,7 @@ Architecture boundary: PySide6 imports are allowed here (UI layer).
 """
 from __future__ import annotations
 
+import json
 import time
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -26,7 +27,7 @@ from PySide6.QtCore import (
     Signal,
     Slot,
 )
-from PySide6.QtGui import QDesktopServices, QStandardItem, QStandardItemModel
+from PySide6.QtGui import QAction, QDesktopServices, QStandardItem, QStandardItemModel
 from PySide6.QtWidgets import (
     QAbstractItemView,
     QDialog,
@@ -38,8 +39,10 @@ from PySide6.QtWidgets import (
     QGroupBox,
     QHBoxLayout,
     QHeaderView,
+    QInputDialog,
     QLabel,
     QLineEdit,
+    QMenu,
     QMessageBox,
     QPlainTextEdit,
     QProgressBar,
@@ -81,8 +84,9 @@ from app.ui.widgets.trial_table_model import TRIAL_RATING_COLUMN, TrialTableMode
 
 _log = get_logger("ui.pages.optimizer_page")
 
-# Score metric options
-SCORE_METRICS = [
+# Score options
+SCORE_OPTIONS = [
+    ("composite", "Composite Score"),
     ("total_profit_pct", "Total Profit %"),
     ("total_profit_abs", "Total Profit (abs)"),
     ("sharpe_ratio", "Sharpe Ratio"),
@@ -459,9 +463,34 @@ class OptimizerPage(QWidget):
         form.addRow(self._label("Trials"), self._trials_spin)
 
         self._score_combo = QComboBox()
-        for key, label in SCORE_METRICS:
+        for key, label in SCORE_OPTIONS:
             self._score_combo.addItem(label, key)
         form.addRow(self._label("Score"), self._score_combo)
+
+        self._target_trades_spin = QSpinBox()
+        self._target_trades_spin.setRange(1, 100_000)
+        self._target_trades_spin.setValue(100)
+        form.addRow(self._label("Target Trades"), self._target_trades_spin)
+
+        self._target_profit_spin = QDoubleSpinBox()
+        self._target_profit_spin.setRange(0.01, 10_000.0)
+        self._target_profit_spin.setDecimals(2)
+        self._target_profit_spin.setSuffix("%")
+        self._target_profit_spin.setValue(50.0)
+        form.addRow(self._label("Target Profit"), self._target_profit_spin)
+
+        self._max_drawdown_spin = QDoubleSpinBox()
+        self._max_drawdown_spin.setRange(0.01, 100.0)
+        self._max_drawdown_spin.setDecimals(2)
+        self._max_drawdown_spin.setSuffix("%")
+        self._max_drawdown_spin.setValue(25.0)
+        form.addRow(self._label("Max Drawdown"), self._max_drawdown_spin)
+
+        self._target_romad_spin = QDoubleSpinBox()
+        self._target_romad_spin.setRange(0.01, 100.0)
+        self._target_romad_spin.setDecimals(2)
+        self._target_romad_spin.setValue(2.0)
+        form.addRow(self._label("Target RoMAD"), self._target_romad_spin)
         layout.addLayout(form)
 
         sync_btn = QPushButton("Sync from Backtest")
@@ -557,6 +586,14 @@ class OptimizerPage(QWidget):
 
         layout.addWidget(_section_label("Selected Trial"))
         self._selected_labels = self._metric_group(layout)
+        layout.addWidget(_section_label("Score Breakdown"))
+        self._score_breakdown_view = QPlainTextEdit()
+        self._score_breakdown_view.setReadOnly(True)
+        self._score_breakdown_view.setMaximumHeight(120)
+        self._score_breakdown_view.setStyleSheet(
+            f"font-family: {theme.FONT_MONO}; font-size: 10px;"
+        )
+        layout.addWidget(self._score_breakdown_view)
 
         self._set_best_btn = QPushButton("Set as Best")
         self._set_best_btn.clicked.connect(self._set_selected_as_best)
@@ -566,8 +603,48 @@ class OptimizerPage(QWidget):
         self._open_result_btn.clicked.connect(self._open_selected_result)
         self._compare_btn = QPushButton("Compare")
         self._compare_btn.clicked.connect(self._compare_selected)
-        for btn in (self._set_best_btn, self._open_log_btn, self._open_result_btn, self._compare_btn):
+
+        self._apply_btn = QPushButton("Apply")
+        apply_menu = QMenu(self._apply_btn)
+        self._apply_existing_action = QAction("Apply to strategy", self)
+        self._apply_existing_action.triggered.connect(self._apply_selected_to_strategy)
+        self._apply_new_action = QAction("Apply new-strategy", self)
+        self._apply_new_action.triggered.connect(self._apply_selected_as_new_strategy)
+        apply_menu.addAction(self._apply_existing_action)
+        apply_menu.addAction(self._apply_new_action)
+        self._apply_btn.setMenu(apply_menu)
+
+        for btn in (
+            self._set_best_btn,
+            self._open_log_btn,
+            self._open_result_btn,
+            self._compare_btn,
+            self._apply_btn,
+        ):
             layout.addWidget(btn)
+
+        layout.addWidget(_section_label("Selected Trial Changes"))
+        self._diff_status_lbl = QLabel("Select a successful trial to preview changes.")
+        self._diff_status_lbl.setWordWrap(True)
+        self._diff_status_lbl.setStyleSheet(f"color: {theme.TEXT_SECONDARY}; font-size: 12px;")
+        layout.addWidget(self._diff_status_lbl)
+
+        self._param_diff_table = QTableWidget(0, 3)
+        self._param_diff_table.setHorizontalHeaderLabels(["Key", "Current", "Selected"])
+        self._param_diff_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self._param_diff_table.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self._param_diff_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self._param_diff_table.setMaximumHeight(150)
+        layout.addWidget(self._param_diff_table)
+
+        self._strategy_diff_view = QPlainTextEdit()
+        self._strategy_diff_view.setReadOnly(True)
+        self._strategy_diff_view.setMaximumHeight(170)
+        self._strategy_diff_view.setStyleSheet(
+            f"font-family: {theme.FONT_MONO}; font-size: 10px;"
+        )
+        layout.addWidget(self._strategy_diff_view)
+
         layout.addStretch()
         return panel
 
@@ -615,11 +692,20 @@ class OptimizerPage(QWidget):
     def _sync_from_backtest(self) -> None:
         settings = self._settings_svc.load_settings()
         prefs = settings.backtest_preferences
+        optimizer_prefs = settings.optimizer_preferences
         self._timeframe_edit.setText(prefs.default_timeframe or "5m")
         self._timerange_edit.setText(prefs.default_timerange or "")
         self._pairs_edit.setText(prefs.default_pairs or "")
         self._wallet_spin.setValue(prefs.dry_run_wallet)
         self._trades_spin.setValue(prefs.max_open_trades)
+        self._trials_spin.setValue(optimizer_prefs.total_trials)
+        score_key = optimizer_prefs.score_metric or "composite"
+        score_idx = self._score_combo.findData(score_key)
+        self._score_combo.setCurrentIndex(max(0, score_idx))
+        self._target_trades_spin.setValue(optimizer_prefs.target_min_trades)
+        self._target_profit_spin.setValue(optimizer_prefs.target_profit_pct)
+        self._max_drawdown_spin.setValue(optimizer_prefs.max_drawdown_limit)
+        self._target_romad_spin.setValue(optimizer_prefs.target_romad)
         idx = self._strategy_combo.findText(prefs.last_strategy)
         if idx >= 0:
             self._strategy_combo.setCurrentIndex(idx)
@@ -705,6 +791,8 @@ class OptimizerPage(QWidget):
         if not strategy:
             raise ValueError("Select a strategy before starting.")
         pairs = [p.strip() for p in self._pairs_edit.text().split(",") if p.strip()]
+        score_key = self._score_combo.currentData() or "composite"
+        score_mode = "composite" if score_key == "composite" else "single_metric"
         return SessionConfig(
             strategy_name=strategy,
             strategy_class=getattr(self, "_strategy_class", strategy),
@@ -714,7 +802,12 @@ class OptimizerPage(QWidget):
             dry_run_wallet=self._wallet_spin.value(),
             max_open_trades=self._trades_spin.value(),
             total_trials=self._trials_spin.value(),
-            score_metric=self._score_combo.currentData() or "total_profit_pct",
+            score_metric=score_key,
+            score_mode=score_mode,
+            target_min_trades=self._target_trades_spin.value(),
+            target_profit_pct=self._target_profit_spin.value(),
+            max_drawdown_limit=self._max_drawdown_spin.value(),
+            target_romad=self._target_romad_spin.value(),
             param_defs=self._param_defs,
         )
 
@@ -724,6 +817,7 @@ class OptimizerPage(QWidget):
         try:
             config = self._build_config()
             session = self._service.create_session(config)
+            self._save_optimizer_preferences(config)
         except Exception as exc:
             QMessageBox.warning(self, "Optimizer", str(exc))
             return
@@ -734,6 +828,7 @@ class OptimizerPage(QWidget):
         self._selected_trial = None
         self._trial_model.clear()
         self._log_view.clear()
+        self._clear_selected_trial_diff("Select a successful trial to preview changes.")
         self._progress.setRange(0, config.total_trials)
         self._progress.setValue(0)
         self._start_btn.setEnabled(False)
@@ -827,6 +922,8 @@ class OptimizerPage(QWidget):
         if isinstance(record, TrialRecord):
             self._selected_trial = record
             self._update_metric_labels(self._selected_labels, record)
+            self._update_score_breakdown(record)
+            self._refresh_selected_trial_diff()
 
     def _update_metric_labels(self, labels: dict[str, QLabel], record: Optional[TrialRecord]) -> None:
         if not record or not record.metrics:
@@ -845,6 +942,37 @@ class OptimizerPage(QWidget):
         labels["sharpe"].setText(_fmt_float(m.sharpe_ratio))
         labels["score"].setText(_fmt_float(record.score, 4))
 
+    def _update_score_breakdown(self, record: Optional[TrialRecord]) -> None:
+        if not hasattr(self, "_score_breakdown_view"):
+            return
+        if not record or not record.score_breakdown:
+            self._score_breakdown_view.setPlainText("—")
+            return
+        lines = [
+            f"{key}: {value:.4f}"
+            for key, value in record.score_breakdown.items()
+        ]
+        self._score_breakdown_view.setPlainText("\n".join(lines))
+
+    def _save_optimizer_preferences(self, config: SessionConfig) -> None:
+        try:
+            settings = self._settings_svc.load_settings()
+            settings.optimizer_preferences = settings.optimizer_preferences.model_copy(
+                update={
+                    "last_strategy": config.strategy_name,
+                    "total_trials": config.total_trials,
+                    "score_metric": config.score_metric,
+                    "score_mode": config.score_mode,
+                    "target_min_trades": config.target_min_trades,
+                    "target_profit_pct": config.target_profit_pct,
+                    "max_drawdown_limit": config.max_drawdown_limit,
+                    "target_romad": config.target_romad,
+                }
+            )
+            self._settings_svc.save_settings(settings)
+        except Exception as exc:
+            _log.warning("Could not save optimizer preferences: %s", exc)
+
     def _set_selected_as_best(self) -> None:
         if not self._active_session or not self._selected_trial:
             return
@@ -856,6 +984,133 @@ class OptimizerPage(QWidget):
         self._current_best_trial_number = self._selected_trial.trial_number
         self._trial_model.update_best(old_best, self._selected_trial.trial_number)
         self._update_metric_labels(self._best_labels, self._selected_trial)
+
+    def _refresh_selected_trial_diff(self) -> None:
+        if not self._active_session or not self._selected_trial:
+            self._clear_selected_trial_diff("Select a successful trial to preview changes.")
+            return
+        if self._selected_trial.status != TrialStatus.SUCCESS:
+            self._clear_selected_trial_diff("Only successful trials can be previewed or applied.")
+            return
+
+        diff = self._service.build_trial_diff(
+            self._active_session.session_id,
+            self._selected_trial.trial_number,
+        )
+        if not diff.success:
+            self._clear_selected_trial_diff(diff.error_message or "Could not build diff.")
+            return
+
+        self._param_diff_table.setRowCount(0)
+        for change in diff.param_changes:
+            row = self._param_diff_table.rowCount()
+            self._param_diff_table.insertRow(row)
+            self._param_diff_table.setItem(row, 0, QTableWidgetItem(change.key))
+            self._param_diff_table.setItem(
+                row,
+                1,
+                QTableWidgetItem(self._format_diff_value(change.current_value)),
+            )
+            self._param_diff_table.setItem(
+                row,
+                2,
+                QTableWidgetItem(self._format_diff_value(change.trial_value)),
+            )
+
+        param_count = len(diff.param_changes)
+        code_changed = bool(diff.strategy_diff)
+        if param_count or code_changed:
+            self._diff_status_lbl.setText(
+                f"{param_count} parameter change(s), "
+                f"{'code changes found' if code_changed else 'no code changes'}."
+            )
+        else:
+            self._diff_status_lbl.setText("No changes detected for the selected trial.")
+        self._strategy_diff_view.setPlainText(diff.strategy_diff or "No code changes.")
+
+    def _clear_selected_trial_diff(self, message: str) -> None:
+        if hasattr(self, "_diff_status_lbl"):
+            self._diff_status_lbl.setText(message)
+            self._param_diff_table.setRowCount(0)
+            self._strategy_diff_view.setPlainText("")
+
+    @staticmethod
+    def _format_diff_value(value: Any) -> str:
+        try:
+            return json.dumps(value, ensure_ascii=False, sort_keys=True)
+        except TypeError:
+            return str(value)
+
+    def _apply_selected_to_strategy(self) -> None:
+        if not self._active_session or not self._selected_trial:
+            QMessageBox.information(self, "Optimizer", "Select a successful trial first.")
+            return
+        if self._selected_trial.status != TrialStatus.SUCCESS:
+            QMessageBox.information(self, "Optimizer", "Only successful trials can be applied.")
+            return
+        if QMessageBox.question(
+            self,
+            "Apply Selected Trial",
+            "Apply the selected trial to the existing strategy .py and .json files?",
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No,
+        ) != QMessageBox.Yes:
+            return
+
+        result = self._service.apply_trial_to_strategy(
+            self._active_session.session_id,
+            self._selected_trial.trial_number,
+        )
+        if result.success:
+            QMessageBox.information(
+                self,
+                "Apply Selected Trial",
+                f"Applied to:\n{result.strategy_py_path}\n{result.strategy_json_path}",
+            )
+            self._refresh_selected_trial_diff()
+        else:
+            QMessageBox.warning(self, "Apply Selected Trial", result.error_message)
+
+    def _apply_selected_as_new_strategy(self) -> None:
+        if not self._active_session or not self._selected_trial:
+            QMessageBox.information(self, "Optimizer", "Select a successful trial first.")
+            return
+        if self._selected_trial.status != TrialStatus.SUCCESS:
+            QMessageBox.information(self, "Optimizer", "Only successful trials can be applied.")
+            return
+
+        default_name = (
+            f"{self._active_session.config.strategy_name}"
+            f"_trial_{self._selected_trial.trial_number:03d}"
+        )
+        text, accepted = QInputDialog.getText(
+            self,
+            "Apply New Strategy",
+            "New strategy name:",
+            QLineEdit.Normal,
+            default_name,
+        )
+        if not accepted:
+            return
+        strategy_name = text.strip()
+        if strategy_name.endswith(".py"):
+            strategy_name = strategy_name[:-3]
+
+        result = self._service.apply_trial_as_new_strategy(
+            self._active_session.session_id,
+            self._selected_trial.trial_number,
+            strategy_name,
+        )
+        if result.success:
+            if self._strategy_combo.findText(strategy_name) < 0:
+                self._strategy_combo.addItem(strategy_name)
+            QMessageBox.information(
+                self,
+                "Apply New Strategy",
+                f"Created:\n{result.strategy_py_path}\n{result.strategy_json_path}",
+            )
+        else:
+            QMessageBox.warning(self, "Apply New Strategy", result.error_message)
 
     def _export_best(self) -> None:
         if not self._active_session:

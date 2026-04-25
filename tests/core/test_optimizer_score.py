@@ -1,7 +1,12 @@
 """Unit tests for compute_optimizer_score."""
 import math
+from types import SimpleNamespace
+
 import pytest
-from app.core.services.optimizer_session_service import compute_optimizer_score
+from app.core.services.optimizer_session_service import (
+    compute_enhanced_composite_score,
+    compute_optimizer_score,
+)
 
 
 class TestComputeOptimizerScore:
@@ -65,3 +70,133 @@ class TestComputeOptimizerScore:
         """Sanity check: result is always finite."""
         result = compute_optimizer_score({"total_profit_pct": 3.14}, "total_profit_pct")
         assert math.isfinite(result)
+
+
+class TestComputeEnhancedCompositeScore:
+    def _config(self, **overrides):
+        values = {
+            "target_min_trades": 100,
+            "target_profit_pct": 50.0,
+            "max_drawdown_limit": 25.0,
+            "target_romad": 2.0,
+        }
+        values.update(overrides)
+        return SimpleNamespace(**values)
+
+    def _metrics(self, **overrides):
+        values = {
+            "total_trades": 100,
+            "total_profit_pct": 50.0,
+            "max_drawdown_pct": 10.0,
+            "profit_factor": 2.0,
+            "sharpe_ratio": 1.5,
+            "win_rate": 0.60,
+        }
+        values.update(overrides)
+        return values
+
+    def test_breakdown_contains_expected_rounded_keys(self):
+        score, breakdown = compute_enhanced_composite_score(self._metrics(), self._config())
+
+        assert math.isfinite(score)
+        assert set(breakdown) == {
+            "trade_count_score",
+            "profit_score",
+            "drawdown_score",
+            "romad_score",
+            "profit_factor_score",
+            "sharpe_score",
+            "win_rate_score",
+            "base_score",
+            "final_score",
+        }
+        assert all(isinstance(value, float) for value in breakdown.values())
+        assert breakdown["final_score"] == round(score, 4)
+
+    def test_trade_count_logarithmic_saturation(self):
+        _, target = compute_enhanced_composite_score(
+            self._metrics(total_trades=100),
+            self._config(target_min_trades=100),
+        )
+        _, excessive = compute_enhanced_composite_score(
+            self._metrics(total_trades=1000),
+            self._config(target_min_trades=100),
+        )
+
+        assert target["trade_count_score"] == pytest.approx(1.0)
+        assert excessive["trade_count_score"] == pytest.approx(1.0)
+
+    def test_low_trade_count_gets_multiplicative_penalty(self):
+        score, breakdown = compute_enhanced_composite_score(
+            self._metrics(total_trades=25),
+            self._config(target_min_trades=100),
+        )
+
+        assert breakdown["trade_count_score"] < 1.0
+        assert score == pytest.approx(breakdown["base_score"] * 0.25, abs=1e-4)
+
+    def test_quadratic_drawdown_penalty(self):
+        _, low_dd = compute_enhanced_composite_score(
+            self._metrics(max_drawdown_pct=5.0),
+            self._config(max_drawdown_limit=25.0),
+        )
+        _, high_dd = compute_enhanced_composite_score(
+            self._metrics(max_drawdown_pct=20.0),
+            self._config(max_drawdown_limit=25.0),
+        )
+
+        assert low_dd["drawdown_score"] == pytest.approx(0.96)
+        assert high_dd["drawdown_score"] == pytest.approx(0.36)
+
+    def test_drawdown_limit_violation_penalty(self):
+        score, breakdown = compute_enhanced_composite_score(
+            self._metrics(max_drawdown_pct=30.0),
+            self._config(max_drawdown_limit=25.0),
+        )
+
+        assert breakdown["drawdown_score"] == pytest.approx(0.0)
+        assert score == pytest.approx(breakdown["base_score"] - 0.50, abs=1e-4)
+
+    def test_non_positive_profit_penalty(self):
+        score, breakdown = compute_enhanced_composite_score(
+            self._metrics(total_profit_pct=0.0),
+            self._config(),
+        )
+
+        assert breakdown["profit_score"] == pytest.approx(0.0)
+        assert breakdown["romad_score"] == pytest.approx(0.0)
+        assert score == pytest.approx(breakdown["base_score"] - 1.0, abs=1e-4)
+
+    def test_romad_favors_efficient_profit_over_raw_profit(self):
+        efficient_score, efficient = compute_enhanced_composite_score(
+            self._metrics(total_profit_pct=40.0, max_drawdown_pct=5.0),
+            self._config(target_romad=5.0),
+        )
+        inefficient_score, inefficient = compute_enhanced_composite_score(
+            self._metrics(total_profit_pct=60.0, max_drawdown_pct=25.0),
+            self._config(target_romad=5.0),
+        )
+
+        assert efficient["romad_score"] > inefficient["romad_score"]
+        assert efficient_score > inefficient_score
+
+    def test_nan_inf_and_non_numeric_inputs_return_finite_fallback(self):
+        score, breakdown = compute_enhanced_composite_score(
+            {
+                "total_trades": "bad",
+                "total_profit_pct": float("nan"),
+                "max_drawdown_pct": float("inf"),
+                "profit_factor": "bad",
+                "sharpe_ratio": None,
+                "win_rate": "bad",
+            },
+            self._config(
+                target_min_trades=float("nan"),
+                target_profit_pct=0.0,
+                max_drawdown_limit=float("inf"),
+                target_romad="bad",
+            ),
+        )
+
+        assert math.isfinite(score)
+        assert math.isfinite(breakdown["final_score"])

@@ -1,0 +1,57 @@
+{
+  "config_file_path": "",
+  "dry_run_wallet": 80.0,
+  "max_open_trades": 2,
+  "pairs": [
+    "ADA/USDT",
+    "ETH/USDT"
+  ],
+  "param_defs": [
+    {
+      "categories": null,
+      "default": 5,
+      "enabled": true,
+      "high": 20.0,
+      "low": 1.0,
+      "name": "buy_ma_count",
+      "param_type": "int",
+      "space": "buy"
+    },
+    {
+      "categories": null,
+      "default": 13,
+      "enabled": true,
+      "high": 100.0,
+      "low": 1.0,
+      "name": "buy_ma_gap",
+      "param_type": "int",
+      "space": "buy"
+    },
+    {
+      "categories": null,
+      "default": 14,
+      "enabled": true,
+      "high": 20.0,
+      "low": 1.0,
+      "name": "sell_ma_count",
+      "param_type": "int",
+      "space": "sell"
+    },
+    {
+      "categories": null,
+      "default": 66,
+      "enabled": true,
+      "high": 100.0,
+      "low": 1.0,
+      "name": "sell_ma_gap",
+      "param_type": "int",
+      "space": "sell"
+    }
+  ],
+  "score_metric": "sharpe_ratio",
+  "strategy_class": "MultiMa",
+  "strategy_name": "MultiMa",
+  "timeframe": "4h",
+  "timerange": "20250422-20260417",
+  "total_trials": 50
+}

@@ -1,0 +1,31 @@
+{
+  "strategy": "MultiMa",
+  "timeframe": "4h",
+  "total_trades": 20,
+  "wins": 12,
+  "losses": 8,
+  "draws": 0,
+  "win_rate": 60.0,
+  "avg_profit": 0.23622659212914715,
+  "total_profit": 1.8817103999999993,
+  "total_profit_abs": 1.5053683199999996,
+  "sharpe_ratio": 0.04467162662208314,
+  "sortino_ratio": 0.04830633119291766,
+  "calmar_ratio": 1.2002014901552576,
+  "max_drawdown": 8.366850887783066,
+  "max_drawdown_abs": 7.419119950000001,
+  "trade_duration_avg": 9612,
+  "starting_balance": 80.0,
+  "final_balance": 81.50536832,
+  "timerange": "20250422-20260417",
+  "pairlist": [
+    "ADA/USDT",
+    "ETH/USDT"
+  ],
+  "backtest_start": "2025-04-24 00:00:00",
+  "backtest_end": "2026-04-17 00:00:00",
+  "expectancy": 0.075268416,
+  "profit_factor": 1.143145439231041,
+  "max_consecutive_wins": 6,
+  "max_consecutive_losses": 2
+}

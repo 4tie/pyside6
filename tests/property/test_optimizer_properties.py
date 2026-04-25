@@ -8,7 +8,11 @@ import math
 import pytest
 from hypothesis import given, settings, strategies as st
 
-from app.core.services.optimizer_session_service import compute_optimizer_score, SCORE_METRICS
+from app.core.services.optimizer_session_service import (
+    SCORE_METRICS,
+    compute_enhanced_composite_score,
+    compute_optimizer_score,
+)
 
 # All metric names including an unknown one
 _ALL_METRIC_NAMES = list(SCORE_METRICS) + ["unknown_metric", ""]
@@ -56,6 +60,56 @@ def test_score_finite_input_returns_same_value(metric, value):
     """For finite float inputs, score equals the input value."""
     result = compute_optimizer_score({metric: value}, metric)
     assert result == pytest.approx(value)
+
+
+@given(
+    metrics=st.dictionaries(
+        keys=st.sampled_from([
+            "total_trades",
+            "total_profit_pct",
+            "max_drawdown_pct",
+            "profit_factor",
+            "sharpe_ratio",
+            "win_rate",
+        ]),
+        values=st.one_of(
+            st.none(),
+            st.floats(allow_nan=True, allow_infinity=True),
+            st.integers(),
+            st.text(max_size=5),
+        ),
+        max_size=6,
+    ),
+    target_min_trades=st.one_of(st.floats(allow_nan=True, allow_infinity=True), st.integers(), st.text(max_size=5)),
+    target_profit_pct=st.one_of(st.floats(allow_nan=True, allow_infinity=True), st.integers(), st.text(max_size=5)),
+    max_drawdown_limit=st.one_of(st.floats(allow_nan=True, allow_infinity=True), st.integers(), st.text(max_size=5)),
+    target_romad=st.one_of(st.floats(allow_nan=True, allow_infinity=True), st.integers(), st.text(max_size=5)),
+)
+@settings(max_examples=300)
+def test_enhanced_composite_score_always_finite(
+    metrics,
+    target_min_trades,
+    target_profit_pct,
+    max_drawdown_limit,
+    target_romad,
+):
+    """Enhanced composite score and breakdown are finite for arbitrary inputs."""
+    config = type(
+        "Config",
+        (),
+        {
+            "target_min_trades": target_min_trades,
+            "target_profit_pct": target_profit_pct,
+            "max_drawdown_limit": max_drawdown_limit,
+            "target_romad": target_romad,
+        },
+    )()
+
+    score, breakdown = compute_enhanced_composite_score(metrics, config)
+
+    assert isinstance(score, float)
+    assert math.isfinite(score)
+    assert all(math.isfinite(value) for value in breakdown.values())
 
 
 # -----------------------------------------------------------------------
