@@ -57,6 +57,17 @@ async function loadRunDetail(runId) {
     document.getElementById('drawdown').textContent = formatPct(run.max_drawdown_pct / 100);
     document.getElementById('trades-count').textContent = run.trades_count;
     
+    // Sharpe and Profit Factor with color coding
+    const sharpeEl = document.getElementById('sharpe');
+    const sharpeValue = run.sharpe || 0;
+    sharpeEl.textContent = sharpeValue.toFixed(2);
+    sharpeEl.className = `value ${sharpeValue >= 1 ? 'text-success' : sharpeValue > 0 ? 'text-warning' : 'text-error'}`;
+    
+    const pfEl = document.getElementById('profit-factor');
+    const pfValue = run.profit_factor || 0;
+    pfEl.textContent = pfValue.toFixed(2);
+    pfEl.className = `value ${pfValue >= 1 ? 'text-success' : 'text-error'}`;
+    
     // Render trades table
     const tradesBody = document.getElementById('trades-body');
     const trades = run.trades || [];

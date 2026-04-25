@@ -94,6 +94,8 @@ SCORE_OPTIONS = [
     ("win_rate", "Win Rate"),
 ]
 
+TIMEFRAME_OPTIONS = ["1m", "3m", "5m", "15m", "30m", "1h", "2h", "4h", "6h", "8h", "12h", "1d"]
+
 # Param table column indices
 _PCOL_ENABLED  = 0
 _PCOL_NAME     = 1
@@ -457,17 +459,29 @@ class OptimizerPage(QWidget):
         self._strategy_combo.currentTextChanged.connect(self._on_strategy_changed)
         form.addRow(self._label("Strategy"), self._strategy_combo)
 
-        self._timeframe_edit = QLineEdit()
-        self._timeframe_edit.setReadOnly(True)
-        form.addRow(self._label("Timeframe"), self._timeframe_edit)
+        self._timeframe_combo = QComboBox()
+        self._timeframe_combo.setEditable(True)
+        self._timeframe_combo.addItems(TIMEFRAME_OPTIONS)
+        self._timeframe_combo.setCurrentText("5m")
+        form.addRow(self._label("Timeframe"), self._timeframe_combo)
 
         self._timerange_edit = QLineEdit()
         self._timerange_edit.setReadOnly(True)
         form.addRow(self._label("Timerange"), self._timerange_edit)
 
         self._pairs_edit = QLineEdit()
-        self._pairs_edit.setReadOnly(True)
-        form.addRow(self._label("Pairs"), self._pairs_edit)
+        self._pairs_edit.setPlaceholderText("BTC/USDT,ETH/USDT")
+        pairs_row = QWidget()
+        pairs_layout = QHBoxLayout(pairs_row)
+        pairs_layout.setContentsMargins(0, 0, 0, 0)
+        pairs_layout.setSpacing(6)
+        pairs_layout.addWidget(self._pairs_edit, 1)
+        self._select_pairs_btn = QPushButton("Select")
+        self._select_pairs_btn.setToolTip("Edit optimizer pairs")
+        self._select_pairs_btn.setFixedWidth(68)
+        self._select_pairs_btn.clicked.connect(self._select_pairs)
+        pairs_layout.addWidget(self._select_pairs_btn)
+        form.addRow(self._label("Pairs"), pairs_row)
 
         self._wallet_spin = QDoubleSpinBox()
         self._wallet_spin.setRange(1, 1_000_000)
@@ -515,9 +529,10 @@ class OptimizerPage(QWidget):
         layout.addLayout(form)
         for widget in (
             self._strategy_combo,
-            self._timeframe_edit,
+            self._timeframe_combo,
             self._timerange_edit,
             self._pairs_edit,
+            self._select_pairs_btn,
             self._wallet_spin,
             self._trades_spin,
             self._trials_spin,
@@ -789,7 +804,7 @@ class OptimizerPage(QWidget):
         self._param_defs = defs
         self._strategy_class = params.strategy_class
         if params.timeframe:
-            self._timeframe_edit.setText(params.timeframe)
+            self._timeframe_combo.setCurrentText(params.timeframe)
         self._populate_param_table(defs)
 
     def _populate_param_table(self, defs: list[ParamDef]) -> None:
@@ -864,7 +879,7 @@ class OptimizerPage(QWidget):
             strategy_name=strategy,
             strategy_class=getattr(self, "_strategy_class", strategy),
             pairs=pairs,
-            timeframe=self._timeframe_edit.text().strip() or "5m",
+            timeframe=self._timeframe_combo.currentText().strip() or "5m",
             timerange=self._timerange_edit.text().strip() or None,
             dry_run_wallet=self._wallet_spin.value(),
             max_open_trades=self._trades_spin.value(),

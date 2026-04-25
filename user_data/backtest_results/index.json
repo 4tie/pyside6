@@ -157,6 +157,35 @@
         {
           "backtest_end": "2026-04-25 00:00:00",
           "backtest_start": "2025-04-30 00:00:00",
+          "calmar": 2.4359,
+          "expectancy": 0.04,
+          "final_balance": 84.3988,
+          "losses": 62,
+          "max_drawdown_abs": 10.1242,
+          "max_drawdown_pct": 11.979,
+          "pairs": [
+            "ETH/USDT"
+          ],
+          "profit_factor": 1.099,
+          "profit_total_abs": 4.3988,
+          "profit_total_pct": 5.4985,
+          "run_dir": "MultiMa2/run_2026-04-25_19-28-56_c4a51b",
+          "run_id": "run_2026-04-25_19-28-56_c4a51b",
+          "saved_at": "2026-04-25T19:28:56.708267",
+          "sharpe": 0.1888,
+          "sortino": 0.2877,
+          "starting_balance": 80.0,
+          "strategy": "MultiMa2",
+          "timeframe": "5m",
+          "timerange": "20250430-20260425",
+          "trades_count": 110,
+          "version_id": null,
+          "win_rate_pct": 43.64,
+          "wins": 48
+        },
+        {
+          "backtest_end": "2026-04-25 00:00:00",
+          "backtest_start": "2025-04-30 00:00:00",
           "calmar": -0.958,
           "expectancy": -0.0056,
           "final_balance": 78.6653,
@@ -1183,5 +1212,5 @@
       ]
     }
   },
-  "updated_at": "2026-04-25T19:26:03.513396"
+  "updated_at": "2026-04-25T19:28:56.708285"
 }

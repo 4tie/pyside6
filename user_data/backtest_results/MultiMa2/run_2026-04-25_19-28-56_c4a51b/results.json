@@ -1,0 +1,30 @@
+{
+  "avg_duration_min": 225,
+  "avg_profit_pct": 0.060834,
+  "backtest_end": "2026-04-25 00:00:00",
+  "backtest_start": "2025-04-30 00:00:00",
+  "calmar_ratio": 2.4359,
+  "draws": 0,
+  "expectancy": 0.04,
+  "final_balance": 84.398772,
+  "losses": 62,
+  "max_consecutive_losses": 5,
+  "max_consecutive_wins": 3,
+  "max_drawdown_abs": 10.124227,
+  "max_drawdown_pct": 11.979,
+  "pairs": [
+    "ETH/USDT"
+  ],
+  "profit_factor": 1.099,
+  "sharpe_ratio": 0.1888,
+  "sortino_ratio": 0.2877,
+  "starting_balance": 80.0,
+  "strategy": "MultiMa2",
+  "timeframe": "5m",
+  "timerange": "20250430-20260425",
+  "total_profit_abs": 4.398772,
+  "total_profit_pct": 5.498465,
+  "total_trades": 110,
+  "win_rate_pct": 43.6364,
+  "wins": 48
+}

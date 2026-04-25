@@ -5309,3 +5309,24 @@
 2026-04-25 19:26:04.009 | DEBUG    | freqtrade_gui.ui.results       | Loaded 237 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMa2/run_2026-04-25_19-26-03_b32c90/trades.json
 2026-04-25 19:26:04.057 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMa2/run_2026-04-25_19-26-03_b32c90  (exists=True)
 2026-04-25 19:26:04.058 | DEBUG    | freqtrade_gui.ui.results       | Loaded 237 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMa2/run_2026-04-25_19-26-03_b32c90/trades.json
+2026-04-25 19:28:10.512 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to results
+2026-04-25 19:28:37.952 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to backtest
+2026-04-25 19:28:40.063 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to results
+2026-04-25 19:28:40.927 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to backtest
+2026-04-25 19:28:50.997 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run 31c30311-aba0-4da0-8bbd-8d7848a5e05a
+2026-04-25 19:28:56.700 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run 31c30311-aba0-4da0-8bbd-8d7848a5e05a finished with exit_code=0, emitting run_finished
+2026-04-25 19:28:56.710 | INFO     | freqtrade_gui.ui.main_window   | Backtest done: run_2026-04-25_19-28-56_c4a51b — refreshing results
+2026-04-25 19:28:56.711 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run 31c30311-aba0-4da0-8bbd-8d7848a5e05a
+2026-04-25 19:28:57.193 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMa2/run_2026-04-25_19-28-56_c4a51b  (exists=True)
+2026-04-25 19:28:57.194 | DEBUG    | freqtrade_gui.ui.results       | Loaded 110 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMa2/run_2026-04-25_19-28-56_c4a51b/trades.json
+2026-04-25 19:28:57.231 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMa2/run_2026-04-25_19-28-56_c4a51b  (exists=True)
+2026-04-25 19:28:57.232 | DEBUG    | freqtrade_gui.ui.results       | Loaded 110 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMa2/run_2026-04-25_19-28-56_c4a51b/trades.json
+2026-04-25 19:29:04.084 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to results
+2026-04-25 19:29:06.906 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to backtest
+2026-04-25 19:29:08.079 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to results
+2026-04-25 19:29:23.830 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to compare
+2026-04-25 19:29:24.649 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to optimize
+2026-04-25 19:29:26.204 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to optimizer
+2026-04-25 19:32:01.985 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to download
+2026-04-25 19:32:02.638 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to optimizer
+2026-04-25 19:32:15.070 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to backtest
