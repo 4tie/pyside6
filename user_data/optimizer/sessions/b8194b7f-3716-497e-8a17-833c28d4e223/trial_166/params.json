@@ -1,0 +1,21 @@
+{
+  "buy_params": {
+    "buy_ma_count": 3,
+    "buy_ma_gap": 9
+  },
+  "minimal_roi": {
+    "0": 1.298007409895854,
+    "13": 0.6682881129527126,
+    "146": 0.05619529238743117,
+    "38": 0.01980623338706593
+  },
+  "sell_params": {
+    "sell_ma_count": 14,
+    "sell_ma_gap": 45
+  },
+  "stoploss": -0.9589484290151916,
+  "trailing_only_offset_is_reached": true,
+  "trailing_stop": false,
+  "trailing_stop_positive": 0.286901667986056,
+  "trailing_stop_positive_offset": 0.30446328771572273
+}

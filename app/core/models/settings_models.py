@@ -7,6 +7,20 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 from app.core.models.optimizer_models import OptimizerPreferences
 
 
+def update_preference_fields(preferences: BaseModel, updates: dict[str, Any]) -> BaseModel:
+    """Return a validated preference model with a partial field update applied."""
+    fields = set(preferences.__class__.model_fields)
+    unknown = sorted(set(updates) - fields)
+    if unknown:
+        raise ValueError(
+            f"Unknown preference field(s) for {preferences.__class__.__name__}: "
+            f"{', '.join(unknown)}"
+        )
+    merged = preferences.model_dump()
+    merged.update(updates)
+    return preferences.__class__.model_validate(merged)
+
+
 class TerminalPreferences(BaseModel):
     """Terminal appearance preferences."""
 

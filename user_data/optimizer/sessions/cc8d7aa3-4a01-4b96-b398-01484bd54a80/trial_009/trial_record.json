@@ -1,0 +1,50 @@
+{
+  "candidate_params": {
+    "0": 1.6392867219158362,
+    "13": 0.10905618620296872,
+    "146": 0.5780160049837995,
+    "38": 0.8356264856793463,
+    "buy_ma_count": 14,
+    "buy_ma_gap": 19,
+    "sell_ma_count": 20,
+    "sell_ma_gap": 40,
+    "stoploss": -0.5908481118282987,
+    "trailing_only_offset_is_reached": true,
+    "trailing_stop": true,
+    "trailing_stop_positive": 0.4386908459767339,
+    "trailing_stop_positive_offset": 0.23075160970750322
+  },
+  "is_best": false,
+  "log_excerpt": "5 21:56:32,929 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using order_types: {'entry': 'limit', 'exit': 'limit', 'stoploss': 'limit', 'stoploss_on_exchange': False, \n'stoploss_on_exchange_interval': 60}\n2026-04-25 21:56:32,930 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using order_time_in_force: {'entry': 'GTC', 'exit': 'GTC'}\n2026-04-25 21:56:32,930 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using stake_currency: USDT\n2026-04-25 21:56:32,930 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using stake_amount: unlimited\n2026-04-25 21:56:32,930 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using startup_candle_count: 0\n2026-04-25 21:56:32,931 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using use_exit_signal: True\n2026-04-25 21:56:32,931 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using exit_profit_only: False\n2026-04-25 21:56:32,931 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using ignore_roi_if_entry_signal: False\n2026-04-25 21:56:32,931 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using exit_profit_offset: 0.0\n2026-04-25 21:56:32,932 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using disable_dataframe_checks: False\n2026-04-25 21:56:32,932 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using ignore_buying_expired_candle_after: 0\n2026-04-25 21:56:32,932 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using position_adjustment_enable: False\n2026-04-25 21:56:32,933 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using max_entry_position_adjustment: -1\n2026-04-25 21:56:32,933 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using max_open_trades: 3\n2026-04-25 21:56:32,933 - freqtrade - ERROR - Configuration error: The config trailing_stop_positive_offset needs to be greater than trailing_stop_positive in your config.\nPlease make sure to review the documentation at https://www.freqtrade.io/en/stable.",
+  "metrics": {
+    "best_pair": "XRP/USDT",
+    "best_trade_profit_pct": 0.0,
+    "final_balance": 98.56415349,
+    "max_drawdown_pct": 61.806126734204426,
+    "profit_factor": 0.7392360885551527,
+    "sharpe_ratio": -0.13817933756802678,
+    "total_profit_abs": -51.43584651000001,
+    "total_profit_pct": -34.29056434000001,
+    "total_trades": 21,
+    "win_rate": 0.4761904761904761,
+    "worst_pair": "HOME/USDT",
+    "worst_trade_profit_pct": 0.0
+  },
+  "score": -1.504796007810754,
+  "score_breakdown": {
+    "base_score": -0.0571,
+    "drawdown_score": 0.0,
+    "final_score": -1.5048,
+    "profit_factor_score": -0.1304,
+    "profit_score": -0.6858,
+    "romad_score": 0.0,
+    "sharpe_score": -0.0461,
+    "trade_count_score": 0.5514,
+    "win_rate_score": 0.254
+  },
+  "score_metric": "composite",
+  "score_mode": "composite",
+  "session_id": "cc8d7aa3-4a01-4b96-b398-01484bd54a80",
+  "status": "success",
+  "trial_number": 9
+}

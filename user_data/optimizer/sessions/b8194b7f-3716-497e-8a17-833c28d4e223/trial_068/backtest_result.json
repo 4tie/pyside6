@@ -1,0 +1,32 @@
+{
+  "strategy": "yes",
+  "timeframe": "4h",
+  "total_trades": 46,
+  "wins": 38,
+  "losses": 8,
+  "draws": 0,
+  "win_rate": 82.6086956521739,
+  "avg_profit": 2.935217854794175,
+  "total_profit": 53.95397112,
+  "total_profit_abs": 80.93095668,
+  "sharpe_ratio": 1.2669156965992736,
+  "sortino_ratio": 1.611820269040336,
+  "calmar_ratio": 26.564161101861657,
+  "max_drawdown": 10.778820537722929,
+  "max_drawdown_abs": 19.08851216,
+  "trade_duration_avg": 5410,
+  "starting_balance": 150.0,
+  "final_balance": 230.93095668,
+  "timerange": "20250422-20260417",
+  "pairlist": [
+    "XRP/USDT",
+    "ETH/USDT",
+    "HOME/USDT"
+  ],
+  "backtest_start": "2025-04-22 00:00:00",
+  "backtest_end": "2026-04-17 00:00:00",
+  "expectancy": 1.7593686234782608,
+  "profit_factor": 3.0126190268387614,
+  "max_consecutive_wins": 21,
+  "max_consecutive_losses": 3
+}

@@ -3,7 +3,13 @@ import subprocess
 from pathlib import Path
 from typing import Optional
 
-from app.core.models.settings_models import AppSettings, SettingsValidationResult
+from pydantic import BaseModel
+
+from app.core.models.settings_models import (
+    AppSettings,
+    SettingsValidationResult,
+    update_preference_fields,
+)
 from app.core.parsing.json_parser import parse_json_file, write_json_file_atomic, ParseError
 from app.core.utils.app_logger import get_logger
 
@@ -12,6 +18,18 @@ _log = get_logger("settings")
 
 class SettingsService:
     """Manages application settings persistence and resolution."""
+
+    _PREFERENCE_SECTIONS = frozenset(
+        {
+            "backtest_preferences",
+            "optimize_preferences",
+            "download_preferences",
+            "optimizer_preferences",
+            "strategy_lab",
+            "terminal_preferences",
+            "ai",
+        }
+    )
 
     def __init__(self, settings_file: Optional[str] = None):
         if settings_file:
@@ -51,6 +69,30 @@ class SettingsService:
             _log.error("Failed to save settings to %s: %s", self.settings_file, e)
             print(f"Failed to save settings: {e}")
             return False
+
+    def get_preferences(self, section: str) -> BaseModel:
+        """Return a specific preference section from the current settings."""
+        if section not in self._PREFERENCE_SECTIONS:
+            raise ValueError(f"Unknown settings preference section: {section}")
+        settings = self.load_settings()
+        preferences = getattr(settings, section)
+        if not isinstance(preferences, BaseModel):
+            raise ValueError(f"Settings section is not a preference model: {section}")
+        return preferences
+
+    def update_preferences(self, section: str, **kwargs) -> BaseModel:
+        """Partially update one preference section and persist settings atomically."""
+        if section not in self._PREFERENCE_SECTIONS:
+            raise ValueError(f"Unknown settings preference section: {section}")
+        settings = self.load_settings()
+        current = getattr(settings, section)
+        if not isinstance(current, BaseModel):
+            raise ValueError(f"Settings section is not a preference model: {section}")
+        updated = update_preference_fields(current, kwargs)
+        setattr(settings, section, updated)
+        if not self.save_settings(settings):
+            raise RuntimeError(f"Failed to save settings preference section: {section}")
+        return updated
 
     def resolve_python_executable(self, venv_path: Optional[str] = None) -> Optional[str]:
         """Resolve Python executable from venv path."""

@@ -9,6 +9,7 @@ from app.ui import theme
 _NAV_ITEMS = [
     ("dashboard",  "⬡",  "Dashboard"),
     ("backtest",   "▶",  "Backtest"),
+    ("parneeds",   "P",  "ParNeeds"),
     ("results",    "📊", "Results"),
     ("compare",    "⇄",  "Compare"),
     ("optimize",   "⚙",  "Optimize"),

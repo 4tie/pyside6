@@ -1,0 +1,165 @@
+{
+  "best_pointer": {
+    "score": 0.36633663366336633,
+    "session_id": "cc004eff-0936-4112-8326-b124d8af6fd9",
+    "trial_number": 1
+  },
+  "config": {
+    "config_file_path": "",
+    "dry_run_wallet": 150.0,
+    "max_drawdown_limit": 18.0,
+    "max_open_trades": 3,
+    "pairs": [
+      "XRP/USDT",
+      "ETH/USDT",
+      "HOME/USDT"
+    ],
+    "param_defs": [
+      {
+        "categories": null,
+        "default": 16,
+        "enabled": true,
+        "high": 20.0,
+        "low": 1.0,
+        "name": "buy_ma_count",
+        "param_type": "int",
+        "space": "buy"
+      },
+      {
+        "categories": null,
+        "default": 34,
+        "enabled": true,
+        "high": 50.0,
+        "low": 1.0,
+        "name": "buy_ma_gap",
+        "param_type": "int",
+        "space": "buy"
+      },
+      {
+        "categories": null,
+        "default": 2,
+        "enabled": true,
+        "high": 20.0,
+        "low": 1.0,
+        "name": "sell_ma_count",
+        "param_type": "int",
+        "space": "sell"
+      },
+      {
+        "categories": null,
+        "default": 23,
+        "enabled": true,
+        "high": 50.0,
+        "low": 1.0,
+        "name": "sell_ma_gap",
+        "param_type": "int",
+        "space": "sell"
+      },
+      {
+        "categories": null,
+        "default": 0.7588160485463413,
+        "enabled": true,
+        "high": 2.276448,
+        "low": 0.0,
+        "name": "0",
+        "param_type": "decimal",
+        "space": "roi"
+      },
+      {
+        "categories": null,
+        "default": 0.6631255360408145,
+        "enabled": true,
+        "high": 1.989377,
+        "low": 0.0,
+        "name": "13",
+        "param_type": "decimal",
+        "space": "roi"
+      },
+      {
+        "categories": null,
+        "default": 0.15214559216362566,
+        "enabled": true,
+        "high": 1.0,
+        "low": 0.0,
+        "name": "38",
+        "param_type": "decimal",
+        "space": "roi"
+      },
+      {
+        "categories": null,
+        "default": 0.29548035363445635,
+        "enabled": true,
+        "high": 1.0,
+        "low": 0.0,
+        "name": "146",
+        "param_type": "decimal",
+        "space": "roi"
+      },
+      {
+        "categories": null,
+        "default": -0.6005429983909293,
+        "enabled": true,
+        "high": -0.300271,
+        "low": -0.99,
+        "name": "stoploss",
+        "param_type": "decimal",
+        "space": "stoploss"
+      },
+      {
+        "categories": null,
+        "default": true,
+        "enabled": true,
+        "high": null,
+        "low": null,
+        "name": "trailing_stop",
+        "param_type": "boolean",
+        "space": "trailing"
+      },
+      {
+        "categories": null,
+        "default": 0.12872573505303578,
+        "enabled": true,
+        "high": 0.5,
+        "low": 0.001,
+        "name": "trailing_stop_positive",
+        "param_type": "decimal",
+        "space": "trailing"
+      },
+      {
+        "categories": null,
+        "default": 0.24157504864978815,
+        "enabled": true,
+        "high": 0.75,
+        "low": 0.001,
+        "name": "trailing_stop_positive_offset",
+        "param_type": "decimal",
+        "space": "trailing"
+      },
+      {
+        "categories": null,
+        "default": true,
+        "enabled": true,
+        "high": null,
+        "low": null,
+        "name": "trailing_only_offset_is_reached",
+        "param_type": "boolean",
+        "space": "trailing"
+      }
+    ],
+    "score_metric": "win_rate",
+    "score_mode": "single_metric",
+    "strategy_class": "yes",
+    "strategy_name": "yes",
+    "target_min_trades": 100,
+    "target_profit_pct": 50.0,
+    "target_romad": 2.0,
+    "timeframe": "5m",
+    "timerange": "20250422-20260417",
+    "total_trials": 52
+  },
+  "finished_at": "2026-04-25T18:50:02.736271+00:00",
+  "session_id": "cc004eff-0936-4112-8326-b124d8af6fd9",
+  "started_at": "2026-04-25T18:42:37.104659+00:00",
+  "status": "completed",
+  "trials_completed": 52
+}

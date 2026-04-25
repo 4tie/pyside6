@@ -5684,3 +5684,955 @@
 2026-04-25 20:17:57.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #50 (status=TrialStatus.SUCCESS)
 2026-04-25 20:18:00.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #51 (status=TrialStatus.SUCCESS)
 2026-04-25 20:18:04.003 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #52 (status=TrialStatus.SUCCESS)
+2026-04-25 21:33:24.941 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to dashboard
+2026-04-25 21:33:25.970 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to backtest
+2026-04-25 21:33:29.690 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to dashboard
+2026-04-25 21:33:30.339 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to results
+2026-04-25 21:33:30.675 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to backtest
+2026-04-25 21:34:06.756 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to dashboard
+2026-04-25 21:34:06.782 | INFO     | freqtrade_gui.ui.main_window   | ModernMainWindow initialised
+2026-04-25 21:34:06.843 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_20-32-05_7281c0  (exists=True)
+2026-04-25 21:34:06.844 | DEBUG    | freqtrade_gui.ui.results       | Loaded 33 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_20-32-05_7281c0/trades.json
+2026-04-25 21:34:06.875 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_20-32-05_7281c0  (exists=True)
+2026-04-25 21:34:06.875 | DEBUG    | freqtrade_gui.ui.results       | Loaded 33 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_20-32-05_7281c0/trades.json
+2026-04-25 21:34:10.002 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to backtest
+2026-04-25 21:34:11.006 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to dashboard
+2026-04-25 21:34:15.002 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to backtest
+2026-04-25 21:34:35.730 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to dashboard
+2026-04-25 21:34:52.466 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to backtest
+2026-04-25 21:34:53.716 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to parneeds
+2026-04-25 21:34:54.638 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to results
+2026-04-25 21:34:59.708 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_20-13-22_775a4b  (exists=True)
+2026-04-25 21:34:59.710 | DEBUG    | freqtrade_gui.ui.results       | Loaded 72 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_20-13-22_775a4b/trades.json
+2026-04-25 21:35:04.641 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_20-12-54_580b84  (exists=True)
+2026-04-25 21:35:04.643 | DEBUG    | freqtrade_gui.ui.results       | Loaded 94 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_20-12-54_580b84/trades.json
+2026-04-25 21:35:06.668 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_20-13-22_775a4b  (exists=True)
+2026-04-25 21:35:06.670 | DEBUG    | freqtrade_gui.ui.results       | Loaded 72 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_20-13-22_775a4b/trades.json
+2026-04-25 21:35:07.230 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_20-12-54_580b84  (exists=True)
+2026-04-25 21:35:07.232 | DEBUG    | freqtrade_gui.ui.results       | Loaded 94 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_20-12-54_580b84/trades.json
+2026-04-25 21:35:07.718 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_20-13-22_775a4b  (exists=True)
+2026-04-25 21:35:07.720 | DEBUG    | freqtrade_gui.ui.results       | Loaded 72 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_20-13-22_775a4b/trades.json
+2026-04-25 21:35:08.753 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_20-12-54_580b84  (exists=True)
+2026-04-25 21:35:08.755 | DEBUG    | freqtrade_gui.ui.results       | Loaded 94 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_20-12-54_580b84/trades.json
+2026-04-25 21:35:09.192 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_20-13-22_775a4b  (exists=True)
+2026-04-25 21:35:09.196 | DEBUG    | freqtrade_gui.ui.results       | Loaded 72 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_20-13-22_775a4b/trades.json
+2026-04-25 21:35:13.273 | DEBUG    | freqtrade_gui.ui.rollback_dialog | RollbackDialog created for strategy=yty run=run_2026-04-25_20-13-22_775a4b
+2026-04-25 21:35:24.678 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to backtest
+2026-04-25 21:35:28.171 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to results
+2026-04-25 21:35:34.429 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to parneeds
+2026-04-25 21:35:34.904 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to backtest
+2026-04-25 21:36:07.040 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run c35a0a5c-89c7-4be2-8a5e-7728f87b6f0a
+2026-04-25 21:36:10.050 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run c35a0a5c-89c7-4be2-8a5e-7728f87b6f0a finished with exit_code=2, emitting run_finished
+2026-04-25 21:36:10.052 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run c35a0a5c-89c7-4be2-8a5e-7728f87b6f0a
+2026-04-25 21:37:01.575 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run 6957a1f1-1694-469d-8290-000de37b4e0a
+2026-04-25 21:37:05.200 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run 6957a1f1-1694-469d-8290-000de37b4e0a finished with exit_code=0, emitting run_finished
+2026-04-25 21:37:05.213 | INFO     | freqtrade_gui.ui.main_window   | Backtest done: run_2026-04-25_21-37-05_7da428 — refreshing results
+2026-04-25 21:37:05.214 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run 6957a1f1-1694-469d-8290-000de37b4e0a
+2026-04-25 21:37:05.704 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_21-37-05_7da428  (exists=True)
+2026-04-25 21:37:05.705 | DEBUG    | freqtrade_gui.ui.results       | Loaded 72 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_21-37-05_7da428/trades.json
+2026-04-25 21:37:05.739 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_21-37-05_7da428  (exists=True)
+2026-04-25 21:37:05.740 | DEBUG    | freqtrade_gui.ui.results       | Loaded 72 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_21-37-05_7da428/trades.json
+2026-04-25 21:37:18.565 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to results
+2026-04-25 21:37:20.667 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_20-28-21_f2ad6a  (exists=True)
+2026-04-25 21:37:20.668 | DEBUG    | freqtrade_gui.ui.results       | Loaded 33 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_20-28-21_f2ad6a/trades.json
+2026-04-25 21:37:24.756 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to backtest
+2026-04-25 21:37:29.708 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run 97787487-4657-44dc-ba35-0cba453b226a
+2026-04-25 21:37:33.350 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run 97787487-4657-44dc-ba35-0cba453b226a finished with exit_code=0, emitting run_finished
+2026-04-25 21:37:33.365 | INFO     | freqtrade_gui.ui.main_window   | Backtest done: run_2026-04-25_21-37-33_382d1d — refreshing results
+2026-04-25 21:37:33.365 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run 97787487-4657-44dc-ba35-0cba453b226a
+2026-04-25 21:37:33.905 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d  (exists=True)
+2026-04-25 21:37:33.906 | DEBUG    | freqtrade_gui.ui.results       | Loaded 101 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d/trades.json
+2026-04-25 21:37:33.943 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d  (exists=True)
+2026-04-25 21:37:33.944 | DEBUG    | freqtrade_gui.ui.results       | Loaded 101 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d/trades.json
+2026-04-25 21:37:34.548 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to results
+2026-04-25 21:37:35.627 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_21-37-05_7da428  (exists=True)
+2026-04-25 21:37:35.630 | DEBUG    | freqtrade_gui.ui.results       | Loaded 72 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_21-37-05_7da428/trades.json
+2026-04-25 21:37:36.414 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d  (exists=True)
+2026-04-25 21:37:36.417 | DEBUG    | freqtrade_gui.ui.results       | Loaded 101 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d/trades.json
+2026-04-25 21:37:37.439 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_21-37-05_7da428  (exists=True)
+2026-04-25 21:37:37.442 | DEBUG    | freqtrade_gui.ui.results       | Loaded 72 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_21-37-05_7da428/trades.json
+2026-04-25 21:37:38.314 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d  (exists=True)
+2026-04-25 21:37:38.316 | DEBUG    | freqtrade_gui.ui.results       | Loaded 101 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d/trades.json
+2026-04-25 21:37:39.053 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_21-37-05_7da428  (exists=True)
+2026-04-25 21:37:39.054 | DEBUG    | freqtrade_gui.ui.results       | Loaded 72 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_21-37-05_7da428/trades.json
+2026-04-25 21:37:40.382 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d  (exists=True)
+2026-04-25 21:37:40.387 | DEBUG    | freqtrade_gui.ui.results       | Loaded 101 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d/trades.json
+2026-04-25 21:37:51.986 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_21-37-05_7da428  (exists=True)
+2026-04-25 21:37:51.990 | DEBUG    | freqtrade_gui.ui.results       | Loaded 72 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_21-37-05_7da428/trades.json
+2026-04-25 21:37:52.813 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d  (exists=True)
+2026-04-25 21:37:52.816 | DEBUG    | freqtrade_gui.ui.results       | Loaded 101 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d/trades.json
+2026-04-25 21:37:53.360 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_21-37-05_7da428  (exists=True)
+2026-04-25 21:37:53.363 | DEBUG    | freqtrade_gui.ui.results       | Loaded 72 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_21-37-05_7da428/trades.json
+2026-04-25 21:37:54.161 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d  (exists=True)
+2026-04-25 21:37:54.164 | DEBUG    | freqtrade_gui.ui.results       | Loaded 101 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d/trades.json
+2026-04-25 21:37:56.222 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_21-37-05_7da428  (exists=True)
+2026-04-25 21:37:56.225 | DEBUG    | freqtrade_gui.ui.results       | Loaded 72 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_21-37-05_7da428/trades.json
+2026-04-25 21:37:57.653 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d  (exists=True)
+2026-04-25 21:37:57.657 | DEBUG    | freqtrade_gui.ui.results       | Loaded 101 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d/trades.json
+2026-04-25 21:37:59.296 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_21-37-05_7da428  (exists=True)
+2026-04-25 21:37:59.299 | DEBUG    | freqtrade_gui.ui.results       | Loaded 72 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_21-37-05_7da428/trades.json
+2026-04-25 21:38:03.335 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d  (exists=True)
+2026-04-25 21:38:03.338 | DEBUG    | freqtrade_gui.ui.results       | Loaded 101 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d/trades.json
+2026-04-25 21:38:04.970 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_21-37-05_7da428  (exists=True)
+2026-04-25 21:38:04.971 | DEBUG    | freqtrade_gui.ui.results       | Loaded 72 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_21-37-05_7da428/trades.json
+2026-04-25 21:38:05.850 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d  (exists=True)
+2026-04-25 21:38:05.853 | DEBUG    | freqtrade_gui.ui.results       | Loaded 101 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d/trades.json
+2026-04-25 21:38:06.595 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_21-37-05_7da428  (exists=True)
+2026-04-25 21:38:06.597 | DEBUG    | freqtrade_gui.ui.results       | Loaded 72 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_21-37-05_7da428/trades.json
+2026-04-25 21:38:07.173 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d  (exists=True)
+2026-04-25 21:38:07.175 | DEBUG    | freqtrade_gui.ui.results       | Loaded 101 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d/trades.json
+2026-04-25 21:38:07.730 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_21-37-05_7da428  (exists=True)
+2026-04-25 21:38:07.732 | DEBUG    | freqtrade_gui.ui.results       | Loaded 72 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_21-37-05_7da428/trades.json
+2026-04-25 21:38:08.434 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d  (exists=True)
+2026-04-25 21:38:08.437 | DEBUG    | freqtrade_gui.ui.results       | Loaded 101 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d/trades.json
+2026-04-25 21:38:09.300 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_21-37-05_7da428  (exists=True)
+2026-04-25 21:38:09.302 | DEBUG    | freqtrade_gui.ui.results       | Loaded 72 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_21-37-05_7da428/trades.json
+2026-04-25 21:38:10.354 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d  (exists=True)
+2026-04-25 21:38:10.357 | DEBUG    | freqtrade_gui.ui.results       | Loaded 101 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d/trades.json
+2026-04-25 21:38:17.200 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_21-37-05_7da428  (exists=True)
+2026-04-25 21:38:17.202 | DEBUG    | freqtrade_gui.ui.results       | Loaded 72 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_21-37-05_7da428/trades.json
+2026-04-25 21:38:18.283 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d  (exists=True)
+2026-04-25 21:38:18.286 | DEBUG    | freqtrade_gui.ui.results       | Loaded 101 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d/trades.json
+2026-04-25 21:38:19.541 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_21-37-05_7da428  (exists=True)
+2026-04-25 21:38:19.544 | DEBUG    | freqtrade_gui.ui.results       | Loaded 72 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_21-37-05_7da428/trades.json
+2026-04-25 21:38:20.225 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d  (exists=True)
+2026-04-25 21:38:20.226 | DEBUG    | freqtrade_gui.ui.results       | Loaded 101 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d/trades.json
+2026-04-25 21:38:20.702 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_21-37-05_7da428  (exists=True)
+2026-04-25 21:38:20.704 | DEBUG    | freqtrade_gui.ui.results       | Loaded 72 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_21-37-05_7da428/trades.json
+2026-04-25 21:38:21.789 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d  (exists=True)
+2026-04-25 21:38:21.791 | DEBUG    | freqtrade_gui.ui.results       | Loaded 101 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d/trades.json
+2026-04-25 21:38:22.373 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_21-37-05_7da428  (exists=True)
+2026-04-25 21:38:22.375 | DEBUG    | freqtrade_gui.ui.results       | Loaded 72 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_21-37-05_7da428/trades.json
+2026-04-25 21:38:22.925 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d  (exists=True)
+2026-04-25 21:38:22.927 | DEBUG    | freqtrade_gui.ui.results       | Loaded 101 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d/trades.json
+2026-04-25 21:38:49.670 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_21-37-05_7da428  (exists=True)
+2026-04-25 21:38:49.672 | DEBUG    | freqtrade_gui.ui.results       | Loaded 72 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_21-37-05_7da428/trades.json
+2026-04-25 21:38:55.555 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d  (exists=True)
+2026-04-25 21:38:55.557 | DEBUG    | freqtrade_gui.ui.results       | Loaded 101 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d/trades.json
+2026-04-25 21:39:00.698 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_21-37-05_7da428  (exists=True)
+2026-04-25 21:39:00.698 | DEBUG    | freqtrade_gui.ui.results       | Loaded 72 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_21-37-05_7da428/trades.json
+2026-04-25 21:39:01.789 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to parneeds
+2026-04-25 21:39:30.555 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run a0d1ffd8-1414-4b13-8784-8b6d082f45ce
+2026-04-25 21:39:35.450 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run a0d1ffd8-1414-4b13-8784-8b6d082f45ce finished with exit_code=0, emitting run_finished
+2026-04-25 21:39:35.544 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run a0d1ffd8-1414-4b13-8784-8b6d082f45ce
+2026-04-25 21:40:15.997 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run 69d8a08a-4726-41e9-83e9-279cd9d4da79
+2026-04-25 21:40:19.500 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run 69d8a08a-4726-41e9-83e9-279cd9d4da79 finished with exit_code=0, emitting run_finished
+2026-04-25 21:40:19.568 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run 69d8a08a-4726-41e9-83e9-279cd9d4da79
+2026-04-25 21:41:15.583 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to results
+2026-04-25 21:41:16.864 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to compare
+2026-04-25 21:41:18.082 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to optimize
+2026-04-25 21:41:19.376 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to optimizer
+2026-04-25 21:41:25.749 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to parneeds
+2026-04-25 21:41:26.419 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to backtest
+2026-04-25 21:41:27.557 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to backtest
+2026-04-25 21:41:29.435 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to results
+2026-04-25 21:41:31.030 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d  (exists=True)
+2026-04-25 21:41:31.032 | DEBUG    | freqtrade_gui.ui.results       | Loaded 101 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d/trades.json
+2026-04-25 21:41:33.111 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to download
+2026-04-25 21:41:33.574 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to optimizer
+2026-04-25 21:42:05.582 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to results
+2026-04-25 21:42:11.309 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to optimizer
+2026-04-25 21:42:41.000 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #1 (status=TrialStatus.SUCCESS)
+2026-04-25 21:42:41.000 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | update_best: old=#0 (row=-1) → new=#1 (row=0)
+2026-04-25 21:42:54.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #2 (status=TrialStatus.SUCCESS)
+2026-04-25 21:42:58.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #3 (status=TrialStatus.SUCCESS)
+2026-04-25 21:43:09.000 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #4 (status=TrialStatus.SUCCESS)
+2026-04-25 21:43:16.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #5 (status=TrialStatus.SUCCESS)
+2026-04-25 21:43:26.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #6 (status=TrialStatus.SUCCESS)
+2026-04-25 21:43:35.557 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #7 (status=TrialStatus.SUCCESS)
+2026-04-25 21:43:39.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #8 (status=TrialStatus.SUCCESS)
+2026-04-25 21:43:49.500 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #9 (status=TrialStatus.SUCCESS)
+2026-04-25 21:43:58.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #10 (status=TrialStatus.SUCCESS)
+2026-04-25 21:44:06.000 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #11 (status=TrialStatus.SUCCESS)
+2026-04-25 21:44:18.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #12 (status=TrialStatus.SUCCESS)
+2026-04-25 21:44:29.502 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #13 (status=TrialStatus.SUCCESS)
+2026-04-25 21:44:43.502 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #14 (status=TrialStatus.SUCCESS)
+2026-04-25 21:44:53.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #15 (status=TrialStatus.SUCCESS)
+2026-04-25 21:45:03.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #16 (status=TrialStatus.SUCCESS)
+2026-04-25 21:45:12.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #17 (status=TrialStatus.SUCCESS)
+2026-04-25 21:45:22.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #18 (status=TrialStatus.SUCCESS)
+2026-04-25 21:45:32.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #19 (status=TrialStatus.SUCCESS)
+2026-04-25 21:45:42.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #20 (status=TrialStatus.SUCCESS)
+2026-04-25 21:45:51.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #21 (status=TrialStatus.SUCCESS)
+2026-04-25 21:46:01.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #22 (status=TrialStatus.SUCCESS)
+2026-04-25 21:46:10.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #23 (status=TrialStatus.SUCCESS)
+2026-04-25 21:46:20.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #24 (status=TrialStatus.SUCCESS)
+2026-04-25 21:46:29.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #25 (status=TrialStatus.SUCCESS)
+2026-04-25 21:46:39.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #26 (status=TrialStatus.SUCCESS)
+2026-04-25 21:46:49.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #27 (status=TrialStatus.SUCCESS)
+2026-04-25 21:47:00.000 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #28 (status=TrialStatus.SUCCESS)
+2026-04-25 21:47:10.503 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #29 (status=TrialStatus.SUCCESS)
+2026-04-25 21:47:14.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #30 (status=TrialStatus.SUCCESS)
+2026-04-25 21:47:23.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #31 (status=TrialStatus.SUCCESS)
+2026-04-25 21:47:33.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #32 (status=TrialStatus.SUCCESS)
+2026-04-25 21:47:42.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #33 (status=TrialStatus.SUCCESS)
+2026-04-25 21:47:52.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #34 (status=TrialStatus.SUCCESS)
+2026-04-25 21:48:02.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #35 (status=TrialStatus.SUCCESS)
+2026-04-25 21:48:05.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #36 (status=TrialStatus.SUCCESS)
+2026-04-25 21:48:08.000 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #37 (status=TrialStatus.SUCCESS)
+2026-04-25 21:48:18.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #38 (status=TrialStatus.SUCCESS)
+2026-04-25 21:48:28.502 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #39 (status=TrialStatus.SUCCESS)
+2026-04-25 21:48:38.002 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #40 (status=TrialStatus.SUCCESS)
+2026-04-25 21:48:48.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #41 (status=TrialStatus.SUCCESS)
+2026-04-25 21:48:57.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #42 (status=TrialStatus.SUCCESS)
+2026-04-25 21:49:07.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #43 (status=TrialStatus.SUCCESS)
+2026-04-25 21:49:16.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #44 (status=TrialStatus.SUCCESS)
+2026-04-25 21:49:25.002 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #45 (status=TrialStatus.SUCCESS)
+2026-04-25 21:49:34.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #46 (status=TrialStatus.SUCCESS)
+2026-04-25 21:49:37.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #47 (status=TrialStatus.SUCCESS)
+2026-04-25 21:49:40.003 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #48 (status=TrialStatus.SUCCESS)
+2026-04-25 21:49:43.002 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #49 (status=TrialStatus.SUCCESS)
+2026-04-25 21:49:47.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #50 (status=TrialStatus.SUCCESS)
+2026-04-25 21:49:59.502 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #51 (status=TrialStatus.SUCCESS)
+2026-04-25 21:50:03.002 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #52 (status=TrialStatus.SUCCESS)
+2026-04-25 21:53:41.452 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to backtest
+2026-04-25 21:53:43.692 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to compare
+2026-04-25 21:53:44.497 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to results
+2026-04-25 21:53:55.484 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to optimize
+2026-04-25 21:53:56.839 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to optimizer
+2026-04-25 21:55:01.502 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #1 (status=TrialStatus.SUCCESS)
+2026-04-25 21:55:01.502 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | update_best: old=#0 (row=-1) → new=#1 (row=0)
+2026-04-25 21:55:11.500 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #2 (status=TrialStatus.SUCCESS)
+2026-04-25 21:55:11.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | update_best: old=#1 (row=0) → new=#2 (row=1)
+2026-04-25 21:55:29.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #3 (status=TrialStatus.SUCCESS)
+2026-04-25 21:55:39.500 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #4 (status=TrialStatus.SUCCESS)
+2026-04-25 21:55:39.503 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | update_best: old=#2 (row=1) → new=#4 (row=3)
+2026-04-25 21:55:42.500 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #5 (status=TrialStatus.SUCCESS)
+2026-04-25 21:55:56.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #6 (status=TrialStatus.SUCCESS)
+2026-04-25 21:56:09.000 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #7 (status=TrialStatus.SUCCESS)
+2026-04-25 21:56:30.500 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #8 (status=TrialStatus.SUCCESS)
+2026-04-25 21:56:30.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | update_best: old=#4 (row=3) → new=#8 (row=7)
+2026-04-25 21:56:34.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #9 (status=TrialStatus.SUCCESS)
+2026-04-25 21:56:37.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #10 (status=TrialStatus.SUCCESS)
+2026-04-25 21:56:45.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #11 (status=TrialStatus.SUCCESS)
+2026-04-25 21:56:45.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | update_best: old=#8 (row=7) → new=#11 (row=10)
+2026-04-25 21:56:52.000 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #12 (status=TrialStatus.SUCCESS)
+2026-04-25 21:56:59.500 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #13 (status=TrialStatus.SUCCESS)
+2026-04-25 21:57:07.500 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #14 (status=TrialStatus.SUCCESS)
+2026-04-25 21:57:16.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #15 (status=TrialStatus.SUCCESS)
+2026-04-25 21:57:29.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #16 (status=TrialStatus.SUCCESS)
+2026-04-25 21:57:36.002 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #17 (status=TrialStatus.SUCCESS)
+2026-04-25 21:57:47.000 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #18 (status=TrialStatus.SUCCESS)
+2026-04-25 21:57:58.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #19 (status=TrialStatus.SUCCESS)
+2026-04-25 21:58:08.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #20 (status=TrialStatus.SUCCESS)
+2026-04-25 21:58:17.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #21 (status=TrialStatus.SUCCESS)
+2026-04-25 21:58:24.503 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #22 (status=TrialStatus.SUCCESS)
+2026-04-25 21:58:32.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #23 (status=TrialStatus.SUCCESS)
+2026-04-25 21:58:47.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #24 (status=TrialStatus.SUCCESS)
+2026-04-25 21:59:00.000 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #25 (status=TrialStatus.SUCCESS)
+2026-04-25 21:59:12.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #26 (status=TrialStatus.SUCCESS)
+2026-04-25 21:59:22.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #27 (status=TrialStatus.SUCCESS)
+2026-04-25 21:59:34.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #28 (status=TrialStatus.SUCCESS)
+2026-04-25 21:59:45.000 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #29 (status=TrialStatus.SUCCESS)
+2026-04-25 21:59:55.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #30 (status=TrialStatus.SUCCESS)
+2026-04-25 22:00:06.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #31 (status=TrialStatus.SUCCESS)
+2026-04-25 22:00:13.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #32 (status=TrialStatus.SUCCESS)
+2026-04-25 22:00:27.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #33 (status=TrialStatus.SUCCESS)
+2026-04-25 22:00:37.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #34 (status=TrialStatus.SUCCESS)
+2026-04-25 22:00:50.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #35 (status=TrialStatus.SUCCESS)
+2026-04-25 22:01:04.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #36 (status=TrialStatus.SUCCESS)
+2026-04-25 22:01:09.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #37 (status=TrialStatus.SUCCESS)
+2026-04-25 22:01:18.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #38 (status=TrialStatus.SUCCESS)
+2026-04-25 22:01:29.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #39 (status=TrialStatus.SUCCESS)
+2026-04-25 22:01:44.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #40 (status=TrialStatus.SUCCESS)
+2026-04-25 22:01:47.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #41 (status=TrialStatus.SUCCESS)
+2026-04-25 22:01:55.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #42 (status=TrialStatus.SUCCESS)
+2026-04-25 22:02:06.500 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #43 (status=TrialStatus.SUCCESS)
+2026-04-25 22:02:14.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #44 (status=TrialStatus.SUCCESS)
+2026-04-25 22:02:23.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #45 (status=TrialStatus.SUCCESS)
+2026-04-25 22:02:33.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #46 (status=TrialStatus.SUCCESS)
+2026-04-25 22:02:48.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #47 (status=TrialStatus.SUCCESS)
+2026-04-25 22:02:58.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #48 (status=TrialStatus.SUCCESS)
+2026-04-25 22:03:13.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #49 (status=TrialStatus.SUCCESS)
+2026-04-25 22:03:26.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #50 (status=TrialStatus.SUCCESS)
+2026-04-25 22:03:36.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #51 (status=TrialStatus.SUCCESS)
+2026-04-25 22:03:43.500 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #52 (status=TrialStatus.SUCCESS)
+2026-04-25 22:03:51.004 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #53 (status=TrialStatus.SUCCESS)
+2026-04-25 22:04:03.502 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #54 (status=TrialStatus.SUCCESS)
+2026-04-25 22:04:14.002 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #55 (status=TrialStatus.SUCCESS)
+2026-04-25 22:04:21.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #56 (status=TrialStatus.SUCCESS)
+2026-04-25 22:04:36.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #57 (status=TrialStatus.SUCCESS)
+2026-04-25 22:04:40.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #58 (status=TrialStatus.SUCCESS)
+2026-04-25 22:04:54.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #59 (status=TrialStatus.SUCCESS)
+2026-04-25 22:05:05.504 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #60 (status=TrialStatus.SUCCESS)
+2026-04-25 22:05:13.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #61 (status=TrialStatus.SUCCESS)
+2026-04-25 22:05:20.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #62 (status=TrialStatus.SUCCESS)
+2026-04-25 22:05:34.000 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #63 (status=TrialStatus.SUCCESS)
+2026-04-25 22:05:45.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #64 (status=TrialStatus.SUCCESS)
+2026-04-25 22:05:53.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #65 (status=TrialStatus.SUCCESS)
+2026-04-25 22:06:06.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #66 (status=TrialStatus.SUCCESS)
+2026-04-25 22:06:13.002 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #67 (status=TrialStatus.SUCCESS)
+2026-04-25 22:06:25.502 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #68 (status=TrialStatus.SUCCESS)
+2026-04-25 22:06:33.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #69 (status=TrialStatus.SUCCESS)
+2026-04-25 22:06:36.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #70 (status=TrialStatus.SUCCESS)
+2026-04-25 22:06:47.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #71 (status=TrialStatus.SUCCESS)
+2026-04-25 22:06:54.003 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #72 (status=TrialStatus.SUCCESS)
+2026-04-25 22:07:04.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #73 (status=TrialStatus.SUCCESS)
+2026-04-25 22:07:12.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #74 (status=TrialStatus.SUCCESS)
+2026-04-25 22:07:24.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #75 (status=TrialStatus.SUCCESS)
+2026-04-25 22:07:37.502 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #76 (status=TrialStatus.SUCCESS)
+2026-04-25 22:07:47.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #77 (status=TrialStatus.SUCCESS)
+2026-04-25 22:07:54.510 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #78 (status=TrialStatus.SUCCESS)
+2026-04-25 22:08:05.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #79 (status=TrialStatus.SUCCESS)
+2026-04-25 22:08:09.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #80 (status=TrialStatus.SUCCESS)
+2026-04-25 22:08:16.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #81 (status=TrialStatus.SUCCESS)
+2026-04-25 22:08:24.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #82 (status=TrialStatus.SUCCESS)
+2026-04-25 22:08:37.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #83 (status=TrialStatus.SUCCESS)
+2026-04-25 22:08:44.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #84 (status=TrialStatus.SUCCESS)
+2026-04-25 22:08:56.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #85 (status=TrialStatus.SUCCESS)
+2026-04-25 22:09:07.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #86 (status=TrialStatus.SUCCESS)
+2026-04-25 22:09:14.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #87 (status=TrialStatus.SUCCESS)
+2026-04-25 22:09:24.000 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #88 (status=TrialStatus.SUCCESS)
+2026-04-25 22:09:33.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #89 (status=TrialStatus.SUCCESS)
+2026-04-25 22:09:40.502 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #90 (status=TrialStatus.SUCCESS)
+2026-04-25 22:09:52.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #91 (status=TrialStatus.SUCCESS)
+2026-04-25 22:09:59.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #92 (status=TrialStatus.SUCCESS)
+2026-04-25 22:10:09.502 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #93 (status=TrialStatus.SUCCESS)
+2026-04-25 22:10:17.002 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #94 (status=TrialStatus.SUCCESS)
+2026-04-25 22:10:24.500 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #95 (status=TrialStatus.SUCCESS)
+2026-04-25 22:10:35.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #96 (status=TrialStatus.SUCCESS)
+2026-04-25 22:10:39.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #97 (status=TrialStatus.SUCCESS)
+2026-04-25 22:10:50.500 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #98 (status=TrialStatus.SUCCESS)
+2026-04-25 22:10:59.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #99 (status=TrialStatus.SUCCESS)
+2026-04-25 22:11:10.003 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #100 (status=TrialStatus.SUCCESS)
+2026-04-25 22:23:17.502 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #1 (status=TrialStatus.SUCCESS)
+2026-04-25 22:23:17.502 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | update_best: old=#0 (row=-1) → new=#1 (row=0)
+2026-04-25 22:23:27.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #2 (status=TrialStatus.SUCCESS)
+2026-04-25 22:23:27.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | update_best: old=#1 (row=0) → new=#2 (row=1)
+2026-04-25 22:23:39.500 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #3 (status=TrialStatus.SUCCESS)
+2026-04-25 22:23:52.000 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #4 (status=TrialStatus.SUCCESS)
+2026-04-25 22:24:01.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #5 (status=TrialStatus.SUCCESS)
+2026-04-25 22:24:01.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | update_best: old=#2 (row=1) → new=#5 (row=4)
+2026-04-25 22:24:13.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #6 (status=TrialStatus.SUCCESS)
+2026-04-25 22:24:22.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #7 (status=TrialStatus.SUCCESS)
+2026-04-25 22:24:33.000 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #8 (status=TrialStatus.SUCCESS)
+2026-04-25 22:24:42.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #9 (status=TrialStatus.SUCCESS)
+2026-04-25 22:24:45.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #10 (status=TrialStatus.SUCCESS)
+2026-04-25 22:24:53.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #11 (status=TrialStatus.SUCCESS)
+2026-04-25 22:24:53.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | update_best: old=#5 (row=4) → new=#11 (row=10)
+2026-04-25 22:25:00.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #12 (status=TrialStatus.SUCCESS)
+2026-04-25 22:25:08.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #13 (status=TrialStatus.SUCCESS)
+2026-04-25 22:25:15.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #14 (status=TrialStatus.SUCCESS)
+2026-04-25 22:25:24.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #15 (status=TrialStatus.SUCCESS)
+2026-04-25 22:25:34.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #16 (status=TrialStatus.SUCCESS)
+2026-04-25 22:25:45.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #17 (status=TrialStatus.SUCCESS)
+2026-04-25 22:25:56.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #18 (status=TrialStatus.SUCCESS)
+2026-04-25 22:26:03.502 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #19 (status=TrialStatus.SUCCESS)
+2026-04-25 22:26:13.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #20 (status=TrialStatus.SUCCESS)
+2026-04-25 22:26:34.500 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #21 (status=TrialStatus.SUCCESS)
+2026-04-25 22:26:42.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #22 (status=TrialStatus.SUCCESS)
+2026-04-25 22:26:51.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #23 (status=TrialStatus.SUCCESS)
+2026-04-25 22:27:00.000 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #24 (status=TrialStatus.SUCCESS)
+2026-04-25 22:27:09.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #25 (status=TrialStatus.SUCCESS)
+2026-04-25 22:27:19.000 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #26 (status=TrialStatus.SUCCESS)
+2026-04-25 22:27:28.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #27 (status=TrialStatus.SUCCESS)
+2026-04-25 22:27:38.500 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #28 (status=TrialStatus.SUCCESS)
+2026-04-25 22:27:47.500 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #29 (status=TrialStatus.SUCCESS)
+2026-04-25 22:27:58.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #30 (status=TrialStatus.SUCCESS)
+2026-04-25 22:28:05.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #31 (status=TrialStatus.SUCCESS)
+2026-04-25 22:28:12.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #32 (status=TrialStatus.SUCCESS)
+2026-04-25 22:28:21.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #33 (status=TrialStatus.SUCCESS)
+2026-04-25 22:28:30.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #34 (status=TrialStatus.SUCCESS)
+2026-04-25 22:28:39.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #35 (status=TrialStatus.SUCCESS)
+2026-04-25 22:28:48.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #36 (status=TrialStatus.SUCCESS)
+2026-04-25 22:29:03.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #37 (status=TrialStatus.SUCCESS)
+2026-04-25 22:29:12.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #38 (status=TrialStatus.SUCCESS)
+2026-04-25 22:29:24.503 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #39 (status=TrialStatus.SUCCESS)
+2026-04-25 22:29:32.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #40 (status=TrialStatus.SUCCESS)
+2026-04-25 22:29:35.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #41 (status=TrialStatus.SUCCESS)
+2026-04-25 22:29:42.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #42 (status=TrialStatus.SUCCESS)
+2026-04-25 22:29:52.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #43 (status=TrialStatus.SUCCESS)
+2026-04-25 22:30:06.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #44 (status=TrialStatus.SUCCESS)
+2026-04-25 22:30:14.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #45 (status=TrialStatus.SUCCESS)
+2026-04-25 22:30:17.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #46 (status=TrialStatus.SUCCESS)
+2026-04-25 22:30:26.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #47 (status=TrialStatus.SUCCESS)
+2026-04-25 22:30:35.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #48 (status=TrialStatus.SUCCESS)
+2026-04-25 22:30:44.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #49 (status=TrialStatus.SUCCESS)
+2026-04-25 22:30:53.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #50 (status=TrialStatus.SUCCESS)
+2026-04-25 22:31:03.000 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #51 (status=TrialStatus.SUCCESS)
+2026-04-25 22:31:10.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #52 (status=TrialStatus.SUCCESS)
+2026-04-25 22:31:17.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #53 (status=TrialStatus.SUCCESS)
+2026-04-25 22:31:26.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #54 (status=TrialStatus.SUCCESS)
+2026-04-25 22:31:34.002 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #55 (status=TrialStatus.SUCCESS)
+2026-04-25 22:31:42.500 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #56 (status=TrialStatus.SUCCESS)
+2026-04-25 22:31:56.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #57 (status=TrialStatus.SUCCESS)
+2026-04-25 22:32:04.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #58 (status=TrialStatus.SUCCESS)
+2026-04-25 22:32:14.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #59 (status=TrialStatus.SUCCESS)
+2026-04-25 22:32:23.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #60 (status=TrialStatus.SUCCESS)
+2026-04-25 22:32:32.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #61 (status=TrialStatus.SUCCESS)
+2026-04-25 22:32:39.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #62 (status=TrialStatus.SUCCESS)
+2026-04-25 22:32:46.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #63 (status=TrialStatus.SUCCESS)
+2026-04-25 22:32:56.003 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #64 (status=TrialStatus.SUCCESS)
+2026-04-25 22:33:05.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #65 (status=TrialStatus.SUCCESS)
+2026-04-25 22:33:12.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #66 (status=TrialStatus.SUCCESS)
+2026-04-25 22:33:21.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #67 (status=TrialStatus.SUCCESS)
+2026-04-25 22:33:30.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #68 (status=TrialStatus.SUCCESS)
+2026-04-25 22:33:33.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #69 (status=TrialStatus.SUCCESS)
+2026-04-25 22:33:42.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #70 (status=TrialStatus.SUCCESS)
+2026-04-25 22:33:51.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #71 (status=TrialStatus.SUCCESS)
+2026-04-25 22:33:58.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #72 (status=TrialStatus.SUCCESS)
+2026-04-25 22:34:07.000 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #73 (status=TrialStatus.SUCCESS)
+2026-04-25 22:34:14.502 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #74 (status=TrialStatus.SUCCESS)
+2026-04-25 22:34:23.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #75 (status=TrialStatus.SUCCESS)
+2026-04-25 22:34:30.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #76 (status=TrialStatus.SUCCESS)
+2026-04-25 22:34:41.000 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #77 (status=TrialStatus.SUCCESS)
+2026-04-25 22:34:50.004 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #78 (status=TrialStatus.SUCCESS)
+2026-04-25 22:34:59.002 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #79 (status=TrialStatus.SUCCESS)
+2026-04-25 22:35:03.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #80 (status=TrialStatus.SUCCESS)
+2026-04-25 22:35:11.500 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #81 (status=TrialStatus.SUCCESS)
+2026-04-25 22:35:19.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #82 (status=TrialStatus.SUCCESS)
+2026-04-25 22:35:28.503 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #83 (status=TrialStatus.SUCCESS)
+2026-04-25 22:35:37.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #84 (status=TrialStatus.SUCCESS)
+2026-04-25 22:35:44.500 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #85 (status=TrialStatus.SUCCESS)
+2026-04-25 22:35:52.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #86 (status=TrialStatus.SUCCESS)
+2026-04-25 22:35:55.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #87 (status=TrialStatus.SUCCESS)
+2026-04-25 22:36:02.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #88 (status=TrialStatus.SUCCESS)
+2026-04-25 22:36:11.002 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #89 (status=TrialStatus.SUCCESS)
+2026-04-25 22:36:20.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #90 (status=TrialStatus.SUCCESS)
+2026-04-25 22:36:30.502 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #91 (status=TrialStatus.SUCCESS)
+2026-04-25 22:36:34.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #92 (status=TrialStatus.SUCCESS)
+2026-04-25 22:36:37.002 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #93 (status=TrialStatus.SUCCESS)
+2026-04-25 22:36:40.002 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #94 (status=TrialStatus.SUCCESS)
+2026-04-25 22:36:43.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #95 (status=TrialStatus.SUCCESS)
+2026-04-25 22:36:51.000 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #96 (status=TrialStatus.SUCCESS)
+2026-04-25 22:36:54.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #97 (status=TrialStatus.SUCCESS)
+2026-04-25 22:37:03.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #98 (status=TrialStatus.SUCCESS)
+2026-04-25 22:37:12.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #99 (status=TrialStatus.SUCCESS)
+2026-04-25 22:37:21.502 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #100 (status=TrialStatus.SUCCESS)
+2026-04-25 22:38:14.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #1 (status=TrialStatus.SUCCESS)
+2026-04-25 22:38:14.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | update_best: old=#0 (row=-1) → new=#1 (row=0)
+2026-04-25 22:38:17.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #2 (status=TrialStatus.SUCCESS)
+2026-04-25 22:38:21.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #3 (status=TrialStatus.SUCCESS)
+2026-04-25 22:38:21.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | update_best: old=#1 (row=0) → new=#3 (row=2)
+2026-04-25 22:38:24.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #4 (status=TrialStatus.SUCCESS)
+2026-04-25 22:38:27.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #5 (status=TrialStatus.SUCCESS)
+2026-04-25 22:38:31.000 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #6 (status=TrialStatus.SUCCESS)
+2026-04-25 22:38:34.501 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #7 (status=TrialStatus.SUCCESS)
+2026-04-25 22:38:38.001 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #8 (status=TrialStatus.SUCCESS)
+2026-04-25 22:38:41.530 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #9 (status=TrialStatus.SUCCESS)
+2026-04-25 22:38:45.504 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #10 (status=TrialStatus.SUCCESS)
+2026-04-25 22:38:49.003 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #11 (status=TrialStatus.SUCCESS)
+2026-04-25 22:38:52.507 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #12 (status=TrialStatus.SUCCESS)
+2026-04-25 22:38:56.005 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #13 (status=TrialStatus.SUCCESS)
+2026-04-25 22:38:56.008 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | update_best: old=#3 (row=2) → new=#13 (row=12)
+2026-04-25 22:39:00.008 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #14 (status=TrialStatus.SUCCESS)
+2026-04-25 22:39:03.503 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #15 (status=TrialStatus.SUCCESS)
+2026-04-25 22:39:03.507 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | update_best: old=#13 (row=12) → new=#15 (row=14)
+2026-04-25 22:39:07.007 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #16 (status=TrialStatus.SUCCESS)
+2026-04-25 22:39:11.004 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #17 (status=TrialStatus.SUCCESS)
+2026-04-25 22:39:14.535 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #18 (status=TrialStatus.SUCCESS)
+2026-04-25 22:39:14.559 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | update_best: old=#15 (row=14) → new=#18 (row=17)
+2026-04-25 22:39:18.006 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #19 (status=TrialStatus.SUCCESS)
+2026-04-25 22:39:21.505 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #20 (status=TrialStatus.SUCCESS)
+2026-04-25 22:39:24.511 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #21 (status=TrialStatus.SUCCESS)
+2026-04-25 22:39:27.501 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to backtest
+2026-04-25 22:39:28.507 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #22 (status=TrialStatus.SUCCESS)
+2026-04-25 22:39:30.191 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to results
+2026-04-25 22:39:32.018 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #23 (status=TrialStatus.SUCCESS)
+2026-04-25 22:39:35.522 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #24 (status=TrialStatus.SUCCESS)
+2026-04-25 22:39:39.023 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #25 (status=TrialStatus.SUCCESS)
+2026-04-25 22:39:43.016 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #26 (status=TrialStatus.SUCCESS)
+2026-04-25 22:39:46.612 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to parneeds
+2026-04-25 22:39:47.025 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #27 (status=TrialStatus.SUCCESS)
+2026-04-25 22:39:47.286 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to backtest
+2026-04-25 22:39:48.718 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to optimizer
+2026-04-25 22:39:50.528 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #28 (status=TrialStatus.SUCCESS)
+2026-04-25 22:39:53.509 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #29 (status=TrialStatus.SUCCESS)
+2026-04-25 22:39:57.024 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #30 (status=TrialStatus.SUCCESS)
+2026-04-25 22:40:01.011 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #31 (status=TrialStatus.SUCCESS)
+2026-04-25 22:40:05.021 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #32 (status=TrialStatus.SUCCESS)
+2026-04-25 22:40:08.511 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #33 (status=TrialStatus.SUCCESS)
+2026-04-25 22:40:12.013 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #34 (status=TrialStatus.SUCCESS)
+2026-04-25 22:40:15.013 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #35 (status=TrialStatus.SUCCESS)
+2026-04-25 22:40:18.513 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #36 (status=TrialStatus.SUCCESS)
+2026-04-25 22:40:21.513 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #37 (status=TrialStatus.SUCCESS)
+2026-04-25 22:40:24.546 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #38 (status=TrialStatus.SUCCESS)
+2026-04-25 22:40:28.015 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #39 (status=TrialStatus.SUCCESS)
+2026-04-25 22:40:31.516 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #40 (status=TrialStatus.SUCCESS)
+2026-04-25 22:40:35.017 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #41 (status=TrialStatus.SUCCESS)
+2026-04-25 22:40:38.534 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #42 (status=TrialStatus.SUCCESS)
+2026-04-25 22:40:42.047 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #43 (status=TrialStatus.SUCCESS)
+2026-04-25 22:40:45.536 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #44 (status=TrialStatus.SUCCESS)
+2026-04-25 22:40:50.019 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #45 (status=TrialStatus.SUCCESS)
+2026-04-25 22:40:53.019 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #46 (status=TrialStatus.SUCCESS)
+2026-04-25 22:40:56.520 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #47 (status=TrialStatus.SUCCESS)
+2026-04-25 22:41:00.023 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #48 (status=TrialStatus.SUCCESS)
+2026-04-25 22:41:04.021 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #49 (status=TrialStatus.SUCCESS)
+2026-04-25 22:41:07.555 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #50 (status=TrialStatus.SUCCESS)
+2026-04-25 22:41:07.585 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | update_best: old=#18 (row=17) → new=#50 (row=49)
+2026-04-25 22:41:11.022 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #51 (status=TrialStatus.SUCCESS)
+2026-04-25 22:41:15.039 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #52 (status=TrialStatus.SUCCESS)
+2026-04-25 22:41:18.525 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #53 (status=TrialStatus.SUCCESS)
+2026-04-25 22:41:22.096 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #54 (status=TrialStatus.SUCCESS)
+2026-04-25 22:41:22.127 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | update_best: old=#50 (row=49) → new=#54 (row=53)
+2026-04-25 22:41:26.526 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #55 (status=TrialStatus.SUCCESS)
+2026-04-25 22:41:30.069 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #56 (status=TrialStatus.SUCCESS)
+2026-04-25 22:41:33.536 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #57 (status=TrialStatus.SUCCESS)
+2026-04-25 22:41:37.529 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #58 (status=TrialStatus.SUCCESS)
+2026-04-25 22:41:41.122 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #59 (status=TrialStatus.SUCCESS)
+2026-04-25 22:41:41.156 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | update_best: old=#54 (row=53) → new=#59 (row=58)
+2026-04-25 22:41:44.030 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #60 (status=TrialStatus.SUCCESS)
+2026-04-25 22:41:48.086 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #61 (status=TrialStatus.SUCCESS)
+2026-04-25 22:41:48.144 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | update_best: old=#59 (row=58) → new=#61 (row=60)
+2026-04-25 22:41:51.532 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #62 (status=TrialStatus.SUCCESS)
+2026-04-25 22:41:55.532 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #63 (status=TrialStatus.SUCCESS)
+2026-04-25 22:41:59.042 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #64 (status=TrialStatus.SUCCESS)
+2026-04-25 22:42:03.035 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #65 (status=TrialStatus.SUCCESS)
+2026-04-25 22:42:06.535 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #66 (status=TrialStatus.SUCCESS)
+2026-04-25 22:42:10.037 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #67 (status=TrialStatus.SUCCESS)
+2026-04-25 22:42:13.566 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #68 (status=TrialStatus.SUCCESS)
+2026-04-25 22:42:17.559 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #69 (status=TrialStatus.SUCCESS)
+2026-04-25 22:42:21.043 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #70 (status=TrialStatus.SUCCESS)
+2026-04-25 22:42:25.040 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #71 (status=TrialStatus.SUCCESS)
+2026-04-25 22:42:28.542 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #72 (status=TrialStatus.SUCCESS)
+2026-04-25 22:42:31.544 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #73 (status=TrialStatus.SUCCESS)
+2026-04-25 22:42:35.108 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #74 (status=TrialStatus.SUCCESS)
+2026-04-25 22:42:38.550 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #75 (status=TrialStatus.SUCCESS)
+2026-04-25 22:42:42.547 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #76 (status=TrialStatus.SUCCESS)
+2026-04-25 22:42:46.059 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #77 (status=TrialStatus.SUCCESS)
+2026-04-25 22:42:49.561 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #78 (status=TrialStatus.SUCCESS)
+2026-04-25 22:42:53.549 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #79 (status=TrialStatus.SUCCESS)
+2026-04-25 22:42:57.070 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #80 (status=TrialStatus.SUCCESS)
+2026-04-25 22:43:00.551 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #81 (status=TrialStatus.SUCCESS)
+2026-04-25 22:43:04.102 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #82 (status=TrialStatus.SUCCESS)
+2026-04-25 22:43:07.553 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #83 (status=TrialStatus.SUCCESS)
+2026-04-25 22:43:11.556 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #84 (status=TrialStatus.SUCCESS)
+2026-04-25 22:43:15.056 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #85 (status=TrialStatus.SUCCESS)
+2026-04-25 22:43:18.608 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #86 (status=TrialStatus.SUCCESS)
+2026-04-25 22:43:22.592 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #87 (status=TrialStatus.SUCCESS)
+2026-04-25 22:43:26.610 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #88 (status=TrialStatus.SUCCESS)
+2026-04-25 22:43:30.060 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #89 (status=TrialStatus.SUCCESS)
+2026-04-25 22:43:33.077 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #90 (status=TrialStatus.SUCCESS)
+2026-04-25 22:43:37.065 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #91 (status=TrialStatus.SUCCESS)
+2026-04-25 22:43:40.615 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #92 (status=TrialStatus.SUCCESS)
+2026-04-25 22:43:44.095 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #93 (status=TrialStatus.SUCCESS)
+2026-04-25 22:43:48.069 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #94 (status=TrialStatus.SUCCESS)
+2026-04-25 22:43:51.605 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #95 (status=TrialStatus.SUCCESS)
+2026-04-25 22:43:55.105 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #96 (status=TrialStatus.SUCCESS)
+2026-04-25 22:43:59.070 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #97 (status=TrialStatus.SUCCESS)
+2026-04-25 22:44:02.074 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #98 (status=TrialStatus.SUCCESS)
+2026-04-25 22:44:06.610 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #99 (status=TrialStatus.SUCCESS)
+2026-04-25 22:44:10.765 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #100 (status=TrialStatus.SUCCESS)
+2026-04-25 22:44:10.846 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | update_best: old=#61 (row=60) → new=#100 (row=99)
+2026-04-25 22:44:13.621 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #101 (status=TrialStatus.SUCCESS)
+2026-04-25 22:44:17.579 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #102 (status=TrialStatus.SUCCESS)
+2026-04-25 22:44:21.080 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #103 (status=TrialStatus.SUCCESS)
+2026-04-25 22:44:24.613 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #104 (status=TrialStatus.SUCCESS)
+2026-04-25 22:44:28.088 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #105 (status=TrialStatus.SUCCESS)
+2026-04-25 22:44:32.087 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #106 (status=TrialStatus.SUCCESS)
+2026-04-25 22:44:35.587 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #107 (status=TrialStatus.SUCCESS)
+2026-04-25 22:44:39.102 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #108 (status=TrialStatus.SUCCESS)
+2026-04-25 22:44:42.116 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #109 (status=TrialStatus.SUCCESS)
+2026-04-25 22:44:46.126 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #110 (status=TrialStatus.SUCCESS)
+2026-04-25 22:44:49.596 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #111 (status=TrialStatus.SUCCESS)
+2026-04-25 22:44:53.617 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #112 (status=TrialStatus.SUCCESS)
+2026-04-25 22:44:57.594 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #113 (status=TrialStatus.SUCCESS)
+2026-04-25 22:45:01.159 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #114 (status=TrialStatus.SUCCESS)
+2026-04-25 22:45:05.100 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #115 (status=TrialStatus.SUCCESS)
+2026-04-25 22:45:08.599 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #116 (status=TrialStatus.SUCCESS)
+2026-04-25 22:45:13.102 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #117 (status=TrialStatus.SUCCESS)
+2026-04-25 22:45:16.602 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #118 (status=TrialStatus.SUCCESS)
+2026-04-25 22:45:20.380 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #119 (status=TrialStatus.SUCCESS)
+2026-04-25 22:45:23.609 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #120 (status=TrialStatus.SUCCESS)
+2026-04-25 22:45:27.107 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #121 (status=TrialStatus.SUCCESS)
+2026-04-25 22:45:30.637 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #122 (status=TrialStatus.SUCCESS)
+2026-04-25 22:45:34.612 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #123 (status=TrialStatus.SUCCESS)
+2026-04-25 22:45:38.128 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #124 (status=TrialStatus.SUCCESS)
+2026-04-25 22:45:41.650 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #125 (status=TrialStatus.SUCCESS)
+2026-04-25 22:45:45.617 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #126 (status=TrialStatus.SUCCESS)
+2026-04-25 22:45:49.148 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #127 (status=TrialStatus.SUCCESS)
+2026-04-25 22:45:53.119 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #128 (status=TrialStatus.SUCCESS)
+2026-04-25 22:45:56.660 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #129 (status=TrialStatus.SUCCESS)
+2026-04-25 22:46:00.964 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #130 (status=TrialStatus.SUCCESS)
+2026-04-25 22:46:01.089 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | update_best: old=#100 (row=99) → new=#130 (row=129)
+2026-04-25 22:46:03.681 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #131 (status=TrialStatus.SUCCESS)
+2026-04-25 22:46:07.628 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #132 (status=TrialStatus.SUCCESS)
+2026-04-25 22:46:11.151 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #133 (status=TrialStatus.SUCCESS)
+2026-04-25 22:46:15.130 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #134 (status=TrialStatus.SUCCESS)
+2026-04-25 22:46:18.631 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #135 (status=TrialStatus.SUCCESS)
+2026-04-25 22:46:23.157 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #136 (status=TrialStatus.SUCCESS)
+2026-04-25 22:46:26.637 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #137 (status=TrialStatus.SUCCESS)
+2026-04-25 22:46:30.165 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #138 (status=TrialStatus.SUCCESS)
+2026-04-25 22:46:34.152 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #139 (status=TrialStatus.SUCCESS)
+2026-04-25 22:46:38.155 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #140 (status=TrialStatus.SUCCESS)
+2026-04-25 22:46:41.180 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #141 (status=TrialStatus.SUCCESS)
+2026-04-25 22:46:45.142 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #142 (status=TrialStatus.SUCCESS)
+2026-04-25 22:46:48.680 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #143 (status=TrialStatus.SUCCESS)
+2026-04-25 22:46:52.664 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #144 (status=TrialStatus.SUCCESS)
+2026-04-25 22:46:57.151 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #145 (status=TrialStatus.SUCCESS)
+2026-04-25 22:47:00.648 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #146 (status=TrialStatus.SUCCESS)
+2026-04-25 22:47:04.188 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #147 (status=TrialStatus.SUCCESS)
+2026-04-25 22:47:08.160 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #148 (status=TrialStatus.SUCCESS)
+2026-04-25 22:47:11.697 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #149 (status=TrialStatus.SUCCESS)
+2026-04-25 22:47:15.663 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #150 (status=TrialStatus.SUCCESS)
+2026-04-25 22:47:19.161 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #151 (status=TrialStatus.SUCCESS)
+2026-04-25 22:47:22.700 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #152 (status=TrialStatus.SUCCESS)
+2026-04-25 22:47:26.710 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #153 (status=TrialStatus.SUCCESS)
+2026-04-25 22:47:30.672 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #154 (status=TrialStatus.SUCCESS)
+2026-04-25 22:47:34.174 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #155 (status=TrialStatus.SUCCESS)
+2026-04-25 22:47:37.708 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #156 (status=TrialStatus.SUCCESS)
+2026-04-25 22:47:40.691 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #157 (status=TrialStatus.SUCCESS)
+2026-04-25 22:47:44.177 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #158 (status=TrialStatus.SUCCESS)
+2026-04-25 22:47:48.180 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #159 (status=TrialStatus.SUCCESS)
+2026-04-25 22:47:51.182 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #160 (status=TrialStatus.SUCCESS)
+2026-04-25 22:47:54.720 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #161 (status=TrialStatus.SUCCESS)
+2026-04-25 22:47:58.691 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #162 (status=TrialStatus.SUCCESS)
+2026-04-25 22:48:02.190 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #163 (status=TrialStatus.SUCCESS)
+2026-04-25 22:48:05.693 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #164 (status=TrialStatus.SUCCESS)
+2026-04-25 22:48:09.229 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #165 (status=TrialStatus.SUCCESS)
+2026-04-25 22:48:13.224 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #166 (status=TrialStatus.SUCCESS)
+2026-04-25 22:48:16.717 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #167 (status=TrialStatus.SUCCESS)
+2026-04-25 22:48:20.702 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #168 (status=TrialStatus.SUCCESS)
+2026-04-25 22:48:24.203 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #169 (status=TrialStatus.SUCCESS)
+2026-04-25 22:48:27.761 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #170 (status=TrialStatus.SUCCESS)
+2026-04-25 22:48:30.734 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #171 (status=TrialStatus.SUCCESS)
+2026-04-25 22:48:34.741 | DEBUG    | freqtrade_gui.ui.widgets.trial_table_model | Appended trial #172 (status=TrialStatus.SUCCESS)
+2026-04-25 23:36:38.953 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to parneeds
+2026-04-25 23:36:54.123 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run 7adf0fe1-81e4-45a2-bd0b-367eb020db78
+2026-04-25 23:36:58.650 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run 7adf0fe1-81e4-45a2-bd0b-367eb020db78 finished with exit_code=0, emitting run_finished
+2026-04-25 23:36:58.723 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run 7adf0fe1-81e4-45a2-bd0b-367eb020db78
+2026-04-25 23:37:09.620 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to dashboard
+2026-04-25 23:37:09.648 | INFO     | freqtrade_gui.ui.main_window   | ModernMainWindow initialised
+2026-04-25 23:37:09.718 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d  (exists=True)
+2026-04-25 23:37:09.719 | DEBUG    | freqtrade_gui.ui.results       | Loaded 101 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d/trades.json
+2026-04-25 23:37:09.756 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d  (exists=True)
+2026-04-25 23:37:09.756 | DEBUG    | freqtrade_gui.ui.results       | Loaded 101 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d/trades.json
+2026-04-25 23:37:11.256 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to backtest
+2026-04-25 23:37:12.829 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to parneeds
+2026-04-26 00:04:39.088 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to dashboard
+2026-04-26 00:04:39.120 | INFO     | freqtrade_gui.ui.main_window   | ModernMainWindow initialised
+2026-04-26 00:04:39.191 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d  (exists=True)
+2026-04-26 00:04:39.192 | DEBUG    | freqtrade_gui.ui.results       | Loaded 101 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d/trades.json
+2026-04-26 00:04:39.230 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d  (exists=True)
+2026-04-26 00:04:39.231 | DEBUG    | freqtrade_gui.ui.results       | Loaded 101 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d/trades.json
+2026-04-26 00:04:40.809 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to backtest
+2026-04-26 00:04:41.969 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to dashboard
+2026-04-26 00:04:46.435 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to results
+2026-04-26 00:04:55.102 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_21-37-05_7da428  (exists=True)
+2026-04-26 00:04:55.104 | DEBUG    | freqtrade_gui.ui.results       | Loaded 72 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yty/run_2026-04-25_21-37-05_7da428/trades.json
+2026-04-26 00:15:51.838 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to dashboard
+2026-04-26 00:15:51.869 | INFO     | freqtrade_gui.ui.main_window   | ModernMainWindow initialised
+2026-04-26 00:15:51.939 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d  (exists=True)
+2026-04-26 00:15:51.939 | DEBUG    | freqtrade_gui.ui.results       | Loaded 101 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d/trades.json
+2026-04-26 00:15:51.977 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d  (exists=True)
+2026-04-26 00:15:51.978 | DEBUG    | freqtrade_gui.ui.results       | Loaded 101 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-25_21-37-33_382d1d/trades.json
+2026-04-26 00:15:53.871 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to backtest
+2026-04-26 00:15:55.377 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to parneeds
+2026-04-26 00:20:10.229 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run 3040f4ff-59c4-4e9b-bb94-90e7f16c404a
+2026-04-26 00:20:13.900 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run 3040f4ff-59c4-4e9b-bb94-90e7f16c404a finished with exit_code=0, emitting run_finished
+2026-04-26 00:20:13.969 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run ba19f093-6e06-4930-9df5-e956955cac58
+2026-04-26 00:20:13.969 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run 3040f4ff-59c4-4e9b-bb94-90e7f16c404a
+2026-04-26 00:20:17.150 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run ba19f093-6e06-4930-9df5-e956955cac58 finished with exit_code=0, emitting run_finished
+2026-04-26 00:20:17.162 | INFO     | freqtrade_gui.ui.main_window   | Backtest done: run_2026-04-26_00-20-17_57e32e — refreshing results
+2026-04-26 00:20:17.167 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run adff28f9-b91b-4e37-8b78-36b1d975b5c6
+2026-04-26 00:20:17.167 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run ba19f093-6e06-4930-9df5-e956955cac58
+2026-04-26 00:20:17.649 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-17_57e32e  (exists=True)
+2026-04-26 00:20:17.649 | DEBUG    | freqtrade_gui.ui.results       | Loaded 2 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-17_57e32e/trades.json
+2026-04-26 00:20:17.679 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-17_57e32e  (exists=True)
+2026-04-26 00:20:17.679 | DEBUG    | freqtrade_gui.ui.results       | Loaded 2 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-17_57e32e/trades.json
+2026-04-26 00:20:20.400 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run adff28f9-b91b-4e37-8b78-36b1d975b5c6 finished with exit_code=0, emitting run_finished
+2026-04-26 00:20:20.414 | INFO     | freqtrade_gui.ui.main_window   | Backtest done: run_2026-04-26_00-20-20_5dde11 — refreshing results
+2026-04-26 00:20:20.419 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run c76babad-29c8-488d-abd1-23ba8eac7d3e
+2026-04-26 00:20:20.419 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run adff28f9-b91b-4e37-8b78-36b1d975b5c6
+2026-04-26 00:20:20.951 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-20_5dde11  (exists=True)
+2026-04-26 00:20:20.951 | DEBUG    | freqtrade_gui.ui.results       | Loaded 5 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-20_5dde11/trades.json
+2026-04-26 00:20:20.981 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-20_5dde11  (exists=True)
+2026-04-26 00:20:20.981 | DEBUG    | freqtrade_gui.ui.results       | Loaded 5 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-20_5dde11/trades.json
+2026-04-26 00:20:23.651 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run c76babad-29c8-488d-abd1-23ba8eac7d3e finished with exit_code=0, emitting run_finished
+2026-04-26 00:20:23.664 | INFO     | freqtrade_gui.ui.main_window   | Backtest done: run_2026-04-26_00-20-23_3452f1 — refreshing results
+2026-04-26 00:20:23.668 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run 2896d131-912c-4c22-b94e-114f2755de35
+2026-04-26 00:20:23.668 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run c76babad-29c8-488d-abd1-23ba8eac7d3e
+2026-04-26 00:20:24.152 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-23_3452f1  (exists=True)
+2026-04-26 00:20:24.153 | DEBUG    | freqtrade_gui.ui.results       | Loaded 7 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-23_3452f1/trades.json
+2026-04-26 00:20:24.183 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-23_3452f1  (exists=True)
+2026-04-26 00:20:24.184 | DEBUG    | freqtrade_gui.ui.results       | Loaded 7 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-23_3452f1/trades.json
+2026-04-26 00:20:27.000 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run 2896d131-912c-4c22-b94e-114f2755de35 finished with exit_code=0, emitting run_finished
+2026-04-26 00:20:27.014 | INFO     | freqtrade_gui.ui.main_window   | Backtest done: run_2026-04-26_00-20-27_7caac9 — refreshing results
+2026-04-26 00:20:27.017 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run 64a2d700-3928-4d0d-b6fc-d85a2d2abaea
+2026-04-26 00:20:27.017 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run 2896d131-912c-4c22-b94e-114f2755de35
+2026-04-26 00:20:27.512 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-27_7caac9  (exists=True)
+2026-04-26 00:20:27.512 | DEBUG    | freqtrade_gui.ui.results       | Loaded 12 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-27_7caac9/trades.json
+2026-04-26 00:20:27.543 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-27_7caac9  (exists=True)
+2026-04-26 00:20:27.543 | DEBUG    | freqtrade_gui.ui.results       | Loaded 12 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-27_7caac9/trades.json
+2026-04-26 00:20:30.750 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run 64a2d700-3928-4d0d-b6fc-d85a2d2abaea finished with exit_code=0, emitting run_finished
+2026-04-26 00:20:30.764 | INFO     | freqtrade_gui.ui.main_window   | Backtest done: run_2026-04-26_00-20-30_d3e4bc — refreshing results
+2026-04-26 00:20:30.768 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run 3b692f11-8b8c-4289-b0eb-4ccaef0e5e40
+2026-04-26 00:20:30.768 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run 64a2d700-3928-4d0d-b6fc-d85a2d2abaea
+2026-04-26 00:20:31.303 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-30_d3e4bc  (exists=True)
+2026-04-26 00:20:31.303 | DEBUG    | freqtrade_gui.ui.results       | Loaded 5 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-30_d3e4bc/trades.json
+2026-04-26 00:20:31.332 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-30_d3e4bc  (exists=True)
+2026-04-26 00:20:31.332 | DEBUG    | freqtrade_gui.ui.results       | Loaded 5 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-30_d3e4bc/trades.json
+2026-04-26 00:20:34.050 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run 3b692f11-8b8c-4289-b0eb-4ccaef0e5e40 finished with exit_code=0, emitting run_finished
+2026-04-26 00:20:34.065 | INFO     | freqtrade_gui.ui.main_window   | Backtest done: run_2026-04-26_00-20-34_7ab910 — refreshing results
+2026-04-26 00:20:34.070 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run 97c42b4b-e2f2-435d-930a-b3ccaca6cb2e
+2026-04-26 00:20:34.070 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run 3b692f11-8b8c-4289-b0eb-4ccaef0e5e40
+2026-04-26 00:20:34.554 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-34_7ab910  (exists=True)
+2026-04-26 00:20:34.554 | DEBUG    | freqtrade_gui.ui.results       | Loaded 10 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-34_7ab910/trades.json
+2026-04-26 00:20:34.584 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-34_7ab910  (exists=True)
+2026-04-26 00:20:34.584 | DEBUG    | freqtrade_gui.ui.results       | Loaded 10 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-34_7ab910/trades.json
+2026-04-26 00:20:37.350 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run 97c42b4b-e2f2-435d-930a-b3ccaca6cb2e finished with exit_code=0, emitting run_finished
+2026-04-26 00:20:37.365 | INFO     | freqtrade_gui.ui.main_window   | Backtest done: run_2026-04-26_00-20-37_79f986 — refreshing results
+2026-04-26 00:20:37.370 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run c8699905-ece6-4ac4-9829-3fb343904d42
+2026-04-26 00:20:37.370 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run 97c42b4b-e2f2-435d-930a-b3ccaca6cb2e
+2026-04-26 00:20:37.903 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-37_79f986  (exists=True)
+2026-04-26 00:20:37.904 | DEBUG    | freqtrade_gui.ui.results       | Loaded 16 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-37_79f986/trades.json
+2026-04-26 00:20:37.934 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-37_79f986  (exists=True)
+2026-04-26 00:20:37.934 | DEBUG    | freqtrade_gui.ui.results       | Loaded 16 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-37_79f986/trades.json
+2026-04-26 00:20:40.600 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run c8699905-ece6-4ac4-9829-3fb343904d42 finished with exit_code=0, emitting run_finished
+2026-04-26 00:20:40.613 | INFO     | freqtrade_gui.ui.main_window   | Backtest done: run_2026-04-26_00-20-40_5fd20e — refreshing results
+2026-04-26 00:20:40.618 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run 3eece430-e712-48fb-b0c2-8e85150280a2
+2026-04-26 00:20:40.618 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run c8699905-ece6-4ac4-9829-3fb343904d42
+2026-04-26 00:20:41.104 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-40_5fd20e  (exists=True)
+2026-04-26 00:20:41.104 | DEBUG    | freqtrade_gui.ui.results       | Loaded 8 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-40_5fd20e/trades.json
+2026-04-26 00:20:41.133 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-40_5fd20e  (exists=True)
+2026-04-26 00:20:41.134 | DEBUG    | freqtrade_gui.ui.results       | Loaded 8 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-40_5fd20e/trades.json
+2026-04-26 00:20:43.800 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run 3eece430-e712-48fb-b0c2-8e85150280a2 finished with exit_code=0, emitting run_finished
+2026-04-26 00:20:43.814 | INFO     | freqtrade_gui.ui.main_window   | Backtest done: run_2026-04-26_00-20-43_f3dd2e — refreshing results
+2026-04-26 00:20:43.819 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run d7c49693-bc30-46ba-a90a-6b86f61324d7
+2026-04-26 00:20:43.820 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run 3eece430-e712-48fb-b0c2-8e85150280a2
+2026-04-26 00:20:44.353 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-43_f3dd2e  (exists=True)
+2026-04-26 00:20:44.353 | DEBUG    | freqtrade_gui.ui.results       | Loaded 2 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-43_f3dd2e/trades.json
+2026-04-26 00:20:44.383 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-43_f3dd2e  (exists=True)
+2026-04-26 00:20:44.383 | DEBUG    | freqtrade_gui.ui.results       | Loaded 2 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-43_f3dd2e/trades.json
+2026-04-26 00:20:47.150 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run d7c49693-bc30-46ba-a90a-6b86f61324d7 finished with exit_code=0, emitting run_finished
+2026-04-26 00:20:47.174 | INFO     | freqtrade_gui.ui.main_window   | Backtest done: run_2026-04-26_00-20-47_88f8ad — refreshing results
+2026-04-26 00:20:47.181 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run c67427b5-37a3-4868-a638-eb21d135d4db
+2026-04-26 00:20:47.181 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run d7c49693-bc30-46ba-a90a-6b86f61324d7
+2026-04-26 00:20:47.670 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-47_88f8ad  (exists=True)
+2026-04-26 00:20:47.670 | DEBUG    | freqtrade_gui.ui.results       | Loaded 10 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-47_88f8ad/trades.json
+2026-04-26 00:20:47.700 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-47_88f8ad  (exists=True)
+2026-04-26 00:20:47.701 | DEBUG    | freqtrade_gui.ui.results       | Loaded 10 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-47_88f8ad/trades.json
+2026-04-26 00:20:50.350 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run c67427b5-37a3-4868-a638-eb21d135d4db finished with exit_code=0, emitting run_finished
+2026-04-26 00:20:50.364 | INFO     | freqtrade_gui.ui.main_window   | Backtest done: run_2026-04-26_00-20-50_02b9af — refreshing results
+2026-04-26 00:20:50.370 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run b91c6261-84a5-4905-8eac-898315230b4e
+2026-04-26 00:20:50.370 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run c67427b5-37a3-4868-a638-eb21d135d4db
+2026-04-26 00:20:50.904 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-50_02b9af  (exists=True)
+2026-04-26 00:20:50.905 | DEBUG    | freqtrade_gui.ui.results       | Loaded 2 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-50_02b9af/trades.json
+2026-04-26 00:20:50.935 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-50_02b9af  (exists=True)
+2026-04-26 00:20:50.935 | DEBUG    | freqtrade_gui.ui.results       | Loaded 2 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-50_02b9af/trades.json
+2026-04-26 00:20:53.600 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run b91c6261-84a5-4905-8eac-898315230b4e finished with exit_code=0, emitting run_finished
+2026-04-26 00:20:53.616 | INFO     | freqtrade_gui.ui.main_window   | Backtest done: run_2026-04-26_00-20-53_b2e5f6 — refreshing results
+2026-04-26 00:20:53.620 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run 6023d788-45d1-4447-839f-0cde62bea32f
+2026-04-26 00:20:53.620 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run b91c6261-84a5-4905-8eac-898315230b4e
+2026-04-26 00:20:54.106 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-53_b2e5f6  (exists=True)
+2026-04-26 00:20:54.106 | DEBUG    | freqtrade_gui.ui.results       | Loaded 4 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-53_b2e5f6/trades.json
+2026-04-26 00:20:54.136 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-53_b2e5f6  (exists=True)
+2026-04-26 00:20:54.137 | DEBUG    | freqtrade_gui.ui.results       | Loaded 4 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-53_b2e5f6/trades.json
+2026-04-26 00:20:56.850 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run 6023d788-45d1-4447-839f-0cde62bea32f finished with exit_code=0, emitting run_finished
+2026-04-26 00:20:56.866 | INFO     | freqtrade_gui.ui.main_window   | Backtest done: run_2026-04-26_00-20-56_68d6f9 — refreshing results
+2026-04-26 00:20:56.871 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run 1e662e8b-2a9e-4a18-af0d-0cc26ec6c73e
+2026-04-26 00:20:56.871 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run 6023d788-45d1-4447-839f-0cde62bea32f
+2026-04-26 00:20:57.407 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-56_68d6f9  (exists=True)
+2026-04-26 00:20:57.408 | DEBUG    | freqtrade_gui.ui.results       | Loaded 3 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-56_68d6f9/trades.json
+2026-04-26 00:20:57.436 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-56_68d6f9  (exists=True)
+2026-04-26 00:20:57.437 | DEBUG    | freqtrade_gui.ui.results       | Loaded 3 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-20-56_68d6f9/trades.json
+2026-04-26 00:21:00.150 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run 1e662e8b-2a9e-4a18-af0d-0cc26ec6c73e finished with exit_code=0, emitting run_finished
+2026-04-26 00:21:00.167 | INFO     | freqtrade_gui.ui.main_window   | Backtest done: run_2026-04-26_00-21-00_cfc225 — refreshing results
+2026-04-26 00:21:00.172 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run 7ae5f5ed-a9e3-4771-8a66-ec5d259deb4d
+2026-04-26 00:21:00.172 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run 1e662e8b-2a9e-4a18-af0d-0cc26ec6c73e
+2026-04-26 00:21:00.658 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-00_cfc225  (exists=True)
+2026-04-26 00:21:00.658 | DEBUG    | freqtrade_gui.ui.results       | Loaded 33 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-00_cfc225/trades.json
+2026-04-26 00:21:00.691 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-00_cfc225  (exists=True)
+2026-04-26 00:21:00.691 | DEBUG    | freqtrade_gui.ui.results       | Loaded 33 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-00_cfc225/trades.json
+2026-04-26 00:21:03.400 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run 7ae5f5ed-a9e3-4771-8a66-ec5d259deb4d finished with exit_code=0, emitting run_finished
+2026-04-26 00:21:03.417 | INFO     | freqtrade_gui.ui.main_window   | Backtest done: run_2026-04-26_00-21-03_0455b2 — refreshing results
+2026-04-26 00:21:03.421 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run d1a84f96-6956-4846-9e2e-baffdcc090cd
+2026-04-26 00:21:03.421 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run 7ae5f5ed-a9e3-4771-8a66-ec5d259deb4d
+2026-04-26 00:21:03.958 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-03_0455b2  (exists=True)
+2026-04-26 00:21:03.958 | DEBUG    | freqtrade_gui.ui.results       | Loaded 3 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-03_0455b2/trades.json
+2026-04-26 00:21:03.988 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-03_0455b2  (exists=True)
+2026-04-26 00:21:03.988 | DEBUG    | freqtrade_gui.ui.results       | Loaded 3 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-03_0455b2/trades.json
+2026-04-26 00:21:06.600 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run d1a84f96-6956-4846-9e2e-baffdcc090cd finished with exit_code=0, emitting run_finished
+2026-04-26 00:21:06.617 | INFO     | freqtrade_gui.ui.main_window   | Backtest done: run_2026-04-26_00-21-06_7fddf4 — refreshing results
+2026-04-26 00:21:06.620 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run 089a06ea-d6be-4bbf-90ef-ad712b851bec
+2026-04-26 00:21:06.620 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run d1a84f96-6956-4846-9e2e-baffdcc090cd
+2026-04-26 00:21:07.108 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-06_7fddf4  (exists=True)
+2026-04-26 00:21:07.108 | DEBUG    | freqtrade_gui.ui.results       | Loaded 7 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-06_7fddf4/trades.json
+2026-04-26 00:21:07.137 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-06_7fddf4  (exists=True)
+2026-04-26 00:21:07.138 | DEBUG    | freqtrade_gui.ui.results       | Loaded 7 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-06_7fddf4/trades.json
+2026-04-26 00:21:09.800 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run 089a06ea-d6be-4bbf-90ef-ad712b851bec finished with exit_code=0, emitting run_finished
+2026-04-26 00:21:09.818 | INFO     | freqtrade_gui.ui.main_window   | Backtest done: run_2026-04-26_00-21-09_acb0c1 — refreshing results
+2026-04-26 00:21:09.820 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run 523feff2-4ec8-42f4-81a5-65a193a938f1
+2026-04-26 00:21:09.820 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run 089a06ea-d6be-4bbf-90ef-ad712b851bec
+2026-04-26 00:21:10.358 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-09_acb0c1  (exists=True)
+2026-04-26 00:21:10.358 | DEBUG    | freqtrade_gui.ui.results       | Loaded 3 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-09_acb0c1/trades.json
+2026-04-26 00:21:10.388 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-09_acb0c1  (exists=True)
+2026-04-26 00:21:10.388 | DEBUG    | freqtrade_gui.ui.results       | Loaded 3 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-09_acb0c1/trades.json
+2026-04-26 00:21:13.050 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run 523feff2-4ec8-42f4-81a5-65a193a938f1 finished with exit_code=0, emitting run_finished
+2026-04-26 00:21:13.070 | INFO     | freqtrade_gui.ui.main_window   | Backtest done: run_2026-04-26_00-21-13_7fec79 — refreshing results
+2026-04-26 00:21:13.077 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run 1a2707a9-0948-4362-a605-f02d09ab1e00
+2026-04-26 00:21:13.077 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run 523feff2-4ec8-42f4-81a5-65a193a938f1
+2026-04-26 00:21:13.570 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-13_7fec79  (exists=True)
+2026-04-26 00:21:13.570 | DEBUG    | freqtrade_gui.ui.results       | Loaded 7 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-13_7fec79/trades.json
+2026-04-26 00:21:13.600 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-13_7fec79  (exists=True)
+2026-04-26 00:21:13.600 | DEBUG    | freqtrade_gui.ui.results       | Loaded 7 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-13_7fec79/trades.json
+2026-04-26 00:21:16.350 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run 1a2707a9-0948-4362-a605-f02d09ab1e00 finished with exit_code=0, emitting run_finished
+2026-04-26 00:21:16.365 | INFO     | freqtrade_gui.ui.main_window   | Backtest done: run_2026-04-26_00-21-16_2099ab — refreshing results
+2026-04-26 00:21:16.368 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run e43c8f18-18e4-4b9f-8790-d96eb9ff1693
+2026-04-26 00:21:16.369 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run 1a2707a9-0948-4362-a605-f02d09ab1e00
+2026-04-26 00:21:16.906 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-16_2099ab  (exists=True)
+2026-04-26 00:21:16.906 | DEBUG    | freqtrade_gui.ui.results       | Loaded 3 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-16_2099ab/trades.json
+2026-04-26 00:21:16.943 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-16_2099ab  (exists=True)
+2026-04-26 00:21:16.943 | DEBUG    | freqtrade_gui.ui.results       | Loaded 3 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-16_2099ab/trades.json
+2026-04-26 00:21:19.600 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run e43c8f18-18e4-4b9f-8790-d96eb9ff1693 finished with exit_code=0, emitting run_finished
+2026-04-26 00:21:19.616 | INFO     | freqtrade_gui.ui.main_window   | Backtest done: run_2026-04-26_00-21-19_0d3e86 — refreshing results
+2026-04-26 00:21:19.619 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run 130c7377-6947-407c-b9e8-703904e985e8
+2026-04-26 00:21:19.619 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run e43c8f18-18e4-4b9f-8790-d96eb9ff1693
+2026-04-26 00:21:20.108 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-19_0d3e86  (exists=True)
+2026-04-26 00:21:20.109 | DEBUG    | freqtrade_gui.ui.results       | Loaded 3 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-19_0d3e86/trades.json
+2026-04-26 00:21:20.137 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-19_0d3e86  (exists=True)
+2026-04-26 00:21:20.138 | DEBUG    | freqtrade_gui.ui.results       | Loaded 3 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-19_0d3e86/trades.json
+2026-04-26 00:21:22.900 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run 130c7377-6947-407c-b9e8-703904e985e8 finished with exit_code=0, emitting run_finished
+2026-04-26 00:21:22.917 | INFO     | freqtrade_gui.ui.main_window   | Backtest done: run_2026-04-26_00-21-22_62c870 — refreshing results
+2026-04-26 00:21:22.919 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run 26ee6a66-c024-4991-8e1e-9f6f888ea9d1
+2026-04-26 00:21:22.919 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run 130c7377-6947-407c-b9e8-703904e985e8
+2026-04-26 00:21:23.458 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-22_62c870  (exists=True)
+2026-04-26 00:21:23.459 | DEBUG    | freqtrade_gui.ui.results       | Loaded 19 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-22_62c870/trades.json
+2026-04-26 00:21:23.489 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-22_62c870  (exists=True)
+2026-04-26 00:21:23.490 | DEBUG    | freqtrade_gui.ui.results       | Loaded 19 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-22_62c870/trades.json
+2026-04-26 00:21:26.150 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run 26ee6a66-c024-4991-8e1e-9f6f888ea9d1 finished with exit_code=0, emitting run_finished
+2026-04-26 00:21:26.163 | INFO     | freqtrade_gui.ui.main_window   | Backtest done: run_2026-04-26_00-21-26_00d0fe — refreshing results
+2026-04-26 00:21:26.165 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run d6ccc2f8-44d4-4da3-80a8-e21376d01ef6
+2026-04-26 00:21:26.166 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run 26ee6a66-c024-4991-8e1e-9f6f888ea9d1
+2026-04-26 00:21:26.655 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-26_00d0fe  (exists=True)
+2026-04-26 00:21:26.655 | DEBUG    | freqtrade_gui.ui.results       | Loaded 3 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-26_00d0fe/trades.json
+2026-04-26 00:21:26.686 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-26_00d0fe  (exists=True)
+2026-04-26 00:21:26.686 | DEBUG    | freqtrade_gui.ui.results       | Loaded 3 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-26_00d0fe/trades.json
+2026-04-26 00:21:29.450 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run d6ccc2f8-44d4-4da3-80a8-e21376d01ef6 finished with exit_code=0, emitting run_finished
+2026-04-26 00:21:29.464 | INFO     | freqtrade_gui.ui.main_window   | Backtest done: run_2026-04-26_00-21-29_cb3cf7 — refreshing results
+2026-04-26 00:21:29.466 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run ce88d4c0-6bb7-41ed-a74e-6f71a27d72d6
+2026-04-26 00:21:29.466 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run d6ccc2f8-44d4-4da3-80a8-e21376d01ef6
+2026-04-26 00:21:30.008 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-29_cb3cf7  (exists=True)
+2026-04-26 00:21:30.008 | DEBUG    | freqtrade_gui.ui.results       | Loaded 4 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-29_cb3cf7/trades.json
+2026-04-26 00:21:30.038 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-29_cb3cf7  (exists=True)
+2026-04-26 00:21:30.038 | DEBUG    | freqtrade_gui.ui.results       | Loaded 4 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-29_cb3cf7/trades.json
+2026-04-26 00:21:32.700 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run ce88d4c0-6bb7-41ed-a74e-6f71a27d72d6 finished with exit_code=0, emitting run_finished
+2026-04-26 00:21:32.716 | INFO     | freqtrade_gui.ui.main_window   | Backtest done: run_2026-04-26_00-21-32_644939 — refreshing results
+2026-04-26 00:21:32.719 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run a20d98c0-bc4e-41e1-acf5-50608dada42e
+2026-04-26 00:21:32.719 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run ce88d4c0-6bb7-41ed-a74e-6f71a27d72d6
+2026-04-26 00:21:33.209 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-32_644939  (exists=True)
+2026-04-26 00:21:33.209 | DEBUG    | freqtrade_gui.ui.results       | Loaded 10 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-32_644939/trades.json
+2026-04-26 00:21:33.240 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-32_644939  (exists=True)
+2026-04-26 00:21:33.240 | DEBUG    | freqtrade_gui.ui.results       | Loaded 10 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-32_644939/trades.json
+2026-04-26 00:21:35.950 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run a20d98c0-bc4e-41e1-acf5-50608dada42e finished with exit_code=0, emitting run_finished
+2026-04-26 00:21:35.967 | INFO     | freqtrade_gui.ui.main_window   | Backtest done: run_2026-04-26_00-21-35_3d2067 — refreshing results
+2026-04-26 00:21:35.970 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run d52c1c04-d800-4908-a06b-6f579a89f4de
+2026-04-26 00:21:35.970 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run a20d98c0-bc4e-41e1-acf5-50608dada42e
+2026-04-26 00:21:36.509 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-35_3d2067  (exists=True)
+2026-04-26 00:21:36.510 | DEBUG    | freqtrade_gui.ui.results       | Loaded 5 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-35_3d2067/trades.json
+2026-04-26 00:21:36.540 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-35_3d2067  (exists=True)
+2026-04-26 00:21:36.540 | DEBUG    | freqtrade_gui.ui.results       | Loaded 5 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-35_3d2067/trades.json
+2026-04-26 00:21:39.250 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run d52c1c04-d800-4908-a06b-6f579a89f4de finished with exit_code=0, emitting run_finished
+2026-04-26 00:21:39.267 | INFO     | freqtrade_gui.ui.main_window   | Backtest done: run_2026-04-26_00-21-39_7ac090 — refreshing results
+2026-04-26 00:21:39.271 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run 343661e0-41d1-4a0b-8df3-e67517ef3362
+2026-04-26 00:21:39.271 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run d52c1c04-d800-4908-a06b-6f579a89f4de
+2026-04-26 00:21:39.810 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-39_7ac090  (exists=True)
+2026-04-26 00:21:39.810 | DEBUG    | freqtrade_gui.ui.results       | Loaded 4 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-39_7ac090/trades.json
+2026-04-26 00:21:39.840 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-39_7ac090  (exists=True)
+2026-04-26 00:21:39.840 | DEBUG    | freqtrade_gui.ui.results       | Loaded 4 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-39_7ac090/trades.json
+2026-04-26 00:21:42.500 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run 343661e0-41d1-4a0b-8df3-e67517ef3362 finished with exit_code=0, emitting run_finished
+2026-04-26 00:21:42.520 | INFO     | freqtrade_gui.ui.main_window   | Backtest done: run_2026-04-26_00-21-42_8801aa — refreshing results
+2026-04-26 00:21:42.522 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run 0e0f06c6-eb04-4308-8664-f2abc3552046
+2026-04-26 00:21:42.522 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run 343661e0-41d1-4a0b-8df3-e67517ef3362
+2026-04-26 00:21:43.019 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-42_8801aa  (exists=True)
+2026-04-26 00:21:43.019 | DEBUG    | freqtrade_gui.ui.results       | Loaded 12 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-42_8801aa/trades.json
+2026-04-26 00:21:43.050 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-42_8801aa  (exists=True)
+2026-04-26 00:21:43.050 | DEBUG    | freqtrade_gui.ui.results       | Loaded 12 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-42_8801aa/trades.json
+2026-04-26 00:21:45.751 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run 0e0f06c6-eb04-4308-8664-f2abc3552046 finished with exit_code=0, emitting run_finished
+2026-04-26 00:21:45.767 | INFO     | freqtrade_gui.ui.main_window   | Backtest done: run_2026-04-26_00-21-45_2a5613 — refreshing results
+2026-04-26 00:21:45.770 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run 9099fb2a-d4f0-4136-971a-28e6c87227e9
+2026-04-26 00:21:45.771 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run 0e0f06c6-eb04-4308-8664-f2abc3552046
+2026-04-26 00:21:46.311 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-45_2a5613  (exists=True)
+2026-04-26 00:21:46.311 | DEBUG    | freqtrade_gui.ui.results       | Loaded 6 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-45_2a5613/trades.json
+2026-04-26 00:21:46.342 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-45_2a5613  (exists=True)
+2026-04-26 00:21:46.342 | DEBUG    | freqtrade_gui.ui.results       | Loaded 6 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-45_2a5613/trades.json
+2026-04-26 00:21:49.050 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run 9099fb2a-d4f0-4136-971a-28e6c87227e9 finished with exit_code=0, emitting run_finished
+2026-04-26 00:21:49.066 | INFO     | freqtrade_gui.ui.main_window   | Backtest done: run_2026-04-26_00-21-49_8afe27 — refreshing results
+2026-04-26 00:21:49.070 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run bc9fba6b-dc6d-407d-bd16-7ff916f25495
+2026-04-26 00:21:49.070 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run 9099fb2a-d4f0-4136-971a-28e6c87227e9
+2026-04-26 00:21:49.567 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-49_8afe27  (exists=True)
+2026-04-26 00:21:49.568 | DEBUG    | freqtrade_gui.ui.results       | Loaded 8 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-49_8afe27/trades.json
+2026-04-26 00:21:49.600 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-49_8afe27  (exists=True)
+2026-04-26 00:21:49.600 | DEBUG    | freqtrade_gui.ui.results       | Loaded 8 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-49_8afe27/trades.json
+2026-04-26 00:21:52.300 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run bc9fba6b-dc6d-407d-bd16-7ff916f25495 finished with exit_code=0, emitting run_finished
+2026-04-26 00:21:52.317 | INFO     | freqtrade_gui.ui.main_window   | Backtest done: run_2026-04-26_00-21-52_b7ea80 — refreshing results
+2026-04-26 00:21:52.321 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run 1922a973-76fd-4b2e-90ac-90867348a053
+2026-04-26 00:21:52.321 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run bc9fba6b-dc6d-407d-bd16-7ff916f25495
+2026-04-26 00:21:52.862 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-52_b7ea80  (exists=True)
+2026-04-26 00:21:52.862 | DEBUG    | freqtrade_gui.ui.results       | Loaded 5 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-52_b7ea80/trades.json
+2026-04-26 00:21:52.892 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-52_b7ea80  (exists=True)
+2026-04-26 00:21:52.892 | DEBUG    | freqtrade_gui.ui.results       | Loaded 5 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-52_b7ea80/trades.json
+2026-04-26 00:21:55.500 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run 1922a973-76fd-4b2e-90ac-90867348a053 finished with exit_code=0, emitting run_finished
+2026-04-26 00:21:55.520 | INFO     | freqtrade_gui.ui.main_window   | Backtest done: run_2026-04-26_00-21-55_90d10d — refreshing results
+2026-04-26 00:21:55.523 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run 5e575b31-6fb0-42b8-9dd2-e28d97b73564
+2026-04-26 00:21:55.523 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run 1922a973-76fd-4b2e-90ac-90867348a053
+2026-04-26 00:21:56.019 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-55_90d10d  (exists=True)
+2026-04-26 00:21:56.022 | DEBUG    | freqtrade_gui.ui.results       | Loaded 3 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-55_90d10d/trades.json
+2026-04-26 00:21:56.050 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-55_90d10d  (exists=True)
+2026-04-26 00:21:56.051 | DEBUG    | freqtrade_gui.ui.results       | Loaded 3 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-55_90d10d/trades.json
+2026-04-26 00:21:58.750 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run 5e575b31-6fb0-42b8-9dd2-e28d97b73564 finished with exit_code=0, emitting run_finished
+2026-04-26 00:21:58.768 | INFO     | freqtrade_gui.ui.main_window   | Backtest done: run_2026-04-26_00-21-58_4949c0 — refreshing results
+2026-04-26 00:21:58.772 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run 91803529-cbc1-4ad7-891b-27563e257630
+2026-04-26 00:21:58.773 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run 5e575b31-6fb0-42b8-9dd2-e28d97b73564
+2026-04-26 00:21:59.315 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-58_4949c0  (exists=True)
+2026-04-26 00:21:59.315 | DEBUG    | freqtrade_gui.ui.results       | Loaded 3 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-58_4949c0/trades.json
+2026-04-26 00:21:59.345 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-58_4949c0  (exists=True)
+2026-04-26 00:21:59.345 | DEBUG    | freqtrade_gui.ui.results       | Loaded 3 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-58_4949c0/trades.json
+2026-04-26 00:22:02.600 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run 91803529-cbc1-4ad7-891b-27563e257630 finished with exit_code=0, emitting run_finished
+2026-04-26 00:22:02.615 | INFO     | freqtrade_gui.ui.main_window   | Backtest done: run_2026-04-26_00-22-02_7b8306 — refreshing results
+2026-04-26 00:22:02.618 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run 85522d25-1bfd-49e3-8e13-0eed67eaf9ab
+2026-04-26 00:22:02.619 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run 91803529-cbc1-4ad7-891b-27563e257630
+2026-04-26 00:22:03.110 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-22-02_7b8306  (exists=True)
+2026-04-26 00:22:03.111 | DEBUG    | freqtrade_gui.ui.results       | Loaded 7 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-22-02_7b8306/trades.json
+2026-04-26 00:22:03.140 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-22-02_7b8306  (exists=True)
+2026-04-26 00:22:03.140 | DEBUG    | freqtrade_gui.ui.results       | Loaded 7 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-22-02_7b8306/trades.json
+2026-04-26 00:22:06.450 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run 85522d25-1bfd-49e3-8e13-0eed67eaf9ab finished with exit_code=0, emitting run_finished
+2026-04-26 00:22:06.469 | INFO     | freqtrade_gui.ui.main_window   | Backtest done: run_2026-04-26_00-22-06_59d171 — refreshing results
+2026-04-26 00:22:06.473 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run f371cb37-1042-43f0-ae74-e6cc5eee2f92
+2026-04-26 00:22:06.473 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run 85522d25-1bfd-49e3-8e13-0eed67eaf9ab
+2026-04-26 00:22:07.015 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-22-06_59d171  (exists=True)
+2026-04-26 00:22:07.016 | DEBUG    | freqtrade_gui.ui.results       | Loaded 4 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-22-06_59d171/trades.json
+2026-04-26 00:22:07.046 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-22-06_59d171  (exists=True)
+2026-04-26 00:22:07.046 | DEBUG    | freqtrade_gui.ui.results       | Loaded 4 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-22-06_59d171/trades.json
+2026-04-26 00:22:09.700 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run f371cb37-1042-43f0-ae74-e6cc5eee2f92 finished with exit_code=0, emitting run_finished
+2026-04-26 00:22:09.719 | INFO     | freqtrade_gui.ui.main_window   | Backtest done: run_2026-04-26_00-22-09_0a362d — refreshing results
+2026-04-26 00:22:09.722 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run 36c99bee-3658-462c-9b7d-c82686a347a3
+2026-04-26 00:22:09.723 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run f371cb37-1042-43f0-ae74-e6cc5eee2f92
+2026-04-26 00:22:10.214 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-22-09_0a362d  (exists=True)
+2026-04-26 00:22:10.214 | DEBUG    | freqtrade_gui.ui.results       | Loaded 4 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-22-09_0a362d/trades.json
+2026-04-26 00:22:10.244 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-22-09_0a362d  (exists=True)
+2026-04-26 00:22:10.244 | DEBUG    | freqtrade_gui.ui.results       | Loaded 4 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-22-09_0a362d/trades.json
+2026-04-26 00:22:12.900 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run 36c99bee-3658-462c-9b7d-c82686a347a3 finished with exit_code=0, emitting run_finished
+2026-04-26 00:22:12.918 | INFO     | freqtrade_gui.ui.main_window   | Backtest done: run_2026-04-26_00-22-12_85ddea — refreshing results
+2026-04-26 00:22:12.922 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run 7851a277-79ce-401f-bcde-f77873d10090
+2026-04-26 00:22:12.922 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run 36c99bee-3658-462c-9b7d-c82686a347a3
+2026-04-26 00:22:13.464 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-22-12_85ddea  (exists=True)
+2026-04-26 00:22:13.464 | DEBUG    | freqtrade_gui.ui.results       | Loaded 5 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-22-12_85ddea/trades.json
+2026-04-26 00:22:13.493 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-22-12_85ddea  (exists=True)
+2026-04-26 00:22:13.494 | DEBUG    | freqtrade_gui.ui.results       | Loaded 5 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-22-12_85ddea/trades.json
+2026-04-26 00:22:16.200 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run 7851a277-79ce-401f-bcde-f77873d10090 finished with exit_code=0, emitting run_finished
+2026-04-26 00:22:16.219 | INFO     | freqtrade_gui.ui.main_window   | Backtest done: run_2026-04-26_00-22-16_50e0e6 — refreshing results
+2026-04-26 00:22:16.223 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter started for run bba959b6-eb87-4053-8b0b-ba6bddb84f4c
+2026-04-26 00:22:16.223 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run 7851a277-79ce-401f-bcde-f77873d10090
+2026-04-26 00:22:16.715 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-22-16_50e0e6  (exists=True)
+2026-04-26 00:22:16.715 | DEBUG    | freqtrade_gui.ui.results       | Loaded 16 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-22-16_50e0e6/trades.json
+2026-04-26 00:22:16.746 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-22-16_50e0e6  (exists=True)
+2026-04-26 00:22:16.746 | DEBUG    | freqtrade_gui.ui.results       | Loaded 16 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-22-16_50e0e6/trades.json
+2026-04-26 00:22:19.500 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | Run bba959b6-eb87-4053-8b0b-ba6bddb84f4c finished with exit_code=0, emitting run_finished
+2026-04-26 00:22:19.516 | INFO     | freqtrade_gui.ui.main_window   | Backtest done: run_2026-04-26_00-22-19_73cb02 — refreshing results
+2026-04-26 00:22:19.517 | DEBUG    | freqtrade_gui.ui.adapters.process_run_adapter | ProcessRunAdapter stopped for run bba959b6-eb87-4053-8b0b-ba6bddb84f4c
+2026-04-26 00:22:20.054 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-22-19_73cb02  (exists=True)
+2026-04-26 00:22:20.054 | DEBUG    | freqtrade_gui.ui.results       | Loaded 7 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-22-19_73cb02/trades.json
+2026-04-26 00:22:20.083 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-22-19_73cb02  (exists=True)
+2026-04-26 00:22:20.084 | DEBUG    | freqtrade_gui.ui.results       | Loaded 7 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-22-19_73cb02/trades.json
+2026-04-26 00:23:25.888 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to parneeds
+2026-04-26 00:23:26.958 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to backtest
+2026-04-26 00:23:28.718 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to dashboard
+2026-04-26 00:23:30.282 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to results
+2026-04-26 00:23:30.912 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to compare
+2026-04-26 00:23:31.507 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to optimizer
+2026-04-26 00:23:39.423 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to backtest
+2026-04-26 00:23:43.484 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to optimize
+2026-04-26 00:23:44.439 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to optimizer
+2026-04-26 00:23:56.234 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to download
+2026-04-26 00:23:59.121 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to settings

@@ -1,0 +1,54 @@
+[
+  {
+    "duration_min": 240,
+    "entry": "2025-12-09 16:00:00+00:00",
+    "entry_rate": 3245.88,
+    "exit": "2025-12-09 20:00:00+00:00",
+    "exit_rate": 3328.54,
+    "exit_reason": "roi",
+    "is_open": false,
+    "pair": "ETH/USDT",
+    "profit_abs": 0.93585263,
+    "profit_pct": 2.341725,
+    "stake_amount": 39.924324
+  },
+  {
+    "duration_min": 960,
+    "entry": "2025-12-10 00:00:00+00:00",
+    "entry_rate": 3318.04,
+    "exit": "2025-12-10 16:00:00+00:00",
+    "exit_rate": 3402.54,
+    "exit_reason": "roi",
+    "is_open": false,
+    "pair": "ETH/USDT",
+    "profit_abs": 0.94113098,
+    "profit_pct": 2.341796,
+    "stake_amount": 40.148284
+  },
+  {
+    "duration_min": 7440,
+    "entry": "2025-12-10 20:00:00+00:00",
+    "entry_rate": 0.02428,
+    "exit": "2025-12-16 00:00:00+00:00",
+    "exit_rate": 0.02158,
+    "exit_reason": "force_exit",
+    "is_open": false,
+    "pair": "HOME/USDT",
+    "profit_abs": -4.62951996,
+    "profit_pct": -11.297845,
+    "stake_amount": 40.93608
+  },
+  {
+    "duration_min": 9120,
+    "entry": "2025-12-09 16:00:00+00:00",
+    "entry_rate": 2.1155,
+    "exit": "2025-12-16 00:00:00+00:00",
+    "exit_rate": 1.8981,
+    "exit_reason": "force_exit",
+    "is_open": false,
+    "pair": "XRP/USDT",
+    "profit_abs": -4.18471704,
+    "profit_pct": -10.455798,
+    "stake_amount": 39.98295
+  }
+]

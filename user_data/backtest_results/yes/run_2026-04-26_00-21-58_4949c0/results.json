@@ -1,0 +1,32 @@
+{
+  "avg_duration_min": 5680,
+  "avg_profit_pct": -6.026157,
+  "backtest_end": "2025-12-02 00:00:00",
+  "backtest_start": "2025-11-18 00:00:00",
+  "calmar_ratio": -122.2915,
+  "draws": 0,
+  "expectancy": -2.4209,
+  "final_balance": 72.737267,
+  "losses": 2,
+  "max_consecutive_losses": 2,
+  "max_consecutive_wins": 1,
+  "max_drawdown_abs": 8.199307,
+  "max_drawdown_pct": 10.1305,
+  "pairs": [
+    "HOME/USDT",
+    "ETH/USDT",
+    "XRP/USDT"
+  ],
+  "profit_factor": 0.1142,
+  "sharpe_ratio": -3.98,
+  "sortino_ratio": -10.7681,
+  "starting_balance": 80.0,
+  "strategy": "yes",
+  "timeframe": "4h",
+  "timerange": "20251118-20251202",
+  "total_profit_abs": -7.262733,
+  "total_profit_pct": -9.078416,
+  "total_trades": 3,
+  "win_rate_pct": 33.3333,
+  "wins": 1
+}

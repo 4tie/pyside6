@@ -1,0 +1,33 @@
+{
+  "export_time": "2026-04-25T19:28:48.140243+00:00",
+  "ft_stratparam_v": 1,
+  "params": {
+    "buy": {
+      "buy_ma_count": 3,
+      "buy_ma_gap": 22
+    },
+    "max_open_trades": {
+      "max_open_trades": 2
+    },
+    "roi": {
+      "0": 0.3047334807519309,
+      "13": 0.48977803081699733,
+      "146": 0.09806659426582072,
+      "38": 0.5201211112145971
+    },
+    "sell": {
+      "sell_ma_count": 17,
+      "sell_ma_gap": 2
+    },
+    "stoploss": {
+      "stoploss": -0.764898585708039
+    },
+    "trailing": {
+      "trailing_only_offset_is_reached": true,
+      "trailing_stop": false,
+      "trailing_stop_positive": 0.06132353716331025,
+      "trailing_stop_positive_offset": 0.17560990527654
+    }
+  },
+  "strategy_name": "yes"
+}

@@ -6,12 +6,13 @@ from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
     QComboBox, QSpinBox, QFormLayout, QFrame, QCheckBox, QSplitter
 )
-from PySide6.QtCore import Qt, Signal, Slot
+from PySide6.QtCore import Qt, QTimer, Signal, Slot
 
 from app.app_state.settings_state import SettingsState
+from app.core.models.settings_models import AppSettings
 from app.core.services.optimize_service import OptimizeService
-from app.core.services.settings_service import SettingsService
 from app.core.services.process_run_manager import ProcessRunManager
+from app.core.services.settings_service import SettingsService
 from app.ui.adapters.process_run_adapter import ProcessRunAdapter
 from app.ui import theme
 from app.ui.widgets.terminal_widget import TerminalWidget
@@ -37,17 +38,24 @@ class OptimizePage(QWidget):
     def __init__(self, settings_state: SettingsState, process_manager: ProcessRunManager, parent: QWidget | None = None):
         super().__init__(parent)
         self._state = settings_state
-        self._settings_svc = SettingsService()
+        self._settings_svc = getattr(settings_state, "settings_service", SettingsService())
         self._optimize_svc = OptimizeService(self._settings_svc)
         self._process_manager = process_manager
         self._current_run_id: Optional[str] = None
         self._adapter: Optional[ProcessRunAdapter] = None
         self._running = False
+        self._loading_preferences = False
+        self._prefs_save_timer = QTimer(self)
+        self._prefs_save_timer.setSingleShot(True)
+        self._prefs_save_timer.setInterval(500)
+        self._prefs_save_timer.timeout.connect(self._save_preferences)
         self._build()
         self._sig_stdout.connect(self._terminal.append_output)
         self._sig_stderr.connect(self._terminal.append_error)
         self._sig_finished.connect(self._handle_finished)
         self._load_strategies()
+        self._restore_preferences()
+        self._connect_preferences_autosave()
 
     def _build(self):
         root = QVBoxLayout(self)
@@ -161,6 +169,54 @@ class OptimizePage(QWidget):
             self._strategy_combo.addItems(strategies)
         except Exception as e:
             _log.warning("Could not load strategies: %s", e)
+
+    def _restore_preferences(self) -> None:
+        current = getattr(self._state, "current_settings", None)
+        settings = current if isinstance(current, AppSettings) else self._settings_svc.load_settings()
+        self._state.current_settings = settings
+        prefs = settings.optimize_preferences
+        self._loading_preferences = True
+        if prefs.last_strategy:
+            idx = self._strategy_combo.findText(prefs.last_strategy)
+            if idx >= 0:
+                self._strategy_combo.setCurrentIndex(idx)
+        self._tf_combo.setCurrentText(prefs.default_timeframe or "5m")
+        self._timerange_edit.setCurrentText(prefs.default_timerange or "")
+        self._epochs_spin.setValue(prefs.epochs)
+        self._loss_combo.setCurrentText(prefs.hyperopt_loss)
+        spaces = {s.strip() for s in prefs.spaces.split(",") if s.strip()}
+        for name, checkbox in self._space_checks.items():
+            checkbox.setChecked(not spaces or prefs.spaces == "all" or name in spaces)
+        self._loading_preferences = False
+
+    def _connect_preferences_autosave(self) -> None:
+        self._strategy_combo.currentTextChanged.connect(self._schedule_preferences_save)
+        self._tf_combo.currentTextChanged.connect(self._schedule_preferences_save)
+        self._timerange_edit.currentTextChanged.connect(self._schedule_preferences_save)
+        self._epochs_spin.valueChanged.connect(self._schedule_preferences_save)
+        self._loss_combo.currentTextChanged.connect(self._schedule_preferences_save)
+        for checkbox in self._space_checks.values():
+            checkbox.toggled.connect(self._schedule_preferences_save)
+
+    def _schedule_preferences_save(self, *_args) -> None:
+        if self._loading_preferences:
+            return
+        self._prefs_save_timer.start()
+
+    def _save_preferences(self) -> None:
+        spaces = [s for s, cb in self._space_checks.items() if cb.isChecked()]
+        try:
+            self._state.update_preferences(
+                "optimize_preferences",
+                last_strategy=self._strategy_combo.currentText().strip(),
+                default_timeframe=self._tf_combo.currentText().strip(),
+                default_timerange=self._timerange_edit.currentText().strip(),
+                epochs=self._epochs_spin.value(),
+                spaces="all" if set(spaces) == set(SPACES) else ",".join(spaces),
+                hyperopt_loss=self._loss_combo.currentText().strip(),
+            )
+        except Exception as exc:
+            _log.warning("Could not save optimize preferences: %s", exc)
 
     def _run(self):
         if self._running:

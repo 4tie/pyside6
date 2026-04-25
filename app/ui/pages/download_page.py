@@ -7,12 +7,13 @@ from PySide6.QtWidgets import (
     QComboBox, QLineEdit, QFormLayout, QFrame, QSplitter, QListWidget,
     QCheckBox,
 )
-from PySide6.QtCore import Qt, Signal, Slot
+from PySide6.QtCore import Qt, QTimer, Signal, Slot
 
 from app.app_state.settings_state import SettingsState
+from app.core.models.settings_models import AppSettings
 from app.core.services.download_data_service import DownloadDataService
-from app.core.services.settings_service import SettingsService
 from app.core.services.process_run_manager import ProcessRunManager
+from app.core.services.settings_service import SettingsService
 from app.ui.adapters.process_run_adapter import ProcessRunAdapter
 from app.ui import theme
 from app.ui.widgets.terminal_widget import TerminalWidget
@@ -37,16 +38,22 @@ class DownloadPage(QWidget):
     def __init__(self, settings_state: SettingsState, process_manager: ProcessRunManager, parent: QWidget | None = None):
         super().__init__(parent)
         self._state = settings_state
-        self._settings_svc = SettingsService()
+        self._settings_svc = getattr(settings_state, "settings_service", SettingsService())
         self._download_svc = DownloadDataService(self._settings_svc)
         self._process_manager = process_manager
         self._current_run_id: Optional[str] = None
         self._adapter: Optional[ProcessRunAdapter] = None
         self._running = False
+        self._loading_preferences = False
+        self._prefs_save_timer = QTimer(self)
+        self._prefs_save_timer.setSingleShot(True)
+        self._prefs_save_timer.setInterval(500)
+        self._prefs_save_timer.timeout.connect(self._save_preferences)
         self._build()
         self._sig_stdout.connect(self._terminal.append_output)
         self._sig_stderr.connect(self._terminal.append_error)
         self._sig_finished.connect(self._handle_finished)
+        self._connect_preferences_autosave()
 
     def _build(self):
         root = QVBoxLayout(self)
@@ -197,11 +204,13 @@ class DownloadPage(QWidget):
         pair = self._pair_input.text().strip().upper()
         if pair and not self._pair_exists(pair):
             self._pairs_list.addItem(pair)
+            self._schedule_preferences_save()
         self._pair_input.clear()
 
     def _quick_add(self, pair: str):
         if not self._pair_exists(pair):
             self._pairs_list.addItem(pair)
+            self._schedule_preferences_save()
 
     def _pair_exists(self, pair: str) -> bool:
         return any(
@@ -210,8 +219,12 @@ class DownloadPage(QWidget):
         )
 
     def _remove_pair(self):
+        removed = False
         for item in self._pairs_list.selectedItems():
             self._pairs_list.takeItem(self._pairs_list.row(item))
+            removed = True
+        if removed:
+            self._schedule_preferences_save()
 
     def _get_pairs(self) -> list[str]:
         return [self._pairs_list.item(i).text()
@@ -241,8 +254,6 @@ class DownloadPage(QWidget):
         except Exception as e:
             self._terminal.append_info(f"⚠ {e}", theme.RED)
             return
-
-        self._save_preferences()
 
         self._running = True
         self._run_btn.setEnabled(False)
@@ -289,15 +300,42 @@ class DownloadPage(QWidget):
         self._stop_btn.setEnabled(False)
 
     def _save_preferences(self) -> None:
-        """Persist current checkbox states to DownloadPreferences."""
-        settings = self._settings_svc.load_settings()
-        settings.download_preferences.prepend = self._prepend_cb.isChecked()
-        settings.download_preferences.erase = self._erase_cb.isChecked()
-        self._settings_svc.save_settings(settings)
+        """Persist current download form values to DownloadPreferences."""
+        try:
+            self._state.update_preferences(
+                "download_preferences",
+                default_timeframe=self._tf_combo.currentText().strip(),
+                default_timerange=self._timerange_edit.text().strip(),
+                default_pairs=",".join(self._get_pairs()),
+                prepend=self._prepend_cb.isChecked(),
+                erase=self._erase_cb.isChecked(),
+            )
+        except Exception as exc:
+            _log.warning("Could not save download preferences: %s", exc)
 
     def _restore_preferences(self) -> None:
-        """Restore checkbox states from persisted DownloadPreferences."""
-        settings = self._settings_svc.load_settings()
+        """Restore persisted DownloadPreferences."""
+        current = getattr(self._state, "current_settings", None)
+        settings = current if isinstance(current, AppSettings) else self._settings_svc.load_settings()
+        self._state.current_settings = settings
         prefs = settings.download_preferences
+        self._loading_preferences = True
+        self._tf_combo.setCurrentText(prefs.default_timeframe or "5m")
+        self._timerange_edit.setText(prefs.default_timerange or "")
+        self._pairs_list.clear()
+        for pair in [p.strip() for p in prefs.default_pairs.split(",") if p.strip()]:
+            self._pairs_list.addItem(pair)
         self._prepend_cb.setChecked(prefs.prepend)
         self._erase_cb.setChecked(prefs.erase)
+        self._loading_preferences = False
+
+    def _connect_preferences_autosave(self) -> None:
+        self._tf_combo.currentTextChanged.connect(self._schedule_preferences_save)
+        self._timerange_edit.textChanged.connect(self._schedule_preferences_save)
+        self._prepend_cb.toggled.connect(self._schedule_preferences_save)
+        self._erase_cb.toggled.connect(self._schedule_preferences_save)
+
+    def _schedule_preferences_save(self, *_args) -> None:
+        if self._loading_preferences:
+            return
+        self._prefs_save_timer.start()

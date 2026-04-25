@@ -1,0 +1,40 @@
+{
+  "candidate_params": {
+    "0": 1.9960563634309927,
+    "13": 0.06622331222671635,
+    "146": 0.232876947580957,
+    "38": 0.6333808395616153,
+    "buy_ma_count": 4,
+    "buy_ma_gap": 21,
+    "sell_ma_count": 4,
+    "sell_ma_gap": 43,
+    "stoploss": -0.8994951694765788,
+    "trailing_only_offset_is_reached": true,
+    "trailing_stop": false,
+    "trailing_stop_positive": 0.07885390673500867,
+    "trailing_stop_positive_offset": 0.06988374648108374
+  },
+  "is_best": false,
+  "log_excerpt": ". Duration Winners │ 0d 00:15 / 0d 10:35 / 0d 04:24 │\n│ Min/Max/Avg. Duration Losers  │ 0d 00:05 / 0d 08:30 / 0d 02:10 │\n│ Max Consecutive Wins / Loss   │ 8 / 24                         │\n│ Rejected Entry signals        │ 0                              │\n│ Entry/Exit Timeouts           │ 0 / 0                          │\n│                               │                                │\n│ Min balance                   │ 43.939 USDT                    │\n│ Max balance                   │ 149.081 USDT                   │\n│ Max % of account underwater   │ 70.71%                         │\n│ Absolute drawdown             │ 106.061 USDT (70.71%)          │\n│ Drawdown duration             │ 349 days 23:35:00              │\n│ Profit at drawdown start      │ 0 USDT                         │\n│ Profit at drawdown end        │ -106.061 USDT                  │\n│ Drawdown start                │ 2025-04-23 00:45:00            │\n│ Drawdown end                  │ 2026-04-08 00:20:00            │\n│ Market change                 │ -10.52%                        │\n└───────────────────────────────┴────────────────────────────────┘\n\nBacktested 2025-04-22 00:00:00 -> 2026-04-17 00:00:00 | Max open trades : 3\n                                                          STRATEGY SUMMARY                                                          \n┏━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━┓\n┃ Strategy ┃ Trades ┃ Avg Profit % ┃ Tot Profit USDT ┃ Tot Profit % ┃ Avg Duration ┃  Win  Draw  Loss  Win% ┃             Drawdown ┃\n┡━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━┩\n│      yes │   1987 │        -0.18 │        -104.653 │       -69.77 │      2:52:00 │  624     0  1363  31.4 │ 106.061 USDT  70.71% │\n└──────────┴────────┴──────────────┴─────────────────┴──────────────┴──────────────┴────────────────────────┴──────────────────────┘",
+  "metrics": {
+    "best_pair": "XRP/USDT",
+    "best_trade_profit_pct": 0.0,
+    "final_balance": 45.34701599000019,
+    "max_drawdown_pct": 70.70713633333321,
+    "profit_factor": 0.7142303494272517,
+    "sharpe_ratio": -11.172386724915954,
+    "total_profit_abs": -104.65298401000001,
+    "total_profit_pct": -69.76865600666667,
+    "total_trades": 1987,
+    "win_rate": 0.3140412682435833,
+    "worst_pair": "HOME/USDT",
+    "worst_trade_profit_pct": 0.0
+  },
+  "score": -11.172386724915954,
+  "score_breakdown": {},
+  "score_metric": "sharpe_ratio",
+  "score_mode": "single_metric",
+  "session_id": "00d5d57f-9960-4dcc-ac23-ec438d4ba9c3",
+  "status": "success",
+  "trial_number": 57
+}

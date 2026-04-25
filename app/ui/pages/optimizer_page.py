@@ -61,6 +61,7 @@ from PySide6.QtWidgets import (
 )
 
 from app.app_state.settings_state import SettingsState
+from app.core.models.settings_models import AppSettings
 from app.core.models.optimizer_models import (
     OptimizerSession,
     ParamDef,
@@ -253,7 +254,7 @@ class OptimizerPage(QWidget):
         self._process_manager = process_manager
 
         # Services
-        self._settings_svc = settings_state.settings_service
+        self._settings_svc = getattr(settings_state, "settings_service", SettingsService())
         self._backtest_svc = BacktestService(self._settings_svc)
         self._service = StrategyOptimizerService(
             settings_service=self._settings_svc,
@@ -266,6 +267,7 @@ class OptimizerPage(QWidget):
         self._session_start_time: Optional[float] = None
         self._running = False
         self._param_defs: List[ParamDef] = []
+        self._loading_preferences = False
 
         # Batched update buffers (9.9)
         self._pending_log_lines: list[str] = []
@@ -295,9 +297,15 @@ class OptimizerPage(QWidget):
         self._elapsed_timer.setInterval(1000)
         self._elapsed_timer.timeout.connect(self._update_elapsed)
 
+        self._prefs_save_timer = QTimer(self)
+        self._prefs_save_timer.setSingleShot(True)
+        self._prefs_save_timer.setInterval(500)
+        self._prefs_save_timer.timeout.connect(self._save_preferences)
+
         # Load initial data
         self._load_strategies()
-        self._sync_from_backtest()
+        self._restore_preferences()
+        self._connect_preferences_autosave()
         self._load_history()
 
     def _build(self) -> None:
@@ -545,10 +553,6 @@ class OptimizerPage(QWidget):
             widget.setMinimumWidth(0)
             widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
-        sync_btn = QPushButton("Sync from Backtest")
-        sync_btn.clicked.connect(self._sync_from_backtest)
-        layout.addWidget(sync_btn)
-
         layout.addWidget(_section_label("Parameters"))
         self._param_model = QStandardItemModel(0, _PCOL_COUNT, self)
         self._param_model.setHorizontalHeaderLabels(["On", "Name", "Type", "Space", "Default", "Min", "Max"])
@@ -774,15 +778,21 @@ class OptimizerPage(QWidget):
         except Exception as exc:
             _log.warning("Could not load optimizer strategies: %s", exc)
 
-    def _sync_from_backtest(self) -> None:
-        settings = self._settings_svc.load_settings()
-        prefs = settings.backtest_preferences
+    def _restore_preferences(self) -> None:
+        current = getattr(self._state, "current_settings", None)
+        settings = current if isinstance(current, AppSettings) else self._settings_svc.load_settings()
+        self._state.current_settings = settings
         optimizer_prefs = settings.optimizer_preferences
-        self._timeframe_combo.setCurrentText(prefs.default_timeframe or "5m")
-        self._timerange_edit.setText(prefs.default_timerange or "")
-        self._pairs_edit.setText(prefs.default_pairs or "")
-        self._wallet_spin.setValue(prefs.dry_run_wallet)
-        self._trades_spin.setValue(prefs.max_open_trades)
+        self._loading_preferences = True
+        if optimizer_prefs.last_strategy:
+            idx = self._strategy_combo.findText(optimizer_prefs.last_strategy)
+            if idx >= 0:
+                self._strategy_combo.setCurrentIndex(idx)
+        self._timeframe_combo.setCurrentText(optimizer_prefs.default_timeframe or "5m")
+        self._timerange_edit.setText(optimizer_prefs.default_timerange or "")
+        self._pairs_edit.setText(optimizer_prefs.default_pairs or "")
+        self._wallet_spin.setValue(optimizer_prefs.dry_run_wallet)
+        self._trades_spin.setValue(optimizer_prefs.max_open_trades)
         self._trials_spin.setValue(optimizer_prefs.total_trials)
         score_key = optimizer_prefs.score_metric or "composite"
         score_idx = self._score_combo.findData(score_key)
@@ -791,12 +801,51 @@ class OptimizerPage(QWidget):
         self._target_profit_spin.setValue(optimizer_prefs.target_profit_pct)
         self._max_drawdown_spin.setValue(optimizer_prefs.max_drawdown_limit)
         self._target_romad_spin.setValue(optimizer_prefs.target_romad)
-        idx = self._strategy_combo.findText(prefs.last_strategy)
-        if idx >= 0:
-            self._strategy_combo.setCurrentIndex(idx)
-        has_config = bool(prefs.last_strategy or prefs.default_pairs or settings.user_data_path)
+        self._loading_preferences = False
+        has_config = bool(optimizer_prefs.last_strategy or optimizer_prefs.default_pairs or settings.user_data_path)
         self._warning_lbl.setVisible(not has_config)
-        self._warning_lbl.setText("Backtesting preferences look empty. Configure the Backtesting tab first.")
+        self._warning_lbl.setText("Optimizer preferences look empty. Configure this tab before starting.")
+
+    def _connect_preferences_autosave(self) -> None:
+        self._strategy_combo.currentTextChanged.connect(self._schedule_preferences_save)
+        self._timeframe_combo.currentTextChanged.connect(self._schedule_preferences_save)
+        self._timerange_edit.textChanged.connect(self._schedule_preferences_save)
+        self._pairs_edit.textChanged.connect(self._schedule_preferences_save)
+        self._wallet_spin.valueChanged.connect(self._schedule_preferences_save)
+        self._trades_spin.valueChanged.connect(self._schedule_preferences_save)
+        self._trials_spin.valueChanged.connect(self._schedule_preferences_save)
+        self._score_combo.currentIndexChanged.connect(self._schedule_preferences_save)
+        self._target_trades_spin.valueChanged.connect(self._schedule_preferences_save)
+        self._target_profit_spin.valueChanged.connect(self._schedule_preferences_save)
+        self._max_drawdown_spin.valueChanged.connect(self._schedule_preferences_save)
+        self._target_romad_spin.valueChanged.connect(self._schedule_preferences_save)
+
+    def _schedule_preferences_save(self, *_args) -> None:
+        if self._loading_preferences:
+            return
+        self._prefs_save_timer.start()
+
+    def _save_preferences(self) -> None:
+        score_key = self._score_combo.currentData() or "composite"
+        try:
+            self._state.update_preferences(
+                "optimizer_preferences",
+                last_strategy=self._strategy_combo.currentText().strip(),
+                default_timeframe=self._timeframe_combo.currentText().strip(),
+                default_timerange=self._timerange_edit.text().strip(),
+                default_pairs=self._pairs_edit.text().strip(),
+                dry_run_wallet=self._wallet_spin.value(),
+                max_open_trades=self._trades_spin.value(),
+                total_trials=self._trials_spin.value(),
+                score_metric=score_key,
+                score_mode="composite" if score_key == "composite" else "single_metric",
+                target_min_trades=self._target_trades_spin.value(),
+                target_profit_pct=self._target_profit_spin.value(),
+                max_drawdown_limit=self._max_drawdown_spin.value(),
+                target_romad=self._target_romad_spin.value(),
+            )
+        except Exception as exc:
+            _log.warning("Could not save optimizer preferences: %s", exc)
 
     def _select_pairs(self) -> None:
         current = self._pairs_edit.text().strip()
@@ -1073,20 +1122,22 @@ class OptimizerPage(QWidget):
 
     def _save_optimizer_preferences(self, config: SessionConfig) -> None:
         try:
-            settings = self._settings_svc.load_settings()
-            settings.optimizer_preferences = settings.optimizer_preferences.model_copy(
-                update={
-                    "last_strategy": config.strategy_name,
-                    "total_trials": config.total_trials,
-                    "score_metric": config.score_metric,
-                    "score_mode": config.score_mode,
-                    "target_min_trades": config.target_min_trades,
-                    "target_profit_pct": config.target_profit_pct,
-                    "max_drawdown_limit": config.max_drawdown_limit,
-                    "target_romad": config.target_romad,
-                }
+            self._state.update_preferences(
+                "optimizer_preferences",
+                last_strategy=config.strategy_name,
+                default_timeframe=config.timeframe,
+                default_timerange=config.timerange or "",
+                default_pairs=",".join(config.pairs),
+                dry_run_wallet=config.dry_run_wallet,
+                max_open_trades=config.max_open_trades,
+                total_trials=config.total_trials,
+                score_metric=config.score_metric,
+                score_mode=config.score_mode,
+                target_min_trades=config.target_min_trades,
+                target_profit_pct=config.target_profit_pct,
+                max_drawdown_limit=config.max_drawdown_limit,
+                target_romad=config.target_romad,
             )
-            self._settings_svc.save_settings(settings)
         except Exception as exc:
             _log.warning("Could not save optimizer preferences: %s", exc)
 

@@ -159,6 +159,12 @@ class OptimizerPreferences(BaseModel):
     """Persisted optimizer UI preferences (added to AppSettings)."""
 
     last_strategy: str = ""
+    default_timeframe: str = "5m"
+    default_timerange: str = ""
+    default_pairs: str = ""
+    last_timerange_preset: str = "30d"
+    dry_run_wallet: float = 80.0
+    max_open_trades: int = 2
     total_trials: int = 50
     score_metric: str = "composite"
     score_mode: str = "composite"

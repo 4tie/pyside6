@@ -1,0 +1,32 @@
+{
+  "avg_duration_min": 4380,
+  "avg_profit_pct": 0.228373,
+  "backtest_end": "2026-04-07 00:00:00",
+  "backtest_start": "2026-03-24 00:00:00",
+  "calmar_ratio": 31.8407,
+  "draws": 0,
+  "expectancy": 0.0873,
+  "final_balance": 80.349397,
+  "losses": 2,
+  "max_consecutive_losses": 2,
+  "max_consecutive_wins": 2,
+  "max_drawdown_abs": 1.532688,
+  "max_drawdown_pct": 1.8718,
+  "pairs": [
+    "HOME/USDT",
+    "ETH/USDT",
+    "XRP/USDT"
+  ],
+  "profit_factor": 1.228,
+  "sharpe_ratio": 0.5583,
+  "sortino_ratio": 15.5619,
+  "starting_balance": 80.0,
+  "strategy": "yes",
+  "timeframe": "4h",
+  "timerange": "20260324-20260407",
+  "total_profit_abs": 0.349397,
+  "total_profit_pct": 0.436746,
+  "total_trades": 4,
+  "win_rate_pct": 50.0,
+  "wins": 2
+}

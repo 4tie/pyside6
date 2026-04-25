@@ -1,6 +1,6 @@
 /* Backtest Run Page Script */
 
-import { getStrategies, getPairs, saveFavorites, downloadData, saveBacktestConfig, getBacktestConfig, getSettings } from '/static/shared/js/api.js';
+import { getStrategies, getPairs, saveFavorites, downloadData, getSettings, updateSettings } from '/static/shared/js/api.js';
 import { initTheme, toggleTheme } from '/static/shared/js/theme.js';
 import { showSuccess, showError, showWarning } from '/static/shared/js/components.js';
 
@@ -45,6 +45,9 @@ function updateStatus(status, message = '') {
 // Polling for status updates
 let pollingInterval = null;
 let currentRunId = null;
+let selectedPairs = new Set();
+let isLoadingPreferences = false;
+let preferencesSaveTimer = null;
 // Start polling for status updates
 function startPolling() {
   if (pollingInterval) return;
@@ -144,9 +147,15 @@ function updateTimerangeFromPreset() {
   timerangeInput.value = `${formatDate(start)}-${formatDate(end)}`;
 }
 
-// Load saved preferences from settings
-async function loadSavedPrefs() {
+function updateSaveStatus(message) {
+  const el = document.getElementById('settings-save-status');
+  if (el) el.textContent = message;
+}
+
+// Apply saved preferences from settings on page load.
+async function applySavedPreferences() {
   try {
+    isLoadingPreferences = true;
     const settings = await getSettings();
     const prefs = settings.backtest_preferences || {};
     
@@ -178,13 +187,12 @@ async function loadSavedPrefs() {
         updateTimerangeFromPreset();
       }
     }
-    
-    showSuccess('Loaded saved preferences');
-    addLog('info', 'Loaded saved preferences');
   } catch (error) {
     console.error('Failed to load preferences:', error);
     showError('Failed to load saved preferences');
     addLog('error', 'Failed to load saved preferences');
+  } finally {
+    isLoadingPreferences = false;
   }
 }
 
@@ -193,7 +201,6 @@ async function loadSavedPrefs() {
 // State
 let allPairs = [];
 let favorites = [];
-let selectedPairs = new Set();
 
 // Load page data
 async function loadPageData() {
@@ -208,14 +215,7 @@ async function loadPageData() {
     allPairs = pairsData.pairs;
     favorites = pairsData.favorites;
     
-    // Load saved config
-    const config = await getBacktestConfig();
-    if (config.strategy) document.getElementById('strategy').value = config.strategy;
-    if (config.timeframe) document.getElementById('timeframe').value = config.timeframe;
-    if (config.timerange) document.getElementById('timerange').value = config.timerange;
-    if (config.max_open_trades) document.getElementById('max_open_trades').value = config.max_open_trades;
-    if (config.dry_run_wallet) document.getElementById('dry_run_wallet').value = config.dry_run_wallet;
-    if (config.pairs) selectedPairs = new Set(config.pairs);
+    await applySavedPreferences();
     
     // Setup preset timerange handler
     document.getElementById('timerange-preset').addEventListener('change', updateTimerangeFromPreset);
@@ -265,7 +265,7 @@ function renderPairs() {
         selectedPairs.delete(pair);
       }
       updatePairsCount();
-      saveConfig();
+      scheduleSaveConfig();
     });
   });
   
@@ -311,7 +311,7 @@ document.getElementById('randomize-pairs').addEventListener('click', () => {
   
   renderPairs();
   updatePairsCount();
-  saveConfig();
+  scheduleSaveConfig();
 });
 
 // Search pairs
@@ -503,9 +503,6 @@ document.getElementById('stop-backtest-btn').addEventListener('click', async () 
   }
 });
 
-// Load saved preferences button
-document.getElementById('load-prefs-btn').addEventListener('click', loadSavedPrefs);
-
 // Clear logs
 document.getElementById('clear-logs').addEventListener('click', () => {
   document.getElementById('logs-container').innerHTML = '<div class="log-entry">Logs cleared</div>';
@@ -521,25 +518,45 @@ function addLog(level, message) {
   logsContainer.scrollTop = logsContainer.scrollHeight;
 }
 
+function scheduleSaveConfig() {
+  if (isLoadingPreferences) return;
+  updateSaveStatus('Saving preferences...');
+  clearTimeout(preferencesSaveTimer);
+  preferencesSaveTimer = setTimeout(saveConfig, 500);
+}
+
 // Save config
 async function saveConfig() {
+  const preferenceUpdate = {
+    default_timeframe: document.getElementById('timeframe').value || '',
+    default_timerange: document.getElementById('timerange').value || '',
+    default_pairs: Array.from(selectedPairs).join(','),
+    last_strategy: document.getElementById('strategy').value || '',
+    last_timerange_preset: document.getElementById('timerange-preset').value || 'custom',
+    max_open_trades: parseInt(document.getElementById('max_open_trades').value) || 2,
+    dry_run_wallet: parseFloat(document.getElementById('dry_run_wallet').value) || 80,
+  };
+
   try {
-    await saveBacktestConfig({
-      strategy: document.getElementById('strategy').value || null,
-      timeframe: document.getElementById('timeframe').value || null,
-      pairs: Array.from(selectedPairs),
-      timerange: document.getElementById('timerange').value || null,
-      max_open_trades: parseInt(document.getElementById('max_open_trades').value) || null,
-      dry_run_wallet: parseFloat(document.getElementById('dry_run_wallet').value) || null,
+    await updateSettings({
+      backtest_preferences: preferenceUpdate,
+      download_preferences: {
+        default_timeframe: preferenceUpdate.default_timeframe,
+        default_timerange: preferenceUpdate.default_timerange,
+        default_pairs: preferenceUpdate.default_pairs,
+      },
     });
+    updateSaveStatus('Preferences saved');
   } catch (error) {
     console.error('Failed to save config:', error);
+    updateSaveStatus('Preference save failed');
   }
 }
 
 // Auto-save on form changes
-document.querySelectorAll('input, select').forEach(input => {
-  input.addEventListener('change', saveConfig);
+document.querySelectorAll('#backtest-form input, #backtest-form select').forEach(input => {
+  if (input.id === 'pairs-search') return;
+  input.addEventListener('change', scheduleSaveConfig);
 });
 
 // Load page data on mount

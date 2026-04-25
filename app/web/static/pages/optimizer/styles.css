@@ -35,6 +35,11 @@
   margin: 0;
 }
 
+.save-status {
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
 /* Config Form */
 .config-form {
   display: flex;

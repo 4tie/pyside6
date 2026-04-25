@@ -42,7 +42,10 @@ class SettingsUpdate(BaseModel):
     venv_path: Optional[str] = None
     python_executable: Optional[str] = None
     freqtrade_executable: Optional[str] = None
+    use_module_execution: Optional[bool] = None
     backtest_preferences: Optional[Dict[str, Any]] = None
+    optimize_preferences: Optional[Dict[str, Any]] = None
+    download_preferences: Optional[Dict[str, Any]] = None
     optimizer_preferences: Optional[Dict[str, Any]] = None
 
 
@@ -148,6 +151,8 @@ class SettingsResponse(BaseModel):
     freqtrade_executable: str
     use_module_execution: bool
     backtest_preferences: Dict[str, Any] = Field(default_factory=dict)
+    optimize_preferences: Dict[str, Any] = Field(default_factory=dict)
+    download_preferences: Dict[str, Any] = Field(default_factory=dict)
     optimizer_preferences: Dict[str, Any] = Field(default_factory=dict)
 
 

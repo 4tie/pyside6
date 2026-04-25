@@ -19,6 +19,8 @@ let trials = [];
 let selectedTrial = null;
 let compareTrialA = null;
 let isRunning = false;
+let isLoadingPreferences = false;
+let preferencesSaveTimer = null;
 
 // Score metric options matching PySide6
 const SCORE_OPTIONS = [
@@ -62,11 +64,13 @@ const els = {
   strategyDiff: document.getElementById('strategy-diff'),
   compareModal: document.getElementById('compare-modal'),
   compareTable: document.getElementById('compare-table'),
+  saveStatus: document.getElementById('settings-save-status'),
 };
 
 // Initialize
 async function init() {
   await loadStrategies();
+  await loadOptimizerPreferences();
   await loadSessionHistory();
   setupEventListeners();
   setupTheme();
@@ -152,33 +156,38 @@ function handleParamChange(e) {
   paramDefs[idx] = { ...paramDefs[idx], [field]: value };
 }
 
-// Sync from backtest preferences
-async function syncFromBacktest() {
+function updateSaveStatus(message) {
+  if (els.saveStatus) els.saveStatus.textContent = message;
+}
+
+// Load optimizer preferences
+async function loadOptimizerPreferences() {
   try {
+    isLoadingPreferences = true;
     const settings = await api.get('/settings');
-    const prefs = settings.backtest_preferences || {};
     const optPrefs = settings.optimizer_preferences || {};
     
-    els.timeframe.value = prefs.default_timeframe || '5m';
-    els.timerange.value = prefs.default_timerange || '';
-    els.pairs.value = prefs.default_pairs || '';
-    els.wallet.value = prefs.dry_run_wallet || 80;
-    els.maxTrades.value = prefs.max_open_trades || 2;
-    
+    if (optPrefs.last_strategy) {
+      els.strategySelect.value = optPrefs.last_strategy;
+      await loadStrategyParams(optPrefs.last_strategy);
+    }
+
+    els.timeframe.value = optPrefs.default_timeframe || '5m';
+    els.timerange.value = optPrefs.default_timerange || '';
+    els.pairs.value = optPrefs.default_pairs || '';
+    els.wallet.value = optPrefs.dry_run_wallet || 80;
+    els.maxTrades.value = optPrefs.max_open_trades || 2;
     els.trials.value = optPrefs.total_trials || 50;
     els.scoreMetric.value = optPrefs.score_metric || 'composite';
     els.targetTrades.value = optPrefs.target_min_trades || 100;
     els.targetProfit.value = optPrefs.target_profit_pct || 50.0;
     els.maxDrawdown.value = optPrefs.max_drawdown_limit || 25.0;
     els.targetRomad.value = optPrefs.target_romad || 2.0;
-    
-    if (prefs.last_strategy) {
-      els.strategySelect.value = prefs.last_strategy;
-      await loadStrategyParams(prefs.last_strategy);
-    }
   } catch (err) {
-    console.error('Failed to sync from backtest:', err);
-    showError('Failed to sync from backtest preferences');
+    console.error('Failed to load optimizer preferences:', err);
+    showError('Failed to load optimizer preferences');
+  } finally {
+    isLoadingPreferences = false;
   }
 }
 
@@ -889,33 +898,81 @@ async function deleteSelectedSession() {
 // Save optimizer preferences
 async function saveOptimizerPreferences(config) {
   try {
-    const settings = await api.get('/settings');
-    const prefs = settings.optimizer_preferences || {};
-    
-    prefs.last_strategy = config.strategy_name;
-    prefs.total_trials = config.total_trials;
-    prefs.score_metric = config.score_metric;
-    prefs.score_mode = config.score_mode;
-    prefs.target_min_trades = config.target_min_trades;
-    prefs.target_profit_pct = config.target_profit_pct;
-    prefs.max_drawdown_limit = config.max_drawdown_limit;
-    prefs.target_romad = config.target_romad;
-    
-    await api.put('/settings', { optimizer_preferences: prefs });
+    await api.put('/settings', {
+      optimizer_preferences: {
+        last_strategy: config.strategy_name,
+        default_timeframe: config.timeframe,
+        default_timerange: config.timerange || '',
+        default_pairs: config.pairs.join(','),
+        dry_run_wallet: config.dry_run_wallet,
+        max_open_trades: config.max_open_trades,
+        total_trials: config.total_trials,
+        score_metric: config.score_metric,
+        score_mode: config.score_mode,
+        target_min_trades: config.target_min_trades,
+        target_profit_pct: config.target_profit_pct,
+        max_drawdown_limit: config.max_drawdown_limit,
+        target_romad: config.target_romad,
+      },
+    });
+    updateSaveStatus('Preferences saved');
   } catch (err) {
     console.error('Failed to save preferences:', err);
+    updateSaveStatus('Preference save failed');
   }
+}
+
+function scheduleOptimizerPreferencesSave() {
+  if (isLoadingPreferences) return;
+  updateSaveStatus('Saving preferences...');
+  clearTimeout(preferencesSaveTimer);
+  preferencesSaveTimer = setTimeout(() => {
+    saveOptimizerPreferences(buildPreferenceConfig());
+  }, 500);
+}
+
+function buildPreferenceConfig() {
+  return {
+    strategy_name: els.strategySelect.value || '',
+    pairs: els.pairs.value.split(',').map(p => p.trim()).filter(Boolean),
+    timeframe: els.timeframe.value || '5m',
+    timerange: els.timerange.value || null,
+    dry_run_wallet: parseFloat(els.wallet.value) || 80,
+    max_open_trades: parseInt(els.maxTrades.value) || 2,
+    total_trials: parseInt(els.trials.value) || 50,
+    score_metric: els.scoreMetric.value || 'composite',
+    score_mode: els.scoreMetric.value === 'composite' ? 'composite' : 'single_metric',
+    target_min_trades: parseInt(els.targetTrades.value) || 100,
+    target_profit_pct: parseFloat(els.targetProfit.value) || 50,
+    max_drawdown_limit: parseFloat(els.maxDrawdown.value) || 25,
+    target_romad: parseFloat(els.targetRomad.value) || 2,
+  };
 }
 
 // Setup event listeners
 function setupEventListeners() {
   // Strategy selection
-  els.strategySelect.addEventListener('change', (e) => {
-    loadStrategyParams(e.target.value);
+  els.strategySelect.addEventListener('change', async (e) => {
+    await loadStrategyParams(e.target.value);
+    scheduleOptimizerPreferencesSave();
   });
-  
-  // Sync button
-  document.getElementById('sync-from-backtest').addEventListener('click', syncFromBacktest);
+
+  [
+    els.timeframe,
+    els.timerange,
+    els.pairs,
+    els.wallet,
+    els.maxTrades,
+    els.trials,
+    els.scoreMetric,
+    els.targetTrades,
+    els.targetProfit,
+    els.maxDrawdown,
+    els.targetRomad,
+  ].forEach(input => {
+    input.addEventListener('change', scheduleOptimizerPreferencesSave);
+    input.addEventListener('input', scheduleOptimizerPreferencesSave);
+  });
   
   // Start/Stop
   els.startBtn.addEventListener('click', startOptimizer);

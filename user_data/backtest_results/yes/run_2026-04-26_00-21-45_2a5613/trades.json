@@ -1,0 +1,80 @@
+[
+  {
+    "duration_min": 240,
+    "entry": "2025-12-23 16:00:00+00:00",
+    "entry_rate": 0.01887,
+    "exit": "2025-12-23 20:00:00+00:00",
+    "exit_rate": 0.0194,
+    "exit_reason": "roi",
+    "is_open": false,
+    "pair": "HOME/USDT",
+    "profit_abs": 1.04197587,
+    "profit_pct": 2.603279,
+    "stake_amount": 39.98553
+  },
+  {
+    "duration_min": 3840,
+    "entry": "2025-12-24 00:00:00+00:00",
+    "entry_rate": 0.02014,
+    "exit": "2025-12-26 16:00:00+00:00",
+    "exit_rate": 0.02065,
+    "exit_reason": "roi",
+    "is_open": false,
+    "pair": "HOME/USDT",
+    "profit_abs": 0.94358131,
+    "profit_pct": 2.327414,
+    "stake_amount": 40.50154
+  },
+  {
+    "duration_min": 6240,
+    "entry": "2025-12-24 16:00:00+00:00",
+    "entry_rate": 1.8634,
+    "exit": "2025-12-29 00:00:00+00:00",
+    "exit_rate": 1.9109,
+    "exit_reason": "roi",
+    "is_open": false,
+    "pair": "XRP/USDT",
+    "profit_abs": 0.94884769,
+    "profit_pct": 2.34421,
+    "stake_amount": 40.43578
+  },
+  {
+    "duration_min": 3360,
+    "entry": "2025-12-26 16:00:00+00:00",
+    "entry_rate": 2923.2,
+    "exit": "2025-12-29 00:00:00+00:00",
+    "exit_rate": 2997.65,
+    "exit_reason": "roi",
+    "is_open": false,
+    "pair": "ETH/USDT",
+    "profit_abs": 0.9594081,
+    "profit_pct": 2.341978,
+    "stake_amount": 40.9248
+  },
+  {
+    "duration_min": 1200,
+    "entry": "2025-12-29 04:00:00+00:00",
+    "entry_rate": 3043.75,
+    "exit": "2025-12-30 00:00:00+00:00",
+    "exit_rate": 2937.91,
+    "exit_reason": "force_exit",
+    "is_open": false,
+    "pair": "ETH/USDT",
+    "profit_abs": -1.53195674,
+    "profit_pct": -3.670142,
+    "stake_amount": 41.699375
+  },
+  {
+    "duration_min": 1200,
+    "entry": "2025-12-29 04:00:00+00:00",
+    "entry_rate": 1.9151,
+    "exit": "2025-12-30 00:00:00+00:00",
+    "exit_rate": 1.8508,
+    "exit_reason": "force_exit",
+    "is_open": false,
+    "pair": "XRP/USDT",
+    "profit_abs": -1.49064321,
+    "profit_pct": -3.550619,
+    "stake_amount": 41.94069
+  }
+]

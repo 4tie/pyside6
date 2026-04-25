@@ -8,12 +8,13 @@ from PySide6.QtWidgets import (
     QComboBox, QLineEdit, QSpinBox, QDoubleSpinBox,
     QSplitter, QFrame, QFormLayout
 )
-from PySide6.QtCore import Qt, Signal, Slot
+from PySide6.QtCore import Qt, QTimer, Signal, Slot
 
 from app.app_state.settings_state import SettingsState
+from app.core.models.settings_models import AppSettings
 from app.core.services.backtest_service import BacktestService
-from app.core.services.settings_service import SettingsService
 from app.core.services.process_run_manager import ProcessRunManager
+from app.core.services.settings_service import SettingsService
 from app.ui.adapters.process_run_adapter import ProcessRunAdapter
 from app.ui import theme
 from app.ui.widgets.terminal_widget import TerminalWidget
@@ -36,18 +37,25 @@ class BacktestPage(QWidget):
     def __init__(self, settings_state: SettingsState, process_manager: ProcessRunManager, parent: QWidget | None = None):
         super().__init__(parent)
         self._state = settings_state
-        self._settings_svc = SettingsService()
+        self._settings_svc = getattr(settings_state, "settings_service", SettingsService())
         self._backtest_svc = BacktestService(self._settings_svc)
         self._process_manager = process_manager
         self._current_run_id: Optional[str] = None
         self._adapter: Optional[ProcessRunAdapter] = None
         self._running = False
+        self._loading_preferences = False
+        self._prefs_save_timer = QTimer(self)
+        self._prefs_save_timer.setSingleShot(True)
+        self._prefs_save_timer.setInterval(500)
+        self._prefs_save_timer.timeout.connect(self._save_preferences)
         self._build()
         # Wire bridge signals to slots (always runs on main thread)
         self._sig_stdout.connect(self._terminal.append_output)
         self._sig_stderr.connect(self._terminal.append_error)
         self._sig_finished.connect(self._handle_finished)
         self._load_strategies()
+        self._restore_preferences()
+        self._connect_preferences_autosave()
 
     # ── UI construction ───────────────────────────────────────────────
     def _build(self):
@@ -143,10 +151,6 @@ class BacktestPage(QWidget):
 
         cl.addLayout(form)
 
-        load_btn = QPushButton("↺  Load Saved Prefs")
-        load_btn.clicked.connect(self._load_prefs)
-        cl.addWidget(load_btn)
-
         cl.addStretch()
 
         self._status_lbl = QLabel("Ready")
@@ -167,6 +171,19 @@ class BacktestPage(QWidget):
         lbl.setStyleSheet(f"color: {theme.TEXT_SECONDARY}; font-size: 12px;")
         return lbl
 
+    def get_run_config(self) -> dict:
+        """Return the current Backtest form values as a reusable run config."""
+        pairs_text = self._pairs_edit.text().strip()
+        pairs = [p.strip() for p in pairs_text.split(",") if p.strip()] if pairs_text else []
+        return {
+            "strategy": self._strategy_combo.currentText().strip(),
+            "timeframe": self._tf_combo.currentText().strip(),
+            "timerange": self._timerange_edit.text().strip(),
+            "pairs": pairs,
+            "dry_run_wallet": self._wallet_spin.value(),
+            "max_open_trades": self._trades_spin.value(),
+        }
+
     # ── Helpers ───────────────────────────────────────────────────────
     def _load_strategies(self):
         try:
@@ -183,19 +200,61 @@ class BacktestPage(QWidget):
         except Exception as e:
             _log.warning("Could not load strategies: %s", e)
 
-    def _load_prefs(self):
-        settings = self._state.current_settings
+    def _restore_preferences(self):
+        current = getattr(self._state, "current_settings", None)
+        settings = current if isinstance(current, AppSettings) else self._settings_svc.load_settings()
+        self._state.current_settings = settings
         if not settings:
             return
         p = settings.backtest_preferences
+        self._loading_preferences = True
+        if p.last_strategy:
+            idx = self._strategy_combo.findText(p.last_strategy)
+            if idx >= 0:
+                self._strategy_combo.setCurrentIndex(idx)
         if p.default_timeframe:
             self._tf_combo.setCurrentText(p.default_timeframe)
-        if p.default_pairs:
-            self._pairs_edit.setText(p.default_pairs)
-        self._wallet_spin.setValue(p.dry_run_wallet)
-        self._trades_spin.setValue(p.max_open_trades)
         if p.last_timerange_preset:
             self._preset_combo.setCurrentText(p.last_timerange_preset)
+        if p.default_pairs:
+            self._pairs_edit.setText(p.default_pairs)
+        if p.default_timerange:
+            self._timerange_edit.setText(p.default_timerange)
+        self._wallet_spin.setValue(p.dry_run_wallet)
+        self._trades_spin.setValue(p.max_open_trades)
+        self._loading_preferences = False
+
+    def _connect_preferences_autosave(self) -> None:
+        self._strategy_combo.currentTextChanged.connect(self._schedule_preferences_save)
+        self._tf_combo.currentTextChanged.connect(self._schedule_preferences_save)
+        self._preset_combo.currentTextChanged.connect(self._schedule_preferences_save)
+        self._timerange_edit.textChanged.connect(self._schedule_preferences_save)
+        self._pairs_edit.textChanged.connect(self._schedule_preferences_save)
+        self._wallet_spin.valueChanged.connect(self._schedule_preferences_save)
+        self._trades_spin.valueChanged.connect(self._schedule_preferences_save)
+
+    def _schedule_preferences_save(self, *_args) -> None:
+        if self._loading_preferences:
+            return
+        self._status_lbl.setText("Saving preferences...")
+        self._prefs_save_timer.start()
+
+    def _save_preferences(self) -> None:
+        try:
+            self._state.update_preferences(
+                "backtest_preferences",
+                last_strategy=self._strategy_combo.currentText().strip(),
+                default_timeframe=self._tf_combo.currentText().strip(),
+                default_timerange=self._timerange_edit.text().strip(),
+                default_pairs=self._pairs_edit.text().strip(),
+                last_timerange_preset=self._preset_combo.currentText().strip(),
+                dry_run_wallet=self._wallet_spin.value(),
+                max_open_trades=self._trades_spin.value(),
+            )
+            self._status_lbl.setText("Preferences saved")
+        except Exception as exc:
+            _log.warning("Could not save backtest preferences: %s", exc)
+            self._status_lbl.setText("Preference save failed")
 
     def _on_preset_changed(self, preset: str):
         if preset == "Custom":

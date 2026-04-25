@@ -54,6 +54,20 @@ class SettingsState(QObject):
         self.settings_changed.emit(self.current_settings)
         return self.current_settings
 
+    def update_preferences(self, section: str, **kwargs):
+        """Update and save a nested preference section."""
+        if not self.current_settings:
+            self.current_settings = self.settings_service.load_settings()
+        previous_ai = self.current_settings.ai
+        preferences = self.settings_service.update_preferences(section, **kwargs)
+        self.current_settings = self.settings_service.settings
+        if self.current_settings:
+            self.settings_saved.emit(self.current_settings)
+            self.settings_changed.emit(self.current_settings)
+            if previous_ai != self.current_settings.ai:
+                self.ai_settings_changed.emit(self.current_settings.ai)
+        return preferences
+
     def validate_current_settings(self) -> SettingsValidationResult:
         """Validate current settings."""
         if not self.current_settings:

@@ -15,6 +15,7 @@ from app.ui import theme
 from app.ui.shell.sidebar import NavSidebar
 from app.ui.pages.dashboard_page import DashboardPage
 from app.ui.pages.backtest_page import BacktestPage
+from app.ui.pages.parneeds_page import ParNeedsPage
 from app.ui.pages.results_page import ResultsPage
 from app.ui.pages.compare_page import ComparePage
 from app.ui.pages.optimize_page import OptimizePage
@@ -76,6 +77,7 @@ class ModernMainWindow(QMainWindow):
         # Create pages
         self.dashboard_page  = DashboardPage(self.settings_state)
         self.backtest_page   = BacktestPage(self.settings_state, self._process_manager)
+        self.parneeds_page   = ParNeedsPage(self.settings_state, self._process_manager)
         self.results_page    = ResultsPage(self.settings_state)
         self.compare_page    = ComparePage(self.settings_state)
         self.optimize_page   = OptimizePage(self.settings_state, self._process_manager)
@@ -86,6 +88,7 @@ class ModernMainWindow(QMainWindow):
         self._pages = {
             "dashboard": self.dashboard_page,
             "backtest":  self.backtest_page,
+            "parneeds":  self.parneeds_page,
             "results":   self.results_page,
             "compare":   self.compare_page,
             "optimize":  self.optimize_page,
@@ -102,6 +105,7 @@ class ModernMainWindow(QMainWindow):
     def _wire_signals(self):
         self.sidebar.page_changed.connect(self._navigate)
         self.backtest_page.run_completed.connect(self._on_backtest_done)
+        self.parneeds_page.run_completed.connect(self._on_backtest_done)
         self.settings_page.settings_saved.connect(self._on_settings_saved)
 
     def _register_shortcuts(self):
@@ -113,6 +117,8 @@ class ModernMainWindow(QMainWindow):
     def _navigate(self, page_id: str):
         page = self._pages.get(page_id)
         if page:
+            if page_id == "parneeds":
+                self.parneeds_page.sync_from_backtest(self.backtest_page.get_run_config())
             self.stack.setCurrentWidget(page)
             self.sidebar.navigate_to(page_id)
             _log.debug("Navigated to %s", page_id)
@@ -125,6 +131,7 @@ class ModernMainWindow(QMainWindow):
         _log.info("Settings saved — reloading strategies")
         try:
             self.backtest_page._load_strategies()
+            self.parneeds_page._load_strategies()
             self.optimize_page._load_strategies()
         except Exception:
             pass
