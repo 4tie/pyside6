@@ -129,3 +129,36 @@ export async function stopLoop() {
 export async function getLoopIterations() {
   return fetch(`${API_BASE}/loop/iterations`).then(r => r.json());
 }
+
+// Generic REST API methods
+export const api = {
+  get: (path) => fetch(`${API_BASE}${path}`).then(r => {
+    if (!r.ok) throw new Error(`HTTP ${r.status}: ${r.statusText}`);
+    return r.json();
+  }),
+  
+  post: (path, data) => fetch(`${API_BASE}${path}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  }).then(r => {
+    if (!r.ok) throw new Error(`HTTP ${r.status}: ${r.statusText}`);
+    return r.json();
+  }),
+  
+  put: (path, data) => fetch(`${API_BASE}${path}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  }).then(r => {
+    if (!r.ok) throw new Error(`HTTP ${r.status}: ${r.statusText}`);
+    return r.json();
+  }),
+  
+  delete: (path) => fetch(`${API_BASE}${path}`, {
+    method: 'DELETE',
+  }).then(r => {
+    if (!r.ok) throw new Error(`HTTP ${r.status}: ${r.statusText}`);
+    return r.json();
+  }),
+};

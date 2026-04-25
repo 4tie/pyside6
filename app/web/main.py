@@ -10,7 +10,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
 # Import route handlers
-from app.web.api.routes import runs, strategies, diagnosis, comparison, settings, loop, diff, backtest, optimize, process
+from app.web.api.routes import runs, strategies, diagnosis, comparison, settings, loop, diff, backtest, optimize, process, optimizer
 
 # Create FastAPI app
 app = FastAPI(
@@ -40,9 +40,12 @@ else:
 
 @app.get("/")
 async def root():
-    """Root route redirects to dashboard."""
-    from fastapi.responses import RedirectResponse
-    return RedirectResponse(url="/static/pages/dashboard/index.html")
+    """Root route serves dashboard directly."""
+    from fastapi.responses import FileResponse
+    dashboard_path = static_dir / "pages" / "dashboard" / "index.html"
+    if dashboard_path.exists():
+        return FileResponse(str(dashboard_path))
+    return {"error": "Dashboard not found"}
 
 
 @app.get("/api/health")
@@ -62,6 +65,7 @@ app.include_router(diff.router, prefix="/api", tags=["diff"])
 app.include_router(backtest.router, prefix="/api", tags=["backtest"])
 app.include_router(optimize.router, prefix="/api", tags=["optimize"])
 app.include_router(process.router, prefix="/api", tags=["process"])
+app.include_router(optimizer.router, prefix="/api", tags=["optimizer"])
 
 if __name__ == "__main__":
     import uvicorn
