@@ -1,9 +1,9 @@
 /* Dashboard Page Script */
 
-import { getRuns, getStrategies } from '../../shared/js/api.js';
-import { formatPct } from '../../shared/js/utils.js';
-import { initTheme, toggleTheme } from '../../shared/js/theme.js';
-import { renderRunCard } from '../../shared/js/components.js';
+import { getRuns, getStrategies } from '/static/shared/js/api.js';
+import { formatPct } from '/static/shared/js/utils.js';
+import { initTheme, toggleTheme } from '/static/shared/js/theme.js';
+import { renderRunCard } from '/static/shared/js/components.js';
 
 // Initialize theme
 initTheme();

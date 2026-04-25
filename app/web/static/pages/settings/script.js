@@ -1,7 +1,7 @@
 /* Settings Page Script */
 
-import { getSettings, updateSettings } from '../../shared/js/api.js';
-import { initTheme, toggleTheme } from '../../shared/js/theme.js';
+import { getSettings, updateSettings } from '/static/shared/js/api.js';
+import { initTheme, toggleTheme } from '/static/shared/js/theme.js';
 
 // Initialize theme
 initTheme();

@@ -44,7 +44,14 @@ async def root():
     from fastapi.responses import FileResponse
     dashboard_path = static_dir / "pages" / "dashboard" / "index.html"
     if dashboard_path.exists():
-        return FileResponse(str(dashboard_path))
+        return FileResponse(
+            str(dashboard_path),
+            headers={
+                "Cache-Control": "no-cache, no-store, must-revalidate",
+                "Pragma": "no-cache",
+                "Expires": "0",
+            }
+        )
     return {"error": "Dashboard not found"}
 
 

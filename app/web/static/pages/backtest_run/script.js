@@ -1,7 +1,7 @@
 /* Backtest Run Page Script */
 
-import { getStrategies, getPairs, saveFavorites, downloadData, saveBacktestConfig, getBacktestConfig } from '../../shared/js/api.js';
-import { initTheme, toggleTheme } from '../../shared/js/theme.js';
+import { getStrategies, getPairs, saveFavorites, downloadData, saveBacktestConfig, getBacktestConfig } from '/static/shared/js/api.js';
+import { initTheme, toggleTheme } from '/static/shared/js/theme.js';
 
 // Initialize theme
 initTheme();

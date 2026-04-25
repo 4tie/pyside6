@@ -1,8 +1,8 @@
 /* Comparison Page Script */
 
-import { getRuns, compareRuns } from '../../shared/js/api.js';
-import { formatPct } from '../../shared/js/utils.js';
-import { initTheme, toggleTheme } from '../../shared/js/theme.js';
+import { getRuns, compareRuns } from '/static/shared/js/api.js';
+import { formatPct } from '/static/shared/js/utils.js';
+import { initTheme, toggleTheme } from '/static/shared/js/theme.js';
 
 // Initialize theme
 initTheme();

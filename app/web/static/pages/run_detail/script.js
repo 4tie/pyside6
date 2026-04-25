@@ -1,8 +1,8 @@
 /* Run Detail Page Script */
 
-import { getRun, getDiagnosis, deleteRun, getRuns, getRunDiff, rollbackRun } from '../../shared/js/api.js';
-import { formatPct, formatDate, formatCurrency } from '../../shared/js/utils.js';
-import { initTheme, toggleTheme } from '../../shared/js/theme.js';
+import { getRun, getDiagnosis, deleteRun, getRuns, getRunDiff, rollbackRun } from '/static/shared/js/api.js';
+import { formatPct, formatDate, formatCurrency } from '/static/shared/js/utils.js';
+import { initTheme, toggleTheme } from '/static/shared/js/theme.js';
 
 // Initialize theme
 initTheme();
