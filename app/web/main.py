@@ -6,11 +6,25 @@ Serves static files from app/web/static/ for the browser-based UI.
 from pathlib import Path
 
 from fastapi import FastAPI
+from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
 # Import route handlers
-from app.web.api.routes import runs, strategies, diagnosis, comparison, settings, loop, diff, backtest, optimize, process, optimizer
+from app.web.api.routes import (
+    backtest,
+    comparison,
+    dashboard,
+    diagnosis,
+    diff,
+    loop,
+    optimize,
+    optimizer,
+    process,
+    runs,
+    settings,
+    strategies,
+)
 
 # Create FastAPI app
 app = FastAPI(
@@ -37,22 +51,43 @@ else:
     static_dir.mkdir(parents=True, exist_ok=True)
     app.mount("/static", StaticFiles(directory=str(static_dir), html=True), name="static")
 
+react_dist_dir = Path(__file__).parent.parent / "re_web" / "dist"
+react_assets_dir = react_dist_dir / "assets"
+if react_assets_dir.exists():
+    app.mount("/app/assets", StaticFiles(directory=str(react_assets_dir)), name="re_web_assets")
+
+
+def _no_cache_file_response(path: Path) -> FileResponse:
+    return FileResponse(
+        str(path),
+        headers={
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            "Pragma": "no-cache",
+            "Expires": "0",
+        },
+    )
+
 
 @app.get("/")
 async def root():
-    """Root route serves dashboard directly."""
-    from fastapi.responses import FileResponse
+    """Root route serves the React build when present, otherwise legacy dashboard."""
+    react_index_path = react_dist_dir / "index.html"
+    if react_index_path.exists():
+        return _no_cache_file_response(react_index_path)
+
     dashboard_path = static_dir / "pages" / "dashboard" / "index.html"
     if dashboard_path.exists():
-        return FileResponse(
-            str(dashboard_path),
-            headers={
-                "Cache-Control": "no-cache, no-store, must-revalidate",
-                "Pragma": "no-cache",
-                "Expires": "0",
-            }
-        )
+        return _no_cache_file_response(dashboard_path)
     return {"error": "Dashboard not found"}
+
+
+@app.get("/app/{full_path:path}")
+async def react_spa(full_path: str):
+    """Serve the React SPA entry for client-side routes."""
+    react_index_path = react_dist_dir / "index.html"
+    if react_index_path.exists():
+        return _no_cache_file_response(react_index_path)
+    return {"error": "React app build not found", "path": full_path}
 
 
 @app.get("/api/health")
@@ -64,6 +99,7 @@ async def health_check():
 # Register route handlers
 app.include_router(runs.router, prefix="/api", tags=["runs"])
 app.include_router(strategies.router, prefix="/api", tags=["strategies"])
+app.include_router(dashboard.router, prefix="/api", tags=["dashboard"])
 app.include_router(diagnosis.router, prefix="/api", tags=["diagnosis"])
 app.include_router(comparison.router, prefix="/api", tags=["comparison"])
 app.include_router(settings.router, prefix="/api", tags=["settings"])
