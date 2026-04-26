@@ -3,7 +3,6 @@ import {
   BarChart3,
   Download,
   GitCompare,
-  History,
   LayoutDashboard,
   Moon,
   Settings,
@@ -24,7 +23,6 @@ const routes: RouteItem[] = [
   { path: '/app', label: 'Dashboard', icon: <LayoutDashboard size={17} /> },
   { path: '/app/backtest', label: 'Backtest', icon: <Activity size={17} /> },
   { path: '/app/optimizer', label: 'Optimizer', icon: <SlidersHorizontal size={17} /> },
-  { path: '/app/run', label: 'Run Detail', icon: <History size={17} /> },
   { path: '/app/comparison', label: 'Comparison', icon: <GitCompare size={17} /> },
   { path: '/app/download', label: 'Download', icon: <Download size={17} /> },
   { path: '/app/settings', label: 'Settings', icon: <Settings size={17} /> }

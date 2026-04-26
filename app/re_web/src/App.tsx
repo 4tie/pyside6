@@ -6,7 +6,6 @@ import { ComparisonPage } from './pages/ComparisonPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { DownloadPage } from './pages/DownloadPage';
 import { OptimizerPage } from './pages/OptimizerPage';
-import { RunDetailPage } from './pages/RunDetailPage';
 import { SettingsPage } from './pages/SettingsPage';
 import type { RunResponse } from './types/api';
 
@@ -31,8 +30,8 @@ export function App() {
   }, []);
 
   const onOpenRun = useCallback(
-    (run: RunResponse) => {
-      navigate(`/app/run/${encodeURIComponent(run.strategy)}/${encodeURIComponent(run.run_id)}`);
+    (_run: RunResponse) => {
+      navigate('/app/backtest');
     },
     [navigate]
   );
@@ -40,15 +39,11 @@ export function App() {
   const content = useMemo(() => {
     if (path === '/app' || path === '/') return <DashboardPage onOpenRun={onOpenRun} />;
     if (path.startsWith('/app/backtest')) return <BacktestPage />;
+    if (path.startsWith('/app/run')) return <BacktestPage />;
     if (path.startsWith('/app/optimizer')) return <OptimizerPage />;
     if (path.startsWith('/app/comparison')) return <ComparisonPage onOpenRun={onOpenRun} />;
     if (path.startsWith('/app/download')) return <DownloadPage />;
     if (path.startsWith('/app/settings')) return <SettingsPage />;
-    if (path.startsWith('/app/run')) {
-      const parts = path.split('/').map(decodeURIComponent);
-      const runId = parts[4] || parts[3];
-      return <RunDetailPage runId={runId} onOpenRun={onOpenRun} />;
-    }
     return <DashboardPage onOpenRun={onOpenRun} />;
   }, [path, onOpenRun]);
 
