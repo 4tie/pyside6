@@ -6636,3 +6636,68 @@
 2026-04-26 00:23:44.439 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to optimizer
 2026-04-26 00:23:56.234 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to download
 2026-04-26 00:23:59.121 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to settings
+2026-04-26 03:25:39.362 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to dashboard
+2026-04-26 03:25:39.392 | INFO     | freqtrade_gui.ui.main_window   | ModernMainWindow initialised
+2026-04-26 03:25:39.475 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-22-19_73cb02  (exists=True)
+2026-04-26 03:25:39.475 | DEBUG    | freqtrade_gui.ui.results       | Loaded 7 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-22-19_73cb02/trades.json
+2026-04-26 03:25:39.506 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-22-19_73cb02  (exists=True)
+2026-04-26 03:25:39.506 | DEBUG    | freqtrade_gui.ui.results       | Loaded 7 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-22-19_73cb02/trades.json
+2026-04-26 03:25:44.484 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to backtest
+2026-04-26 03:25:45.345 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to parneeds
+2026-04-26 03:25:46.118 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to results
+2026-04-26 03:25:47.843 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-22-16_50e0e6  (exists=True)
+2026-04-26 03:25:47.846 | DEBUG    | freqtrade_gui.ui.results       | Loaded 16 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-22-16_50e0e6/trades.json
+2026-04-26 03:25:48.524 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-22-12_85ddea  (exists=True)
+2026-04-26 03:25:48.526 | DEBUG    | freqtrade_gui.ui.results       | Loaded 5 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-22-12_85ddea/trades.json
+2026-04-26 03:25:49.027 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-22-09_0a362d  (exists=True)
+2026-04-26 03:25:49.029 | DEBUG    | freqtrade_gui.ui.results       | Loaded 4 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-22-09_0a362d/trades.json
+2026-04-26 03:25:49.433 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-22-02_7b8306  (exists=True)
+2026-04-26 03:25:49.435 | DEBUG    | freqtrade_gui.ui.results       | Loaded 7 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-22-02_7b8306/trades.json
+2026-04-26 03:25:49.752 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-55_90d10d  (exists=True)
+2026-04-26 03:25:49.754 | DEBUG    | freqtrade_gui.ui.results       | Loaded 3 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-55_90d10d/trades.json
+2026-04-26 03:25:50.041 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-39_7ac090  (exists=True)
+2026-04-26 03:25:50.043 | DEBUG    | freqtrade_gui.ui.results       | Loaded 4 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-39_7ac090/trades.json
+2026-04-26 03:25:50.306 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-29_cb3cf7  (exists=True)
+2026-04-26 03:25:50.308 | DEBUG    | freqtrade_gui.ui.results       | Loaded 4 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-29_cb3cf7/trades.json
+2026-04-26 03:25:50.545 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-19_0d3e86  (exists=True)
+2026-04-26 03:25:50.548 | DEBUG    | freqtrade_gui.ui.results       | Loaded 3 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-19_0d3e86/trades.json
+2026-04-26 03:25:50.770 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-13_7fec79  (exists=True)
+2026-04-26 03:25:50.772 | DEBUG    | freqtrade_gui.ui.results       | Loaded 7 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-13_7fec79/trades.json
+2026-04-26 03:25:50.872 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-09_acb0c1  (exists=True)
+2026-04-26 03:25:50.874 | DEBUG    | freqtrade_gui.ui.results       | Loaded 3 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-09_acb0c1/trades.json
+2026-04-26 03:25:50.975 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-06_7fddf4  (exists=True)
+2026-04-26 03:25:50.976 | DEBUG    | freqtrade_gui.ui.results       | Loaded 7 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-06_7fddf4/trades.json
+2026-04-26 03:25:52.122 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-22-02_7b8306  (exists=True)
+2026-04-26 03:25:52.122 | DEBUG    | freqtrade_gui.ui.results       | Loaded 7 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-22-02_7b8306/trades.json
+2026-04-26 03:25:52.409 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-22-16_50e0e6  (exists=True)
+2026-04-26 03:25:52.411 | DEBUG    | freqtrade_gui.ui.results       | Loaded 16 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-22-16_50e0e6/trades.json
+2026-04-26 03:25:52.642 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-22-19_73cb02  (exists=True)
+2026-04-26 03:25:52.642 | DEBUG    | freqtrade_gui.ui.results       | Loaded 7 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-22-19_73cb02/trades.json
+2026-04-26 03:26:06.713 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-39_7ac090  (exists=True)
+2026-04-26 03:26:06.713 | DEBUG    | freqtrade_gui.ui.results       | Loaded 4 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-39_7ac090/trades.json
+2026-04-26 03:26:07.284 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-35_3d2067  (exists=True)
+2026-04-26 03:26:07.286 | DEBUG    | freqtrade_gui.ui.results       | Loaded 5 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-35_3d2067/trades.json
+2026-04-26 03:26:11.822 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-32_644939  (exists=True)
+2026-04-26 03:26:11.824 | DEBUG    | freqtrade_gui.ui.results       | Loaded 10 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-32_644939/trades.json
+2026-04-26 03:26:12.731 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-35_3d2067  (exists=True)
+2026-04-26 03:26:12.731 | DEBUG    | freqtrade_gui.ui.results       | Loaded 5 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-35_3d2067/trades.json
+2026-04-26 03:26:13.315 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-32_644939  (exists=True)
+2026-04-26 03:26:13.315 | DEBUG    | freqtrade_gui.ui.results       | Loaded 10 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-32_644939/trades.json
+2026-04-26 03:26:15.177 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-29_cb3cf7  (exists=True)
+2026-04-26 03:26:15.177 | DEBUG    | freqtrade_gui.ui.results       | Loaded 4 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-29_cb3cf7/trades.json
+2026-04-26 03:26:15.765 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-22_62c870  (exists=True)
+2026-04-26 03:26:15.767 | DEBUG    | freqtrade_gui.ui.results       | Loaded 19 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-22_62c870/trades.json
+2026-04-26 03:26:18.002 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-19_0d3e86  (exists=True)
+2026-04-26 03:26:18.002 | DEBUG    | freqtrade_gui.ui.results       | Loaded 3 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-19_0d3e86/trades.json
+2026-04-26 03:26:18.344 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-16_2099ab  (exists=True)
+2026-04-26 03:26:18.346 | DEBUG    | freqtrade_gui.ui.results       | Loaded 3 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-16_2099ab/trades.json
+2026-04-26 03:26:18.923 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-22_62c870  (exists=True)
+2026-04-26 03:26:18.923 | DEBUG    | freqtrade_gui.ui.results       | Loaded 19 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/yes/run_2026-04-26_00-21-22_62c870/trades.json
+2026-04-26 03:26:23.823 | DEBUG    | freqtrade_gui.ui.results       | Loading run detail from: /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMa/run_2026-04-24_23-22-36_00a7a1  (exists=True)
+2026-04-26 03:26:23.826 | DEBUG    | freqtrade_gui.ui.results       | Loaded 218 trades from /home/mohs/Desktop/ae/pyside6/user_data/backtest_results/MultiMa/run_2026-04-24_23-22-36_00a7a1/trades.json
+2026-04-26 03:26:31.031 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to compare
+2026-04-26 03:26:31.717 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to optimize
+2026-04-26 03:26:33.830 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to optimizer
+2026-04-26 03:26:34.831 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to download
+2026-04-26 03:26:35.766 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to settings
+2026-04-26 03:26:36.924 | DEBUG    | freqtrade_gui.ui.main_window   | Navigated to backtest
