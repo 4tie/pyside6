@@ -213,7 +213,8 @@ def test_mc_iteration_count_matches_config(qt_app, tmp_path):
         "dry_run_wallet": 80.0,
         "max_open_trades": 2,
     })
-    n = 5
+    # Use the spin box minimum (10) — setting below minimum clamps to minimum
+    n = 10
     page._mc_iterations_spin.setValue(n)
 
     page._parneeds_svc.validate_candle_coverage = MagicMock(

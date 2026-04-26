@@ -343,39 +343,39 @@ Extend the existing ParNeeds page with three new validation workflows (Walk-Forw
     - `test_missing_field_formatting` — Property 11, `@settings(max_examples=300)`
     - `test_export_filename_pattern` — Property 12, `@settings(max_examples=200)`
 
-- [~] 18. Write integration tests in `tests/ui/pages/test_parneeds_page_integration.py`
-  - [~] 18.1 Walk-Forward integration: verify subprocess call sequence (IS then OOS per fold) and `run_completed` signal count using mocked `ProcessRunManager` and `BacktestService`
+- [x] 18. Write integration tests in `tests/ui/pages/test_parneeds_page_integration.py`
+  - [x] 18.1 Walk-Forward integration: verify subprocess call sequence (IS then OOS per fold) and `run_completed` signal count using mocked `ProcessRunManager` and `BacktestService`
     - _Requirements: 2.1, 3.5_
 
-  - [~] 18.2 Monte Carlo integration: verify coverage check called exactly once and iteration count matches config
+  - [x] 18.2 Monte Carlo integration: verify coverage check called exactly once and iteration count matches config
     - _Requirements: 5.1, 15.3_
 
-  - [~] 18.3 Parameter Sensitivity integration: verify coverage check called before sweep and sweep point count matches generated list
+  - [x] 18.3 Parameter Sensitivity integration: verify coverage check called before sweep and sweep point count matches generated list
     - _Requirements: 9.3, 15.1_
 
-  - [~] 18.4 Export integration: verify JSON and CSV files written to `tmp_path` with correct filenames
+  - [x] 18.4 Export integration: verify JSON and CSV files written to `tmp_path` with correct filenames
     - _Requirements: 13.2, 13.3, 13.4_
 
-  - [~] 18.5 Stop integration: verify `ProcessRunManager.stop_run` called when Stop button clicked during each workflow
+  - [x] 18.5 Stop integration: verify `ProcessRunManager.stop_run` called when Stop button clicked during each workflow
     - _Requirements: 2.5, 5.7, 9.7_
 
-- [~] 19. Write example-based unit tests in `tests/ui/pages/test_parneeds_page_unit.py`
-  - [~] 19.1 Workflow selector shows/hides correct config panels for each workflow selection
+- [x] 19. Write example-based unit tests in `tests/ui/pages/test_parneeds_page_unit.py`
+  - [x] 19.1 Workflow selector shows/hides correct config panels for each workflow selection
     - _Requirements: 14.2_
 
-  - [~] 19.2 Walk-Forward, Monte Carlo, and Parameter Sensitivity config panels have correct default values
+  - [x] 19.2 Walk-Forward, Monte Carlo, and Parameter Sensitivity config panels have correct default values
     - _Requirements: 4.1, 7.1, 11.1_
 
-  - [~] 19.3 Grid > 200 points shows confirmation dialog; no parameters found disables Start button
+  - [x] 19.3 Grid > 200 points shows confirmation dialog; no parameters found disables Start button
     - _Requirements: 8.4, 11.4_
 
-  - [~] 19.4 Results table has correct 17-column headers; Export button disabled when empty, enabled when rows present
+  - [x] 19.4 Results table has correct 17-column headers; Export button disabled when empty, enabled when rows present
     - _Requirements: 12.1, 13.1_
 
-  - [~] 19.5 Fold row colour-coding (green for positive OOS profit, red for negative); best sweep point row highlighted
+  - [x] 19.5 Fold row colour-coding (green for positive OOS profit, red for negative); best sweep point row highlighted
     - _Requirements: 3.4, 10.4_
 
-- [~] 20. Final checkpoint — Ensure all tests pass
+- [x] 20. Final checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes
