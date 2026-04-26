@@ -307,6 +307,8 @@ class OptimizerPage(QWidget):
         self._restore_preferences()
         self._connect_preferences_autosave()
         self._load_history()
+        # Auto-reload when settings.json changes externally
+        self._state.preferences_reloaded.connect(self._on_preferences_reloaded)
 
     def _build(self) -> None:
         root = QVBoxLayout(self)
@@ -777,6 +779,13 @@ class OptimizerPage(QWidget):
             self._on_strategy_changed(self._strategy_combo.currentText())
         except Exception as exc:
             _log.warning("Could not load optimizer strategies: %s", exc)
+
+    def _on_preferences_reloaded(self, settings: AppSettings) -> None:
+        """Called when settings.json changes on disk from an external source."""
+        if self._loading_preferences or self._prefs_save_timer.isActive():
+            return
+        _log.debug("Optimizer preferences reloaded from disk")
+        self._restore_preferences()
 
     def _restore_preferences(self) -> None:
         current = getattr(self._state, "current_settings", None)

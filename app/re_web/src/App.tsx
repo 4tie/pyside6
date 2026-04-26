@@ -4,6 +4,7 @@ import { useTheme } from './hooks/useTheme';
 import { BacktestPage } from './pages/BacktestPage';
 import { ComparisonPage } from './pages/ComparisonPage';
 import { DashboardPage } from './pages/DashboardPage';
+import { DownloadPage } from './pages/DownloadPage';
 import { OptimizerPage } from './pages/OptimizerPage';
 import { RunDetailPage } from './pages/RunDetailPage';
 import { SettingsPage } from './pages/SettingsPage';
@@ -41,6 +42,7 @@ export function App() {
     if (path.startsWith('/app/backtest')) return <BacktestPage />;
     if (path.startsWith('/app/optimizer')) return <OptimizerPage />;
     if (path.startsWith('/app/comparison')) return <ComparisonPage onOpenRun={onOpenRun} />;
+    if (path.startsWith('/app/download')) return <DownloadPage />;
     if (path.startsWith('/app/settings')) return <SettingsPage />;
     if (path.startsWith('/app/run')) {
       const parts = path.split('/').map(decodeURIComponent);

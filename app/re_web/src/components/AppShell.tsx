@@ -1,6 +1,7 @@
 import {
   Activity,
   BarChart3,
+  Download,
   GitCompare,
   History,
   LayoutDashboard,
@@ -24,6 +25,7 @@ const routes: RouteItem[] = [
   { path: '/app/optimizer', label: 'Optimizer', icon: <SlidersHorizontal size={17} /> },
   { path: '/app/run', label: 'Run Detail', icon: <History size={17} /> },
   { path: '/app/comparison', label: 'Comparison', icon: <GitCompare size={17} /> },
+  { path: '/app/download', label: 'Download', icon: <Download size={17} /> },
   { path: '/app/settings', label: 'Settings', icon: <Settings size={17} /> }
 ];
 

@@ -33,6 +33,21 @@ async def get_settings(
     return _settings_response(app_settings)
 
 
+@router.post("/settings/validate")
+async def validate_settings(settings: SettingsServiceDep) -> dict:
+    """Validate current settings (python, freqtrade, user_data)."""
+    app_settings = settings.load_settings()
+    result = settings.validate_settings(app_settings)
+    return {
+        "valid": result.valid,
+        "python_ok": result.python_ok,
+        "freqtrade_ok": result.freqtrade_ok,
+        "user_data_ok": result.user_data_ok,
+        "message": result.message,
+        "details": result.details,
+    }
+
+
 @router.put("/settings")
 async def update_settings(
     update: SettingsUpdate,

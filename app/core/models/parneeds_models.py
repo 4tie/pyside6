@@ -3,7 +3,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import date
-from typing import Optional
+from enum import Enum
+from typing import Any, Optional
 
 
 @dataclass(frozen=True)
@@ -50,14 +51,184 @@ class CandleCoverageReport:
         return not self.missing_reasons
 
 
-@dataclass(frozen=True)
-class ParNeedsRunResult:
-    """Displayable result for a completed ParNeeds backtest window."""
+# ---------------------------------------------------------------------------
+# Walk-Forward models
+# ---------------------------------------------------------------------------
 
-    timerange: str
-    status: str
-    run_id: str = ""
-    profit_total_pct: Optional[float] = None
+class WalkForwardMode(str, Enum):
+    ANCHORED = "anchored"
+    ROLLING  = "rolling"
+
+
+@dataclass(frozen=True)
+class WalkForwardConfig:
+    """Configuration for one Walk-Forward run."""
+
+    strategy: str
+    timeframe: str
+    timerange: str          # normalised YYYYMMDD-YYYYMMDD
+    pairs: list[str]
+    dry_run_wallet: float
+    max_open_trades: int
+    n_folds: int = 5
+    split_ratio: float = 0.80   # fraction of each fold that is in-sample
+    mode: WalkForwardMode = WalkForwardMode.ANCHORED
+
+
+@dataclass(frozen=True)
+class WalkForwardFold:
+    """One in-sample / out-of-sample fold pair."""
+
+    fold_index: int          # 1-based
+    is_timerange: str        # in-sample YYYYMMDD-YYYYMMDD
+    oos_timerange: str       # out-of-sample YYYYMMDD-YYYYMMDD
+    is_start: date
+    is_end: date
+    oos_start: date
+    oos_end: date
+
+
+@dataclass
+class WalkForwardFoldResult:
+    """Mutable result for one fold (populated as backtests complete)."""
+
+    fold: WalkForwardFold
+    is_run_id: str = ""
+    oos_run_id: str = ""
+    is_profit_pct: Optional[float] = None
+    oos_profit_pct: Optional[float] = None
     win_rate_pct: Optional[float] = None
     max_drawdown_pct: Optional[float] = None
     trades_count: Optional[int] = None
+    status: str = "pending"   # pending | running | completed | failed
+
+
+# ---------------------------------------------------------------------------
+# Monte Carlo models
+# ---------------------------------------------------------------------------
+
+@dataclass(frozen=True)
+class MonteCarloConfig:
+    """Configuration for one Monte Carlo run."""
+
+    strategy: str
+    timeframe: str
+    timerange: str
+    pairs: list[str]
+    dry_run_wallet: float
+    max_open_trades: int
+    n_iterations: int = 500
+    randomise_trade_order: bool = True
+    profit_noise: bool = True
+    max_drawdown_threshold_pct: float = 20.0
+    base_seed: int = 20240101
+
+
+@dataclass(frozen=True)
+class MCPercentiles:
+    """Percentile summary for one metric across Monte Carlo iterations."""
+
+    p5: float
+    p50: float
+    p95: float
+
+
+@dataclass(frozen=True)
+class MCSummary:
+    """Aggregate statistics for a completed Monte Carlo run."""
+
+    profit_percentiles: MCPercentiles
+    drawdown_percentiles: MCPercentiles
+    win_rate_percentiles: MCPercentiles
+    trades_percentiles: MCPercentiles
+    probability_of_profit: float        # fraction of iterations with profit > 0
+    probability_exceed_max_dd: float    # fraction of iterations exceeding threshold
+
+
+# ---------------------------------------------------------------------------
+# Parameter Sensitivity models
+# ---------------------------------------------------------------------------
+
+class SweepParamType(str, Enum):
+    INT         = "int"
+    DECIMAL     = "decimal"
+    CATEGORICAL = "categorical"
+    BOOLEAN     = "boolean"
+    FIXED       = "fixed"   # built-in backtest params (stoploss, roi, etc.)
+
+
+@dataclass
+class SweepParameterDef:
+    """Definition of one sweepable parameter."""
+
+    name: str
+    param_type: SweepParamType
+    default_value: Any
+    # For numeric params
+    min_value: Optional[float] = None
+    max_value: Optional[float] = None
+    step: Optional[float] = None
+    # For categorical/boolean params
+    values: list[Any] = field(default_factory=list)
+    enabled: bool = False   # user must opt-in
+
+
+@dataclass(frozen=True)
+class SweepPoint:
+    """One combination of parameter values to test."""
+
+    index: int
+    param_overrides: dict[str, Any]   # param_name → value
+    label: str                         # human-readable summary
+
+
+@dataclass
+class SweepPointResult:
+    """Mutable result for one sweep point."""
+
+    point: SweepPoint
+    run_id: str = ""
+    profit_pct: Optional[float] = None
+    win_rate_pct: Optional[float] = None
+    max_drawdown_pct: Optional[float] = None
+    trades_count: Optional[int] = None
+    status: str = "pending"
+
+
+# ---------------------------------------------------------------------------
+# Shared result row (used by all four workflows)
+# ---------------------------------------------------------------------------
+
+@dataclass(frozen=True)
+class ParNeedsRunResult:
+    """Displayable result row for the shared results table.
+
+    Replaces the old Timerange-only result model.  The Timerange workflow
+    maps its fields as follows:
+        run_trial  ← window label (e.g. "2w 1", "1m 3")
+        workflow   ← "timerange"
+        timerange  ← window timerange string
+        profit_pct ← profit_total_pct
+        win_rate   ← win_rate_pct
+        max_dd_pct ← max_drawdown_pct
+        trades     ← trades_count
+        status     ← status
+    """
+
+    run_trial: str                      # e.g. "Fold 1 OOS", "Iter 42", "Sweep 7"
+    workflow: str                       # "timerange" | "walk_forward" | "monte_carlo" | "param_sensitivity"
+    strategy: str = ""
+    pairs: str = ""                     # comma-joined
+    timeframe: str = ""
+    timerange: str = ""
+    profit_pct: Optional[float] = None
+    total_profit: Optional[float] = None
+    win_rate: Optional[float] = None
+    max_dd_pct: Optional[float] = None
+    trades: Optional[int] = None
+    profit_factor: Optional[float] = None
+    sharpe_ratio: Optional[float] = None
+    score: Optional[float] = None       # stability score (WF) or None
+    status: str = ""
+    result_path: str = ""
+    log_path: str = ""

@@ -8,7 +8,7 @@ No PySide6, fastapi, or starlette imports are permitted in this module.
 
 import subprocess
 import threading
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Callable, Optional
 
 from app.core.models.command_models import RunCommand
@@ -65,7 +65,7 @@ class ProcessRunManager:
 
         run = ProcessRun(command=cmd_list, cwd=command.cwd or None)
         run.status = RunStatus.RUNNING
-        run.started_at = datetime.utcnow()
+        run.started_at = datetime.now(timezone.utc)
 
         try:
             proc = subprocess.Popen(
@@ -154,7 +154,7 @@ class ProcessRunManager:
         # sees the CANCELLED status and skips its own terminal transition.
         with self._lock:
             run.status = RunStatus.CANCELLED
-            run.finished_at = datetime.utcnow()
+            run.finished_at = datetime.now(timezone.utc)
 
         if proc is not None:
             _log.info("Stopping run %s (pid=%s) — sending SIGTERM", run_id, proc.pid)
@@ -284,7 +284,7 @@ class ProcessRunManager:
                     return
 
                 run.exit_code = return_code
-                run.finished_at = datetime.utcnow()
+                run.finished_at = datetime.now(timezone.utc)
                 if return_code == 0:
                     run.status = RunStatus.FINISHED
                 else:
@@ -309,4 +309,4 @@ class ProcessRunManager:
             with self._lock:
                 if run.status == RunStatus.RUNNING:
                     run.status = RunStatus.FAILED
-                    run.finished_at = datetime.utcnow()
+                    run.finished_at = datetime.now(timezone.utc)

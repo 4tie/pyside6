@@ -123,7 +123,7 @@ def test_download_data_runs_full_command(monkeypatch):
     settings_service = _FakeSettingsService()
     process_service = _FakeProcessService()
 
-    def _fake_build_command(self, timeframe, timerange=None, pairs=None):
+    def _fake_build_command(self, timeframe, timerange=None, pairs=None, prepend=False, erase=False):
         return command
 
     monkeypatch.setattr(

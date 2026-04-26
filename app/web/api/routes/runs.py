@@ -79,50 +79,6 @@ async def list_runs(
     ]
 
 
-@router.get("/runs/{strategy}", response_model=List[RunResponse])
-async def list_strategy_runs(
-    strategy: str,
-    settings: SettingsServiceDep,
-) -> List[RunResponse]:
-    """List all backtest runs for a specific strategy."""
-    app_settings = settings.load_settings()
-    if not app_settings.user_data_path:
-        return []
-
-    backtest_results_dir = Path(app_settings.user_data_path) / "backtest_results"
-    runs = IndexStore.get_strategy_runs(str(backtest_results_dir), strategy)
-
-    return [
-        RunResponse(
-            run_id=r.get("run_id", ""),
-            strategy=r.get("strategy", ""),
-            timeframe=r.get("timeframe", ""),
-            pairs=r.get("pairs", []),
-            timerange=r.get("timerange", ""),
-            backtest_start=r.get("backtest_start", ""),
-            backtest_end=r.get("backtest_end", ""),
-            saved_at=r.get("saved_at", ""),
-            profit_total_pct=r.get("profit_total_pct", 0.0),
-            profit_total_abs=r.get("profit_total_abs", 0.0),
-            starting_balance=r.get("starting_balance", 0.0),
-            final_balance=r.get("final_balance", 0.0),
-            max_drawdown_pct=r.get("max_drawdown_pct", 0.0),
-            max_drawdown_abs=r.get("max_drawdown_abs", 0.0),
-            trades_count=r.get("trades_count", 0),
-            wins=r.get("wins", 0),
-            losses=r.get("losses", 0),
-            win_rate_pct=r.get("win_rate_pct", 0.0),
-            sharpe=r.get("sharpe"),
-            sortino=r.get("sortino"),
-            calmar=r.get("calmar"),
-            profit_factor=r.get("profit_factor", 0.0),
-            expectancy=r.get("expectancy", 0.0),
-            run_dir=r.get("run_dir", ""),
-        )
-        for r in runs
-    ]
-
-
 @router.get("/runs/{strategy}/{run_id}", response_model=RunDetailResponse)
 async def get_strategy_run(
     strategy: str,

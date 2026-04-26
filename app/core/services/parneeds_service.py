@@ -1,16 +1,33 @@
 """Core logic for ParNeeds validation workflows."""
 from __future__ import annotations
 
+import ast
+import csv
+import dataclasses
+import itertools
+import json
 import random
+import statistics
 from datetime import date, datetime, time, timedelta, timezone
 from pathlib import Path
-from typing import Iterable, Optional
+from typing import Any, Iterable, Optional
 
 from app.core.freqtrade.resolvers.runtime_resolver import find_run_paths
 from app.core.models.parneeds_models import (
     CandleCoverageReport,
+    MCPercentiles,
+    MCSummary,
+    MonteCarloConfig,
     ParNeedsConfig,
+    ParNeedsRunResult,
     ParNeedsWindow,
+    SweepParameterDef,
+    SweepParamType,
+    SweepPoint,
+    SweepPointResult,
+    WalkForwardConfig,
+    WalkForwardFold,
+    WalkForwardMode,
 )
 from app.core.models.settings_models import AppSettings
 from app.core.parsing.json_parser import parse_json_file
@@ -295,3 +312,378 @@ class ParNeedsService:
 
     def _format_dt(self, value: datetime) -> str:
         return value.astimezone(timezone.utc).strftime("%Y-%m-%d %H:%M")
+
+    # ------------------------------------------------------------------
+    # Walk-Forward methods
+    # ------------------------------------------------------------------
+
+    def generate_walk_forward_folds(
+        self,
+        config: WalkForwardConfig,
+    ) -> list[WalkForwardFold]:
+        """Generate in-sample / out-of-sample fold pairs for walk-forward validation.
+
+        Raises ValueError when the timerange is too short to produce the
+        requested number of folds.
+        """
+        global_start, global_end = self.parse_timerange(config.timerange)
+        total_days = (global_end - global_start).days
+
+        fold_step = total_days / config.n_folds
+        if fold_step < 2:
+            raise ValueError(
+                f"Timerange is too short ({total_days} days) to produce "
+                f"{config.n_folds} folds — each fold would be less than 2 days. "
+                "Use a longer timerange or fewer folds."
+            )
+
+        folds: list[WalkForwardFold] = []
+        for i in range(1, config.n_folds + 1):
+            if config.mode == WalkForwardMode.ANCHORED:
+                is_start = global_start
+                is_end = global_start + timedelta(
+                    days=int(fold_step * i * config.split_ratio)
+                )
+            else:  # ROLLING
+                is_start = global_start + timedelta(days=int((i - 1) * fold_step))
+                is_end = is_start + timedelta(days=int(fold_step * config.split_ratio))
+
+            oos_start = is_end
+            oos_days = max(1, int(fold_step * (1 - config.split_ratio)))
+            oos_end = oos_start + timedelta(days=oos_days)
+
+            folds.append(
+                WalkForwardFold(
+                    fold_index=i,
+                    is_timerange=f"{is_start:%Y%m%d}-{is_end:%Y%m%d}",
+                    oos_timerange=f"{oos_start:%Y%m%d}-{oos_end:%Y%m%d}",
+                    is_start=is_start,
+                    is_end=is_end,
+                    oos_start=oos_start,
+                    oos_end=oos_end,
+                )
+            )
+
+        return folds
+
+    def compute_stability_score(self, oos_profits: list[float]) -> float:
+        """Compute a stability score in [0, 100] from a list of OOS profits.
+
+        Score = (positive_fold_ratio * 70) + (consistency_bonus * 30)
+        """
+        if not oos_profits:
+            return 0.0
+
+        n = len(oos_profits)
+        positive_count = sum(1 for p in oos_profits if p > 0)
+        positive_fold_ratio = positive_count / n
+
+        mean = statistics.mean(oos_profits)
+        if n < 2:
+            std_dev = 0.0
+        else:
+            std_dev = statistics.stdev(oos_profits)
+
+        if std_dev == 0.0:
+            # Perfectly consistent (all values identical)
+            consistency_bonus = 1.0
+        elif mean == 0.0:
+            consistency_bonus = 0.0
+        else:
+            cv = abs(std_dev / mean)
+            consistency_bonus = max(0.0, 1.0 - min(cv, 1.0))
+
+        score = (positive_fold_ratio * 70.0) + (consistency_bonus * 30.0)
+        return max(0.0, min(100.0, score))
+
+    # ------------------------------------------------------------------
+    # Monte Carlo methods
+    # ------------------------------------------------------------------
+
+    def generate_mc_seed(self, base_seed: int, iteration_index: int) -> int:
+        """Derive a unique, deterministic seed for a Monte Carlo iteration.
+
+        Uses: (base_seed * 1_000_003 + iteration_index) % (2**31 - 1)
+        """
+        return (base_seed * 1_000_003 + iteration_index) % (2**31 - 1)
+
+    def apply_profit_noise(
+        self,
+        profit: float,
+        seed: int,
+        noise_pct: float = 0.02,
+    ) -> float:
+        """Apply a small random multiplier to a profit value.
+
+        The multiplier is drawn uniformly from [1 - noise_pct, 1 + noise_pct]
+        using a seeded RNG so results are reproducible.
+        """
+        rng = random.Random(seed)
+        multiplier = rng.uniform(1.0 - noise_pct, 1.0 + noise_pct)
+        return profit * multiplier
+
+    def compute_mc_percentiles(self, values: list[float]) -> MCPercentiles:
+        """Compute p5, p50, p95 percentiles from a list of float values.
+
+        Raises ValueError for an empty list.
+        """
+        if not values:
+            raise ValueError("Cannot compute percentiles of an empty list")
+
+        sorted_vals = sorted(values)
+        n = len(sorted_vals)
+
+        def _percentile(p: float) -> float:
+            # Linear interpolation (same as numpy's default)
+            idx = p * (n - 1)
+            lo = int(idx)
+            hi = lo + 1
+            if hi >= n:
+                return sorted_vals[-1]
+            frac = idx - lo
+            return sorted_vals[lo] + frac * (sorted_vals[hi] - sorted_vals[lo])
+
+        return MCPercentiles(
+            p5=_percentile(0.05),
+            p50=_percentile(0.50),
+            p95=_percentile(0.95),
+        )
+
+    # ------------------------------------------------------------------
+    # Parameter Sensitivity methods
+    # ------------------------------------------------------------------
+
+    _FIXED_BACKTEST_PARAMS = (
+        "stoploss",
+        "roi_table",
+        "trailing_stop",
+        "trailing_stop_positive",
+        "trailing_stop_positive_offset",
+        "max_open_trades",
+    )
+
+    _PARAM_CLASS_TO_TYPE: dict[str, SweepParamType] = {
+        "IntParameter": SweepParamType.INT,
+        "DecimalParameter": SweepParamType.DECIMAL,
+        "CategoricalParameter": SweepParamType.CATEGORICAL,
+        "BooleanParameter": SweepParamType.BOOLEAN,
+    }
+
+    def discover_strategy_parameters(
+        self,
+        strategy_path: Path,
+    ) -> list[SweepParameterDef]:
+        """Parse a Freqtrade strategy file and return sweepable parameter definitions.
+
+        Returns an empty list when the file does not exist or contains no
+        recognised parameters — never raises.
+        """
+        if not strategy_path.exists():
+            return []
+
+        try:
+            source = strategy_path.read_text(encoding="utf-8")
+            tree = ast.parse(source, filename=str(strategy_path))
+        except Exception:
+            _log.warning("Could not parse strategy file: %s", strategy_path)
+            return []
+
+        params: list[SweepParameterDef] = []
+        seen_names: set[str] = set()
+
+        for node in ast.walk(tree):
+            if not isinstance(node, (ast.Assign, ast.AnnAssign)):
+                continue
+
+            # Resolve the target name
+            if isinstance(node, ast.Assign):
+                targets = node.targets
+                value_node = node.value
+            else:  # AnnAssign
+                targets = [node.target] if node.value is not None else []
+                value_node = node.value
+
+            for target in targets:
+                if not isinstance(target, ast.Name):
+                    continue
+                var_name = target.id
+
+                # Fixed backtest params (simple attribute assignments)
+                if var_name in self._FIXED_BACKTEST_PARAMS and var_name not in seen_names:
+                    params.append(
+                        SweepParameterDef(
+                            name=var_name,
+                            param_type=SweepParamType.FIXED,
+                            default_value=None,
+                            enabled=False,
+                        )
+                    )
+                    seen_names.add(var_name)
+                    continue
+
+                # Freqtrade hyperopt parameter classes
+                if not isinstance(value_node, ast.Call):
+                    continue
+                func = value_node.func
+                class_name = (
+                    func.id
+                    if isinstance(func, ast.Name)
+                    else (func.attr if isinstance(func, ast.Attribute) else None)
+                )
+                if class_name not in self._PARAM_CLASS_TO_TYPE:
+                    continue
+                if var_name in seen_names:
+                    continue
+
+                params.append(
+                    SweepParameterDef(
+                        name=var_name,
+                        param_type=self._PARAM_CLASS_TO_TYPE[class_name],
+                        default_value=None,
+                        enabled=False,
+                    )
+                )
+                seen_names.add(var_name)
+
+        return params
+
+    def generate_oat_sweep_points(
+        self,
+        params: list[SweepParameterDef],
+        baseline: dict[str, Any],
+    ) -> list[SweepPoint]:
+        """Generate One-At-a-Time sweep points.
+
+        For each enabled parameter, enumerate its range while holding all
+        other parameters at their baseline values.
+        """
+        points: list[SweepPoint] = []
+        idx = 0
+
+        for param in params:
+            if not param.enabled:
+                continue
+
+            values = self._param_values(param)
+            for val in values:
+                overrides = {**baseline, param.name: val}
+                points.append(
+                    SweepPoint(
+                        index=idx,
+                        param_overrides=overrides,
+                        label=f"{param.name}={val}",
+                    )
+                )
+                idx += 1
+
+        return points
+
+    def generate_grid_sweep_points(
+        self,
+        params: list[SweepParameterDef],
+        baseline: dict[str, Any],
+    ) -> list[SweepPoint]:
+        """Generate grid (Cartesian product) sweep points.
+
+        Computes the full Cartesian product of all enabled parameter ranges.
+        """
+        enabled = [p for p in params if p.enabled]
+        if not enabled:
+            return []
+
+        param_names = [p.name for p in enabled]
+        param_ranges = [self._param_values(p) for p in enabled]
+
+        points: list[SweepPoint] = []
+        for idx, combo in enumerate(itertools.product(*param_ranges)):
+            overrides = {**baseline, **dict(zip(param_names, combo))}
+            label = ", ".join(f"{name}={val}" for name, val in zip(param_names, combo))
+            points.append(
+                SweepPoint(
+                    index=idx,
+                    param_overrides=overrides,
+                    label=label,
+                )
+            )
+
+        return points
+
+    def _param_values(self, param: SweepParameterDef) -> list[Any]:
+        """Enumerate the discrete values for a sweep parameter."""
+        if param.param_type in (SweepParamType.CATEGORICAL, SweepParamType.BOOLEAN):
+            return list(param.values)
+
+        if param.param_type in (SweepParamType.INT, SweepParamType.DECIMAL):
+            if param.min_value is None or param.max_value is None or param.step is None:
+                return []
+            values: list[Any] = []
+            current = param.min_value
+            while current <= param.max_value + 1e-9:
+                if param.param_type == SweepParamType.INT:
+                    values.append(int(round(current)))
+                else:
+                    values.append(round(current, 10))
+                current += param.step
+            return values
+
+        # FIXED params have no enumerable range
+        return []
+
+    # ------------------------------------------------------------------
+    # Export method
+    # ------------------------------------------------------------------
+
+    _CSV_COLUMNS = (
+        "run_trial",
+        "workflow",
+        "strategy",
+        "pairs",
+        "timeframe",
+        "timerange",
+        "profit_pct",
+        "total_profit",
+        "win_rate",
+        "max_dd_pct",
+        "trades",
+        "profit_factor",
+        "sharpe_ratio",
+        "score",
+        "status",
+        "result_path",
+        "log_path",
+    )
+
+    def export_results(
+        self,
+        results: list[ParNeedsRunResult],
+        workflow: str,
+        export_dir: Path,
+    ) -> tuple[Path, Path]:
+        """Write results to JSON and CSV files in *export_dir*.
+
+        Returns ``(json_path, csv_path)``.  Raises on write failure so the
+        caller can log and surface the error to the terminal.
+        """
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        stem = f"parneeds_{workflow}_{timestamp}"
+
+        export_dir.mkdir(parents=True, exist_ok=True)
+
+        json_path = export_dir / f"{stem}.json"
+        csv_path = export_dir / f"{stem}.csv"
+
+        # JSON — full serialisation
+        json_data = [dataclasses.asdict(r) for r in results]
+        json_path.write_text(
+            json.dumps(json_data, indent=2, default=str),
+            encoding="utf-8",
+        )
+
+        # CSV — visible table columns only
+        with csv_path.open("w", newline="", encoding="utf-8") as fh:
+            writer = csv.DictWriter(fh, fieldnames=list(self._CSV_COLUMNS))
+            writer.writeheader()
+            for row in json_data:
+                writer.writerow({col: row.get(col, "") for col in self._CSV_COLUMNS})
+
+        return json_path, csv_path

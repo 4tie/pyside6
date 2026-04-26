@@ -21,6 +21,8 @@ export function Tabs({ tabs, active, onChange }: TabsProps) {
           <button
             key={tab.id}
             type="button"
+            role="tab"
+            aria-selected={tab.id === selected.id}
             className={tab.id === selected.id ? 'tab active' : 'tab'}
             onClick={() => onChange(tab.id)}
           >
@@ -28,7 +30,9 @@ export function Tabs({ tabs, active, onChange }: TabsProps) {
           </button>
         ))}
       </div>
-      <div className="tab-panel">{selected.content}</div>
+      <div className="tab-panel" role="tabpanel">
+        {selected.content}
+      </div>
     </div>
   );
 }

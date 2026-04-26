@@ -88,7 +88,7 @@ export const api = {
     }),
   stopBacktest: () => request<{ status: string; message?: string }>('/api/backtest/stop', { method: 'POST' }),
   backtestStatus: () => request<BacktestStatus>('/api/backtest/status'),
-  downloadData: (payload: { timeframe: string; timerange?: string; pairs?: string[] }) =>
+  downloadData: (payload: { timeframe: string; timerange?: string; pairs?: string[]; prepend?: boolean; erase?: boolean }) =>
     request<{ success: boolean; message: string; task_id?: string }>('/api/download-data', {
       method: 'POST',
       body: JSON.stringify(payload)

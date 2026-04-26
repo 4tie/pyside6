@@ -56,6 +56,8 @@ class BacktestPage(QWidget):
         self._load_strategies()
         self._restore_preferences()
         self._connect_preferences_autosave()
+        # Auto-reload when settings.json changes externally
+        self._state.preferences_reloaded.connect(self._on_preferences_reloaded)
 
     # ── UI construction ───────────────────────────────────────────────
     def _build(self):
@@ -199,6 +201,13 @@ class BacktestPage(QWidget):
                     self._strategy_combo.setCurrentIndex(idx)
         except Exception as e:
             _log.warning("Could not load strategies: %s", e)
+
+    def _on_preferences_reloaded(self, settings: AppSettings) -> None:
+        """Called when settings.json changes on disk from an external source."""
+        if self._loading_preferences or self._prefs_save_timer.isActive():
+            return
+        _log.debug("Backtest preferences reloaded from disk")
+        self._restore_preferences()
 
     def _restore_preferences(self):
         current = getattr(self._state, "current_settings", None)

@@ -29,22 +29,24 @@ def parse_backtest_results_from_zip(zip_path: str) -> BacktestResults:
     """
     path = Path(zip_path)
     if not path.exists():
-        raise ParseError(f"Backtest zip not found", str(path))
+        raise FileNotFoundError(f"Backtest zip not found: {path}")
 
     try:
         with zipfile.ZipFile(path) as zf:
             json_files = [n for n in zf.namelist()
                           if n.endswith(".json") and "_config" not in n]
             if not json_files:
-                raise ParseError("No result JSON found in zip", str(path))
+                raise ValueError(f"No result JSON found in zip: {path}")
             _log.debug("Parsing zip: %s | entry=%s", path.name, json_files[0])
             data = json.loads(zf.read(json_files[0]).decode("utf-8"))
+    except (FileNotFoundError, ValueError):
+        raise
     except json.JSONDecodeError as e:
         _log.error("JSON decode error in %s: %s", path.name, e)
-        raise ParseError(f"Failed to parse backtest JSON", str(path), e)
+        raise ValueError(f"Failed to parse backtest JSON in {path}") from e
     except Exception as e:
         _log.error("Failed to open zip %s: %s", path.name, e)
-        raise ParseError(f"Failed to parse backtest zip", str(path), e)
+        raise ValueError(f"Failed to parse backtest zip {path}: {e}") from e
 
     result = _parse_results_data(data)
     _log.info("Parsed | strategy=%s | trades=%d | profit=%.4f%%",
@@ -66,14 +68,16 @@ def parse_backtest_results_from_json(json_path: str) -> BacktestResults:
     """
     path = Path(json_path)
     if not path.exists():
-        raise ParseError(f"Result file not found", str(path))
+        raise FileNotFoundError(f"Result file not found: {path}")
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
         return _parse_results_data(data)
+    except FileNotFoundError:
+        raise
     except json.JSONDecodeError as e:
-        raise ParseError(f"Failed to parse result JSON", str(path), e)
+        raise ValueError(f"Failed to parse result JSON {path}") from e
     except Exception as e:
-        raise ParseError(f"Failed to parse result file", str(path), e)
+        raise ValueError(f"Failed to parse result file {path}: {e}") from e
 
 
 def _parse_results_data(data: Dict[str, Any]) -> BacktestResults:

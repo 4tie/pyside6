@@ -232,6 +232,8 @@ class DownloadDataRequest(BaseModel):
     timeframe: str = Field(..., description="Timeframe (e.g., 5m, 1h)")
     timerange: Optional[str] = Field(None, description="Date range (e.g., 20240101-20241231)")
     pairs: Optional[List[str]] = Field(None, description="List of trading pairs")
+    prepend: bool = Field(False, description="Include --prepend flag")
+    erase: bool = Field(False, description="Include --erase flag")
 
 
 class DownloadDataResponse(BaseModel):

@@ -89,6 +89,8 @@ async def download_data(
             timeframe=request.timeframe,
             timerange=request.timerange,
             pairs=request.pairs,
+            prepend=request.prepend,
+            erase=request.erase,
         )
     except FileNotFoundError as e:
         raise HTTPException(status_code=404, detail=f"Configuration file not found: {str(e)}")
