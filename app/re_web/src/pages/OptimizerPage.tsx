@@ -1,4 +1,4 @@
-import { Play, RefreshCcw, SlidersHorizontal, Square } from 'lucide-react';
+import { Play, SlidersHorizontal, Square } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { api } from '../api/client';
 import { StatusBadge } from '../components/StatusBadge';
@@ -172,6 +172,15 @@ export function OptimizerPage() {
 
   const activeSession = sessions.find((s) => s.session_id === selectedSession);
 
+  // Compute active step
+  const hasStrategy = Boolean(prefs.last_strategy);
+  const hasParams = params.length > 0;
+  const isRunning = streaming;
+
+  const step1Active = !hasStrategy;
+  const step2Active = hasStrategy && !hasParams && !isRunning;
+  const step3Active = hasParams || isRunning;
+
   return (
     <div className="page">
       <header className="page-header">
@@ -180,18 +189,18 @@ export function OptimizerPage() {
           <p>Optimizer preferences save automatically. Sessions run on the Python backend.</p>
         </div>
         <div className="toolbar">
-          {activeSession && <StatusBadge status={activeSession.status} />}
           <span className={`save-state state-${saveState}`}>{saveState}</span>
-          <button className="button" type="button" onClick={() => void refreshSessions()}>
-            <RefreshCcw size={16} />
-            Refresh
-          </button>
         </div>
       </header>
 
       {message ? <div className="alert">{message}</div> : null}
 
-      <section className="split-layout optimizer-layout">
+      {/* Step 1 — Configure */}
+      <section className={`workflow-step${step1Active ? ' active' : ''}`}>
+        <div className="workflow-step-header">
+          <span className="step-badge">1</span>
+          <h2>Configure</h2>
+        </div>
         <form className="panel form-grid" onSubmit={(e) => e.preventDefault()}>
           <label>
             Strategy
@@ -263,32 +272,20 @@ export function OptimizerPage() {
               onChange={(e) => setPrefs({ ...prefs, max_drawdown_limit: Number(e.target.value) })}
             />
           </label>
-          <div className="button-row" style={{ gridColumn: '1 / -1' }}>
-            <button className="button" type="button" onClick={() => void loadParams()}>
-              <SlidersHorizontal size={16} />
-              Load Params
-            </button>
-            <button
-              className="button primary"
-              type="button"
-              onClick={() => void createAndStart()}
-              disabled={streaming}
-            >
-              <Play size={16} />
-              Start
-            </button>
-            <button className="button ghost" type="button" onClick={() => void stopSession()}>
-              <Square size={16} />
-              Stop
-            </button>
-          </div>
         </form>
+      </section>
 
-        <aside className="panel" style={{ display: 'grid', gap: 10 }}>
-          <div className="panel-header">
-            <h2>Parameter Space</h2>
-            <span className="muted">{params.length} params</span>
-          </div>
+      {/* Step 2 — Parameter Space */}
+      <section className={`workflow-step${step2Active ? ' active' : ''}`}>
+        <div className="workflow-step-header">
+          <span className="step-badge">2</span>
+          <h2>Parameter Space</h2>
+          <button className="button" type="button" onClick={() => void loadParams()}>
+            <SlidersHorizontal size={16} />
+            Load Params
+          </button>
+        </div>
+        <div className="panel">
           <div className="param-list">
             {params.slice(0, 48).map((p) => (
               <div className="param-row" key={p.name}>
@@ -304,59 +301,81 @@ export function OptimizerPage() {
               </div>
             )}
           </div>
-        </aside>
+        </div>
       </section>
 
-      <section className="panel">
-        <div className="panel-header">
-          <h2>Sessions</h2>
-          <select
-            value={selectedSession}
-            onChange={(e) => void refreshSessions(e.target.value)}
-            style={{ maxWidth: 320 }}
+      {/* Step 3 — Run & Monitor */}
+      <section className={`workflow-step${step3Active ? ' active' : ''}`}>
+        <div className="workflow-step-header">
+          <span className="step-badge">3</span>
+          <h2>Run &amp; Monitor</h2>
+          {activeSession && <StatusBadge status={activeSession.status} />}
+          <button
+            className="button primary"
+            type="button"
+            onClick={() => void createAndStart()}
+            disabled={streaming}
           >
-            <option value="">Select session</option>
-            {sessions.map((s) => (
-              <option key={s.session_id} value={s.session_id}>
-                {s.strategy_name ?? s.session_id} — {s.status} ({s.trials_completed} trials)
-              </option>
-            ))}
-          </select>
+            <Play size={16} />
+            Start
+          </button>
+          <button className="button ghost" type="button" onClick={() => void stopSession()}>
+            <Square size={16} />
+            Stop
+          </button>
         </div>
-        <div className="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Session</th>
-                <th>Strategy</th>
-                <th>Status</th>
-                <th>Trials</th>
-                <th>Started</th>
-              </tr>
-            </thead>
-            <tbody>
-              {sessions.map((s) => (
-                <tr
-                  key={s.session_id}
-                  style={{ cursor: 'pointer', background: s.session_id === selectedSession ? 'var(--surface-2)' : undefined }}
-                  onClick={() => void refreshSessions(s.session_id)}
-                >
-                  <td style={{ fontFamily: 'monospace', fontSize: 12 }}>{s.session_id}</td>
-                  <td>{s.strategy_name ?? '—'}</td>
-                  <td>
-                    <StatusBadge status={s.status} />
-                  </td>
-                  <td>{s.trials_completed}</td>
-                  <td>{formatDate(s.started_at)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
 
-      {selectedSession && (
-        <section className="panel">
+        {streaming && <div className="loading-bar" />}
+
+        <div className="panel">
+          <div className="panel-header">
+            <h2>Sessions</h2>
+            <select
+              value={selectedSession}
+              onChange={(e) => void refreshSessions(e.target.value)}
+              style={{ maxWidth: 320 }}
+            >
+              <option value="">Select session</option>
+              {sessions.map((s) => (
+                <option key={s.session_id} value={s.session_id}>
+                  {s.strategy_name ?? s.session_id} — {s.status} ({s.trials_completed} trials)
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Session</th>
+                  <th>Strategy</th>
+                  <th>Status</th>
+                  <th>Trials</th>
+                  <th>Started</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sessions.map((s) => (
+                  <tr
+                    key={s.session_id}
+                    style={{ cursor: 'pointer', background: s.session_id === selectedSession ? 'var(--surface-2)' : undefined }}
+                    onClick={() => void refreshSessions(s.session_id)}
+                  >
+                    <td style={{ fontFamily: 'monospace', fontSize: 12 }}>{s.session_id}</td>
+                    <td>{s.strategy_name ?? '—'}</td>
+                    <td>
+                      <StatusBadge status={s.status} />
+                    </td>
+                    <td>{s.trials_completed}</td>
+                    <td>{formatDate(s.started_at)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div className="panel">
           <div className="panel-header">
             <h2>Trials</h2>
             <span className="muted">{trials.length} recorded</span>
@@ -374,28 +393,28 @@ export function OptimizerPage() {
                 <span>{t.is_best ? '★' : ''}</span>
               </div>
             ))}
-            {!trials.length && (
+            {trials.length === 0 && (
               <div className="empty-state" style={{ fontSize: 12 }}>
                 No trials yet. Start a session to see results.
               </div>
             )}
           </div>
-        </section>
-      )}
+        </div>
 
-      {(liveLog || streaming) && (
-        <section className="panel">
-          <div className="panel-header">
-            <h2>Live Log</h2>
-            <button className="button ghost" type="button" onClick={() => setLiveLog('')} style={{ fontSize: 12 }}>
-              Clear
-            </button>
+        {(liveLog || streaming) && (
+          <div className="panel">
+            <div className="panel-header">
+              <h2>Live Log</h2>
+              <button className="button ghost" type="button" onClick={() => setLiveLog('')} style={{ fontSize: 12 }}>
+                Clear
+              </button>
+            </div>
+            <pre ref={logRef} className="terminal" style={{ minHeight: 200 }}>
+              {liveLog || 'Waiting for output…'}
+            </pre>
           </div>
-          <pre ref={logRef} className="terminal" style={{ minHeight: 200 }}>
-            {liveLog || 'Waiting for output…'}
-          </pre>
-        </section>
-      )}
+        )}
+      </section>
     </div>
   );
 }

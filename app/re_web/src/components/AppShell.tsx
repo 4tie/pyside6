@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import type { ReactNode } from 'react';
 import type { ThemeMode } from '../types/api';
+import { MobileNav } from './MobileNav';
 
 export interface RouteItem {
   path: string;
@@ -56,6 +57,7 @@ export function AppShell({ children, currentPath, theme, onNavigate, onToggleThe
                 key={route.path}
                 className={active ? 'nav-link active' : 'nav-link'}
                 href={route.path}
+                aria-current={active ? 'page' : undefined}
                 onClick={(event) => {
                   event.preventDefault();
                   onNavigate(route.path);
@@ -72,6 +74,7 @@ export function AppShell({ children, currentPath, theme, onNavigate, onToggleThe
         </button>
       </aside>
       <main className="content">{children}</main>
+      <MobileNav routes={routes} currentPath={currentPath} onNavigate={onNavigate} />
     </div>
   );
 }

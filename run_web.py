@@ -23,6 +23,8 @@ from __future__ import annotations
 import argparse
 import logging
 import os
+import socket
+import subprocess
 import sys
 import webbrowser
 from logging.handlers import RotatingFileHandler
@@ -135,21 +137,86 @@ def _setup_logging(log_level: str) -> tuple[logging.Logger, Path]:
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# Tailscale detection
+# ─────────────────────────────────────────────────────────────────────────────
+
+def _in_tailscale_range(addr: str) -> bool:
+    """Return True if *addr* falls in the Tailscale CGNAT range 100.64.0.0/10."""
+    parts = addr.split(".")
+    if len(parts) != 4 or parts[0] != "100":
+        return False
+    try:
+        second = int(parts[1])
+    except ValueError:
+        return False
+    return 64 <= second <= 127
+
+
+def _detect_tailscale_ip() -> str | None:
+    """Return the host's Tailscale IPv4 address, or None if not found.
+
+    Two-step detection:
+    1. Ask the Tailscale CLI (``tailscale ip --4``).
+    2. Fall back to scanning ``socket.getaddrinfo`` for a 100.64/10 address.
+
+    All exceptions are swallowed so the caller always gets ``str | None``.
+    """
+    # Step 1: Tailscale CLI
+    try:
+        result = subprocess.run(
+            ["tailscale", "ip", "--4"],
+            capture_output=True,
+            text=True,
+            timeout=2,
+        )
+        if result.returncode == 0:
+            addr = result.stdout.strip()
+            if _in_tailscale_range(addr):
+                return addr
+    except Exception:
+        pass
+
+    # Step 2: Socket fallback
+    try:
+        for info in socket.getaddrinfo(socket.gethostname(), None):
+            addr = info[4][0]
+            if _in_tailscale_range(addr):
+                return addr
+    except Exception:
+        pass
+
+    return None
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # CLI
 # ─────────────────────────────────────────────────────────────────────────────
 
 def _parse_args() -> argparse.Namespace:
+    _env_port = os.environ.get("WEB_PORT")
+    _default_port = 8000
+    if _env_port is not None:
+        try:
+            _default_port = int(_env_port)
+            if not (1 <= _default_port <= 65535):
+                raise ValueError
+        except ValueError:
+            print(f"ERROR: WEB_PORT={_env_port!r} is not a valid port (1–65535)", file=sys.stderr)
+            sys.exit(1)
+
     p = argparse.ArgumentParser(
         description="Freqtrade GUI — web server launcher",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
-    p.add_argument("--host",      default="0.0.0.0",  help="Bind address")
-    p.add_argument("--port",      default=8000, type=int, help="TCP port")
+    p.add_argument("--host",      default=os.environ.get("WEB_HOST", "0.0.0.0"),  help="Bind address")
+    p.add_argument("--port",      default=_default_port, type=int, help="TCP port")
     p.add_argument("--reload",    action="store_true",  help="Auto-reload on code changes (dev)")
     p.add_argument("--log-level", default="info",
                    choices=["debug", "info", "warning", "error", "critical"],
                    help="Console log level")
     p.add_argument("--no-open",   action="store_true",  help="Do not open browser on start")
+    p.add_argument("--tailscale", action="store_true", default=False,
+                   help="Print Tailscale URL in banner (auto-detects 100.x.x.x address)")
     return p.parse_args()
 
 
@@ -157,14 +224,20 @@ def _parse_args() -> argparse.Namespace:
 # Banner
 # ─────────────────────────────────────────────────────────────────────────────
 
-def _banner(host: str, port: int, log_file: Path, reload: bool) -> None:
+def _banner(host: str, port: int, log_file: Path, reload: bool,
+            tailscale_ip: str | None = None) -> None:
     local = f"http://127.0.0.1:{port}"
-    bound = f"http://{host}:{port}" if host not in ("0.0.0.0", "::") else local
     lines = [
         "",
         f"  {_BOLD}{_CYAN}Freqtrade GUI — Web Server{_RESET}",
         "",
         f"  {'Local':12s}  {_BOLD}{local}{_RESET}",
+    ]
+    if tailscale_ip is not None:
+        lines.append(f"  {'Tailscale':12s}  {_BOLD}http://{tailscale_ip}:{port}/app{_RESET}")
+    if host not in ("0.0.0.0", "::"):
+        lines.append(f"  {'Network':12s}  {_BOLD}http://{host}:{port}/app{_RESET}")
+    lines += [
         f"  {'API docs':12s}  {_BOLD}{local}/docs{_RESET}",
         f"  {'React app':12s}  {_BOLD}{local}/app{_RESET}",
         f"  {'Log file':12s}  {_DIM}{log_file}{_RESET}",
@@ -187,7 +260,13 @@ def main() -> None:
     args = _parse_args()
     log, log_file = _setup_logging(args.log_level)
 
-    _banner(args.host, args.port, log_file, args.reload)
+    tailscale_ip: str | None = None
+    if args.tailscale:
+        tailscale_ip = _detect_tailscale_ip()
+        if tailscale_ip is None:
+            print("WARNING: --tailscale requested but no Tailscale address detected.", file=sys.stderr)
+
+    _banner(args.host, args.port, log_file, args.reload, tailscale_ip=tailscale_ip)
 
     log.info(
         "Starting uvicorn  host=%s  port=%d  reload=%s  log_level=%s",

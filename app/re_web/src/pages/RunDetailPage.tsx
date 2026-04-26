@@ -83,6 +83,12 @@ function EquityChart({ points, startBalance }: { points: EquityPoint[]; startBal
     setHover({ x: toX(clamped), y: toY(pt.balance), balance: pt.balance, idx: clamped });
   }
 
+  function getTouchX(e: React.TouchEvent<SVGSVGElement>): number {
+    const rect = svgRef.current?.getBoundingClientRect();
+    if (!rect || !e.touches.length) return 0;
+    return ((e.touches[0].clientX - rect.left) / rect.width) * W;
+  }
+
   return (
     <div className="equity-chart-wrap">
       <svg
@@ -93,6 +99,17 @@ function EquityChart({ points, startBalance }: { points: EquityPoint[]; startBal
         aria-label="Equity curve"
         onMouseMove={onMouseMove}
         onMouseLeave={() => setHover(null)}
+        onTouchMove={(e) => {
+          e.preventDefault();
+          const svgX = getTouchX(e);
+          const relX = svgX - PAD.left;
+          const idx = Math.round((relX / innerW) * (points.length - 1));
+          const clamped = Math.max(0, Math.min(points.length - 1, idx));
+          const pt = points[clamped];
+          setHover({ x: toX(clamped), y: toY(pt.balance), balance: pt.balance, idx: clamped });
+        }}
+        onTouchEnd={() => setHover(null)}
+        style={{ touchAction: 'none' }}
       >
         <defs>
           <linearGradient id="eq-fill" x1="0" y1="0" x2="0" y2="1">
