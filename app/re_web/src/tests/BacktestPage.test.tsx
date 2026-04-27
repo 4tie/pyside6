@@ -14,6 +14,11 @@ import { BacktestPage } from '../pages/BacktestPage';
 vi.mock('../api/client', () => ({
   api: {
     settings: vi.fn().mockResolvedValue({
+      user_data_path: '',
+      venv_path: '',
+      python_executable: '',
+      freqtrade_executable: '',
+      use_module_execution: true,
       backtest_preferences: {
         last_strategy: 'TestStrategy',
         default_timeframe: '5m',
@@ -22,9 +27,13 @@ vi.mock('../api/client', () => ({
         dry_run_wallet: 80,
         max_open_trades: 2,
       },
+      optimize_preferences: {},
+      download_preferences: {},
+      optimizer_preferences: {},
     }),
     strategies: vi.fn().mockResolvedValue([{ name: 'TestStrategy' }]),
     pairs: vi.fn().mockResolvedValue({ pairs: ['BTC/USDT', 'ETH/USDT'], favorites: [] }),
+    runs: vi.fn().mockResolvedValue([]),
     backtestStatus: vi.fn().mockResolvedValue({ status: 'idle' }),
     updateSettings: vi.fn().mockResolvedValue({}),
   },

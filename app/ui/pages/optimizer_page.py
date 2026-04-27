@@ -71,6 +71,7 @@ from app.core.models.optimizer_models import (
     TrialStatus,
 )
 from app.core.services.backtest_service import BacktestService
+from app.core.services.input_holder_service import InputHolderService
 from app.core.services.optimizer_search_space_service import OptimizerSearchSpaceService
 from app.core.services.optimizer_session_service import StrategyOptimizerService
 from app.core.services.optimizer_store import OptimizerStore
@@ -256,6 +257,7 @@ class OptimizerPage(QWidget):
         # Services
         self._settings_svc = getattr(settings_state, "settings_service", SettingsService())
         self._backtest_svc = BacktestService(self._settings_svc)
+        self._input_holder_svc = InputHolderService(self._settings_svc)
         self._service = StrategyOptimizerService(
             settings_service=self._settings_svc,
             backtest_service=self._backtest_svc,
@@ -788,30 +790,24 @@ class OptimizerPage(QWidget):
         self._restore_preferences()
 
     def _restore_preferences(self) -> None:
-        current = getattr(self._state, "current_settings", None)
-        settings = current if isinstance(current, AppSettings) else self._settings_svc.load_settings()
-        self._state.current_settings = settings
-        optimizer_prefs = settings.optimizer_preferences
         self._loading_preferences = True
-        if optimizer_prefs.last_strategy:
-            idx = self._strategy_combo.findText(optimizer_prefs.last_strategy)
+        try:
+            cfg = self._input_holder_svc.read_config()
+        except Exception as exc:
+            _log.warning("Could not load optimizer preferences from backend: %s", exc)
+            self._loading_preferences = False
+            return
+        if cfg.last_strategy:
+            idx = self._strategy_combo.findText(cfg.last_strategy)
             if idx >= 0:
                 self._strategy_combo.setCurrentIndex(idx)
-        self._timeframe_combo.setCurrentText(optimizer_prefs.default_timeframe or "5m")
-        self._timerange_edit.setText(optimizer_prefs.default_timerange or "")
-        self._pairs_edit.setText(optimizer_prefs.default_pairs or "")
-        self._wallet_spin.setValue(optimizer_prefs.dry_run_wallet)
-        self._trades_spin.setValue(optimizer_prefs.max_open_trades)
-        self._trials_spin.setValue(optimizer_prefs.total_trials)
-        score_key = optimizer_prefs.score_metric or "composite"
-        score_idx = self._score_combo.findData(score_key)
-        self._score_combo.setCurrentIndex(max(0, score_idx))
-        self._target_trades_spin.setValue(optimizer_prefs.target_min_trades)
-        self._target_profit_spin.setValue(optimizer_prefs.target_profit_pct)
-        self._max_drawdown_spin.setValue(optimizer_prefs.max_drawdown_limit)
-        self._target_romad_spin.setValue(optimizer_prefs.target_romad)
+        self._timeframe_combo.setCurrentText(cfg.default_timeframe or "5m")
+        self._timerange_edit.setText(cfg.default_timerange or "")
+        self._pairs_edit.setText(cfg.default_pairs or "")
+        self._wallet_spin.setValue(cfg.dry_run_wallet)
+        self._trades_spin.setValue(cfg.max_open_trades)
         self._loading_preferences = False
-        has_config = bool(optimizer_prefs.last_strategy or optimizer_prefs.default_pairs or settings.user_data_path)
+        has_config = bool(cfg.last_strategy or cfg.default_pairs)
         self._warning_lbl.setVisible(not has_config)
         self._warning_lbl.setText("Optimizer preferences look empty. Configure this tab before starting.")
 
@@ -835,16 +831,24 @@ class OptimizerPage(QWidget):
         self._prefs_save_timer.start()
 
     def _save_preferences(self) -> None:
+        from app.core.models.optimizer_models import OptimizerConfigUpdate
+        update = OptimizerConfigUpdate(
+            last_strategy=self._strategy_combo.currentText().strip(),
+            default_timeframe=self._timeframe_combo.currentText().strip(),
+            default_timerange=self._timerange_edit.text().strip(),
+            default_pairs=self._pairs_edit.text().strip(),
+            dry_run_wallet=self._wallet_spin.value(),
+            max_open_trades=self._trades_spin.value(),
+        )
+        try:
+            self._input_holder_svc.write_config(update)
+        except Exception as exc:
+            _log.warning("Could not save optimizer preferences: %s", exc)
+        # Also persist the non-InputHolder fields (trials, score, targets) via state
         score_key = self._score_combo.currentData() or "composite"
         try:
             self._state.update_preferences(
                 "optimizer_preferences",
-                last_strategy=self._strategy_combo.currentText().strip(),
-                default_timeframe=self._timeframe_combo.currentText().strip(),
-                default_timerange=self._timerange_edit.text().strip(),
-                default_pairs=self._pairs_edit.text().strip(),
-                dry_run_wallet=self._wallet_spin.value(),
-                max_open_trades=self._trades_spin.value(),
                 total_trials=self._trials_spin.value(),
                 score_metric=score_key,
                 score_mode="composite" if score_key == "composite" else "single_metric",
@@ -854,7 +858,7 @@ class OptimizerPage(QWidget):
                 target_romad=self._target_romad_spin.value(),
             )
         except Exception as exc:
-            _log.warning("Could not save optimizer preferences: %s", exc)
+            _log.warning("Could not save optimizer non-InputHolder preferences: %s", exc)
 
     def _select_pairs(self) -> None:
         current = self._pairs_edit.text().strip()

@@ -14,26 +14,29 @@ import { OptimizerPage } from '../pages/OptimizerPage';
 
 vi.mock('../api/client', () => ({
   api: {
-    settings: vi.fn().mockResolvedValue({
-      optimizer_preferences: {
-        last_strategy: '',
-        default_timeframe: '5m',
-        default_timerange: '',
-        default_pairs: 'BTC/USDT',
-        dry_run_wallet: 80,
-        max_open_trades: 2,
-        total_trials: 50,
-        score_mode: 'composite',
-        target_min_trades: 100,
-        target_profit_pct: 50,
-        max_drawdown_limit: 25,
-        target_romad: 2,
-      },
+    getOptimizerConfig: vi.fn().mockResolvedValue({
+      last_strategy: '',
+      default_timeframe: '5m',
+      last_timerange_preset: '30d',
+      default_timerange: '',
+      default_pairs: 'BTC/USDT',
+      pairs_list: ['BTC/USDT'],
+      dry_run_wallet: 80,
+      max_open_trades: 2,
     }),
     optimizerStrategies: vi.fn().mockResolvedValue([]),
     sessions: vi.fn().mockResolvedValue([]),
     sessionTrials: vi.fn().mockResolvedValue({ trials: [], total: 0 }),
-    updateSettings: vi.fn().mockResolvedValue({}),
+    updateOptimizerConfig: vi.fn().mockResolvedValue({
+      last_strategy: '',
+      default_timeframe: '5m',
+      last_timerange_preset: '30d',
+      default_timerange: '',
+      default_pairs: 'BTC/USDT',
+      pairs_list: ['BTC/USDT'],
+      dry_run_wallet: 80,
+      max_open_trades: 2,
+    }),
   },
 }));
 

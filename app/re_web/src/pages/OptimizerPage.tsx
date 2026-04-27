@@ -4,25 +4,29 @@ import { api } from '../api/client';
 import { StatusBadge } from '../components/StatusBadge';
 import { useAutosave } from '../hooks/useAutosave';
 import { useSSE } from '../hooks/useSSE';
-import type { OptimizerSessionSummary, ParamDef, PreferenceSection, TrialRecord } from '../types/api';
-import { csvToList, formatDate, formatNumber } from '../utils/format';
+import type {
+  OptimizerConfigResponse,
+  OptimizerConfigUpdate,
+  OptimizerSessionSummary,
+  ParamDef,
+  TrialRecord,
+} from '../types/api';
+import { formatDate, formatNumber } from '../utils/format';
+
+const DEFAULT_CONFIG: OptimizerConfigResponse = {
+  last_strategy: '',
+  default_timeframe: '5m',
+  last_timerange_preset: '30d',
+  default_timerange: '',
+  default_pairs: 'BTC/USDT',
+  pairs_list: ['BTC/USDT'],
+  dry_run_wallet: 80,
+  max_open_trades: 2,
+};
 
 export function OptimizerPage() {
   const [strategies, setStrategies] = useState<string[]>([]);
-  const [prefs, setPrefs] = useState<PreferenceSection>({
-    last_strategy: '',
-    default_timeframe: '5m',
-    default_timerange: '',
-    default_pairs: 'BTC/USDT',
-    dry_run_wallet: 80,
-    max_open_trades: 2,
-    total_trials: 50,
-    score_mode: 'composite',
-    target_min_trades: 100,
-    target_profit_pct: 50,
-    max_drawdown_limit: 25,
-    target_romad: 2
-  });
+  const [config, setConfig] = useState<OptimizerConfigResponse>(DEFAULT_CONFIG);
   const [params, setParams] = useState<ParamDef[]>([]);
   const [sessions, setSessions] = useState<OptimizerSessionSummary[]>([]);
   const [selectedSession, setSelectedSession] = useState('');
@@ -37,24 +41,45 @@ export function OptimizerPage() {
     void loadAll();
   }, []);
 
+  // Autosave: on every config change, PUT the seven InputHolder fields to the backend
   const saveState = useAutosave(
-    prefs,
-    (value) => api.updateSettings({ optimizer_preferences: value }),
+    config,
+    (value) => {
+      const update: OptimizerConfigUpdate = {
+        last_strategy: value.last_strategy,
+        default_timeframe: value.default_timeframe,
+        last_timerange_preset: value.last_timerange_preset,
+        default_timerange: value.default_timerange,
+        default_pairs: value.default_pairs,
+        dry_run_wallet: value.dry_run_wallet,
+        max_open_trades: value.max_open_trades,
+      };
+      return api.updateOptimizerConfig(update).then((updated) => {
+        // Sync back the server response (e.g. resolved timerange, deduplicated pairs)
+        setConfig(updated);
+      });
+    },
     { enabled: ready, delay: 500 }
   );
 
-  const pairs = useMemo(() => csvToList(prefs.default_pairs), [prefs.default_pairs]);
+  const pairs = useMemo(() => config.pairs_list, [config.pairs_list]);
 
   // SSE stream for selected session
-  const sseUrl = streaming && selectedSession
-    ? `/api/optimizer/sessions/${encodeURIComponent(selectedSession)}/stream`
-    : null;
+  const sseUrl =
+    streaming && selectedSession
+      ? `/api/optimizer/sessions/${encodeURIComponent(selectedSession)}/stream`
+      : null;
 
   useSSE({
     url: sseUrl,
     onMessage(data) {
       try {
-        const event = JSON.parse(data) as { type: string; trial?: TrialRecord; line?: string; session?: unknown };
+        const event = JSON.parse(data) as {
+          type: string;
+          trial?: TrialRecord;
+          line?: string;
+          session?: unknown;
+        };
         if (event.type === 'trial_complete' && event.trial) {
           setTrials((prev) => {
             const idx = prev.findIndex((t) => t.trial_number === event.trial!.trial_number);
@@ -77,7 +102,7 @@ export function OptimizerPage() {
     },
     onError() {
       setStreaming(false);
-    }
+    },
   });
 
   // Auto-scroll log
@@ -86,12 +111,12 @@ export function OptimizerPage() {
   }, [liveLog]);
 
   async function loadAll() {
-    const [settings, strategyList, sessionList] = await Promise.all([
-      api.settings(),
+    const [cfg, strategyList, sessionList] = await Promise.all([
+      api.getOptimizerConfig(),
       api.optimizerStrategies(),
-      api.sessions()
+      api.sessions(),
     ]);
-    setPrefs((current) => ({ ...current, ...settings.optimizer_preferences }));
+    setConfig(cfg);
     setStrategies(strategyList);
     setSessions(sessionList);
     const firstId = sessionList[0]?.session_id ?? '';
@@ -103,41 +128,45 @@ export function OptimizerPage() {
     setReady(true);
   }
 
-  async function loadParams(strategy = prefs.last_strategy) {
+  async function loadParams(strategy = config.last_strategy) {
     if (!strategy) return;
     try {
       const response = await api.strategyParams(strategy);
       setParams(response.params);
-      setPrefs((prev) => ({ ...prev, default_timeframe: response.timeframe || prev.default_timeframe }));
+      // Update timeframe from strategy metadata, persist via autosave
+      if (response.timeframe) {
+        setConfig((prev) => ({ ...prev, default_timeframe: response.timeframe }));
+      }
     } catch (err) {
       setMessage(err instanceof Error ? err.message : String(err));
     }
   }
 
   async function createAndStart() {
-    const strategy = prefs.last_strategy || strategies[0];
+    const strategy = config.last_strategy || strategies[0];
     if (!strategy) return;
     setMessage('');
     setLiveLog('');
     setTrials([]);
     try {
-      const paramSource = params.length ? params : (await api.strategyParams(strategy)).params;
+      const paramSource =
+        params.length ? params : (await api.strategyParams(strategy)).params;
       const response = await api.createSession({
         strategy_name: strategy,
         strategy_class: strategy,
         pairs,
-        timeframe: prefs.default_timeframe || '5m',
-        timerange: prefs.default_timerange || undefined,
-        dry_run_wallet: Number(prefs.dry_run_wallet ?? 80),
-        max_open_trades: Number(prefs.max_open_trades ?? 2),
-        total_trials: Number(prefs.total_trials ?? 50),
-        score_mode: prefs.score_mode ?? 'composite',
-        score_metric: prefs.score_metric ?? 'composite',
-        target_min_trades: Number(prefs.target_min_trades ?? 100),
-        target_profit_pct: Number(prefs.target_profit_pct ?? 50),
-        max_drawdown_limit: Number(prefs.max_drawdown_limit ?? 25),
-        target_romad: Number(prefs.target_romad ?? 2),
-        param_defs: paramSource
+        timeframe: config.default_timeframe || '5m',
+        timerange: config.default_timerange || undefined,
+        dry_run_wallet: config.dry_run_wallet,
+        max_open_trades: config.max_open_trades,
+        total_trials: 50,
+        score_mode: 'composite',
+        score_metric: 'composite',
+        target_min_trades: 100,
+        target_profit_pct: 50,
+        max_drawdown_limit: 25,
+        target_romad: 2,
+        param_defs: paramSource,
       });
       setSelectedSession(response.session_id);
       await api.startSession(response.session_id);
@@ -165,15 +194,16 @@ export function OptimizerPage() {
     setSessions(sessionList);
     if (sessionId) {
       setSelectedSession(sessionId);
-      const trialList = await api.sessionTrials(sessionId).catch(() => ({ trials: [], total: 0 }));
+      const trialList = await api
+        .sessionTrials(sessionId)
+        .catch(() => ({ trials: [], total: 0 }));
       setTrials(trialList.trials);
     }
   }
 
   const activeSession = sessions.find((s) => s.session_id === selectedSession);
 
-  // Compute active step
-  const hasStrategy = Boolean(prefs.last_strategy);
+  const hasStrategy = Boolean(config.last_strategy);
   const hasParams = params.length > 0;
   const isRunning = streaming;
 
@@ -186,7 +216,7 @@ export function OptimizerPage() {
       <header className="page-header">
         <div>
           <h1>Optimizer</h1>
-          <p>Optimizer preferences save automatically. Sessions run on the Python backend.</p>
+          <p>Configure-section fields save automatically to the backend.</p>
         </div>
         <div className="toolbar">
           <span className={`save-state state-${saveState}`}>{saveState}</span>
@@ -205,8 +235,8 @@ export function OptimizerPage() {
           <label>
             Strategy
             <select
-              value={prefs.last_strategy ?? ''}
-              onChange={(e) => setPrefs({ ...prefs, last_strategy: e.target.value })}
+              value={config.last_strategy}
+              onChange={(e) => setConfig({ ...config, last_strategy: e.target.value })}
             >
               <option value="">Select strategy</option>
               {strategies.map((s) => (
@@ -219,57 +249,61 @@ export function OptimizerPage() {
           <label>
             Timeframe
             <input
-              value={prefs.default_timeframe ?? '5m'}
-              onChange={(e) => setPrefs({ ...prefs, default_timeframe: e.target.value })}
+              value={config.default_timeframe}
+              onChange={(e) => setConfig({ ...config, default_timeframe: e.target.value })}
             />
           </label>
           <label style={{ gridColumn: '1 / -1' }}>
             Pairs
             <textarea
-              value={prefs.default_pairs ?? ''}
-              onChange={(e) => setPrefs({ ...prefs, default_pairs: e.target.value })}
+              value={config.default_pairs}
+              onChange={(e) => setConfig({ ...config, default_pairs: e.target.value })}
             />
+          </label>
+          <label>
+            Preset
+            <select
+              value={config.last_timerange_preset}
+              onChange={(e) =>
+                setConfig({ ...config, last_timerange_preset: e.target.value })
+              }
+            >
+              {['7d', '14d', '30d', '60d', '90d', '180d', '1y'].map((p) => (
+                <option key={p} value={p}>
+                  {p}
+                </option>
+              ))}
+            </select>
           </label>
           <label>
             Timerange
             <input
-              value={prefs.default_timerange ?? ''}
-              onChange={(e) => setPrefs({ ...prefs, default_timerange: e.target.value })}
+              value={config.default_timerange}
+              onChange={(e) => setConfig({ ...config, default_timerange: e.target.value })}
               placeholder="20240101-20241231"
             />
           </label>
           <label>
-            Trials
+            Wallet (USDT)
+            <input
+              type="number"
+              min="0.01"
+              step="0.01"
+              value={config.dry_run_wallet}
+              onChange={(e) =>
+                setConfig({ ...config, dry_run_wallet: Number(e.target.value) })
+              }
+            />
+          </label>
+          <label>
+            Max Trades
             <input
               type="number"
               min="1"
-              value={prefs.total_trials ?? 50}
-              onChange={(e) => setPrefs({ ...prefs, total_trials: Number(e.target.value) })}
-            />
-          </label>
-          <label>
-            Min trades
-            <input
-              type="number"
-              min="0"
-              value={prefs.target_min_trades ?? 100}
-              onChange={(e) => setPrefs({ ...prefs, target_min_trades: Number(e.target.value) })}
-            />
-          </label>
-          <label>
-            Target profit %
-            <input
-              type="number"
-              value={prefs.target_profit_pct ?? 50}
-              onChange={(e) => setPrefs({ ...prefs, target_profit_pct: Number(e.target.value) })}
-            />
-          </label>
-          <label>
-            Drawdown cap %
-            <input
-              type="number"
-              value={prefs.max_drawdown_limit ?? 25}
-              onChange={(e) => setPrefs({ ...prefs, max_drawdown_limit: Number(e.target.value) })}
+              value={config.max_open_trades}
+              onChange={(e) =>
+                setConfig({ ...config, max_open_trades: Number(e.target.value) })
+              }
             />
           </label>
         </form>
@@ -358,7 +392,11 @@ export function OptimizerPage() {
                 {sessions.map((s) => (
                   <tr
                     key={s.session_id}
-                    style={{ cursor: 'pointer', background: s.session_id === selectedSession ? 'var(--surface-2)' : undefined }}
+                    style={{
+                      cursor: 'pointer',
+                      background:
+                        s.session_id === selectedSession ? 'var(--surface-2)' : undefined,
+                    }}
                     onClick={() => void refreshSessions(s.session_id)}
                   >
                     <td style={{ fontFamily: 'monospace', fontSize: 12 }}>{s.session_id}</td>
@@ -405,7 +443,12 @@ export function OptimizerPage() {
           <div className="panel">
             <div className="panel-header">
               <h2>Live Log</h2>
-              <button className="button ghost" type="button" onClick={() => setLiveLog('')} style={{ fontSize: 12 }}>
+              <button
+                className="button ghost"
+                type="button"
+                onClick={() => setLiveLog('')}
+                style={{ fontSize: 12 }}
+              >
                 Clear
               </button>
             </div>

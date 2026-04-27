@@ -458,6 +458,85 @@ function RunResultDetail({ detail, diagnosis, diff }: RunResultDetailProps) {
   );
 }
 
+// ─── RunDropdown — colour-coded custom run picker ────────────────────────────
+
+interface RunDropdownProps {
+  runs: RunResponse[];
+  selectedId: string | null;
+  onSelect: (id: string) => void;
+}
+
+function RunDropdown({ runs, selectedId, onSelect }: RunDropdownProps) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const selected = runs.find((r) => r.run_id === selectedId) ?? null;
+
+  // Close on outside click
+  useEffect(() => {
+    function handler(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  return (
+    <div className="run-dropdown" ref={ref}>
+      <button
+        type="button"
+        className="run-dropdown-trigger"
+        onClick={() => setOpen((v) => !v)}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+      >
+        {selected ? (
+          <>
+            <span className="run-dropdown-date">{formatDate(selected.saved_at)}</span>
+            <span className="run-dropdown-strategy">{selected.strategy}</span>
+            <span
+              className="run-dropdown-profit"
+              style={{ color: selected.profit_total_pct >= 0 ? 'var(--green)' : 'var(--red)' }}
+            >
+              {formatPct(selected.profit_total_pct)}
+            </span>
+          </>
+        ) : (
+          <span className="run-dropdown-placeholder">Browse saved runs…</span>
+        )}
+        <ChevronDown size={14} className="run-dropdown-chevron" />
+      </button>
+
+      {open && (
+        <ul className="run-dropdown-list" role="listbox">
+          {runs.map((run) => {
+            const profit = run.profit_total_pct;
+            const isPos = profit >= 0;
+            const isSelected = run.run_id === selectedId;
+            return (
+              <li
+                key={run.run_id}
+                role="option"
+                aria-selected={isSelected}
+                className={`run-dropdown-item${isSelected ? ' selected' : ''}`}
+                onClick={() => { onSelect(run.run_id); setOpen(false); }}
+              >
+                <span className="run-dropdown-date">{formatDate(run.saved_at)}</span>
+                <span className="run-dropdown-strategy">{run.strategy}</span>
+                <span
+                  className="run-dropdown-profit"
+                  style={{ color: isPos ? 'var(--green)' : 'var(--red)' }}
+                >
+                  {formatPct(profit)}
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </div>
+  );
+}
+
 // ─── BacktestPage ─────────────────────────────────────────────────────────────
 
 export function BacktestPage() {
@@ -642,24 +721,11 @@ export function BacktestPage() {
         </div>
         {/* Run history selector */}
         {runs.length > 0 && (
-          <div className="run-selector-wrap">
-            <select
-              className="run-selector"
-              value={runDetail?.run_id ?? ''}
-              onChange={(e) => {
-                const id = e.target.value;
-                if (id) fetchRunDetail(id);
-              }}
-            >
-              <option value="">Browse saved runs…</option>
-              {runs.map((run) => (
-                <option key={run.run_id} value={run.run_id}>
-                  {run.strategy} · {run.run_id} · {formatPct(run.profit_total_pct)}
-                </option>
-              ))}
-            </select>
-            <ChevronDown size={14} className="run-selector-icon" />
-          </div>
+          <RunDropdown
+            runs={[...runs].sort((a, b) => new Date(b.saved_at).getTime() - new Date(a.saved_at).getTime())}
+            selectedId={runDetail?.run_id ?? null}
+            onSelect={fetchRunDetail}
+          />
         )}
       </header>
 

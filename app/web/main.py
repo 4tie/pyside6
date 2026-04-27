@@ -17,6 +17,7 @@ from app.web.api.routes import (
     dashboard,
     diagnosis,
     diff,
+    input_holder,
     loop,
     optimize,
     optimizer,
@@ -109,6 +110,7 @@ app.include_router(backtest.router, prefix="/api", tags=["backtest"])
 app.include_router(optimize.router, prefix="/api", tags=["optimize"])
 app.include_router(process.router, prefix="/api", tags=["process"])
 app.include_router(optimizer.router, prefix="/api", tags=["optimizer"])
+app.include_router(input_holder.router, prefix="/api", tags=["optimizer-config"])
 
 if __name__ == "__main__":
     import uvicorn

@@ -3,6 +3,8 @@ import type {
   BacktestStatus,
   ComparisonResponse,
   DashboardSummary,
+  OptimizerConfigResponse,
+  OptimizerConfigUpdate,
   PairsResponse,
   RunDetailResponse,
   RunResponse,
@@ -112,6 +114,13 @@ export const api = {
   stopSession: (sessionId: string) =>
     request<{ status: string; session_id: string }>(`/api/optimizer/sessions/${encodeURIComponent(sessionId)}/stop`, {
       method: 'POST'
+    }),
+  getOptimizerConfig: () =>
+    request<OptimizerConfigResponse>('/api/optimizer/config'),
+  updateOptimizerConfig: (payload: OptimizerConfigUpdate) =>
+    request<OptimizerConfigResponse>('/api/optimizer/config', {
+      method: 'PUT',
+      body: JSON.stringify(payload)
     })
 };
 

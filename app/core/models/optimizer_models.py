@@ -19,7 +19,7 @@ import uuid
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from app.core.utils.app_logger import get_logger
 
@@ -172,6 +172,55 @@ class OptimizerPreferences(BaseModel):
     target_profit_pct: float = 50.0
     max_drawdown_limit: float = 25.0
     target_romad: float = 2.0
+
+    @field_validator("dry_run_wallet")
+    @classmethod
+    def validate_dry_run_wallet(cls, v: float) -> float:
+        if v <= 0:
+            raise ValueError(
+                f"dry_run_wallet must be greater than 0, got {v}"
+            )
+        return v
+
+    @field_validator("max_open_trades")
+    @classmethod
+    def validate_max_open_trades(cls, v: int) -> int:
+        if v < 1:
+            raise ValueError(
+                f"max_open_trades must be at least 1, got {v}"
+            )
+        return v
+
+
+class OptimizerConfigUpdate(BaseModel):
+    """Partial update payload for PUT /api/optimizer/config.
+
+    All fields are optional — only provided fields are updated.
+    Unknown fields are rejected with HTTP 422 via extra='forbid'.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    last_strategy: str | None = None
+    default_timeframe: str | None = None
+    last_timerange_preset: str | None = None
+    default_timerange: str | None = None
+    default_pairs: str | None = None
+    dry_run_wallet: float | None = None
+    max_open_trades: int | None = None
+
+
+class OptimizerConfigResponse(BaseModel):
+    """Full state returned by GET and PUT /api/optimizer/config."""
+
+    last_strategy: str
+    default_timeframe: str
+    last_timerange_preset: str
+    default_timerange: str
+    default_pairs: str
+    pairs_list: list[str]
+    dry_run_wallet: float
+    max_open_trades: int
 
 
 class ExportResult(BaseModel):

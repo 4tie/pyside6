@@ -134,6 +134,27 @@ export interface StrategyParamsResponse {
   params: ParamDef[];
 }
 
+export interface OptimizerConfigResponse {
+  last_strategy: string;
+  default_timeframe: string;
+  last_timerange_preset: string;
+  default_timerange: string;
+  default_pairs: string;
+  pairs_list: string[];
+  dry_run_wallet: number;
+  max_open_trades: number;
+}
+
+export interface OptimizerConfigUpdate {
+  last_strategy?: string | null;
+  default_timeframe?: string | null;
+  last_timerange_preset?: string | null;
+  default_timerange?: string | null;
+  default_pairs?: string | null;
+  dry_run_wallet?: number | null;
+  max_open_trades?: number | null;
+}
+
 export interface OptimizerSessionSummary {
   session_id: string;
   strategy_name?: string;
