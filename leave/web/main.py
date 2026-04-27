@@ -95,6 +95,20 @@ async def react_spa(full_path: str):
     return {"error": "React app build not found", "path": full_path}
 
 
+@app.get("/{full_path:path}")
+async def catch_all(full_path: str):
+    """Catch-all route to serve React SPA for client-side routing."""
+    # Skip API routes and static files
+    if full_path.startswith("api/") or full_path.startswith("static/") or full_path.startswith("_next/") or full_path.startswith("app/"):
+        return {"error": "Not found", "path": full_path}
+    
+    # Serve React index.html for all other routes (client-side routing)
+    react_index_path = react_dist_dir / "index.html"
+    if react_index_path.exists():
+        return _no_cache_file_response(react_index_path)
+    return {"error": "React app build not found", "path": full_path}
+
+
 @app.get("/api/health")
 async def health_check():
     """Health check endpoint."""
