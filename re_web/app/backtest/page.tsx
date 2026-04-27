@@ -189,7 +189,7 @@ export default function BacktestPage() {
   const randomizePairs = () => {
     if (!pairsData) return;
     const allPairs = pairsData.all_pairs.filter(p => !lockedPairs.has(p));
-    const count = Math.min(5, allPairs.length);
+    const count = Math.min(formData.max_open_trades || 5, allPairs.length);
     const shuffled = [...allPairs].sort(() => Math.random() - 0.5);
     const newSelected = [...lockedPairs, ...shuffled.slice(0, count)];
     setSelectedPairs(newSelected);
