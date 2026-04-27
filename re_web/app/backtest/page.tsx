@@ -323,7 +323,7 @@ export default function BacktestPage() {
                       disabled={isRunning}
                     >
                       <SelectTrigger id="timeframe">
-                        <SelectValue />
+                        <SelectValue placeholder="Select timeframe" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="1m">1m</SelectItem>

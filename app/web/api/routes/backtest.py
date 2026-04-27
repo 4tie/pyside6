@@ -342,7 +342,7 @@ async def get_backtest_runs(
     order: str = Query("desc"),
     limit: int = Query(50),
     offset: int = Query(0),
-) -> dict:
+):
     """Get all backtest runs with filtering and sorting."""
     if backtest_results_dir(settings, required=False) is None:
         return {"runs": [], "total": 0, "message": "User data path not configured"}

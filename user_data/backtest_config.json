@@ -1,11 +1,12 @@
 {
   "dry_run_wallet": 80.0,
-  "max_open_trades": 2,
+  "max_open_trades": 4,
   "pairs": [
     "ADA/USDT",
-    "ETH/USDT"
+    "ETH/USDT",
+    "XRP/USDT"
   ],
   "strategy": "yty",
   "timeframe": "5m",
-  "timerange": "20250510-"
+  "timerange": "20250427-20260427"
 }
