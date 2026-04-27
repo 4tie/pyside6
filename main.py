@@ -79,13 +79,32 @@ def _terminate_process(name: str, proc: subprocess.Popen) -> None:
         proc.wait(timeout=5)
 
 
-def run_web_stack(host: str, backend_port: int, frontend_port: int) -> int:
+def _env_int(name: str, default: int) -> int:
+    value = os.getenv(name)
+    if value is None or value.strip() == "":
+        return default
+    try:
+        return int(value)
+    except ValueError:
+        raise ValueError(f"{name} must be an integer, got {value!r}") from None
+
+
+def _browser_host(bind_host: str) -> str:
+    return "127.0.0.1" if bind_host == "0.0.0.0" else bind_host
+
+
+def run_web_stack(
+    backend_host: str,
+    backend_port: int,
+    frontend_host: str,
+    frontend_port: int,
+) -> int:
     """Run FastAPI backend and Next.js frontend as supervised child processes."""
     if not RE_WEB_DIR.exists():
         raise FileNotFoundError(f"Frontend directory not found: {RE_WEB_DIR}")
 
-    backend_url = f"http://{host}:{backend_port}"
-    frontend_url = f"http://{host}:{frontend_port}"
+    backend_url = f"http://{_browser_host(backend_host)}:{backend_port}"
+    frontend_url = f"http://{_browser_host(frontend_host)}:{frontend_port}"
     frontend_env = dict(os.environ)
     frontend_env["NEXT_PUBLIC_API_URL"] = f"{backend_url}/api"
 
@@ -97,7 +116,7 @@ def run_web_stack(host: str, backend_port: int, frontend_port: int) -> int:
             "uvicorn",
             "app.web.main:app",
             "--host",
-            host,
+            backend_host,
             "--port",
             str(backend_port),
         ],
@@ -111,7 +130,7 @@ def run_web_stack(host: str, backend_port: int, frontend_port: int) -> int:
             "dev",
             "--",
             "--hostname",
-            host,
+            frontend_host,
             "--port",
             str(frontend_port),
         ],
@@ -157,9 +176,28 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         action="store_true",
         help="Run the existing PySide6 desktop app instead of the web stack.",
     )
-    parser.add_argument("--host", default="127.0.0.1", help="Host for backend and frontend.")
-    parser.add_argument("--backend-port", type=int, default=8000, help="FastAPI backend port.")
-    parser.add_argument("--frontend-port", type=int, default=3000, help="Next.js frontend port.")
+    parser.add_argument(
+        "--host",
+        default=os.getenv("WEB_HOST", "127.0.0.1"),
+        help="FastAPI backend host. Defaults to WEB_HOST or 127.0.0.1.",
+    )
+    parser.add_argument(
+        "--backend-port",
+        type=int,
+        default=_env_int("WEB_PORT", 8000),
+        help="FastAPI backend port. Defaults to WEB_PORT or 8000.",
+    )
+    parser.add_argument(
+        "--frontend-host",
+        default=os.getenv("FRONTEND_HOST", os.getenv("WEB_HOST", "127.0.0.1")),
+        help="Next.js frontend host. Defaults to FRONTEND_HOST, WEB_HOST, or 127.0.0.1.",
+    )
+    parser.add_argument(
+        "--frontend-port",
+        type=int,
+        default=_env_int("FRONTEND_PORT", 3000),
+        help="Next.js frontend port. Defaults to FRONTEND_PORT or 3000.",
+    )
     return parser.parse_args(argv)
 
 
@@ -168,7 +206,14 @@ def main() -> None:
     if args.desktop:
         run_desktop()
         return
-    sys.exit(run_web_stack(args.host, args.backend_port, args.frontend_port))
+    sys.exit(
+        run_web_stack(
+            args.host,
+            args.backend_port,
+            args.frontend_host,
+            args.frontend_port,
+        )
+    )
 
 
 if __name__ == "__main__":

@@ -606,7 +606,7 @@ export default function BacktestPage() {
                   {/* Recent Trades */}
                   {latestRun.trades && latestRun.trades.length > 0 && (
                     <div>
-                      <h4 className="text-sm font-medium mb-2">Recent Trades (Last 10)</h4>
+                      <h4 className="text-sm font-medium mb-2">Recent Runs for Strategy</h4>
                       <Table>
                         <TableHeader>
                           <TableRow>
