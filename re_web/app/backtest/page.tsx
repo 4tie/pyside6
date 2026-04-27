@@ -112,11 +112,14 @@ export default function BacktestPage() {
       });
       setSelectedPairs(savedConfig.pairs || []);
     }
-    // Load favorites from pairs data
-    if (pairsData?.favorites) {
+  }, [savedConfig]);
+
+  // Load favorites from pairs data
+  useEffect(() => {
+    if (pairsData?.favorites && favorites.length === 0) {
       setFavorites(pairsData.favorites);
     }
-  }, [savedConfig, pairsData]);
+  }, [pairsData]);
 
   // Save config mutation
   const saveConfigMutation = useMutation({
@@ -169,7 +172,7 @@ export default function BacktestPage() {
   const toggleFavorite = (pair: string) => {
     const newFavorites = favorites.includes(pair)
       ? favorites.filter(p => p !== pair)
-      : [...favorites, pair];
+      : [...favorites.filter(p => p !== pair), pair]; // Ensure no duplicates
     setFavorites(newFavorites);
     api.saveFavorites(newFavorites);
   };
