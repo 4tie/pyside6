@@ -1,0 +1,31 @@
+{
+  "backtest_end": "2026-04-27 00:00:00",
+  "backtest_start": "2026-03-28 00:00:00",
+  "calmar": -28.0891,
+  "expectancy": -0.2441,
+  "final_balance": 77.5594,
+  "losses": 3,
+  "max_drawdown_abs": 5.7631,
+  "max_drawdown_pct": 6.9166,
+  "pairs": [
+    "ADA/USDT",
+    "HOME/USDT",
+    "XRP/USDT"
+  ],
+  "profit_factor": 0.5765,
+  "profit_total_abs": -2.4406,
+  "profit_total_pct": -3.0507,
+  "run_id": "run_2026-04-27_11-19-24_8afc7a",
+  "sharpe": -1.1243,
+  "sortino": -1.0133,
+  "start_time": "2026-04-27T11:19:24.298770",
+  "starting_balance": 80.0,
+  "status": "completed",
+  "strategy": "yesv3",
+  "timeframe": "4h",
+  "timerange": "20260328-20260427",
+  "trades_count": 10,
+  "version_id": null,
+  "win_rate_pct": 70.0,
+  "wins": 7
+}

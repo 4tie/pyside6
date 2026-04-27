@@ -2,6 +2,7 @@
 
 Provides endpoints to run backtests, download data, manage pairs, and persist configuration.
 """
+import re
 from pathlib import Path
 from typing import List, Optional
 
@@ -49,54 +50,26 @@ def get_current_run_id() -> Optional[str]:
     """Get the current running backtest run ID."""
     return _current_run_id
 
-# Major trading pairs from Binance (organized by quote asset)
-COMMON_PAIRS = [
-    # USDT pairs - major coins
+# Hardcoded trading pairs - organized by category
+TRADING_PAIRS = [
+    # Tier 1: Major cryptocurrencies
     "BTC/USDT", "ETH/USDT", "BNB/USDT", "SOL/USDT", "XRP/USDT",
     "ADA/USDT", "DOGE/USDT", "AVAX/USDT", "DOT/USDT", "LINK/USDT",
+    # Tier 2: Established altcoins
     "MATIC/USDT", "UNI/USDT", "LTC/USDT", "ATOM/USDT", "NEAR/USDT",
     "PEPE/USDT", "SHIB/USDT", "FET/USDT", "INJ/USDT", "OP/USDT",
     "AR/USDT", "APT/USDT", "SUI/USDT", "SEI/USDT", "TIA/USDT",
-    "WLD/USDT", "BLUR/USDT", "GMX/USDT", "GRT/USDT", "ENS/USDT",
-    "SNX/USDT", "CRV/USDT", "AAVE/USDT", "COMP/USDT", "MKR/USDT",
-    "YFI/USDT", "1INCH/USDT", "ZRX/USDT", "BAND/USDT", "KAVA/USDT",
-    "RUNE/USDT", "THETA/USDT", "MANA/USDT", "SAND/USDT", "AXS/USDT",
-    "GALA/USDT", "IMX/USDT", "APE/USDT", "STX/USDT", "ROSE/USDT",
-    # USDT pairs - mid-cap
-    "ALGO/USDT", "VET/USDT", "ICP/USDT", "HOT/USDT", "CHZ/USDT",
-    "FIL/USDT", "XTZ/USDT", "EOS/USDT", "TRX/USDT", "XLM/USDT",
-    "BCH/USDT", "ETC/USDT", "DASH/USDT", "ZEC/USDT", "XMR/USDT",
-    # USDT pairs - additional
+    "WLD/USDT", "GMX/USDT", "GRT/USDT", "ENS/USDT", "AAVE/USDT",
+    "MKR/USDT", "YFI/USDT", "CRV/USDT", "SNX/USDT", "COMP/USDT",
+    # Tier 3: Mid-cap gems
+    "THETA/USDT", "MANA/USDT", "SAND/USDT", "AXS/USDT", "GALA/USDT",
+    "IMX/USDT", "APE/USDT", "STX/USDT", "ROSE/USDT", "ALGO/USDT",
+    "VET/USDT", "ICP/USDT", "FIL/USDT", "XTZ/USDT", "EOS/USDT",
+    "TRX/USDT", "XLM/USDT", "BCH/USDT", "ETC/USDT", "FTM/USDT",
+    # Tier 4: Emerging tokens
     "QNT/USDT", "ZIL/USDT", "CELO/USDT", "FLOW/USDT", "HBAR/USDT",
-    "IOTA/USDT", "XEM/USDT", "WAVES/USDT", "KSM/USDT", "SC/USDT",
-    "BAT/USDT", "NEXO/USDT", "CRO/USDT", "LUNC/USDT", "FTM/USDT",
-    "MASK/USDT", "CELR/USDT", "AXL/USDT", "GLM/USDT", "RNDR/USDT",
-    "TFUEL/USDT", "ONG/USDT", "COTI/USDT", "NMR/USDT", "LRC/USDT",
-    # USDC pairs
-    "BTC/USDC", "ETH/USDC", "SOL/USDC", "XRP/USDC", "ADA/USDC",
-    "DOGE/USDC", "AVAX/USDC", "DOT/USDC", "LINK/USDC", "MATIC/USDC",
-    "BNB/USDC", "LTC/USDC", "ATOM/USDC", "UNI/USDC", "AAVE/USDC",
-    # BTC pairs
-    "ETH/BTC", "SOL/BTC", "BNB/BTC", "XRP/BTC", "ADA/BTC",
-    "DOGE/BTC", "DOT/BTC", "LINK/BTC", "AVAX/BTC", "MATIC/BTC",
-    "LTC/BTC", "ATOM/BTC", "UNI/BTC", "AAVE/BTC", "NEAR/BTC",
-    # ETH pairs
-    "SOL/ETH", "LINK/ETH", "MATIC/ETH", "UNI/ETH", "AAVE/ETH",
-    "BNB/ETH", "AVAX/ETH", "DOT/ETH", "ADA/ETH", "LINK/ETH",
-    # BNB pairs
-    "ETH/BNB", "SOL/BNB", "ADA/BNB", "XRP/BNB", "DOGE/BNB",
-    "AVAX/BNB", "DOT/BNB", "LINK/BNB", "MATIC/BNB", "ATOM/BNB",
-    # BUSD pairs
-    "BTC/BUSD", "ETH/BUSD", "BNB/BUSD", "SOL/BUSD", "XRP/BUSD",
-    "ADA/BUSD", "DOGE/BUSD", "AVAX/BUSD", "DOT/BUSD", "LINK/BUSD",
-    # TUSD pairs
-    "BTC/TUSD", "ETH/TUSD", "BNB/TUSD", "USDT/TUSD", "USDC/TUSD",
-    # FDUSD pairs
-    "BTC/FDUSD", "ETH/FDUSD", "BNB/FDUSD", "SOL/FDUSD", "USDT/FDUSD",
-    # Other quote assets
-    "BTC/DAI", "ETH/DAI", "USDT/DAI", "USDC/DAI",
-    "BTC/PAX", "ETH/PAX", "USDT/PAX",
-    "BTC/USDP", "ETH/USDP",
+    "IOTA/USDT", "WAVES/USDT", "KSM/USDT", "BAT/USDT", "LRC/USDT",
+    "RNDR/USDT", "MASK/USDT", "COTI/USDT", "NMR/USDT", "CELR/USDT",
 ]
 
 
@@ -168,20 +141,24 @@ async def download_data(
 async def get_pairs(settings: SettingsServiceDep) -> PairsResponse:
     """Get available trading pairs and favorites."""
     app_settings = settings.load_settings()
-    if not app_settings.user_data_path:
-        return PairsResponse(pairs=COMMON_PAIRS, favorites=[])
-    
+
+    # Use hardcoded trading pairs only
+    all_pairs = TRADING_PAIRS.copy()
+
     # Load favorites from data folder
-    favorites_file = Path(app_settings.user_data_path) / "favorites.json"
     favorites = []
-    if favorites_file.exists():
-        try:
-            data = parse_json_file(favorites_file)
-            favorites = data.get("favorites", [])
-        except Exception:
-            pass
-    
-    return PairsResponse(pairs=COMMON_PAIRS, favorites=favorites)
+    if app_settings.user_data_path:
+        favorites_file = Path(app_settings.user_data_path) / "favorites.json"
+        if favorites_file.exists():
+            try:
+                data = parse_json_file(favorites_file)
+                favorites = data.get("favorites", [])
+                # Filter favorites to only include valid pairs from our hardcoded list
+                favorites = [f for f in favorites if f in TRADING_PAIRS]
+            except Exception:
+                pass
+
+    return PairsResponse(pairs=all_pairs, favorites=favorites)
 
 
 @router.post("/favorites", response_model=FavoritesResponse)
@@ -229,11 +206,23 @@ async def execute_backtest(
         
         # Build the backtest command
         try:
+            # Clean up pairs: remove leading slashes, ensure BASE/QUOTE format
+            cleaned_pairs = []
+            if request.pairs:
+                for pair in request.pairs:
+                    if not pair or not isinstance(pair, str):
+                        continue
+                    # Remove leading slash and ensure valid format
+                    clean_pair = pair.lstrip('/')
+                    # Only include if it matches BASE/QUOTE format
+                    if re.match(r'^[A-Z][A-Z0-9]*\/[A-Z][A-Z0-9]*$', clean_pair):
+                        cleaned_pairs.append(clean_pair)
+
             command = backtest_service.build_command(
                 strategy_name=request.strategy,
                 timeframe=request.timeframe,
                 timerange=request.timerange,
-                pairs=request.pairs,
+                pairs=cleaned_pairs,
                 max_open_trades=request.max_open_trades,
                 dry_run_wallet=request.dry_run_wallet,
             )

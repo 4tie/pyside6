@@ -2329,6 +2329,68 @@
     "yesv3": {
       "runs": [
         {
+          "backtest_end": "2026-04-27 00:00:00",
+          "backtest_start": "2026-03-28 00:00:00",
+          "calmar": -28.0891,
+          "expectancy": -0.2441,
+          "final_balance": 77.5594,
+          "losses": 3,
+          "max_drawdown_abs": 5.7631,
+          "max_drawdown_pct": 6.9166,
+          "pairs": [
+            "ADA/USDT",
+            "HOME/USDT",
+            "XRP/USDT"
+          ],
+          "profit_factor": 0.5765,
+          "profit_total_abs": -2.4406,
+          "profit_total_pct": -3.0507,
+          "run_dir": "yesv3/run_2026-04-27_11-19-24_8afc7a",
+          "run_id": "run_2026-04-27_11-19-24_8afc7a",
+          "saved_at": "2026-04-27T11:19:24.304690",
+          "sharpe": -1.1243,
+          "sortino": -1.0133,
+          "starting_balance": 80.0,
+          "strategy": "yesv3",
+          "timeframe": "4h",
+          "timerange": "20260328-20260427",
+          "trades_count": 10,
+          "version_id": null,
+          "win_rate_pct": 70.0,
+          "wins": 7
+        },
+        {
+          "backtest_end": "2026-04-27 00:00:00",
+          "backtest_start": "2025-04-27 00:00:00",
+          "calmar": 11.1303,
+          "expectancy": 0.1675,
+          "final_balance": 97.4216,
+          "losses": 16,
+          "max_drawdown_abs": 8.887,
+          "max_drawdown_pct": 10.241,
+          "pairs": [
+            "ADA/USDT",
+            "HOME/USDT",
+            "XRP/USDT"
+          ],
+          "profit_factor": 1.5811,
+          "profit_total_abs": 17.4216,
+          "profit_total_pct": 21.7769,
+          "run_dir": "yesv3/run_2026-04-27_11-15-25_e646bb",
+          "run_id": "run_2026-04-27_11-15-25_e646bb",
+          "saved_at": "2026-04-27T11:15:25.245292",
+          "sharpe": 0.8805,
+          "sortino": 0.6404,
+          "starting_balance": 80.0,
+          "strategy": "yesv3",
+          "timeframe": "4h",
+          "timerange": "20250427-20260427",
+          "trades_count": 104,
+          "version_id": null,
+          "win_rate_pct": 84.62,
+          "wins": 88
+        },
+        {
           "backtest_end": "2026-04-17 00:00:00",
           "backtest_start": "2025-04-22 00:00:00",
           "calmar": 10.3001,
@@ -3956,5 +4018,5 @@
       ]
     }
   },
-  "updated_at": "2026-04-26T18:54:47.777572"
+  "updated_at": "2026-04-27T11:19:24.304753"
 }
