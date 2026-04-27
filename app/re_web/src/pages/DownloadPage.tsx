@@ -2,8 +2,9 @@ import { Download, Plus, Square, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { api } from '../api/client';
 import { StatusBadge } from '../components/StatusBadge';
+import { TimerangePicker } from '../components/TimerangePicker';
 import { useAutosave } from '../hooks/useAutosave';
-import type { PreferenceSection } from '../types/api';
+import type { SharedInputsConfig } from '../types/api';
 
 const TIMEFRAMES = ['1m', '3m', '5m', '15m', '30m', '1h', '4h', '1d'];
 const COMMON_PAIRS = [
@@ -13,13 +14,15 @@ const COMMON_PAIRS = [
 ];
 
 export function DownloadPage() {
-  const [prefs, setPrefs] = useState<PreferenceSection>({
+  const [sharedPrefs, setSharedPrefs] = useState<SharedInputsConfig>({
     default_timeframe: '5m',
     default_timerange: '',
+    last_timerange_preset: '30d',
     default_pairs: '',
-    prepend: false,
-    erase: false,
+    dry_run_wallet: 80,
+    max_open_trades: 2,
   });
+  const [downloadPrefs, setDownloadPrefs] = useState({ prepend: false, erase: false });
   const [pairs, setPairs] = useState<string[]>([]);
   const [pairInput, setPairInput] = useState('');
   const [ready, setReady] = useState(false);
@@ -29,9 +32,18 @@ export function DownloadPage() {
 
   useEffect(() => {
     void api.settings().then((s) => {
+      const si = s.shared_inputs;
       const dp = s.download_preferences;
-      setPrefs(dp);
-      const savedPairs = (dp.default_pairs ?? '')
+      setSharedPrefs({
+        default_timeframe: si.default_timeframe,
+        default_timerange: si.default_timerange,
+        last_timerange_preset: si.last_timerange_preset,
+        default_pairs: si.default_pairs,
+        dry_run_wallet: si.dry_run_wallet,
+        max_open_trades: si.max_open_trades,
+      });
+      setDownloadPrefs({ prepend: dp.prepend ?? false, erase: dp.erase ?? false });
+      const savedPairs = (si.default_pairs ?? '')
         .split(',')
         .map((p) => p.trim())
         .filter(Boolean);
@@ -40,14 +52,22 @@ export function DownloadPage() {
     });
   }, []);
 
-  // Sync pairs list back into prefs for autosave
-  const prefsWithPairs: PreferenceSection = { ...prefs, default_pairs: pairs.join(', ') };
+  // Sync pairs list back into sharedPrefs for autosave
+  const sharedPrefsWithPairs: SharedInputsConfig = { ...sharedPrefs, default_pairs: pairs.join(', ') };
 
-  const saveState = useAutosave(
-    prefsWithPairs,
+  const saveStateShared = useAutosave(
+    sharedPrefsWithPairs,
+    (value) => api.updateSharedInputs(value),
+    { enabled: ready, delay: 500 }
+  );
+
+  const saveStateDownload = useAutosave(
+    downloadPrefs,
     (value) => api.updateSettings({ download_preferences: value }),
     { enabled: ready, delay: 500 }
   );
+
+  const saveState = saveStateShared === 'saving' || saveStateDownload === 'saving' ? 'saving' : saveStateShared;
 
   function addPair() {
     const p = pairInput.trim().toUpperCase();
@@ -74,8 +94,8 @@ export function DownloadPage() {
     setStatus({ status: 'running' });
     try {
       const response = await api.downloadData({
-        timeframe: prefs.default_timeframe ?? '5m',
-        timerange: prefs.default_timerange || undefined,
+        timeframe: sharedPrefs.default_timeframe ?? '5m',
+        timerange: sharedPrefs.default_timerange || undefined,
         pairs,
       });
       setLog((prev) => prev + (response.message ?? '') + '\n');
@@ -132,8 +152,8 @@ export function DownloadPage() {
           <label>
             Timeframe
             <select
-              value={prefs.default_timeframe ?? '5m'}
-              onChange={(e) => setPrefs({ ...prefs, default_timeframe: e.target.value })}
+              value={sharedPrefs.default_timeframe ?? '5m'}
+              onChange={(e) => setSharedPrefs({ ...sharedPrefs, default_timeframe: e.target.value })}
             >
               {TIMEFRAMES.map((tf) => (
                 <option key={tf} value={tf}>
@@ -144,25 +164,25 @@ export function DownloadPage() {
           </label>
           <label>
             Timerange
-            <input
-              value={prefs.default_timerange ?? ''}
-              onChange={(e) => setPrefs({ ...prefs, default_timerange: e.target.value })}
+            <TimerangePicker
+              value={sharedPrefs.default_timerange ?? ''}
+              onChange={(value) => setSharedPrefs({ ...sharedPrefs, default_timerange: value })}
               placeholder="20240101-20241231"
             />
           </label>
           <label className="check-row" style={{ gridColumn: '1 / -1' }}>
             <input
               type="checkbox"
-              checked={prefs.prepend ?? false}
-              onChange={(e) => setPrefs({ ...prefs, prepend: e.target.checked })}
+              checked={downloadPrefs.prepend ?? false}
+              onChange={(e) => setDownloadPrefs({ ...downloadPrefs, prepend: e.target.checked })}
             />
             Prepend data (fill gaps at start)
           </label>
           <label className="check-row" style={{ gridColumn: '1 / -1' }}>
             <input
               type="checkbox"
-              checked={prefs.erase ?? false}
-              onChange={(e) => setPrefs({ ...prefs, erase: e.target.checked })}
+              checked={downloadPrefs.erase ?? false}
+              onChange={(e) => setDownloadPrefs({ ...downloadPrefs, erase: e.target.checked })}
             />
             Erase existing data before download
           </label>

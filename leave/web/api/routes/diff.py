@@ -11,8 +11,8 @@ from app.core.backtests.results_index import IndexStore
 from app.core.backtests.results_store import RunStore
 from app.core.services.settings_service import SettingsService
 from app.core.services.version_manager_service import VersionManagerService
-from app.web.dependencies import SettingsServiceDep
-from app.web.models import DiffResponse, RollbackRequest, RollbackResponse
+from leave.web.dependencies import SettingsServiceDep
+from leave.web.models import DiffResponse, RollbackRequest, RollbackResponse
 
 router = APIRouter()
 

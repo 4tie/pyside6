@@ -10,6 +10,7 @@ import type {
   RunResponse,
   SettingsResponse,
   SettingsUpdate,
+  SharedInputsConfig,
   StrategyParamsResponse,
   StrategyResponse,
   TrialListResponse,
@@ -119,6 +120,13 @@ export const api = {
     request<OptimizerConfigResponse>('/api/optimizer/config'),
   updateOptimizerConfig: (payload: OptimizerConfigUpdate) =>
     request<OptimizerConfigResponse>('/api/optimizer/config', {
+      method: 'PUT',
+      body: JSON.stringify(payload)
+    }),
+  getSharedInputs: () =>
+    request<SharedInputsConfig>('/api/shared-inputs'),
+  updateSharedInputs: (payload: Partial<SharedInputsConfig>) =>
+    request<SharedInputsConfig>('/api/shared-inputs', {
       method: 'PUT',
       body: JSON.stringify(payload)
     })

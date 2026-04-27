@@ -10,7 +10,7 @@ from fastapi import APIRouter, HTTPException, BackgroundTasks, Depends
 from app.core.services.backtest_service import BacktestService
 from app.core.services.download_data_service import DownloadDataService
 from app.core.services.settings_service import SettingsService
-from app.web.dependencies import (
+from leave.web.dependencies import (
     SettingsServiceDep,
     BacktestServiceDep,
     ProcessServiceDep,
@@ -18,7 +18,7 @@ from app.web.dependencies import (
 )
 from app.core.services.process_service import ProcessService
 from app.core.parsing.json_parser import parse_json_file, write_json_file_atomic, ParseError
-from app.web.models import (
+from leave.web.models import (
     BacktestRequest,
     DownloadDataRequest,
     DownloadDataResponse,

@@ -28,6 +28,7 @@ class SettingsService:
             "strategy_lab",
             "terminal_preferences",
             "ai",
+            "shared_inputs",
         }
     )
 

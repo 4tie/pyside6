@@ -18,7 +18,7 @@ from app.core.services.loop_service import LoopService
 from app.core.services.improve_service import ImproveService
 from app.core.services.process_service import ProcessService
 from app.core.services.rollback_service import RollbackService
-from app.web.process_output_bus import ProcessOutputBus
+from leave.web.process_output_bus import ProcessOutputBus
 
 
 @lru_cache

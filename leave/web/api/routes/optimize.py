@@ -8,7 +8,7 @@ from fastapi import APIRouter, HTTPException, BackgroundTasks, Depends
 
 from app.core.services.optimize_service import OptimizeService
 from app.core.services.settings_service import SettingsService
-from app.web.dependencies import (
+from leave.web.dependencies import (
     SettingsServiceDep,
     OptimizeServiceDep,
     ProcessServiceDep,

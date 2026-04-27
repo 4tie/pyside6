@@ -23,6 +23,15 @@ export interface PreferenceSection {
   paired_favorites?: string[];
 }
 
+export interface SharedInputsConfig {
+  default_timeframe: string;
+  default_timerange: string;
+  last_timerange_preset: string;
+  default_pairs: string;
+  dry_run_wallet: number;
+  max_open_trades: number;
+}
+
 export interface SettingsResponse {
   user_data_path: string;
   venv_path: string;
@@ -33,6 +42,7 @@ export interface SettingsResponse {
   optimize_preferences: PreferenceSection;
   download_preferences: PreferenceSection;
   optimizer_preferences: PreferenceSection;
+  shared_inputs: SharedInputsConfig;
 }
 
 export type SettingsUpdate = Partial<SettingsResponse>;

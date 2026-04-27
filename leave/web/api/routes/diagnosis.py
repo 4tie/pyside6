@@ -12,8 +12,8 @@ from app.core.backtests.results_store import RunStore
 from app.core.services.diagnosis_service import DiagnosisService
 from app.core.services.pair_analysis_service import PairAnalysisService
 from app.core.services.settings_service import SettingsService
-from app.web.dependencies import SettingsServiceDep
-from app.web.models import DiagnosisResponse
+from leave.web.dependencies import SettingsServiceDep
+from leave.web.models import DiagnosisResponse
 
 router = APIRouter()
 

@@ -4,9 +4,10 @@ import { api } from '../api/client';
 import { MetricCard } from '../components/MetricCard';
 import { StatusBadge } from '../components/StatusBadge';
 import { Tabs } from '../components/Tabs';
+import { TimerangePicker } from '../components/TimerangePicker';
 import { useAutosave } from '../hooks/useAutosave';
 import { useSSE } from '../hooks/useSSE';
-import type { BacktestStatus, PreferenceSection, RunDetailResponse, RunResponse, StrategyResponse } from '../types/api';
+import type { BacktestStatus, RunDetailResponse, RunResponse, SharedInputsConfig, StrategyResponse } from '../types/api';
 import { csvToList, formatDate, formatNumber, formatPct } from '../utils/format';
 
 const TIMEFRAMES = ['1m', '3m', '5m', '15m', '30m', '1h', '4h', '1d'];
@@ -543,10 +544,11 @@ export function BacktestPage() {
   const [strategies, setStrategies] = useState<StrategyResponse[]>([]);
   const [availablePairs, setAvailablePairs] = useState<string[]>([]);
   const [runs, setRuns] = useState<RunResponse[]>([]);
-  const [prefs, setPrefs] = useState<PreferenceSection>({
-    last_strategy: '',
+  const [lastStrategy, setLastStrategy] = useState('');
+  const [sharedPrefs, setSharedPrefs] = useState<SharedInputsConfig>({
     default_timeframe: '5m',
     default_timerange: '',
+    last_timerange_preset: '30d',
     default_pairs: 'BTC/USDT',
     dry_run_wallet: 80,
     max_open_trades: 2
@@ -570,7 +572,8 @@ export function BacktestPage() {
         api.pairs(),
         api.runs().catch(() => [] as RunResponse[]),
       ]);
-      setPrefs((current) => ({ ...current, ...settings.backtest_preferences }));
+      setSharedPrefs((current) => ({ ...current, ...settings.shared_inputs }));
+      setLastStrategy(settings.backtest_preferences.last_strategy ?? '');
       setStrategies(strategyList);
       setAvailablePairs(pairs.pairs);
       setRuns(runList);
@@ -580,8 +583,13 @@ export function BacktestPage() {
   }, []);
 
   const saveState = useAutosave(
-    prefs,
-    (value) => api.updateSettings({ backtest_preferences: value }),
+    sharedPrefs,
+    (value) => api.updateSharedInputs(value),
+    { enabled: ready, delay: 500 }
+  );
+  useAutosave(
+    lastStrategy,
+    (value) => api.updateSettings({ backtest_preferences: { last_strategy: value } }),
     { enabled: ready, delay: 500 }
   );
 
@@ -642,9 +650,9 @@ export function BacktestPage() {
     if (logRef.current) logRef.current.scrollTop = logRef.current.scrollHeight;
   }, [log]);
 
-  const selectedPairs = useMemo(() => csvToList(prefs.default_pairs), [prefs.default_pairs]);
+  const selectedPairs = useMemo(() => csvToList(sharedPrefs.default_pairs), [sharedPrefs.default_pairs]);
 
-  const hasStrategy = Boolean(prefs.last_strategy);
+  const hasStrategy = Boolean(lastStrategy);
   const hasPairs = selectedPairs.length > 0;
   const isRunning = status.status === 'running';
 
@@ -655,7 +663,7 @@ export function BacktestPage() {
   function applyPreset(p: string) {
     setPreset(p);
     if (p !== 'Custom' && PRESETS[p]) {
-      setPrefs((prev) => ({ ...prev, default_timerange: buildTimerange(PRESETS[p]) }));
+      setSharedPrefs((prev) => ({ ...prev, default_timerange: buildTimerange(PRESETS[p]) }));
     }
   }
 
@@ -668,12 +676,12 @@ export function BacktestPage() {
     setDiff(null);
     try {
       const response = await api.executeBacktest({
-        strategy: prefs.last_strategy || strategies[0]?.name || '',
-        timeframe: prefs.default_timeframe || '5m',
-        timerange: prefs.default_timerange || undefined,
+        strategy: lastStrategy || strategies[0]?.name || '',
+        timeframe: sharedPrefs.default_timeframe || '5m',
+        timerange: sharedPrefs.default_timerange || undefined,
         pairs: selectedPairs,
-        dry_run_wallet: Number(prefs.dry_run_wallet ?? 80),
-        max_open_trades: Number(prefs.max_open_trades ?? 2)
+        dry_run_wallet: Number(sharedPrefs.dry_run_wallet ?? 80),
+        max_open_trades: Number(sharedPrefs.max_open_trades ?? 2)
       });
       setLog(`$ freqtrade backtesting ...\n\n`);
       if (response.status !== 'started') {
@@ -701,8 +709,8 @@ export function BacktestPage() {
   async function downloadData() {
     try {
       await api.downloadData({
-        timeframe: prefs.default_timeframe || '5m',
-        timerange: prefs.default_timerange || undefined,
+        timeframe: sharedPrefs.default_timeframe || '5m',
+        timerange: sharedPrefs.default_timerange || undefined,
         pairs: selectedPairs
       });
     } catch { /* errors surfaced via status */ }
@@ -745,8 +753,8 @@ export function BacktestPage() {
           <label>
             Strategy
             <select
-              value={prefs.last_strategy ?? ''}
-              onChange={(e) => setPrefs({ ...prefs, last_strategy: e.target.value })}
+              value={lastStrategy}
+              onChange={(e) => setLastStrategy(e.target.value)}
             >
               <option value="">Select strategy</option>
               {strategies.map((s) => (
@@ -757,8 +765,8 @@ export function BacktestPage() {
           <label>
             Timeframe
             <select
-              value={prefs.default_timeframe ?? '5m'}
-              onChange={(e) => setPrefs({ ...prefs, default_timeframe: e.target.value })}
+              value={sharedPrefs.default_timeframe ?? '5m'}
+              onChange={(e) => setSharedPrefs({ ...sharedPrefs, default_timeframe: e.target.value })}
             >
               {TIMEFRAMES.map((tf) => <option key={tf} value={tf}>{tf}</option>)}
             </select>
@@ -771,9 +779,9 @@ export function BacktestPage() {
           </label>
           <label>
             Timerange
-            <input
-              value={prefs.default_timerange ?? ''}
-              onChange={(e) => { setPreset('Custom'); setPrefs({ ...prefs, default_timerange: e.target.value }); }}
+            <TimerangePicker
+              value={sharedPrefs.default_timerange ?? ''}
+              onChange={(value) => { setPreset('Custom'); setSharedPrefs({ ...sharedPrefs, default_timerange: value }); }}
               placeholder="20240101-20241231"
             />
           </label>
@@ -781,16 +789,16 @@ export function BacktestPage() {
             Wallet
             <input
               type="number" min="0"
-              value={prefs.dry_run_wallet ?? 80}
-              onChange={(e) => setPrefs({ ...prefs, dry_run_wallet: Number(e.target.value) })}
+              value={sharedPrefs.dry_run_wallet ?? 80}
+              onChange={(e) => setSharedPrefs({ ...sharedPrefs, dry_run_wallet: Number(e.target.value) })}
             />
           </label>
           <label>
             Max trades
             <input
               type="number" min="1"
-              value={prefs.max_open_trades ?? 2}
-              onChange={(e) => setPrefs({ ...prefs, max_open_trades: Number(e.target.value) })}
+              value={sharedPrefs.max_open_trades ?? 2}
+              onChange={(e) => setSharedPrefs({ ...sharedPrefs, max_open_trades: Number(e.target.value) })}
             />
           </label>
         </form>
@@ -813,7 +821,7 @@ export function BacktestPage() {
                   const next = selectedPairs.includes(pair)
                     ? selectedPairs.filter((p) => p !== pair)
                     : [...selectedPairs, pair];
-                  setPrefs({ ...prefs, default_pairs: next.join(', ') });
+                  setSharedPrefs({ ...sharedPrefs, default_pairs: next.join(', ') });
                 }}
               >
                 {pair}

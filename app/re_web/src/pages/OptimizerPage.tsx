@@ -2,6 +2,7 @@ import { Play, SlidersHorizontal, Square } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { api } from '../api/client';
 import { StatusBadge } from '../components/StatusBadge';
+import { TimerangePicker } from '../components/TimerangePicker';
 import { useAutosave } from '../hooks/useAutosave';
 import { useSSE } from '../hooks/useSSE';
 import type {
@@ -9,24 +10,22 @@ import type {
   OptimizerConfigUpdate,
   OptimizerSessionSummary,
   ParamDef,
+  SharedInputsConfig,
   TrialRecord,
 } from '../types/api';
 import { formatDate, formatNumber } from '../utils/format';
 
-const DEFAULT_CONFIG: OptimizerConfigResponse = {
-  last_strategy: '',
-  default_timeframe: '5m',
-  last_timerange_preset: '30d',
-  default_timerange: '',
-  default_pairs: 'BTC/USDT',
-  pairs_list: ['BTC/USDT'],
-  dry_run_wallet: 80,
-  max_open_trades: 2,
-};
-
 export function OptimizerPage() {
   const [strategies, setStrategies] = useState<string[]>([]);
-  const [config, setConfig] = useState<OptimizerConfigResponse>(DEFAULT_CONFIG);
+  const [lastStrategy, setLastStrategy] = useState('');
+  const [sharedPrefs, setSharedPrefs] = useState<SharedInputsConfig>({
+    default_timeframe: '5m',
+    default_timerange: '',
+    last_timerange_preset: '30d',
+    default_pairs: 'BTC/USDT',
+    dry_run_wallet: 80,
+    max_open_trades: 2,
+  });
   const [params, setParams] = useState<ParamDef[]>([]);
   const [sessions, setSessions] = useState<OptimizerSessionSummary[]>([]);
   const [selectedSession, setSelectedSession] = useState('');
@@ -41,28 +40,36 @@ export function OptimizerPage() {
     void loadAll();
   }, []);
 
-  // Autosave: on every config change, PUT the seven InputHolder fields to the backend
+  // Autosave: shared fields → api.updateSharedInputs
   const saveState = useAutosave(
-    config,
+    sharedPrefs,
+    (value) =>
+      api.updateSharedInputs(value).then((updated) => {
+        setSharedPrefs(updated);
+      }),
+    { enabled: ready, delay: 500 }
+  );
+
+  // Autosave: last_strategy → api.updateOptimizerConfig
+  useAutosave(
+    lastStrategy,
     (value) => {
-      const update: OptimizerConfigUpdate = {
-        last_strategy: value.last_strategy,
-        default_timeframe: value.default_timeframe,
-        last_timerange_preset: value.last_timerange_preset,
-        default_timerange: value.default_timerange,
-        default_pairs: value.default_pairs,
-        dry_run_wallet: value.dry_run_wallet,
-        max_open_trades: value.max_open_trades,
-      };
-      return api.updateOptimizerConfig(update).then((updated) => {
-        // Sync back the server response (e.g. resolved timerange, deduplicated pairs)
-        setConfig(updated);
-      });
+      const update: OptimizerConfigUpdate = { last_strategy: value };
+      return api.updateOptimizerConfig(update).then(() => undefined);
     },
     { enabled: ready, delay: 500 }
   );
 
-  const pairs = useMemo(() => config.pairs_list, [config.pairs_list]);
+  const pairs = useMemo(
+    () =>
+      sharedPrefs.default_pairs
+        ? sharedPrefs.default_pairs
+            .split(',')
+            .map((p) => p.trim())
+            .filter(Boolean)
+        : [],
+    [sharedPrefs.default_pairs]
+  );
 
   // SSE stream for selected session
   const sseUrl =
@@ -111,12 +118,14 @@ export function OptimizerPage() {
   }, [liveLog]);
 
   async function loadAll() {
-    const [cfg, strategyList, sessionList] = await Promise.all([
+    const [cfg, sharedInputs, strategyList, sessionList] = await Promise.all([
       api.getOptimizerConfig(),
+      api.getSharedInputs(),
       api.optimizerStrategies(),
       api.sessions(),
     ]);
-    setConfig(cfg);
+    setLastStrategy(cfg.last_strategy);
+    setSharedPrefs(sharedInputs);
     setStrategies(strategyList);
     setSessions(sessionList);
     const firstId = sessionList[0]?.session_id ?? '';
@@ -128,14 +137,14 @@ export function OptimizerPage() {
     setReady(true);
   }
 
-  async function loadParams(strategy = config.last_strategy) {
+  async function loadParams(strategy = lastStrategy) {
     if (!strategy) return;
     try {
       const response = await api.strategyParams(strategy);
       setParams(response.params);
       // Update timeframe from strategy metadata, persist via autosave
       if (response.timeframe) {
-        setConfig((prev) => ({ ...prev, default_timeframe: response.timeframe }));
+        setSharedPrefs((prev) => ({ ...prev, default_timeframe: response.timeframe }));
       }
     } catch (err) {
       setMessage(err instanceof Error ? err.message : String(err));
@@ -143,7 +152,7 @@ export function OptimizerPage() {
   }
 
   async function createAndStart() {
-    const strategy = config.last_strategy || strategies[0];
+    const strategy = lastStrategy || strategies[0];
     if (!strategy) return;
     setMessage('');
     setLiveLog('');
@@ -155,10 +164,10 @@ export function OptimizerPage() {
         strategy_name: strategy,
         strategy_class: strategy,
         pairs,
-        timeframe: config.default_timeframe || '5m',
-        timerange: config.default_timerange || undefined,
-        dry_run_wallet: config.dry_run_wallet,
-        max_open_trades: config.max_open_trades,
+        timeframe: sharedPrefs.default_timeframe || '5m',
+        timerange: sharedPrefs.default_timerange || undefined,
+        dry_run_wallet: sharedPrefs.dry_run_wallet,
+        max_open_trades: sharedPrefs.max_open_trades,
         total_trials: 50,
         score_mode: 'composite',
         score_metric: 'composite',
@@ -203,7 +212,7 @@ export function OptimizerPage() {
 
   const activeSession = sessions.find((s) => s.session_id === selectedSession);
 
-  const hasStrategy = Boolean(config.last_strategy);
+  const hasStrategy = Boolean(lastStrategy);
   const hasParams = params.length > 0;
   const isRunning = streaming;
 
@@ -235,8 +244,8 @@ export function OptimizerPage() {
           <label>
             Strategy
             <select
-              value={config.last_strategy}
-              onChange={(e) => setConfig({ ...config, last_strategy: e.target.value })}
+              value={lastStrategy}
+              onChange={(e) => setLastStrategy(e.target.value)}
             >
               <option value="">Select strategy</option>
               {strategies.map((s) => (
@@ -249,23 +258,23 @@ export function OptimizerPage() {
           <label>
             Timeframe
             <input
-              value={config.default_timeframe}
-              onChange={(e) => setConfig({ ...config, default_timeframe: e.target.value })}
+              value={sharedPrefs.default_timeframe}
+              onChange={(e) => setSharedPrefs({ ...sharedPrefs, default_timeframe: e.target.value })}
             />
           </label>
           <label style={{ gridColumn: '1 / -1' }}>
             Pairs
             <textarea
-              value={config.default_pairs}
-              onChange={(e) => setConfig({ ...config, default_pairs: e.target.value })}
+              value={sharedPrefs.default_pairs}
+              onChange={(e) => setSharedPrefs({ ...sharedPrefs, default_pairs: e.target.value })}
             />
           </label>
           <label>
             Preset
             <select
-              value={config.last_timerange_preset}
+              value={sharedPrefs.last_timerange_preset}
               onChange={(e) =>
-                setConfig({ ...config, last_timerange_preset: e.target.value })
+                setSharedPrefs({ ...sharedPrefs, last_timerange_preset: e.target.value })
               }
             >
               {['7d', '14d', '30d', '60d', '90d', '180d', '1y'].map((p) => (
@@ -277,9 +286,9 @@ export function OptimizerPage() {
           </label>
           <label>
             Timerange
-            <input
-              value={config.default_timerange}
-              onChange={(e) => setConfig({ ...config, default_timerange: e.target.value })}
+            <TimerangePicker
+              value={sharedPrefs.default_timerange}
+              onChange={(value) => setSharedPrefs({ ...sharedPrefs, default_timerange: value })}
               placeholder="20240101-20241231"
             />
           </label>
@@ -289,9 +298,9 @@ export function OptimizerPage() {
               type="number"
               min="0.01"
               step="0.01"
-              value={config.dry_run_wallet}
+              value={sharedPrefs.dry_run_wallet}
               onChange={(e) =>
-                setConfig({ ...config, dry_run_wallet: Number(e.target.value) })
+                setSharedPrefs({ ...sharedPrefs, dry_run_wallet: Number(e.target.value) })
               }
             />
           </label>
@@ -300,9 +309,9 @@ export function OptimizerPage() {
             <input
               type="number"
               min="1"
-              value={config.max_open_trades}
+              value={sharedPrefs.max_open_trades}
               onChange={(e) =>
-                setConfig({ ...config, max_open_trades: Number(e.target.value) })
+                setSharedPrefs({ ...sharedPrefs, max_open_trades: Number(e.target.value) })
               }
             />
           </label>

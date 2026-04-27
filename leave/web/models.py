@@ -154,6 +154,7 @@ class SettingsResponse(BaseModel):
     optimize_preferences: Dict[str, Any] = Field(default_factory=dict)
     download_preferences: Dict[str, Any] = Field(default_factory=dict)
     optimizer_preferences: Dict[str, Any] = Field(default_factory=dict)
+    shared_inputs: Dict[str, Any] = Field(default_factory=dict)
 
 
 class LoopStatusResponse(BaseModel):

@@ -26,7 +26,7 @@ from app.core.services.optimizer_session_service import StrategyOptimizerService
 from app.core.services.optimizer_store import OptimizerStore
 from app.core.services.settings_service import SettingsService
 from app.core.services.backtest_service import BacktestService
-from app.web.dependencies import (
+from leave.web.dependencies import (
     SettingsServiceDep,
     BacktestServiceDep,
 )

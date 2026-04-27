@@ -8,7 +8,7 @@ import asyncio
 from fastapi import APIRouter
 from sse_starlette.sse import EventSourceResponse
 
-from app.web.dependencies import ProcessOutputBusDep
+from leave.web.dependencies import ProcessOutputBusDep
 
 router = APIRouter()
 

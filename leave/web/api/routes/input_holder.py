@@ -12,7 +12,7 @@ from app.core.models.optimizer_models import (
     OptimizerConfigUpdate,
 )
 from app.core.services.input_holder_service import InputHolderService
-from app.web.dependencies import SettingsServiceDep
+from leave.web.dependencies import SettingsServiceDep
 
 router = APIRouter()
 

@@ -1,6 +1,7 @@
 import { Save, ShieldCheck } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { api } from '../api/client';
+import { TimerangePicker } from '../components/TimerangePicker';
 import { useAutosave } from '../hooks/useAutosave';
 import type { PreferenceSection, SettingsResponse } from '../types/api';
 
@@ -86,12 +87,14 @@ function PrefsSection({
             ))}
           </select>
         </label>
-        <PrefField
-          label="Default timerange"
-          value={prefs.default_timerange}
-          onChange={(v) => set('default_timerange', v)}
-          placeholder="20240101-20241231"
-        />
+        <label>
+          Default timerange
+          <TimerangePicker
+            value={prefs.default_timerange}
+            onChange={(v) => set('default_timerange', v)}
+            placeholder="20240101-20241231"
+          />
+        </label>
         <PrefField
           label="Default pairs"
           value={prefs.default_pairs}

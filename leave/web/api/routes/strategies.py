@@ -11,11 +11,11 @@ from app.core.services.settings_service import SettingsService
 from app.core.services.strategy_config_service import StrategyConfigService
 from app.core.freqtrade.resolvers.config_resolver import find_config_file_path
 from app.core.parsing.json_parser import parse_json_file
-from app.web.dependencies import (
+from leave.web.dependencies import (
     SettingsServiceDep,
     BacktestServiceDep,
 )
-from app.web.models import StrategyResponse
+from leave.web.models import StrategyResponse
 from pathlib import Path
 
 router = APIRouter()

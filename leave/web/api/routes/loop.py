@@ -7,8 +7,8 @@ from typing import List
 from fastapi import APIRouter, HTTPException, Depends
 
 from app.core.services.loop_service import LoopService
-from app.web.dependencies import LoopServiceDep
-from app.web.models import (
+from leave.web.dependencies import LoopServiceDep
+from leave.web.models import (
     LoopStatusResponse,
     LoopStartRequest,
     LoopIterationResponse,

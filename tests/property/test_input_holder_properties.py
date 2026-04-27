@@ -161,8 +161,8 @@ import os
 from fastapi.testclient import TestClient
 
 from app.core.services.settings_service import SettingsService
-from app.web.dependencies import get_settings_service
-from app.web.main import app
+from leave.web.dependencies import get_settings_service
+from leave.web.main import app
 
 KNOWN_FIELDS = frozenset(
     {"last_strategy", "default_timeframe", "last_timerange_preset",
@@ -218,6 +218,14 @@ def test_read_your_writes(payload: dict):
                 assert abs(data[key] - value) < 1e-6
             elif key == "max_open_trades":
                 assert data[key] == value
+            elif key == "default_pairs":
+                # default_pairs goes through deduplication which strips empty tokens
+                # e.g. "," normalizes to "" — compare normalized forms
+                from app.core.services.input_holder_service import InputHolderService
+                expected_normalized = InputHolderService.deduplicate_pairs(value)
+                assert data[key] == expected_normalized, (
+                    f"Mismatch for {key}: {data[key]!r} != {expected_normalized!r}"
+                )
             else:
                 assert data[key] == value, f"Mismatch for {key}: {data[key]!r} != {value!r}"
     finally:

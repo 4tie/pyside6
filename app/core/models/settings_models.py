@@ -205,6 +205,17 @@ class AISettings(BaseModel):
         return data
 
 
+class SharedInputsPreferences(BaseModel):
+    """Shared trading input preferences used across Backtest, Download, and Optimizer pages."""
+
+    default_timeframe: str = Field("5m", description="Default timeframe")
+    default_timerange: str = Field("", description="Default timerange")
+    last_timerange_preset: str = Field("30d", description="Last used timerange preset")
+    default_pairs: str = Field("", description="Comma-separated pairs")
+    dry_run_wallet: float = Field(80.0, description="Dry run wallet balance")
+    max_open_trades: int = Field(2, description="Max open trades")
+
+
 class AppSettings(BaseModel):
     """Main application settings for Freqtrade GUI."""
 
@@ -247,6 +258,9 @@ class AppSettings(BaseModel):
     optimizer_preferences: OptimizerPreferences = Field(
         default_factory=OptimizerPreferences, description="Strategy Optimizer UI preferences"
     )
+    shared_inputs: SharedInputsPreferences = Field(
+        default_factory=SharedInputsPreferences, description="Shared trading input preferences"
+    )
     favorite_pairs: list[str] = Field(
         default_factory=list,
         description="Shared favorite trading pairs across all sections",
@@ -272,6 +286,34 @@ class AppSettings(BaseModel):
                         collected.append(pair)
         if collected:
             data["favorite_pairs"] = collected
+        return data
+
+    @model_validator(mode="before")
+    @classmethod
+    def migrate_shared_inputs(cls, data: Any) -> Any:
+        """Migrate shared fields from per-section preferences into shared_inputs when absent."""
+        if not isinstance(data, dict):
+            return data
+        if "shared_inputs" in data:
+            return data
+        data = dict(data)
+        _shared_fields = (
+            "default_timeframe",
+            "default_timerange",
+            "last_timerange_preset",
+            "default_pairs",
+            "dry_run_wallet",
+            "max_open_trades",
+        )
+        merged: dict = {}
+        # Priority: download → backtest → optimizer (last wins, so optimizer takes precedence)
+        for source_key in ("download_preferences", "backtest_preferences", "optimizer_preferences"):
+            section = data.get(source_key)
+            if isinstance(section, dict):
+                for field in _shared_fields:
+                    if field in section:
+                        merged[field] = section[field]
+        data["shared_inputs"] = merged
         return data
 
     @field_validator(

@@ -304,6 +304,46 @@ textarea:focus {
   outline: 2px solid var(--accent);
   outline-offset: -1px;
   border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent), transparent 85%);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+/* Better text selection styling */
+input::selection,
+textarea::selection {
+  background: color-mix(in srgb, var(--accent), transparent 70%);
+  color: var(--text);
+}
+
+/* ── Timerange picker ─────────────────────────────────────────────────────── */
+.timerange-picker {
+  display: grid;
+  gap: 8px;
+}
+
+.timerange-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.timerange-presets .chip {
+  font-size: 12px;
+  padding: 0 10px;
+  min-height: 28px;
+}
+
+.timerange-dates {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.timerange-dates label {
+  display: grid;
+  gap: 4px;
+  color: var(--muted);
+  font-size: 11px;
 }
 
 .button,

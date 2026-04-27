@@ -13,8 +13,8 @@ from app.core.services.comparison_service import ComparisonService
 from app.core.services.pattern_database import PatternDatabase
 from app.core.services.pattern_engine import PatternEngine
 from app.core.services.settings_service import SettingsService
-from app.web.dependencies import SettingsServiceDep
-from app.web.models import ComparisonResponse
+from leave.web.dependencies import SettingsServiceDep
+from leave.web.models import ComparisonResponse
 
 router = APIRouter()
 

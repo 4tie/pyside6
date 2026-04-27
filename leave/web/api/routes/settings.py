@@ -4,8 +4,8 @@ Provides endpoints to retrieve and update application settings.
 """
 from fastapi import APIRouter, HTTPException
 
-from app.web.dependencies import SettingsServiceDep
-from app.web.models import SettingsResponse, SettingsUpdate
+from leave.web.dependencies import SettingsServiceDep
+from leave.web.models import SettingsResponse, SettingsUpdate
 
 router = APIRouter()
 
@@ -21,6 +21,7 @@ def _settings_response(app_settings) -> SettingsResponse:
         optimize_preferences=app_settings.optimize_preferences.model_dump(mode="json"),
         download_preferences=app_settings.download_preferences.model_dump(mode="json"),
         optimizer_preferences=app_settings.optimizer_preferences.model_dump(mode="json"),
+        shared_inputs=app_settings.shared_inputs.model_dump(mode="json"),
     )
 
 

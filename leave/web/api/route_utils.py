@@ -12,7 +12,7 @@ from app.core.backtests.results_index import IndexStore
 from app.core.backtests.results_store import RunStore
 from app.core.parsing.json_parser import parse_json_file
 from app.core.services.settings_service import SettingsService
-from app.web.models import RunDetailResponse, RunResponse
+from leave.web.models import RunDetailResponse, RunResponse
 
 
 def app_settings(settings: SettingsService):

@@ -11,7 +11,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
 # Import route handlers
-from app.web.api.routes import (
+from leave.web.api.routes import (
     backtest,
     comparison,
     dashboard,
@@ -24,6 +24,7 @@ from app.web.api.routes import (
     process,
     runs,
     settings,
+    shared_inputs,
     strategies,
 )
 
@@ -111,6 +112,7 @@ app.include_router(optimize.router, prefix="/api", tags=["optimize"])
 app.include_router(process.router, prefix="/api", tags=["process"])
 app.include_router(optimizer.router, prefix="/api", tags=["optimizer"])
 app.include_router(input_holder.router, prefix="/api", tags=["optimizer-config"])
+app.include_router(shared_inputs.router, prefix="/api", tags=["shared-inputs"])
 
 if __name__ == "__main__":
     import uvicorn
