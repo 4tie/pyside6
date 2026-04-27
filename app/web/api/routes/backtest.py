@@ -332,3 +332,53 @@ async def latest_run(settings: SettingsServiceDep) -> dict:
     payload = detail.model_dump(mode="json")
     payload["exists"] = True
     return payload
+
+
+@router.get("/backtest-runs")
+async def get_backtest_runs(
+    settings: SettingsServiceDep,
+    strategy: Optional[str] = Query(None),
+    sort_by: str = Query("saved_at"),
+    order: str = Query("desc"),
+    limit: int = Query(50),
+    offset: int = Query(0),
+) -> dict:
+    """Get all backtest runs with filtering and sorting."""
+    if backtest_results_dir(settings, required=False) is None:
+        return {"runs": [], "total": 0, "message": "User data path not configured"}
+    
+    runs = latest_runs(settings)
+    
+    # Filter by strategy if provided
+    if strategy:
+        runs = [run for run in runs if run.get("strategy") == strategy]
+    
+    # Sort runs
+    valid_sort_fields = {
+        "saved_at", "profit_total_pct", "win_rate_pct", "max_drawdown_pct",
+        "trades_count", "starting_balance", "final_balance"
+    }
+    sort_field = sort_by if sort_by in valid_sort_fields else "saved_at"
+    reverse = order.lower() == "desc"
+    runs = sorted(runs, key=lambda run: run.get(sort_field, 0), reverse=reverse)
+    
+    # Pagination
+    total = len(runs)
+    runs = runs[offset:offset + limit]
+    
+    # Load full details for each run
+    detailed_runs = []
+    for run in runs:
+        try:
+            detail = load_run_detail(settings, run.get("run_id", ""))
+            detailed_runs.append(detail.model_dump(mode="json"))
+        except HTTPException:
+            # Skip runs that fail to load
+            continue
+    
+    return {
+        "runs": detailed_runs,
+        "total": total,
+        "offset": offset,
+        "limit": limit,
+    }

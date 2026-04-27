@@ -9,9 +9,12 @@ Dependencies: requests, python-dotenv (both in project requirements.txt)
 """
 
 import os
+import json
 import threading
 import tkinter as tk
 from tkinter import ttk
+from datetime import datetime
+from pathlib import Path
 
 try:
     import requests
@@ -29,6 +32,11 @@ SYSTEM_PROMPT = (
     "language and provide numbered fix steps."
 )
 
+# Storage paths
+CHAT_DATA_DIR = Path("data/chat_history")
+CHAT_LOG_FILE = CHAT_DATA_DIR / "conversations.jsonl"
+CHAT_SESSIONS_DIR = CHAT_DATA_DIR / "sessions"
+
 
 def load_env() -> None:
     """Load .env file (if python-dotenv is available) and read config into module globals."""
@@ -44,13 +52,57 @@ def load_env() -> None:
     OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "llama3")
 
 
+def ensure_data_dirs() -> None:
+    """Create chat history directories if they don't exist."""
+    CHAT_DATA_DIR.mkdir(parents=True, exist_ok=True)
+    CHAT_SESSIONS_DIR.mkdir(parents=True, exist_ok=True)
+
+
 # ---------------------------------------------------------------------------
 # OllamaClient
 # ---------------------------------------------------------------------------
 
+class MessageStore:
+    """Persists chat messages to disk in JSONL + per-session JSON formats."""
+
+    def __init__(self) -> None:
+        ensure_data_dirs()
+        self.session_id: str = datetime.now().strftime("%Y%m%d_%H%M%S")
+        self.session_file: Path = CHAT_SESSIONS_DIR / f"session_{self.session_id}.json"
+        self._session_messages: list[dict] = []
+
+    def save(self, role: str, content: str) -> None:
+        """Append a message to both the global log and the session file."""
+        entry = {
+            "session_id": self.session_id,
+            "timestamp": datetime.now().isoformat(),
+            "model": OLLAMA_MODEL,
+            "role": role,
+            "content": content,
+        }
+        try:
+            with open(CHAT_LOG_FILE, "a", encoding="utf-8") as f:
+                f.write(json.dumps(entry) + "\n")
+        except OSError:
+            pass
+
+        self._session_messages.append(entry)
+        try:
+            with open(self.session_file, "w", encoding="utf-8") as f:
+                json.dump(
+                    {"session_id": self.session_id, "messages": self._session_messages},
+                    f,
+                    indent=2,
+                    ensure_ascii=False,
+                )
+        except OSError:
+            pass
+
+
 class OllamaClient:
     def __init__(self) -> None:
         self.history: list[dict] = []
+        self.store = MessageStore()
 
     def health_check(self) -> tuple[bool, str]:
         """GET {OLLAMA_BASE_URL}/api/tags. Returns (ok, message). Never raises."""
@@ -74,6 +126,7 @@ class OllamaClient:
             return "Error: 'requests' library is not installed."
 
         self.history.append({"role": "user", "content": user_message})
+        self.store.save("user", user_message)
 
         payload = {
             "model": OLLAMA_MODEL,
@@ -92,6 +145,7 @@ class OllamaClient:
             data = resp.json()
             reply: str = data["message"]["content"]
             self.history.append({"role": "assistant", "content": reply})
+            self.store.save("assistant", reply)
             return reply
         except requests.exceptions.ConnectionError as exc:
             return f"Error: Cannot connect to Ollama at {OLLAMA_BASE_URL}: {exc}"
@@ -115,7 +169,7 @@ class ChatApp:
         threading.Thread(target=self._health_check, daemon=True).start()
 
     def _build_ui(self) -> None:
-        self.root.title("Log & Error Chat")
+        self.root.title("4tie — Log & Error Chat")
         self.root.minsize(700, 500)
 
         # --- Top frame: Chat_Window + scrollbar ---
@@ -141,7 +195,7 @@ class ChatApp:
 
         # --- Bottom frame: Input_Area + Send_Button ---
         bottom_frame = tk.Frame(self.root)
-        bottom_frame.pack(fill=tk.X, padx=6, pady=6)
+        bottom_frame.pack(fill=tk.X, padx=6, pady=(4, 0))
 
         self.input_area = tk.Text(bottom_frame, height=5, wrap=tk.WORD)
         self.input_area.pack(side=tk.LEFT, fill=tk.X, expand=True)
@@ -150,6 +204,18 @@ class ChatApp:
         self.send_button.pack(side=tk.RIGHT, padx=(6, 0))
 
         self.input_area.bind("<Control-Return>", self._on_send)
+
+        # --- Status bar ---
+        session_path = str(self.client.store.session_file)
+        self._status_var = tk.StringVar(value=f"Session: {session_path}")
+        status_bar = tk.Label(
+            self.root,
+            textvariable=self._status_var,
+            anchor="w",
+            fg="#888888",
+            font=("TkDefaultFont", 8),
+        )
+        status_bar.pack(fill=tk.X, padx=6, pady=(2, 4))
 
     def _append_message(self, role: str, text: str) -> None:
         label_map = {"user": "You", "ai": "AI", "system": "System"}
@@ -214,6 +280,7 @@ class ChatApp:
 
 if __name__ == "__main__":
     load_env()
+    ensure_data_dirs()
     root = tk.Tk()
     app = ChatApp(root, OllamaClient())
     root.mainloop()

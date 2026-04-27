@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { usePathname } from 'next/navigation';
-import { api, BacktestRequest, PairsResponse, LatestBacktestRun } from '@/lib/api';
+import { api, BacktestRequest, PairsResponse, LatestBacktestRun, BacktestRunsRequest } from '@/lib/api';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -54,6 +54,12 @@ export default function BacktestPage() {
     queryKey: ['latest-backtest-run'],
     queryFn: () => api.getLatestBacktestRun(),
     refetchInterval: 5000,
+  });
+
+  // Fetch recent runs
+  const { data: recentRunsData, isLoading: recentRunsLoading } = useQuery({
+    queryKey: ['recent-backtest-runs'],
+    queryFn: () => api.getBacktestRuns({ limit: 10, sort_by: 'saved_at', order: 'desc' }),
   });
 
   // Fetch data availability
@@ -603,28 +609,48 @@ export default function BacktestPage() {
                     </div>
                   )}
 
-                  {/* Recent Trades */}
-                  {latestRun.trades && latestRun.trades.length > 0 && (
+                  {/* Recent Runs */}
+                  {recentRunsData && recentRunsData.runs && recentRunsData.runs.length > 0 && (
                     <div>
-                      <h4 className="text-sm font-medium mb-2">Recent Runs for Strategy</h4>
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="text-sm font-medium">Recent Runs (Last 10)</h4>
+                        <Link href="/backtest-runs" className="text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
+                          View More
+                        </Link>
+                      </div>
                       <Table>
                         <TableHeader>
                           <TableRow>
-                            <TableHead>Pair</TableHead>
-                            <TableHead>Profit</TableHead>
-                            <TableHead>Exit Reason</TableHead>
+                            <TableHead>Strategy</TableHead>
+                            <TableHead>Profit %</TableHead>
+                            <TableHead>Win Rate %</TableHead>
+                            <TableHead>Balance</TableHead>
+                            <TableHead>Days</TableHead>
+                            <TableHead>Timerange</TableHead>
+                            <TableHead>Date</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {latestRun.trades.slice(-10).reverse().map((trade, i) => (
-                            <TableRow key={i}>
-                              <TableCell>{trade.pair}</TableCell>
-                              <TableCell className={trade.profit > 0 ? 'text-green-600' : 'text-red-600'}>
-                                {trade.profit.toFixed(2)}%
-                              </TableCell>
-                              <TableCell className="text-xs">{trade.exit_reason}</TableCell>
-                            </TableRow>
-                          ))}
+                          {recentRunsData.runs.slice(0, 10).map((run) => {
+                            const daysRun = run.backtest_start && run.backtest_end
+                              ? Math.ceil((new Date(run.backtest_end).getTime() - new Date(run.backtest_start).getTime()) / (1000 * 60 * 60 * 24))
+                              : 0;
+                            return (
+                              <TableRow key={run.run_id}>
+                                <TableCell className="font-medium">{run.strategy}</TableCell>
+                                <TableCell className={run.profit_total_pct && run.profit_total_pct > 0 ? 'text-green-600' : 'text-red-600'}>
+                                  {run.profit_total_pct?.toFixed(2) ?? 'N/A'}%
+                                </TableCell>
+                                <TableCell>{run.win_rate_pct?.toFixed(2) ?? 'N/A'}%</TableCell>
+                                <TableCell className="text-xs">
+                                  {run.starting_balance?.toFixed(2) ?? 'N/A'} → {run.final_balance?.toFixed(2) ?? 'N/A'}
+                                </TableCell>
+                                <TableCell className="text-xs">{daysRun}</TableCell>
+                                <TableCell className="text-xs">{run.timerange || 'N/A'}</TableCell>
+                                <TableCell className="text-xs">{run.saved_at ? new Date(run.saved_at).toLocaleDateString() : 'N/A'}</TableCell>
+                              </TableRow>
+                            );
+                          })}
                         </TableBody>
                       </Table>
                     </div>

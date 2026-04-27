@@ -119,6 +119,22 @@ export interface LatestBacktestRun {
   params?: Record<string, any>;
 }
 
+export interface BacktestRunsRequest {
+  strategy?: string;
+  sort_by?: string;
+  order?: 'asc' | 'desc';
+  limit?: number;
+  offset?: number;
+}
+
+export interface BacktestRunsResponse {
+  runs: LatestBacktestRun[];
+  total: number;
+  offset: number;
+  limit: number;
+  message?: string;
+}
+
 class ApiClient {
   private baseUrl: string;
 
@@ -211,6 +227,19 @@ class ApiClient {
 
   async getLatestBacktestRun(): Promise<LatestBacktestRun> {
     return this.request<LatestBacktestRun>('/latest-run');
+  }
+
+  async getBacktestRuns(params?: BacktestRunsRequest): Promise<BacktestRunsResponse> {
+    const queryParams = new URLSearchParams();
+    if (params?.strategy) queryParams.append('strategy', params.strategy);
+    if (params?.sort_by) queryParams.append('sort_by', params.sort_by);
+    if (params?.order) queryParams.append('order', params.order);
+    if (params?.limit !== undefined) queryParams.append('limit', params.limit.toString());
+    if (params?.offset !== undefined) queryParams.append('offset', params.offset.toString());
+    
+    const queryString = queryParams.toString();
+    const endpoint = `/backtest-runs${queryString ? `?${queryString}` : ''}`;
+    return this.request<BacktestRunsResponse>(endpoint);
   }
 
   async saveFavorites(favorites: string[]): Promise<{ favorites: string[] }> {

@@ -20,22 +20,22 @@
   - [x] 3.6 Implement `ChatApp._on_send(event=None)`: read Input_Area content; if empty/whitespace-only return immediately keeping focus on Input_Area; otherwise append "You: <message>" to Chat_Window, clear Input_Area, disable Send_Button, append "Thinking…" system message, then dispatch `client.chat(message)` on a background thread with `root.after(0, _on_response)` as callback
   - [x] 3.7 Implement `ChatApp._on_response(reply)`: remove "Thinking…" from Chat_Window, append "AI: <reply>" via `_append_message`, re-enable Send_Button
 
-- [-] 4. Unit tests
-  - [ ] 4.1 Write example-based tests for `OllamaClient.health_check`: mocked 200 returns `(True, message)`; mocked connection error returns `(False, message)` containing the URL; mocked non-200 returns `(False, message)`
-  - [ ] 4.2 Write example-based tests for `OllamaClient.chat`: mocked 200 returns assistant content; mocked connection error returns error string without raising; mocked 500 returns error string; malformed JSON returns error string
-  - [ ] 4.3 Write example-based tests for `ChatApp._on_send`: empty Input_Area → Chat_Window unchanged, no HTTP call; whitespace-only → same; valid text → Send_Button disabled and "Thinking…" in Chat_Window
-  - [ ] 4.4 Write example-based tests for `ChatApp._on_response`: Send_Button re-enabled; "Thinking…" removed; AI reply appears in Chat_Window with "AI:" prefix
-  - [ ] 4.5 Write example-based tests for UI configuration: window title is "Log & Error Chat"; minsize is (700, 500); Chat_Window state is DISABLED; Ctrl+Enter triggers `_on_send`; Send_Button command triggers `_on_send`
-  - [ ] 4.6 Write example-based test for `.env` loading: create temp `.env` with custom values, verify module constants reflect them
+- [x] 4. Unit tests
+  - [x] 4.1 Write example-based tests for `OllamaClient.health_check`: mocked 200 returns `(True, message)`; mocked connection error returns `(False, message)` containing the URL; mocked non-200 returns `(False, message)`
+  - [x] 4.2 Write example-based tests for `OllamaClient.chat`: mocked 200 returns assistant content; mocked connection error returns error string without raising; mocked 500 returns error string; malformed JSON returns error string
+  - [x] 4.3 Write example-based tests for `ChatApp._on_send`: empty Input_Area → Chat_Window unchanged, no HTTP call; whitespace-only → same; valid text → Send_Button disabled and "Thinking…" in Chat_Window
+  - [x] 4.4 Write example-based tests for `ChatApp._on_response`: Send_Button re-enabled; "Thinking…" removed; AI reply appears in Chat_Window with "AI:" prefix
+  - [x] 4.5 Write example-based tests for UI configuration: window title is "Log & Error Chat"; minsize is (700, 500); Chat_Window state is DISABLED; Ctrl+Enter triggers `_on_send`; Send_Button command triggers `_on_send`
+  - [x] 4.6 Write example-based test for `.env` loading: create temp `.env` with custom values, verify module constants reflect them
 
-- [~] 5. Property-based tests (Hypothesis)
-  - [ ] 5.1 P1 — Non-empty input echoed with "You:" prefix: generate random non-empty non-whitespace strings, simulate submission, assert Chat_Window contains "You: <text>"
-  - [ ] 5.2 P2 — Whitespace-only input rejected: generate whitespace-only strings, assert no Chat_Window append and no HTTP call made
-  - [ ] 5.3 P3 — POST payload well-formed for any user message: generate random messages, capture POST payload via mock, assert `stream==False`, correct model, system role first, user role last with correct content
-  - [ ] 5.4 P4 — Full conversation history included in every request: generate random sequences of user/assistant pairs, assert next POST payload contains all prior pairs in order
-  - [ ] 5.5 P5 — Assistant content correctly extracted from any valid response: generate random `message.content` strings in valid Ollama response JSON, assert `OllamaClient.chat` returns that exact string
-  - [ ] 5.6 P6 — Any AI_Client failure returns a string, never raises: generate connection errors and non-200 status codes, assert `OllamaClient.chat` returns non-empty string without raising
-  - [ ] 5.7 P7 — Assistant reply echoed with "AI:" prefix: generate random reply strings, simulate response, assert Chat_Window contains "AI: <reply>"
-  - [ ] 5.8 P8 — Health check failure shows attempted URL: generate random base URLs, simulate health check failure, assert Chat_Window message contains that URL
-  - [ ] 5.9 P9 — Health check success shows model name: generate random model name strings, simulate successful health check, assert Chat_Window ready message contains the model name
-  - [ ] 5.10 P10 — Environment variable fallback correctness: test all four combinations of OLLAMA_BASE_URL / OLLAMA_MODEL presence/absence, assert resolved values match env var or default
+- [x] 5. Property-based tests (Hypothesis)
+  - [x] 5.1 P1 — Non-empty input echoed with "You:" prefix: generate random non-empty non-whitespace strings, simulate submission, assert Chat_Window contains "You: <text>"
+  - [x] 5.2 P2 — Whitespace-only input rejected: generate whitespace-only strings, assert no Chat_Window append and no HTTP call made
+  - [x] 5.3 P3 — POST payload well-formed for any user message: generate random messages, capture POST payload via mock, assert `stream==False`, correct model, system role first, user role last with correct content
+  - [x] 5.4 P4 — Full conversation history included in every request: generate random sequences of user/assistant pairs, assert next POST payload contains all prior pairs in order
+  - [x] 5.5 P5 — Assistant content correctly extracted from any valid response: generate random `message.content` strings in valid Ollama response JSON, assert `OllamaClient.chat` returns that exact string
+  - [x] 5.6 P6 — Any AI_Client failure returns a string, never raises: generate connection errors and non-200 status codes, assert `OllamaClient.chat` returns non-empty string without raising
+  - [x] 5.7 P7 — Assistant reply echoed with "AI:" prefix: generate random reply strings, simulate response, assert Chat_Window contains "AI: <reply>"
+  - [x] 5.8 P8 — Health check failure shows attempted URL: generate random base URLs, simulate health check failure, assert Chat_Window message contains that URL
+  - [x] 5.9 P9 — Health check success shows model name: generate random model name strings, simulate successful health check, assert Chat_Window ready message contains the model name
+  - [x] 5.10 P10 — Environment variable fallback correctness: test all four combinations of OLLAMA_BASE_URL / OLLAMA_MODEL presence/absence, assert resolved values match env var or default
