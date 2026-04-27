@@ -108,22 +108,22 @@ Consolidate six common trading input fields into a single `shared_inputs` prefer
   - Remove all reads/writes to `optimizer_preferences` for the six shared fields
   - _Requirements: 7.1, 7.2, 7.3, 7.4_
 
-- [-] 10. Checkpoint — Ensure all tests pass
+- [x] 10. Checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [~] 11. Remove shared-field `PrefsSection` blocks from `SettingsPage`
+- [x] 11. Remove shared-field `PrefsSection` blocks from `SettingsPage`
   - In `app/re_web/src/pages/SettingsPage.tsx`, remove the three `<PrefsSection>` calls for `backtest_preferences`, `optimizer_preferences`, and `download_preferences`
   - Remove the `setPrefs` helper and any state/autosave logic that was only used for those three sections
   - Keep the "Paths & Executables" section and its autosave unchanged
   - Update `emptySettings` initial state to remove the three preference keys if they are no longer referenced
   - _Requirements: 8.1, 8.2, 8.3_
 
-  - [~] 11.1 Write unit test for `SettingsPage` cleanup
+  - [x] 11.1 Write unit test for `SettingsPage` cleanup
     - Assert `SettingsPage` renders without `PrefsSection` components for `backtest_preferences`, `optimizer_preferences`, `download_preferences`
     - Assert the "Paths & Executables" section is still present
     - _Requirements: 8.1, 8.2_
 
-- [~] 12. Final checkpoint — Ensure all tests pass
+- [x] 12. Final checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes

@@ -1,4 +1,4 @@
-import { ChevronDown, Download, Play, Square, TrendingDown, TrendingUp } from 'lucide-react';
+import { ChevronDown, Download, Lock, Play, Search, Shuffle, Square, TrendingDown, TrendingUp, Unlock } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { api } from '../api/client';
 import { MetricCard } from '../components/MetricCard';
@@ -562,6 +562,8 @@ export function BacktestPage() {
   const [diagnosis, setDiagnosis] = useState<unknown>(null);
   const [diff, setDiff] = useState<unknown>(null);
   const [loadingResult, setLoadingResult] = useState(false);
+  const [lockedPairs, setLockedPairs] = useState<Set<string>>(new Set());
+  const [pairSearch, setPairSearch] = useState('');
   const logRef = useRef<HTMLPreElement>(null);
 
   useEffect(() => {
@@ -651,9 +653,51 @@ export function BacktestPage() {
   }, [log]);
 
   const selectedPairs = useMemo(() => csvToList(sharedPrefs.default_pairs), [sharedPrefs.default_pairs]);
+  const hasPairs = selectedPairs.length > 0;
+
+  const filteredPairs = useMemo(() => {
+    if (!pairSearch) return availablePairs;
+    const searchLower = pairSearch.toLowerCase();
+    return availablePairs.filter((pair) => pair.toLowerCase().includes(searchLower));
+  }, [availablePairs, pairSearch]);
+
+  const toggleLock = (pair: string) => {
+    setLockedPairs((prev) => {
+      const next = new Set(prev);
+      if (next.has(pair)) {
+        next.delete(pair);
+      } else {
+        next.add(pair);
+      }
+      return next;
+    });
+  };
+
+  const handleRandomize = () => {
+    const maxTrades = sharedPrefs.max_open_trades ?? 2;
+    const locked = Array.from(lockedPairs);
+    const unlockedSelected = selectedPairs.filter((p) => !lockedPairs.has(p));
+    const unlockedAvailable = availablePairs.filter((p) => !lockedPairs.has(p) && !selectedPairs.includes(p));
+
+    // If locked pairs already exceed max trades, don't randomize
+    if (locked.length >= maxTrades) {
+      return;
+    }
+
+    // Calculate how many more pairs we need
+    const needed = maxTrades - locked.length;
+    const toKeep = Math.max(0, needed - unlockedAvailable.length);
+    const unlockedToKeep = unlockedSelected.slice(0, toKeep);
+    const slotsToFill = needed - unlockedToKeep.length;
+
+    // Randomly select from available unlocked pairs
+    const shuffled = [...unlockedAvailable].sort(() => Math.random() - 0.5);
+    const newSelection = [...locked, ...unlockedToKeep, ...shuffled.slice(0, slotsToFill)];
+
+    setSharedPrefs({ ...sharedPrefs, default_pairs: newSelection.join(', ') });
+  };
 
   const hasStrategy = Boolean(lastStrategy);
-  const hasPairs = selectedPairs.length > 0;
   const isRunning = status.status === 'running';
 
   const step1Active = !hasStrategy;
@@ -772,16 +816,10 @@ export function BacktestPage() {
             </select>
           </label>
           <label>
-            Preset
-            <select value={preset} onChange={(e) => applyPreset(e.target.value)}>
-              {[...Object.keys(PRESETS), 'Custom'].map((p) => <option key={p} value={p}>{p}</option>)}
-            </select>
-          </label>
-          <label>
             Timerange
             <TimerangePicker
               value={sharedPrefs.default_timerange ?? ''}
-              onChange={(value) => { setPreset('Custom'); setSharedPrefs({ ...sharedPrefs, default_timerange: value }); }}
+              onChange={(value) => setSharedPrefs({ ...sharedPrefs, default_timerange: value })}
               placeholder="20240101-20241231"
             />
           </label>
@@ -811,13 +849,46 @@ export function BacktestPage() {
           <h2>Pairs</h2>
         </div>
         <div className="panel">
+          <div className="pair-search">
+            <Search size={16} />
+            <input
+              type="text"
+              placeholder="Search pairs..."
+              value={pairSearch}
+              onChange={(e) => setPairSearch(e.target.value)}
+            />
+          </div>
           <div className="chip-grid">
-            {availablePairs.map((pair) => (
+            <button
+              className={selectedPairs.length === availablePairs.length ? 'chip active' : 'chip'}
+              type="button"
+              onClick={() => {
+                const next = selectedPairs.length === availablePairs.length
+                  ? []
+                  : [...availablePairs];
+                setSharedPrefs({ ...sharedPrefs, default_pairs: next.join(', ') });
+              }}
+            >
+              All
+            </button>
+            <button
+              className="chip"
+              type="button"
+              onClick={handleRandomize}
+              title="Randomize pairs (respects locked pairs)"
+            >
+              <Shuffle size={14} />
+            </button>
+            {filteredPairs.map((pair) => (
               <button
                 key={pair}
-                className={selectedPairs.includes(pair) ? 'chip active' : 'chip'}
+                className={`chip ${selectedPairs.includes(pair) ? 'active' : ''} ${lockedPairs.has(pair) ? 'locked' : ''}`}
                 type="button"
-                onClick={() => {
+                onClick={(e) => {
+                  // If clicking the lock icon, toggle lock instead of selection
+                  if ((e.target as HTMLElement).closest('.lock-icon')) {
+                    return;
+                  }
                   const next = selectedPairs.includes(pair)
                     ? selectedPairs.filter((p) => p !== pair)
                     : [...selectedPairs, pair];
@@ -825,6 +896,18 @@ export function BacktestPage() {
                 }}
               >
                 {pair}
+                {selectedPairs.includes(pair) && (
+                  <span
+                    className="lock-icon"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleLock(pair);
+                    }}
+                    title={lockedPairs.has(pair) ? 'Unlock pair' : 'Lock pair'}
+                  >
+                    {lockedPairs.has(pair) ? <Lock size={12} /> : <Unlock size={12} />}
+                  </span>
+                )}
               </button>
             ))}
           </div>

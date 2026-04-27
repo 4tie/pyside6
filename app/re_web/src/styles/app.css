@@ -346,6 +346,69 @@ textarea::selection {
   font-size: 11px;
 }
 
+/* ── Pair chips with lock icons ───────────────────────────────────────────── */
+.chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.chip.locked {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent), transparent 90%);
+}
+
+.chip .lock-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  margin-left: 2px;
+  color: var(--muted);
+  transition: color 0.15s;
+}
+
+.chip.locked .lock-icon {
+  color: var(--accent);
+}
+
+.chip .lock-icon:hover {
+  color: var(--text);
+}
+
+/* ── Pair search bar ─────────────────────────────────────────────────────── */
+.pair-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  margin-bottom: 12px;
+}
+
+.pair-search svg {
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.pair-search input {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 13px;
+}
+
+.pair-search input::placeholder {
+  color: var(--muted);
+}
+
 .button,
 .icon-button {
   display: inline-flex;

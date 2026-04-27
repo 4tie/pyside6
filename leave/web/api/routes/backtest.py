@@ -49,23 +49,54 @@ def get_current_run_id() -> Optional[str]:
     """Get the current running backtest run ID."""
     return _current_run_id
 
-# Common trading pairs from Binance
+# Major trading pairs from Binance (organized by quote asset)
 COMMON_PAIRS = [
-    "BTC/USDT",
-    "ETH/USDT",
-    "BNB/USDT",
-    "ADA/USDT",
-    "XRP/USDT",
-    "SOL/USDT",
-    "DOGE/USDT",
-    "DOT/USDT",
-    "MATIC/USDT",
-    "AVAX/USDT",
-    "LINK/USDT",
-    "UNI/USDT",
-    "LTC/USDT",
-    "ATOM/USDT",
-    "NEAR/USDT",
+    # USDT pairs - major coins
+    "BTC/USDT", "ETH/USDT", "BNB/USDT", "SOL/USDT", "XRP/USDT",
+    "ADA/USDT", "DOGE/USDT", "AVAX/USDT", "DOT/USDT", "LINK/USDT",
+    "MATIC/USDT", "UNI/USDT", "LTC/USDT", "ATOM/USDT", "NEAR/USDT",
+    "PEPE/USDT", "SHIB/USDT", "FET/USDT", "INJ/USDT", "OP/USDT",
+    "AR/USDT", "APT/USDT", "SUI/USDT", "SEI/USDT", "TIA/USDT",
+    "WLD/USDT", "BLUR/USDT", "GMX/USDT", "GRT/USDT", "ENS/USDT",
+    "SNX/USDT", "CRV/USDT", "AAVE/USDT", "COMP/USDT", "MKR/USDT",
+    "YFI/USDT", "1INCH/USDT", "ZRX/USDT", "BAND/USDT", "KAVA/USDT",
+    "RUNE/USDT", "THETA/USDT", "MANA/USDT", "SAND/USDT", "AXS/USDT",
+    "GALA/USDT", "IMX/USDT", "APE/USDT", "STX/USDT", "ROSE/USDT",
+    # USDT pairs - mid-cap
+    "ALGO/USDT", "VET/USDT", "ICP/USDT", "HOT/USDT", "CHZ/USDT",
+    "FIL/USDT", "XTZ/USDT", "EOS/USDT", "TRX/USDT", "XLM/USDT",
+    "BCH/USDT", "ETC/USDT", "DASH/USDT", "ZEC/USDT", "XMR/USDT",
+    # USDT pairs - additional
+    "QNT/USDT", "ZIL/USDT", "CELO/USDT", "FLOW/USDT", "HBAR/USDT",
+    "IOTA/USDT", "XEM/USDT", "WAVES/USDT", "KSM/USDT", "SC/USDT",
+    "BAT/USDT", "NEXO/USDT", "CRO/USDT", "LUNC/USDT", "FTM/USDT",
+    "MASK/USDT", "CELR/USDT", "AXL/USDT", "GLM/USDT", "RNDR/USDT",
+    "TFUEL/USDT", "ONG/USDT", "COTI/USDT", "NMR/USDT", "LRC/USDT",
+    # USDC pairs
+    "BTC/USDC", "ETH/USDC", "SOL/USDC", "XRP/USDC", "ADA/USDC",
+    "DOGE/USDC", "AVAX/USDC", "DOT/USDC", "LINK/USDC", "MATIC/USDC",
+    "BNB/USDC", "LTC/USDC", "ATOM/USDC", "UNI/USDC", "AAVE/USDC",
+    # BTC pairs
+    "ETH/BTC", "SOL/BTC", "BNB/BTC", "XRP/BTC", "ADA/BTC",
+    "DOGE/BTC", "DOT/BTC", "LINK/BTC", "AVAX/BTC", "MATIC/BTC",
+    "LTC/BTC", "ATOM/BTC", "UNI/BTC", "AAVE/BTC", "NEAR/BTC",
+    # ETH pairs
+    "SOL/ETH", "LINK/ETH", "MATIC/ETH", "UNI/ETH", "AAVE/ETH",
+    "BNB/ETH", "AVAX/ETH", "DOT/ETH", "ADA/ETH", "LINK/ETH",
+    # BNB pairs
+    "ETH/BNB", "SOL/BNB", "ADA/BNB", "XRP/BNB", "DOGE/BNB",
+    "AVAX/BNB", "DOT/BNB", "LINK/BNB", "MATIC/BNB", "ATOM/BNB",
+    # BUSD pairs
+    "BTC/BUSD", "ETH/BUSD", "BNB/BUSD", "SOL/BUSD", "XRP/BUSD",
+    "ADA/BUSD", "DOGE/BUSD", "AVAX/BUSD", "DOT/BUSD", "LINK/BUSD",
+    # TUSD pairs
+    "BTC/TUSD", "ETH/TUSD", "BNB/TUSD", "USDT/TUSD", "USDC/TUSD",
+    # FDUSD pairs
+    "BTC/FDUSD", "ETH/FDUSD", "BNB/FDUSD", "SOL/FDUSD", "USDT/FDUSD",
+    # Other quote assets
+    "BTC/DAI", "ETH/DAI", "USDT/DAI", "USDC/DAI",
+    "BTC/PAX", "ETH/PAX", "USDT/PAX",
+    "BTC/USDP", "ETH/USDP",
 ]
 
 

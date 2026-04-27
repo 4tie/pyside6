@@ -283,7 +283,7 @@ def main() -> None:
 
     try:
         uvicorn.run(
-            "app.web.main:app",
+            "leave.web.main:app",
             host=args.host,
             port=args.port,
             reload=args.reload,
