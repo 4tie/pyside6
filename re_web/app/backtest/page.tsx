@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { usePathname } from 'next/navigation';
 import { api, BacktestRequest, PairsResponse, LatestBacktestRun } from '@/lib/api';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -15,9 +16,10 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
 import Link from 'next/link';
-import { Search, Heart, Lock, Unlock, ChevronDown, ChevronUp, Download } from 'lucide-react';
+import { Search, Heart, Lock, Unlock, ChevronDown, ChevronUp, Download, BarChart3, Play, Settings } from 'lucide-react';
 
 export default function BacktestPage() {
+  const pathname = usePathname();
   const queryClient = useQueryClient();
   
   const [formData, setFormData] = useState<BacktestRequest>({
@@ -228,6 +230,38 @@ export default function BacktestPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      {/* Navigation Bar */}
+      <nav className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
+        <div className="container mx-auto px-4 py-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <BarChart3 className="text-blue-600" size={24} />
+              <h1 className="text-xl font-bold text-gray-900 dark:text-white">Strategy Optimizer</h1>
+            </div>
+            <div className="flex items-center gap-4">
+              <Link href="/">
+                <Button variant={pathname === '/' ? 'default' : 'ghost'} className="flex items-center gap-2">
+                  <BarChart3 size={16} />
+                  Dashboard
+                </Button>
+              </Link>
+              <Link href="/backtest">
+                <Button variant={pathname === '/backtest' ? 'default' : 'ghost'} className="flex items-center gap-2">
+                  <Play size={16} />
+                  Backtest
+                </Button>
+              </Link>
+              <Link href="/settings">
+                <Button variant="ghost" className="flex items-center gap-2">
+                  <Settings size={16} />
+                  Settings
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </nav>
+
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
           <div className="flex items-center justify-between">
