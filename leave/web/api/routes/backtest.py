@@ -51,26 +51,32 @@ def get_current_run_id() -> Optional[str]:
     return _current_run_id
 
 # Hardcoded trading pairs - organized by category
-TRADING_PAIRS = [
-    # Tier 1: Major cryptocurrencies
-    "BTC/USDT", "ETH/USDT", "BNB/USDT", "SOL/USDT", "XRP/USDT",
-    "ADA/USDT", "DOGE/USDT", "AVAX/USDT", "DOT/USDT", "LINK/USDT",
-    # Tier 2: Established altcoins
-    "MATIC/USDT", "UNI/USDT", "LTC/USDT", "ATOM/USDT", "NEAR/USDT",
-    "PEPE/USDT", "SHIB/USDT", "FET/USDT", "INJ/USDT", "OP/USDT",
-    "AR/USDT", "APT/USDT", "SUI/USDT", "SEI/USDT", "TIA/USDT",
-    "WLD/USDT", "GMX/USDT", "GRT/USDT", "ENS/USDT", "AAVE/USDT",
-    "MKR/USDT", "YFI/USDT", "CRV/USDT", "SNX/USDT", "COMP/USDT",
-    # Tier 3: Mid-cap gems
-    "THETA/USDT", "MANA/USDT", "SAND/USDT", "AXS/USDT", "GALA/USDT",
-    "IMX/USDT", "APE/USDT", "STX/USDT", "ROSE/USDT", "ALGO/USDT",
-    "VET/USDT", "ICP/USDT", "FIL/USDT", "XTZ/USDT", "EOS/USDT",
-    "TRX/USDT", "XLM/USDT", "BCH/USDT", "ETC/USDT", "FTM/USDT",
-    # Tier 4: Emerging tokens
-    "QNT/USDT", "ZIL/USDT", "CELO/USDT", "FLOW/USDT", "HBAR/USDT",
-    "IOTA/USDT", "WAVES/USDT", "KSM/USDT", "BAT/USDT", "LRC/USDT",
-    "RNDR/USDT", "MASK/USDT", "COTI/USDT", "NMR/USDT", "CELR/USDT",
-]
+TRADING_PAIRS_CATEGORIZED = {
+    "Tier 1: Major cryptocurrencies": [
+        "BTC/USDT", "ETH/USDT", "BNB/USDT", "SOL/USDT", "XRP/USDT",
+        "ADA/USDT", "DOGE/USDT", "AVAX/USDT", "DOT/USDT", "LINK/USDT",
+    ],
+    "Tier 2: Established altcoins": [
+        "MATIC/USDT", "UNI/USDT", "LTC/USDT", "ATOM/USDT", "NEAR/USDT",
+        "PEPE/USDT", "SHIB/USDT", "FET/USDT", "INJ/USDT", "OP/USDT",
+        "AR/USDT", "APT/USDT", "SUI/USDT", "SEI/USDT", "TIA/USDT",
+        "WLD/USDT", "GMX/USDT", "GRT/USDT", "ENS/USDT", "AAVE/USDT",
+        "MKR/USDT", "YFI/USDT", "CRV/USDT", "SNX/USDT", "COMP/USDT",
+    ],
+    "Tier 3: Mid-cap gems": [
+        "THETA/USDT", "MANA/USDT", "SAND/USDT", "AXS/USDT", "GALA/USDT",
+        "IMX/USDT", "APE/USDT", "STX/USDT", "ROSE/USDT", "ALGO/USDT",
+        "VET/USDT", "ICP/USDT", "FIL/USDT", "XTZ/USDT", "EOS/USDT",
+        "TRX/USDT", "XLM/USDT", "BCH/USDT", "ETC/USDT", "FTM/USDT",
+    ],
+    "Tier 4: Emerging tokens": [
+        "QNT/USDT", "ZIL/USDT", "CELO/USDT", "FLOW/USDT", "HBAR/USDT",
+        "IOTA/USDT", "WAVES/USDT", "KSM/USDT", "BAT/USDT", "LRC/USDT",
+        "RNDR/USDT", "MASK/USDT", "COTI/USDT", "NMR/USDT", "CELR/USDT",
+    ],
+}
+
+TRADING_PAIRS = [pair for category in TRADING_PAIRS_CATEGORIZED.values() for pair in category]
 
 
 @router.post("/download-data", response_model=DownloadDataResponse)
@@ -137,13 +143,112 @@ async def download_data(
     )
 
 
-@router.get("/pairs", response_model=PairsResponse)
-async def get_pairs(settings: SettingsServiceDep) -> PairsResponse:
-    """Get available trading pairs and favorites."""
+@router.get("/check-data")
+async def check_data_availability(
+    pairs: List[str],
+    timeframe: str,
+    settings: SettingsServiceDep,
+    timerange: str | None = None,
+) -> dict:
+    """Check if data exists for selected pairs and timeframe."""
     app_settings = settings.load_settings()
+    if not app_settings.user_data_path:
+        raise HTTPException(status_code=404, detail="User data path not configured")
+    
+    if not app_settings.venv_path:
+        raise HTTPException(
+            status_code=400,
+            detail="Virtual environment not configured. Please configure the venv path in settings to check data availability."
+        )
+    
+    download_service = DownloadDataService(settings)
+    
+    try:
+        command = download_service.build_command(
+            timeframe=timeframe,
+            timerange=timerange,
+            pairs=pairs,
+            prepend=False,
+            erase=False,
+        )
+    except FileNotFoundError as e:
+        raise HTTPException(status_code=404, detail=f"Configuration file not found: {str(e)}")
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=f"Invalid configuration: {str(e)}")
+    
+    # Build environment with venv
+    env = ProcessService.build_environment(app_settings.venv_path)
+    
+    # Use freqtrade list-data command to check availability
+    # We'll modify the command to use list-data instead of download-data
+    from app.core.services.command_builder import CommandBuilder
+    
+    try:
+        # Build list-data command
+        list_data_cmd = CommandBuilder(
+            command="freqtrade",
+            args=[
+                "list-data",
+                "--user-data-dir", str(command.cwd),
+                "--timeframe", timeframe,
+            ]
+        )
+        
+        if timerange:
+            list_data_cmd.add_arg("--timerange", timerange)
+        
+        if pairs:
+            list_data_cmd.add_arg("--pairs", ",".join(pairs))
+        
+        full_command = list_data_cmd.as_list()
+        
+        # Execute command synchronously to get output
+        import subprocess
+        result = subprocess.run(
+            full_command,
+            capture_output=True,
+            text=True,
+            env=env,
+            cwd=command.cwd,
+        )
+        
+        if result.returncode != 0:
+            # If command fails, assume data is missing
+            return {
+                "available": False,
+                "missing_pairs": pairs,
+                "message": "Data check failed - data may be missing",
+            }
+        
+        # Parse output to determine which pairs have data
+        available_pairs = set()
+        if result.stdout:
+            # Parse the output - freqtrade list-data shows available data
+            for pair in pairs:
+                if pair in result.stdout:
+                    available_pairs.add(pair)
+        
+        missing_pairs = [p for p in pairs if p not in available_pairs]
+        
+        return {
+            "available": len(missing_pairs) == 0,
+            "available_pairs": list(available_pairs),
+            "missing_pairs": missing_pairs,
+            "message": f"Data available for {len(available_pairs)} pairs, missing for {len(missing_pairs)} pairs",
+        }
+    except Exception as e:
+        # On error, assume data is missing
+        return {
+            "available": False,
+            "missing_pairs": pairs,
+            "message": f"Failed to check data availability: {str(e)}",
+        }
 
-    # Use hardcoded trading pairs only
-    all_pairs = TRADING_PAIRS.copy()
+
+@router.get("/pairs")
+async def get_pairs(settings: SettingsServiceDep) -> dict:
+    """Get available trading pairs and favorites, grouped by category."""
+    app_settings = settings.load_settings()
 
     # Load favorites from data folder
     favorites = []
@@ -158,7 +263,11 @@ async def get_pairs(settings: SettingsServiceDep) -> PairsResponse:
             except Exception:
                 pass
 
-    return PairsResponse(pairs=all_pairs, favorites=favorites)
+    return {
+        "categories": TRADING_PAIRS_CATEGORIZED,
+        "all_pairs": TRADING_PAIRS,
+        "favorites": favorites,
+    }
 
 
 @router.post("/favorites", response_model=FavoritesResponse)
@@ -288,6 +397,103 @@ async def execute_backtest(
         import traceback
         error_detail = f"{str(e)}\n{traceback.format_exc()}"
         raise HTTPException(status_code=500, detail=f"Backtest start failed: {error_detail}")
+
+
+@router.get("/latest-run")
+async def get_latest_backtest_run(settings: SettingsServiceDep) -> dict:
+    """Get the most recent backtest run with full details."""
+    app_settings = settings.load_settings()
+    if not app_settings.user_data_path:
+        raise HTTPException(status_code=404, detail="User data path not configured")
+
+    from leave.web.api.route_utils import backtest_results_dir, load_run_index, iter_index_runs
+    from app.core.indexing.run_store import RunStore
+    from app.core.parsing.json_parser import parse_json_file
+
+    backtest_dir = backtest_results_dir(settings, required=False)
+    if not backtest_dir:
+        return {
+            "exists": False,
+            "message": "No backtest results directory configured",
+        }
+
+    try:
+        index = load_run_index(settings)
+        runs = list(iter_index_runs(index))
+        
+        if not runs:
+            return {
+                "exists": False,
+                "message": "No backtest runs found",
+            }
+
+        # Sort by saved_at to get latest
+        def _latest_first(run: dict) -> str:
+            return str(run.get("saved_at") or run.get("backtest_end") or "")
+
+        runs = sorted(runs, key=_latest_first, reverse=True)
+        latest_run = runs[0]
+
+        # Load full run data
+        run_dir = backtest_dir / latest_run.get("run_dir", "")
+        try:
+            results = RunStore.load_run(run_dir)
+        except (FileNotFoundError, ValueError):
+            return {
+                "exists": False,
+                "message": "Failed to load latest run data",
+            }
+
+        # Load params if available
+        params_file = run_dir / "params.json"
+        params = {}
+        if params_file.exists():
+            params = parse_json_file(params_file)
+
+        return {
+            "exists": True,
+            "run_id": latest_run.get("run_id", ""),
+            "strategy": latest_run.get("strategy", ""),
+            "timeframe": latest_run.get("timeframe", ""),
+            "pairs": latest_run.get("pairs", []),
+            "timerange": latest_run.get("timerange", ""),
+            "backtest_start": latest_run.get("backtest_start", ""),
+            "backtest_end": latest_run.get("backtest_end", ""),
+            "saved_at": latest_run.get("saved_at", ""),
+            "profit_total_pct": latest_run.get("profit_total_pct", 0.0),
+            "profit_total_abs": latest_run.get("profit_total_abs", 0.0),
+            "starting_balance": latest_run.get("starting_balance", 0.0),
+            "final_balance": latest_run.get("final_balance", 0.0),
+            "max_drawdown_pct": latest_run.get("max_drawdown_pct", 0.0),
+            "max_drawdown_abs": latest_run.get("max_drawdown_abs", 0.0),
+            "trades_count": latest_run.get("trades_count", 0),
+            "wins": latest_run.get("wins", 0),
+            "losses": latest_run.get("losses", 0),
+            "win_rate_pct": latest_run.get("win_rate_pct", 0.0),
+            "sharpe": latest_run.get("sharpe"),
+            "sortino": latest_run.get("sortino"),
+            "calmar": latest_run.get("calmar"),
+            "profit_factor": latest_run.get("profit_factor", 0.0),
+            "expectancy": latest_run.get("expectancy", 0.0),
+            "run_dir": latest_run.get("run_dir", ""),
+            "trades": [
+                {
+                    "pair": t.pair,
+                    "profit_abs": t.profit_abs,
+                    "profit": t.profit,
+                    "open_date": t.open_date,
+                    "close_date": t.close_date,
+                    "exit_reason": t.exit_reason,
+                }
+                for t in results.trades
+            ],
+            "params": params,
+        }
+    except Exception as e:
+        return {
+            "exists": False,
+            "message": f"Failed to load latest run: {str(e)}",
+        }
 
 
 @router.post("/backtest-config", response_model=BacktestConfigResponse)

@@ -63,7 +63,8 @@ export interface TradingPair {
 }
 
 export interface PairsResponse {
-  pairs: string[];
+  categories: Record<string, string[]>;
+  all_pairs: string[];
   favorites: string[];
 }
 
@@ -71,6 +72,51 @@ export interface BacktestStatus {
   status: string;
   run_id?: string;
   message: string;
+}
+
+export interface DataAvailabilityResponse {
+  available: boolean;
+  available_pairs: string[];
+  missing_pairs: string[];
+  message: string;
+}
+
+export interface LatestBacktestRun {
+  exists: boolean;
+  message?: string;
+  run_id?: string;
+  strategy?: string;
+  timeframe?: string;
+  pairs?: string[];
+  timerange?: string;
+  backtest_start?: string;
+  backtest_end?: string;
+  saved_at?: string;
+  profit_total_pct?: number;
+  profit_total_abs?: number;
+  starting_balance?: number;
+  final_balance?: number;
+  max_drawdown_pct?: number;
+  max_drawdown_abs?: number;
+  trades_count?: number;
+  wins?: number;
+  losses?: number;
+  win_rate_pct?: number;
+  sharpe?: number;
+  sortino?: number;
+  calmar?: number;
+  profit_factor?: number;
+  expectancy?: number;
+  run_dir?: string;
+  trades?: Array<{
+    pair: string;
+    profit_abs: number;
+    profit: number;
+    open_date: string;
+    close_date: string;
+    exit_reason: string;
+  }>;
+  params?: Record<string, any>;
 }
 
 class ApiClient {
@@ -155,6 +201,16 @@ class ApiClient {
   // Pairs
   async getPairs(): Promise<PairsResponse> {
     return this.request<PairsResponse>('/pairs');
+  }
+
+  async checkDataAvailability(pairs: string[], timeframe: string, timerange?: string): Promise<DataAvailabilityResponse> {
+    const params = new URLSearchParams({ pairs: pairs.join(','), timeframe });
+    if (timerange) params.append('timerange', timerange);
+    return this.request<DataAvailabilityResponse>(`/check-data?${params.toString()}`);
+  }
+
+  async getLatestBacktestRun(): Promise<LatestBacktestRun> {
+    return this.request<LatestBacktestRun>('/latest-run');
   }
 
   async saveFavorites(favorites: string[]): Promise<{ favorites: string[] }> {
