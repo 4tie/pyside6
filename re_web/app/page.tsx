@@ -43,7 +43,15 @@ export default function Dashboard() {
     );
   }
 
-  const metrics = summary.metrics;
+  const metrics = summary.metrics || {
+    total_runs: 0,
+    total_strategies: 0,
+    best_profit_pct: 0,
+    best_win_rate_pct: 0,
+    min_drawdown_pct: 0,
+    total_trades: 0,
+    latest_run_date: "",
+  };
   const recentRuns = summary.recent_runs || [];
 
   // Prepare chart data
