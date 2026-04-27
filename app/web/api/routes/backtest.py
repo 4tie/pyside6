@@ -72,6 +72,18 @@ def _favorites_file(user_data_dir: Path) -> Path:
     return user_data_dir / "favorites.json"
 
 
+def _normalize_pairs(pairs: list[str]) -> list[str]:
+    normalized: list[str] = []
+    seen: set[str] = set()
+    for pair in pairs:
+        clean_pair = pair.strip()
+        if not clean_pair or clean_pair in seen:
+            continue
+        seen.add(clean_pair)
+        normalized.append(clean_pair)
+    return normalized
+
+
 def _load_favorites(user_data_dir: Path) -> list[str]:
     path = _favorites_file(user_data_dir)
     if not path.exists():
@@ -80,7 +92,7 @@ def _load_favorites(user_data_dir: Path) -> list[str]:
         data = parse_json_file(path)
     except Exception:
         return []
-    return list(data.get("favorites") or [])
+    return _normalize_pairs(list(data.get("favorites") or []))
 
 
 def _pair_file(user_data_dir: Path, pair: str, timeframe: str) -> Path:
@@ -129,8 +141,9 @@ async def save_favorites(request: FavoritesRequest, settings: SettingsServiceDep
     user_data_dir = Path(app_settings.user_data_path).expanduser()
     path = _favorites_file(user_data_dir)
     path.parent.mkdir(parents=True, exist_ok=True)
-    write_json_file_atomic(path, {"favorites": request.favorites})
-    return FavoritesResponse(favorites=request.favorites)
+    favorites = _normalize_pairs(request.favorites)
+    write_json_file_atomic(path, {"favorites": favorites})
+    return FavoritesResponse(favorites=favorites)
 
 
 @router.get("/check-data", response_model=DataAvailabilityResponse)

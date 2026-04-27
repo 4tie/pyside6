@@ -18,6 +18,16 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import Link from 'next/link';
 import { Search, Heart, Lock, Unlock, ChevronDown, ChevronUp, Download, BarChart3, Play, Settings } from 'lucide-react';
 
+function uniquePairs(pairs: string[]): string[] {
+  return pairs.reduce<string[]>((acc, pair) => {
+    const normalizedPair = pair.trim();
+    if (normalizedPair && !acc.includes(normalizedPair)) {
+      acc.push(normalizedPair);
+    }
+    return acc;
+  }, []);
+}
+
 export default function BacktestPage() {
   const pathname = usePathname();
   const queryClient = useQueryClient();
@@ -115,11 +125,12 @@ export default function BacktestPage() {
   }, [savedConfig]);
 
   // Load favorites from pairs data
+  const favoritePairs = pairsData?.favorites;
   useEffect(() => {
-    if (pairsData?.favorites && favorites.length === 0) {
-      setFavorites(pairsData.favorites);
+    if (favoritePairs) {
+      setFavorites(uniquePairs(favoritePairs));
     }
-  }, [pairsData]);
+  }, [favoritePairs]);
 
   // Save config mutation
   const saveConfigMutation = useMutation({
@@ -164,15 +175,23 @@ export default function BacktestPage() {
   };
 
   const togglePair = (pair: string) => {
+    if (selectedPairs.includes(pair)) {
+      setLockedPairs(prev => {
+        if (!prev.has(pair)) return prev;
+        const newLocked = new Set(prev);
+        newLocked.delete(pair);
+        return newLocked;
+      });
+    }
     setSelectedPairs(prev =>
       prev.includes(pair) ? prev.filter(p => p !== pair) : [...prev, pair]
     );
   };
 
   const toggleFavorite = (pair: string) => {
-    const newFavorites = favorites.includes(pair)
+    const newFavorites = uniquePairs(favorites.includes(pair)
       ? favorites.filter(p => p !== pair)
-      : [...favorites.filter(p => p !== pair), pair]; // Ensure no duplicates
+      : [...favorites, pair]);
     setFavorites(newFavorites);
     api.saveFavorites(newFavorites);
   };
@@ -183,6 +202,7 @@ export default function BacktestPage() {
       if (newLocked.has(pair)) {
         newLocked.delete(pair);
       } else {
+        setSelectedPairs(prev => prev.includes(pair) ? prev : [...prev, pair]);
         newLocked.add(pair);
       }
       return newLocked;
@@ -191,10 +211,13 @@ export default function BacktestPage() {
 
   const randomizePairs = () => {
     if (!pairsData) return;
-    const allPairs = pairsData.all_pairs.filter(p => !lockedPairs.has(p));
-    const count = Math.min(formData.max_open_trades || 5, allPairs.length);
-    const shuffled = [...allPairs].sort(() => Math.random() - 0.5);
-    const newSelected = [...lockedPairs, ...shuffled.slice(0, count)];
+    const lockedSelectedPairs = selectedPairs.filter(pair => lockedPairs.has(pair));
+    const unlockedCandidates = pairsData.all_pairs.filter(pair => !lockedSelectedPairs.includes(pair));
+    const targetCount = Math.min(formData.max_open_trades || 5, pairsData.all_pairs.length);
+    const randomCount = Math.max(targetCount - lockedSelectedPairs.length, 0);
+    const shuffled = [...unlockedCandidates].sort(() => Math.random() - 0.5);
+    const newSelected = uniquePairs([...lockedSelectedPairs, ...shuffled.slice(0, randomCount)]);
+    setLockedPairs(new Set(lockedSelectedPairs));
     setSelectedPairs(newSelected);
   };
 
@@ -483,13 +506,13 @@ export default function BacktestPage() {
                                   <Label htmlFor={pair} className="flex-1 cursor-pointer">
                                     {pair}
                                   </Label>
-                                  {isFavorite && <Heart size={16} className="fill-red-500 text-red-500" />}
                                   {isSelected && (
                                     <Button
                                       variant="ghost"
                                       size="icon"
                                       onClick={() => toggleLock(pair)}
                                       disabled={isRunning}
+                                      aria-label={isLocked ? `Unlock ${pair}` : `Lock ${pair}`}
                                     >
                                       {isLocked ? <Lock size={16} /> : <Unlock size={16} />}
                                     </Button>
@@ -499,6 +522,7 @@ export default function BacktestPage() {
                                     size="icon"
                                     onClick={() => toggleFavorite(pair)}
                                     disabled={isRunning}
+                                    aria-label={isFavorite ? `Remove ${pair} from favorites` : `Add ${pair} to favorites`}
                                   >
                                     <Heart size={16} className={isFavorite ? "fill-red-500 text-red-500" : ""} />
                                   </Button>
