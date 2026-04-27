@@ -71,7 +71,14 @@ export default function BacktestPage() {
   // Load saved config on mount
   useEffect(() => {
     if (savedConfig) {
-      setFormData(savedConfig);
+      setFormData({
+        strategy: savedConfig.strategy || '',
+        timeframe: savedConfig.timeframe || '1h',
+        timerange: savedConfig.timerange || '',
+        pairs: savedConfig.pairs || [],
+        max_open_trades: savedConfig.max_open_trades || 5,
+        dry_run_wallet: savedConfig.dry_run_wallet || 1000,
+      });
       setSelectedPairs(savedConfig.pairs || []);
     }
   }, [savedConfig]);
@@ -140,8 +147,8 @@ export default function BacktestPage() {
                 <div className="space-y-2">
                   <Label htmlFor="strategy">Strategy</Label>
                   <Select
-                    value={formData.strategy || undefined}
-                    onValueChange={(value) => setFormData({ ...formData, strategy: value })}
+                    value={formData.strategy || ''}
+                    onValueChange={(value: string | null) => setFormData({ ...formData, strategy: value || '' })}
                     disabled={strategiesLoading || isRunning}
                   >
                     <SelectTrigger id="strategy">
@@ -161,8 +168,8 @@ export default function BacktestPage() {
                   <div className="space-y-2">
                     <Label htmlFor="timeframe">Timeframe</Label>
                     <Select
-                      value={formData.timeframe || undefined}
-                      onValueChange={(value) => setFormData({ ...formData, timeframe: value })}
+                      value={formData.timeframe || ''}
+                      onValueChange={(value: string | null) => setFormData({ ...formData, timeframe: value || '' })}
                       disabled={isRunning}
                     >
                       <SelectTrigger id="timeframe">

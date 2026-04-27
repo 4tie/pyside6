@@ -53,10 +53,13 @@ else:
     static_dir.mkdir(parents=True, exist_ok=True)
     app.mount("/static", StaticFiles(directory=str(static_dir), html=True), name="static")
 
-react_dist_dir = Path(__file__).parent.parent / "re_web" / "dist"
+react_dist_dir = Path(__file__).parent.parent.parent / "re_web" / "dist"
 react_assets_dir = react_dist_dir / "assets"
+react_next_dir = react_dist_dir / "_next"
 if react_assets_dir.exists():
     app.mount("/app/assets", StaticFiles(directory=str(react_assets_dir)), name="re_web_assets")
+if react_next_dir.exists():
+    app.mount("/_next", StaticFiles(directory=str(react_next_dir)), name="re_web_next")
 
 
 def _no_cache_file_response(path: Path) -> FileResponse:
