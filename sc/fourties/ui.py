@@ -62,6 +62,7 @@ class ChatApp:
             frame, height=config.INPUT_HEIGHT, wrap=tk.WORD
         )
         self.input_area.pack(side=tk.LEFT, fill=tk.X, expand=True)
+        self.input_area.bind("<Return>", self._on_send)
         self.input_area.bind("<Control-Return>", self._on_send)
 
         btn_frame = tk.Frame(frame)

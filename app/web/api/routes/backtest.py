@@ -360,7 +360,16 @@ async def get_backtest_runs(
     }
     sort_field = sort_by if sort_by in valid_sort_fields else "saved_at"
     reverse = order.lower() == "desc"
-    runs = sorted(runs, key=lambda run: run.get(sort_field, 0), reverse=reverse)
+    
+    # Use appropriate default value based on field type
+    def get_sort_value(run, field):
+        value = run.get(field)
+        if value is None:
+            # Use empty string for date fields, 0 for numeric fields
+            return "" if field == "saved_at" else 0
+        return value
+    
+    runs = sorted(runs, key=lambda run: get_sort_value(run, sort_field), reverse=reverse)
     
     # Pagination
     total = len(runs)
