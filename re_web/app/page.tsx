@@ -44,7 +44,7 @@ export default function Dashboard() {
   }
 
   const metrics = summary.metrics;
-  const recentRuns = summary.recent_runs;
+  const recentRuns = summary.recent_runs || [];
 
   // Prepare chart data
   const chartData = recentRuns.slice(0, 10).map(run => ({
